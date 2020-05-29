@@ -1,3 +1,20 @@
+language: cpp
+compiler: gcc
+os: 
+  - linux
+  - osx
+dist: bionic
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - make
+      - g++-9
+      - libglew-dev
+      - libopenal-dev
+      - libglfw3-dev
+
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
@@ -13,6 +30,5 @@ addons:
       name: "andreasdr/tdme2"
       description: "TDME2 - ThreeDeeMiniEngine2 is a lightweight 3D engine including tools suited for 3D game development using C++11"
     notification_email: andreas@drewke.net
-    build_command_prepend: ""
-    build_command: "make"
+    build_command: "make mains"
     branch_pattern: coverity_scan
