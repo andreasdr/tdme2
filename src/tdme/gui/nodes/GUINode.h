@@ -501,4 +501,12 @@ public:
 	 * @param depthIdx depth index
 	 */
 	static void dumpNode(GUINode* node, int depth = 0, int indent = 0, int depthIdx = 0);
+
+	/**
+	 * Dump parent nodes
+	 * @param node node to dump from
+	 * @param indent indention
+	 */
+	static void dumpParentNodes(GUINode* node, int indent = 0);
+
 };

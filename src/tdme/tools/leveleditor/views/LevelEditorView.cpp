@@ -495,6 +495,7 @@ void LevelEditorView::handleInputEvents()
 							Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
 							updateGizmo();
 						}
+						updateGUITransformationsElements();
 					}
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
@@ -510,6 +511,7 @@ void LevelEditorView::handleInputEvents()
 					if (selectedEntityIds.size() > 1) {
 						setGizmoRotation(Transformations());
 					}
+					updateGUITransformationsElements();
 				} else {
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
@@ -556,8 +558,8 @@ void LevelEditorView::handleInputEvents()
 					}
 					mouseDraggingLastObject = selectedEntity;
 					updateGizmo();
+					updateGUIElements();
 				}
-				updateGUIElements();
 			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_RIGHT && mouseDragging == true) {
@@ -811,6 +813,32 @@ void LevelEditorView::updateGUIElements()
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
+		} else {
+			levelEditorScreenController->unsetObjectData();
+			levelEditorScreenController->unsetObject();
+			levelEditorScreenController->unsetObjectProperties();
+		}
+	} else
+	if (selectedEntityIds.size() > 1) {
+		levelEditorScreenController->unsetObjectData();
+		levelEditorScreenController->unsetObjectProperties();
+	} else
+	if (selectedEntityIds.size() == 0) {
+		levelEditorScreenController->unsetObject();
+		levelEditorScreenController->unsetObjectData();
+		levelEditorScreenController->unsetObjectProperties();
+	}
+	for (auto i = 0; i < 4; i++) {
+		levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
+	}
+	updateGUITransformationsElements();
+}
+
+void LevelEditorView::updateGUITransformationsElements() {
+	if (selectedEntityIds.size() == 1) {
+		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			levelEditorScreenController->setObject(
 				selectedEntity->getTranslation(),
 				selectedEntity->getScale(),
@@ -827,24 +855,10 @@ void LevelEditorView::updateGUIElements()
 				objectCenter = levelEditorObject->getTransformations().getTranslation();
 			}
 			levelEditorScreenController->setObjectData(levelEditorObject->getId(), levelEditorObject->getDescription(), levelEditorObject->getEntity()->getName(), objectCenter);
-		} else {
-			levelEditorScreenController->unsetObjectData();
-			levelEditorScreenController->unsetObject();
-			levelEditorScreenController->unsetObjectProperties();
 		}
 	} else
 	if (selectedEntityIds.size() > 1) {
-		levelEditorScreenController->unsetObjectData();
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
-		levelEditorScreenController->unsetObjectProperties();
-	} else
-	if (selectedEntityIds.size() == 0) {
-		levelEditorScreenController->unsetObjectData();
-		levelEditorScreenController->unsetObject();
-		levelEditorScreenController->unsetObjectProperties();
-	}
-	for (auto i = 0; i < 4; i++) {
-		levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
 	}
 }
 

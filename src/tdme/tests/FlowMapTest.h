@@ -43,7 +43,6 @@ private:
 	LevelEditorEntity* playerModelEntity { nullptr };
 	Model* emptyModel { nullptr };
 	Object3D* startPlayerObject { nullptr };
-	Vector3 startPlayerCellDirectionLast;
 	Vector3 startPlayerCellDirection;
 	Vector3 startPlayerCellPosition;
 	Object3D* endPlayerObject1 { nullptr };

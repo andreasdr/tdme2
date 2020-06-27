@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.org/andreasdr/tdme2.svg?branch=master)](https://travis-ci.org/andreasdr/tdme2)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/andreasdrewke)
-
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/tdme_logo_full.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
@@ -33,8 +32,8 @@
         - Vector2, Vector3, Vector4, Matrix3x3, Matrix4x4 and Quaternion class
             - those have a ordinary API + operators, the latter is still a bit WIP
     - 3d engine
-        - model parsing
-            - DAE parsing with skinned meshes and animations
+        - model reader
+            - DAE
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
                 - requires triangulated meshes for now
@@ -42,7 +41,7 @@
             - GLTF via tinygltf
             - TDME Model file format
                 - this is a much more efficient model file format for TDME
-                - can be read and written
+                - can also be written
         - objects/entity types
             - 3d model based objects with
                 - animations
@@ -217,6 +216,8 @@
     - documentation
 
 - What is WIP or planned
+    - Light scattering effect / effects
+    - Simple script language
     - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
@@ -283,7 +284,7 @@
 
 - External references
     - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
-    - the world wide web! thank you for sharing
+    - the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
 
 - Other credits
     - Mathias Lenz

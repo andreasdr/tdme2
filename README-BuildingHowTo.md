@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/tdme_logo_full.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
 
 # 1. How to build TDME2?
 
@@ -58,39 +58,6 @@ make clean && make -j HARDWARE_THREADS mains
 ```
 
 ### 1.2.4. Build with GLES2
-
-TDME2 supports OpenGL-ES2. As FreeGLUT does not include support for GLES2 by default we need to compile our own version of FreeGLUT.
-
-```bash
-sudo apt-get install cmake
-git clone https://github.com/dcnieho/FreeGLUT.git
-cd FreeGLUT/freeglut/freeglut
-cmake -DCMAKE_BUILD_TYPE=Debug -DFREEGLUT_GLES=ON -DFREEGLUT_BUILD_DEMOS=NO
-make
-sudo make install
-```
-
-If you get the following error if building TDME2 with FreeGLUT/GLES2 support:
-```
-/usr/local/lib/libfreeglut-gles.so: undefined reference to `glutCreateMenuUcall'
-```
-
-Then open FreeGLUT/freeglut/freeglut/src/fg_ext.c and comment out the following line: "CHECK_NAME(glutCreateMenuUcall);" like "// CHECK_NAME(glutCreateMenuUcall);"
-Go back to the folder where you issued cloning FreeGLUT. Then do again:
-
-```bash
-cd FreeGLUT/freeglut/freeglut
-make
-sudo make install
-```
-
-Before running a TDME2 binary like described below you need to execute the following command in your TDME2 folder just that the FreeGLUT/GLES2 library is found.
-
-```
-export LD_LIBRARY_PATH=/usr/local/lib
-```
-
-Go back into your TDME2 folder and continue to build TDME2.
 
 Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 

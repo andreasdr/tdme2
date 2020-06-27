@@ -198,8 +198,9 @@ public:
 	/** 
 	 * Get child controller nodes
 	 * @param childControllerNodes child controller nodes
+	 * @param requireConditionsMet require conditions met
 	 */
-	virtual void getChildControllerNodes(vector<GUINode*>& childControllerNodes);
+	virtual void getChildControllerNodes(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
 
 	// overriden methods
 	void dispose() override;
@@ -218,6 +219,7 @@ private:
 	/**
 	 * Get child controller nodes internal
 	 * @param childControllerNodes child controller nodes
+	 * @param requireConditionsMet require conditions met
 	 */
-	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes);
+	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
 };

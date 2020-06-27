@@ -16,12 +16,42 @@ PostProcessingProgram::PostProcessingProgram(RenderPass renderPass) {
 	this->renderPass = renderPass;
 }
 
-void PostProcessingProgram::addPostProcessingStep(string shaderId, PostProcessingProgram::FrameBufferSource source, PostProcessingProgram::FrameBufferTarget target, bool bindTemporary) {
+void PostProcessingProgram::addEffectPass(
+	int effectPassIdx,
+	int frameBufferWidthDivideFactor,
+	int frameBufferHeightDivideFactor,
+	string shaderPrefix,
+	bool useEZR,
+	bool applyShadowMapping,
+	bool applyPostProcessing,
+	int32_t renderTypes,
+	Color4 clearColor,
+	bool renderSun,
+	bool skipOnSunNotVisible
+) {
+	PostProcessingProgramEffectPass effectPass;
+	effectPass.effectPassIdx = effectPassIdx;
+	effectPass.frameBufferWidthDivideFactor = frameBufferWidthDivideFactor;
+	effectPass.frameBufferHeightDivideFactor = frameBufferHeightDivideFactor;
+	effectPass.shaderPrefix = shaderPrefix;
+	effectPass.useEZR = useEZR;
+	effectPass.applyShadowMapping = applyShadowMapping;
+	effectPass.applyPostProcessing = applyPostProcessing;
+	effectPass.renderTypes = renderTypes;
+	effectPass.clearColor = clearColor;
+	effectPass.renderSun = renderSun;
+	effectPass.skipOnSunNotVisible = skipOnSunNotVisible;
+	//effectPass
+	effectPasses.push_back(effectPass);
+}
+
+void PostProcessingProgram::addPostProcessingStep(string shaderId, PostProcessingProgram::FrameBufferSource source, PostProcessingProgram::FrameBufferTarget target, bool bindTemporary, PostProcessingProgram::FrameBufferSource blendToSource) {
 	PostProcessingProgramStep step;
 	step.shaderId = shaderId;
 	step.source = source;
 	step.target = target;
 	step.bindTemporary = bindTemporary;
+	step.blendToSource = blendToSource;
 	steps.push_back(step);
 }
 

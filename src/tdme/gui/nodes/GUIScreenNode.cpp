@@ -30,6 +30,7 @@
 
 using std::map;
 using std::remove;
+using std::reverse;
 using std::set;
 using std::string;
 using std::to_string;
@@ -197,7 +198,22 @@ void GUIScreenNode::layout()
 
 void GUIScreenNode::layout(GUINode* node)
 {
+	// check if parent nodes have conditions met
+	{
+		auto _node = node;
+		while (_node != nullptr) {
+			if (_node->conditionsMet == false) return;
+			_node = _node->parentNode;
+		}
+	}
+
+	// first step, make sure all parents up to screen node are layouted
 	auto _node = node;
+	while (_node->parentNode != nullptr && _node->layouted == false) {
+		_node->layouted = false;
+		_node = _node->parentNode;
+	}
+
 	// find a node that is a valid base for layouting from
 	while (
 		_node->parentNode != nullptr &&
@@ -206,7 +222,7 @@ void GUIScreenNode::layout(GUINode* node)
 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
 		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) ||
-		// percent depend on its parent sizedimensions so make sure its already layouted
+		// percent depend on its parent dimensions so make sure its already layouted
 		(_node->layouted == false &&
 		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
@@ -218,39 +234,30 @@ void GUIScreenNode::layout(GUINode* node)
 		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
 		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
 		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR)))) {
+		_node->layouted = false;
 		_node = _node->parentNode;
 	}
-	// last step, make sure all parents until screen node are layouted
-	while (_node->parentNode != nullptr &&_node->layouted == false) {
-		_node = _node->parentNode;
-	}
+
 	// do the magic
 	if (dynamic_cast< GUIParentNode* >(_node) != nullptr) {
 		auto parentNode = dynamic_cast<GUIParentNode*>(_node);
-		if (parentNode->conditionsMet == true) {
-			parentNode->layoutSubNodes();
-			parentNode->layoutSubNodes();
-			parentNode->getChildControllerNodes(childControllerNodes);
-			for (auto i = 0; i < childControllerNodes.size(); i++) {
-				auto childNode = childControllerNodes[i];
-				auto controller = childNode->getController();
-				if (controller != nullptr && childNode->layouted == true) controller->postLayout();
-			}
-			auto controller = parentNode->getController();
-			if (controller != nullptr) controller->postLayout();
-			parentNode->layouted = true;
-		} else {
-			parentNode->layouted = false;
+		parentNode->layout();
+		parentNode->layoutSubNodes();
+		parentNode->getScreenNode()->layoutSubNodes();
+		parentNode->layouted = true;
+		parentNode->getScreenNode()->getChildControllerNodes(childControllerNodes, true);
+		for (auto i = 0; i < childControllerNodes.size(); i++) {
+			auto childNode = childControllerNodes[i];
+			auto childController = childNode->getController();
+			if (childController != nullptr) childController->postLayout();
 		}
 	} else {
-		if (_node->conditionsMet == true) {
-			_node->computeContentAlignment();
-			auto controller = _node->getController();
-			if (controller != nullptr) controller->postLayout();
-			_node->layouted = true;
-		} else {
-			_node->layouted = false;
-		}
+		_node->layout();
+		_node->getScreenNode()->layoutSubNodes();
+		_node->computeContentAlignment();
+		_node->layouted = true;
+		auto nodeController = _node->getController();
+		if (nodeController != nullptr) nodeController->postLayout();
 	}
 }
 
@@ -268,6 +275,7 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->computedConstraints.height = height;
 	this->layouted = false;
 }
+
 
 const string GUIScreenNode::getNodeType()
 {

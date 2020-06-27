@@ -26,6 +26,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
+#include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -80,6 +81,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::engine::subsystems::skinning::SkinningShader;
+using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
@@ -129,6 +131,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
+	friend class tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 	friend class tdme::gui::GUI;
 	friend class tdme::gui::nodes::GUIImageNode;
 	friend class tdme::gui::nodes::GUINode;
@@ -138,6 +141,7 @@ class tdme::engine::Engine final
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
 	enum ShaderType { OBJECT3D };
+	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
@@ -165,6 +169,7 @@ private:
 	static FrameBufferRenderShader* frameBufferRenderShader;
 	static PostProcessing* postProcessing;
 	static PostProcessingShader* postProcessingShader;
+	static Texture2DRenderShader* texture2DRenderShader;
 	static int threadCount;
 	static bool have4K;
 	static float animationBlendingTime;
@@ -174,6 +179,7 @@ private:
 	static float shadowMaplightEyeDistanceScale;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
+	static int32_t sunTextureId;
 
 	struct Shader {
 		ShaderType type;
@@ -197,10 +203,14 @@ private:
 
 	array<Light, LIGHTS_MAX> lights;
 	Color4 sceneColor;
+	float sunSize;
+	Vector3 sunPosition;
 	FrameBuffer* frameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
 	FrameBuffer* postProcessingTemporaryFrameBuffer { nullptr };
+	array<FrameBuffer*, EFFECTPASS_COUNT - 1> effectPassFrameBuffers;
+	array<bool, EFFECTPASS_COUNT - 1> effectPassSkip;
 	ShadowMapping* shadowMapping { nullptr };
 
 	map<string, Entity*> entitiesById;
@@ -273,13 +283,6 @@ private:
 	 */
 	inline static MeshManager* getMeshManager() {
 		return meshManager;
-	}
-
-	/**
-	 * @return vertex buffer object manager
-	 */
-	inline static VBOManager* getVBOManager() {
-		return vboManager;
 	}
 
 	/**
@@ -425,6 +428,14 @@ public:
 	 */
 	inline static TextureManager* getTextureManager() {
 		return Engine::textureManager;
+	}
+
+
+	/**
+	 * @return vertex buffer object manager
+	 */
+	inline static VBOManager* getVBOManager() {
+		return vboManager;
 	}
 
 	/**
@@ -625,14 +636,14 @@ public:
 	}
 
 	/**
-	 * @return scaled width
+	 * @return scaled width or -1 if not in use
 	 */
 	inline int32_t getScaledWidth() {
 		return scaledWidth;
 	}
 
 	/**
-	 * @return scaled height
+	 * @return scaled height -1 if not in use
 	 */
 	inline int32_t getScaledHeight() {
 		return scaledHeight;
@@ -695,7 +706,7 @@ public:
 		return &lights[idx];
 	}
 
-	/** 
+	/**
 	 * @return scene / background color
 	 */
 	inline const Color4& getSceneColor() const {
@@ -708,6 +719,36 @@ public:
 	 */
 	inline void setSceneColor(const Color4& sceneColor) {
 		this->sceneColor = sceneColor;
+	}
+
+	/**
+	 * @return sun size
+	 */
+	inline float getSunSize() const {
+		return sunSize;
+	}
+
+	/**
+	 * Set sun size
+	 * @param sunSize sun size
+	 */
+	inline void setSunSize(float sunSize) {
+		this->sunSize = sunSize;
+	}
+
+	/**
+	 * @return sun position
+	 */
+	inline const Vector3& getSunPosition() const {
+		return sunPosition;
+	}
+
+	/**
+	 * Set sun position
+	 * @param subPosition sun position
+	 */
+	inline void setSunPosition(const Vector3& sunPosition) {
+		this->sunPosition = sunPosition;
 	}
 
 	/** 
@@ -884,8 +925,9 @@ public:
 	 * Convert screen coordinate by world coordinate
 	 * @param worldCoordinate world woordinate
 	 * @param screenCoordinate screen coordinate
+	 * @returns if world coordinate is within frustum
 	 */
-	void computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
+	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
 
 	/** 
 	 * Shutdown the engine
@@ -1001,5 +1043,22 @@ private:
 	 * @param targetFrameBuffer target frame buffer
 	 */
 	void doPostProcessing(PostProcessingProgram::RenderPass renderPass, const array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer);
+
+	/**
+	 * Do a render/effect pass
+	 * @param effectPass effect pass
+	 * @param shaderPrefix shader prefix
+	 * @param useEZR if to use early Z rejection
+	 * @param doShadowMapping if to apply shadow mapping
+	 * @param applyPostProcessing if to apply post processing
+	 * @param renderTypes render types
+	 */
+	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, int32_t renderTypes);
+
+	/**
+	 * Render sun
+	 * @return if sun is visible
+	 */
+	bool renderSun();
 
 };

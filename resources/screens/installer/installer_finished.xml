@@ -3,7 +3,7 @@
 		<layout alignment="horizontal" width="100%" height="*">
 					
 			<layout alignment="horizontal" width="34%" height="100%" vertical-align="center" horizontal-align="center">
-				<image src="resources/screens/installer/images/logo.png"/>
+				<image src="resources/installer/logo.png"/>
 			</layout>
 			
 			<layout padding="20" alignment="vertical" width="67%" height="100%">

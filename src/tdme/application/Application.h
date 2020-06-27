@@ -253,6 +253,7 @@ private:
 	static ApplicationShutdown applicationShutdown;
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
+	string executableFileName;
 	bool initialized { false };
 	int32_t windowWidth { 1024 };
 	int32_t windowHeight { 768 };

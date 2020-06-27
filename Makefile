@@ -18,6 +18,7 @@ LDFLAGS =
 INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/ -Iext/rapidjson/include
 
 # set platform specific flags
+OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
@@ -132,13 +133,13 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	# Linux, GLES2
 	else ifeq ($(GLES2), YES)
-		EXTRAFLAGS := -DGLES2
+		EXTRAFLAGS := -DGLFW3 -DGLES2
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread 
 	else
 		# Linux, GL
 		#EXTRAFLAGS = -D_GLIBCXX_DEBUG
@@ -321,6 +322,9 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
@@ -370,6 +374,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
@@ -385,6 +390,7 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
+	src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \
@@ -969,9 +975,18 @@ $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(EXT_HL_OBJS)
 
+ifeq ($(OSSHORT), Msys)
+$(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
+	@mkdir -p $(dir $@);
+	@EXECUTABLE=$$(echo $1 | grep -o '[a-zA-Z0-9]*-main' | sed -e 's/\-main//');
+	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $@.rc.o $< -l$(NAME) $(EXTRA_LIBS)
+else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+endif
 
 hashlink:
 	(cd ext/hashlink && $(MAKE) clean && $(MAKE) libhl && mkdir -p ../../$(LIB_DIR) && cp libhl.so ../../$(LIB_DIR) && $(MAKE) clean)

@@ -101,8 +101,9 @@ public:
 	 * @param source source frame buffer
 	 * @param shaderId post processing shader id
 	 * @param temporary bind additional temporary frame buffer
+	 * @param blendToSource target = blendToSource + source
 	 */
-	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr);
+	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr);
 
 	/**
 	 * Public constructor

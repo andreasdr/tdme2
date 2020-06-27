@@ -56,4 +56,25 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	 */
 	virtual void setBufferPixelHeight(void* context, float pixelHeight) = 0;
 
+	/**
+	 * Set texture light position x
+	 * @param context context
+	 * @param textureLightPositionX texture light position x
+	 */
+	virtual void setTextureLightPositionX(void* context, float textureLightPositionX) = 0;
+
+	/**
+	 * Set texture light position y
+	 * @param context context
+	 * @param textureLightPositionY texture light position y
+	 */
+	virtual void setTextureLightPositionY(void* context, float textureLightPositionY) = 0;
+
+	/**
+	 * Set intensity
+	 * @param context context
+	 * @param intensity effect intensity
+	 */
+	virtual void setIntensity(void* context, float intensity) = 0;
+
 };

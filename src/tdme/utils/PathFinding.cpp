@@ -39,7 +39,19 @@ using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHeight, float stepSize, float stepSizeLast, float actorStepUpMax, uint16_t skipOnCollisionTypeIds, int maxTries) {
+PathFinding::PathFinding(
+	World* world,
+	bool sloping,
+	int stepsMax,
+	float actorHeight,
+	float stepSize,
+	float stepSizeLast,
+	float actorStepUpMax,
+	uint16_t skipOnCollisionTypeIds,
+	int maxTries,
+	float flowMapStepSize,
+	float flowMapScaleActorBoundingVolumes
+	) {
 	this->world = world;
 	this->customTest = nullptr;
 	this->sloping = sloping;
@@ -53,25 +65,33 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHe
 	this->skipOnCollisionTypeIds = skipOnCollisionTypeIds;
 	this->maxTries = maxTries;
 	this->collisionTypeIds = 0;
+	this->flowMapStepSize = flowMapStepSize;
+	this->flowMapScaleActorBoundingVolumes = flowMapScaleActorBoundingVolumes;
 }
 
 PathFinding::~PathFinding() {
 }
 
-bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
-	auto cacheId = toId(x, y, z) + ";" + to_string(collisionTypeIds) + ";" + to_string(ignoreStepUpMax);
+bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+	auto cacheId =
+		"straight;" +
+		to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
+		to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
+		toId(x, y, z, stepSize) + ";" +
+		to_string(collisionTypeIds) + ";" +
+		to_string(ignoreStepUpMax);
 	auto walkableCacheIt = walkableCache.find(cacheId);
 	if (walkableCacheIt != walkableCache.end()) {
 		height = walkableCacheIt->second;
 		return height > -10000.0f;
 	}
-	auto walkable = isWalkable(x, y, z, height, collisionTypeIds, ignoreStepUpMax);
+	auto walkable = isWalkable(x, y, z, height, stepSize, collisionTypeIds, ignoreStepUpMax);
 	if (walkable == false) return false;
 	walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
 }
 
-bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, uint16_t collisionTypeIds) {
+bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds) {
 	float slopeAngle = 0.0f;
 
 	// slope angle and center
@@ -86,7 +106,13 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 		Vector3(0.0f, 1.0f, 0.0f)
 	);
 
-	auto cacheId = toId(x, y, z) + ";" + to_string(collisionTypeIds) + ";slope;" + to_string(slopeAngle);
+	auto cacheId =
+		"slope;" +
+		to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
+		to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
+		toId(x, y, z, stepSize) + ";" +
+		to_string(collisionTypeIds) +
+		to_string(slopeAngle);
 	auto walkableCacheIt = walkableCache.find(cacheId);
 	if (walkableCacheIt != walkableCache.end()) {
 		auto height = walkableCacheIt->second;
@@ -110,14 +136,14 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 	return walkable;
 }
 
-bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+bool PathFinding::isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
 	// determine y height of ground plate of actor bounding volume
 	float _z = z - stepSize / 2.0f;
 	height = -10000.0f;
 	Vector3 actorPosition;
-	for (auto i = 0; i < 2; i++) {
+	for (auto i = 0; i < 4; i++) {
 		float _x = x - stepSize / 2.0f;
-		for (auto j = 0; j < 2; j++) {
+		for (auto j = 0; j < 4; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
@@ -129,9 +155,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			_x+= stepSize;
+			_x+= stepSize / 2.0f;
 		}
-		_z+= stepSize;
+		_z+= stepSize / 2.0f;
 	}
 
 	// set up transformations
@@ -148,48 +174,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 }
 
-void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition) {
-	// start node
-	PathFindingNode start;
-	start.position = startPosition;
-	start.costsAll = 0.0f;
-	start.costsReachPoint = 0.0f;
-	start.costsEstimated = 0.0f;
-	start.x = getIntegerPositionComponent(start.position.getX());
-	start.y = 0;
-	start.z = getIntegerPositionComponent(start.position.getZ());
-	start.id = toId(
-		start.position.getX(),
-		start.position.getY(),
-		start.position.getZ()
-	);
-
-	// end node
-	end.position = endPosition;
-	end.costsAll = 0.0f;
-	end.costsReachPoint = 0.0f;
-	end.costsEstimated = 0.0f;
-	end.x = getIntegerPositionComponent(end.position.getX());
-	end.y = 0;
-	end.z = getIntegerPositionComponent(end.position.getZ());
-	end.id = toId(
-		end.position.getX(),
-		end.position.getY(),
-		end.position.getZ()
-	);
-
-	// end positions
-	endPositions = { endPosition };
-
-	// set up start node costs
-	start.costsEstimated = computeDistanceToEnd(start);
-	start.costsAll = start.costsEstimated;
-
-	// put to open nodes
-	openNodes[start.id] = start;
-}
-
-void PathFinding::step(const PathFindingNode& node, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
+void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
 	auto nodeId = node.id;
 
 	// Find valid successors
@@ -208,11 +193,11 @@ void PathFinding::step(const PathFindingNode& node, const set<string>* nodesToTe
 			);
 			if (nodesToTestPtr->find(successorNodeId) == nodesToTestPtr->end()) continue;
 		}
-		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
+		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ, stepSize, scaleActorBoundingVolumes):true;
 		//
 		float yHeight;
 		// first node or walkable?
-		if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight) == true) {
+		if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight, stepSize, scaleActorBoundingVolumes) == true) {
 			// check if successor node equals previous node / node
 			if (equals(node, successorX, yHeight, successorZ)) {
 				continue;
@@ -313,7 +298,7 @@ void PathFinding::step(const PathFindingNode& node, const set<string>* nodesToTe
 	openNodes.erase(nodeId);
 }
 
-bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
+bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& endPosition, float stepSize, float scaleActorBoundingVolumes, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
 	// clear path
 	path.clear();
 
@@ -342,7 +327,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize, actorHeight / 2.0f, stepSize)
+		Vector3(stepSize * scaleActorBoundingVolumes, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes)
 	);
 	// set up transformations
 	Transformations actorTransformations;
@@ -356,7 +341,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize * 1.5f, actorHeight / 2.0f, stepSize * 1.5f)
+		Vector3(stepSize * scaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes * 2.5f)
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
@@ -402,12 +387,13 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 				endPositionComputed.getY(),
 				endPositionComputed.getZ(),
 				endYHeight,
+				stepSize,
 				0,
 				true
 			) == false) {
 			if (VERBOSE == true) {
 				Console::println(
-					"Not walkable: " +
+					"End position not walkable: " +
 					to_string(endPositionComputed.getX()) + ", " +
 					to_string(endPositionComputed.getY()) + ", " +
 					to_string(endPositionComputed.getZ()) + " / " +
@@ -432,8 +418,46 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 			);
 		}
 
-		// otherwise start path finding
-		start(startPositionComputed, endPositionComputed);
+		// end node + start node
+		{
+			// start node
+			PathFindingNode start;
+			start.position = startPositionComputed;
+			start.costsAll = 0.0f;
+			start.costsReachPoint = 0.0f;
+			start.costsEstimated = 0.0f;
+			start.x = getIntegerPositionComponent(start.position.getX(), stepSize);
+			start.y = 0;
+			start.z = getIntegerPositionComponent(start.position.getZ(), stepSize);
+			start.id = toId(
+				start.position.getX(),
+				start.position.getY(),
+				start.position.getZ(),
+				stepSize
+			);
+
+			// end node
+			end.position = endPositionComputed;
+			end.costsAll = 0.0f;
+			end.costsReachPoint = 0.0f;
+			end.costsEstimated = 0.0f;
+			end.x = getIntegerPositionComponent(end.position.getX(), stepSize);
+			end.y = 0;
+			end.z = getIntegerPositionComponent(end.position.getZ(), stepSize);
+			end.id = toId(
+				end.position.getX(),
+				end.position.getY(),
+				end.position.getZ(),
+				stepSize
+			);
+
+			// set up start node costs
+			start.costsEstimated = computeDistanceToEnd(start);
+			start.costsAll = start.costsEstimated;
+
+			// put to open nodes
+			openNodes[start.id] = start;
+		}
 
 		// do the steps
 		bool done = false;
@@ -488,7 +512,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 				break;
 			} else {
 				// do a step
-				step(node, nullptr, false);
+				step(node, stepSize, scaleActorBoundingVolumes, nullptr, false);
 			}
 		}
 
@@ -534,9 +558,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 	return success;
 }
 
-FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, PathFindingCustomTest* customTest) {
-	this->endPositions = endPositions;
-
+FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, PathFindingCustomTest* customTest) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -552,7 +574,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize, actorHeight / 2.0f, stepSize)
+		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes)
 	);
 	// set up transformations
 	Transformations actorTransformations;
@@ -566,65 +588,71 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize * 1.5f, actorHeight / 2.0f, stepSize * 1.5f)
+		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f)
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
 	//
-	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / stepSize));
-	auto zMax = static_cast<int>(Math::ceil(depth / 2.0f / stepSize));
-	auto xMin = static_cast<int>(Math::ceil(-width / 2.0f / stepSize));
-	auto xMax = static_cast<int>(Math::ceil(width / 2.0f / stepSize));
+	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / flowMapStepSize));
+	auto zMax = static_cast<int>(Math::ceil(depth / 2.0f / flowMapStepSize));
+	auto xMin = static_cast<int>(Math::ceil(-width / 2.0f / flowMapStepSize));
+	auto xMax = static_cast<int>(Math::ceil(width / 2.0f / flowMapStepSize));
 	const vector<Vector3> emptyPath = { center };
 	const vector<Vector3>& pathToUse = path.empty() == false?path:emptyPath;
-	auto stepSize2 = stepSize + 0.01f;
-
-	// based on path finding and
-	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
-	// generate cost map via dijkstra
 
 	// set up end position in costs map
 	if (endPositions.size() == 0) {
 		Console::println("PathFinding::createFlowMap(): no end positions given");
 	}
 
-	// add to open nodes
-	auto startNodePosition = Vector3(
-		alignPositionComponent(pathToUse[0].getX()),
-		pathToUse[0].getY(),
-		alignPositionComponent(pathToUse[0].getZ())
+	// end node
+	end.position = path[0];
+	end.costsAll = 0.0f;
+	end.costsReachPoint = 0.0f;
+	end.costsEstimated = 0.0f;
+	end.x = getIntegerPositionComponent(end.position.getX());
+	end.y = 0;
+	end.z = getIntegerPositionComponent(end.position.getZ());
+	end.id = toId(
+		end.position.getX(),
+		end.position.getY(),
+		end.position.getZ()
 	);
-	float nodeYHeight;
-	isWalkableInternal(startNodePosition.getX(), startNodePosition.getY(), startNodePosition.getZ(), nodeYHeight);
-	PathFindingNode node;
-	node.position.set(startNodePosition).setY(nodeYHeight);
-	node.costsAll = 0.0f;
-	node.costsReachPoint = 0.0f;
-	node.costsEstimated = 0.0f;
-	node.x = getIntegerPositionComponent(startNodePosition.getX());
-	node.y = 0;
-	node.z = getIntegerPositionComponent(startNodePosition.getZ());
-	node.id = toIdInt(node.x, node.y, node.z);
 
-	// not in use in this case, this does not make sense, I still like it lol
-	end = PathFindingNode();
-
-	// set up start node costs
-	node.costsEstimated = computeDistanceToEnd(node);
-	node.costsAll = node.costsEstimated;
-
-	// put to open nodes
-	openNodes[node.id] = node;
+	// add end position to open nodes/start nodes
+	for (auto& endPosition: endPositions) {
+		auto nodePosition = Vector3(
+			FlowMap::alignPositionComponent(endPosition.getX(), flowMapStepSize),
+			endPosition.getY(),
+			FlowMap::alignPositionComponent(endPosition.getZ(), flowMapStepSize)
+		);
+		float nodeYHeight;
+		isWalkableInternal(nodePosition.getX(), nodePosition.getY(), nodePosition.getZ(), nodeYHeight, flowMapStepSize, flowMapScaleActorBoundingVolumes);
+		PathFindingNode node;
+		node.position.set(nodePosition).setY(nodeYHeight);
+		node.costsAll = 0.0f;
+		node.costsReachPoint = 0.0f;
+		node.costsEstimated = 0.0f;
+		node.x = FlowMap::getIntegerPositionComponent(nodePosition.getX(), flowMapStepSize);
+		node.y = 0;
+		node.z = FlowMap::getIntegerPositionComponent(nodePosition.getZ(), flowMapStepSize);
+		node.id = toIdInt(node.x, node.y, node.z);
+		// set up start node costs
+		node.costsEstimated = computeDistanceToEnd(node);
+		node.costsAll = node.costsEstimated;
+		// put to open nodes
+		openNodes[node.id] = node;
+	}
 
 	// nodes to test
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
-			FlowMap::alignPositionComponent(_centerPathNode.getX(), stepSize),
+			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
-			FlowMap::alignPositionComponent(_centerPathNode.getZ(), stepSize)
+			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
 		);
-		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
-		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
 		for (auto z = zMin; z <= zMax; z++) {
 			for (auto x = xMin; x <= xMax; x++) {
 				auto nodeId = toIdInt(
@@ -648,28 +676,30 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		const auto& node = *nodePtr;
 
 		// do a step
-		step(node, &nodesToTest, true);
+		step(node, flowMapStepSize, flowMapScaleActorBoundingVolumes, &nodesToTest, true);
 	}
 
 	// clear nodes to test
 	nodesToTest.clear();
 
-	// generate flow map
-	auto flowMap = new FlowMap(stepSize);
+	// generate flow map, which is based on
+	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
+	auto flowMap = new FlowMap(pathToUse, endPositions, flowMapStepSize, complete);
+	flowMap->acquireReference();
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
-			FlowMap::alignPositionComponent(_centerPathNode.getX(), stepSize),
+			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
-			FlowMap::alignPositionComponent(_centerPathNode.getZ(), stepSize)
+			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
 		);
-		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
-		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
 		for (auto z = zMin; z <= zMax; z++) {
 			for (auto x = xMin; x <= xMax; x++) {
 				auto cellPosition = Vector3(
-					static_cast<float>(centerPathNodeX) * stepSize + static_cast<float>(x) * stepSize,
+					static_cast<float>(centerPathNodeX) * flowMapStepSize + static_cast<float>(x) * flowMapStepSize,
 					0.0f,
-					static_cast<float>(centerPathNodeZ) * stepSize + static_cast<float>(z) * stepSize
+					static_cast<float>(centerPathNodeZ) * flowMapStepSize + static_cast<float>(z) * flowMapStepSize
 				);
 				auto cellId = FlowMap::toIdInt(
 					centerPathNodeX + x,
@@ -715,9 +745,9 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 					} else {
 						// yes && walkable
 						auto& neighbourNode = neighbourNodeIt->second;
-						if (minCostsNode == nullptr || neighbourNode.costsAll < minCosts) {
+						if (minCostsNode == nullptr || neighbourNode.costsReachPoint < minCosts) {
 							minCostsNode = &neighbourNode;
-							minCosts = neighbourNode.costsAll;
+							minCosts = neighbourNode.costsReachPoint;
 						}
 					}
 				}
@@ -758,18 +788,18 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	// do some post adjustments
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
-			FlowMap::alignPositionComponent(_centerPathNode.getX(), stepSize),
+			FlowMap::alignPositionComponent(_centerPathNode.getX(), flowMapStepSize),
 			_centerPathNode.getY(),
-			FlowMap::alignPositionComponent(_centerPathNode.getZ(), stepSize)
+			FlowMap::alignPositionComponent(_centerPathNode.getZ(), flowMapStepSize)
 		);
-		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
-		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), flowMapStepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), flowMapStepSize);
 		for (auto z = zMin; z <= zMax; z++) {
 			for (auto x = xMin; x <= xMax; x++) {
 				auto cellPosition = Vector3(
-					static_cast<float>(centerPathNodeX) * stepSize + static_cast<float>(x) * stepSize,
+					static_cast<float>(centerPathNodeX) * flowMapStepSize + static_cast<float>(x) * flowMapStepSize,
 					0.0f,
-					static_cast<float>(centerPathNodeZ) * stepSize + static_cast<float>(z) * stepSize
+					static_cast<float>(centerPathNodeZ) * flowMapStepSize + static_cast<float>(z) * flowMapStepSize
 				);
 				auto cellId = FlowMap::toIdInt(
 					centerPathNodeX + x,

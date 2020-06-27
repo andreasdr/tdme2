@@ -1,0 +1,64 @@
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
+
+- This is a detailed, but for sure still incomplete, list of web references that I used to implement certain engine features
+  - http://blog.selfshadow.com/publications/s2012-shading-course/burley/s2012_pbs_disney_brdf_notes_v3.pdf
+  - http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
+  - http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
+  - http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
+  - http://devcry.heiho.net/html/2015/20150517-libpng.html
+  - http://fabiensanglard.net/lightScattering/index.php
+  - http://fabiensanglard.net/shadowmapping/index.php
+  - http://filmicworlds.com/blog/filmic-tonemapping-operators/
+  - http://learnwebgl.brown37.net/10_surface_properties/texture_mapping_transforms.html
+  - http://stackoverflow.com/questions/11365399/opengl-shader-a-spotlight-and-a-directional-light?answertab=active#tab-top
+  - http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
+  - http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
+  - http://theorangeduck.com/page/pure-depth-ssao
+  - http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
+  - http://www.crownandcutlass.com/features/technicaldetails/frustum.html
+  - http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
+  - http://www.gamedev.net/topic/552906-closest-point-on-triangle/
+  - http://www.gamedev.net/topic/567310-platform-game-collision-detection/
+  - http://www.songho.ca/opengl/gl_matrix.html
+  - http://www.songho.ca/opengl/gl_transform.html
+  - http://www.wazim.com/Collada_Tutorial_1.htm
+  - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
+  - https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
+  - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+  - https://gist.github.com/niw/5963798
+  - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+  - https://github.com/KhronosGroup/glTF-WebGL-PBR/#environment-maps
+  - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#inner-and-outer-cone-angles
+  - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#range-property
+  - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
+  - https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
+  - https://github.com/SaschaWillems/Vulkan
+  - https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
+  - https://github.com/glfw/glfw/blob/master/tests/vulkan.c
+  - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)
+  - https://howtorts.github.io/2014/01/04/basic-flow-fields.html
+  - https://hub.jmonkeyengine.org/t/depth-only-ssao/37749
+  - https://jayconrod.com/posts/34/water-simulation-in-glsl
+  - https://jogamp.org/joal-demos/www/
+  - https://jogamp.org/wiki/index.php/Jogl_Tutorial
+  - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+  - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
+  - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
+  - https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
+  - https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
+  - https://stackoverflow.com/questions/15370033/how-to-use-inet-pton-with-the-mingw-compiler
+  - https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+  - https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
+  - https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
+  - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+  - https://vulkan-tutorial.com
+  - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
+  - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
+  - https://www.zlib.net/zpipe.c
+
+- Links
+	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
+    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
+    - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)

@@ -338,8 +338,18 @@ public:
 	 * @return equality
 	 */
 
-	inline bool operator ==(Vector4& v) {
+	inline bool operator ==(const Vector4& v) const {
 		return this->equals(v);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param v vector to compare to
+	 * @return non equality
+	 */
+
+	inline bool operator !=(const Vector4& v) const {
+		return this->equals(v) == false;
 	}
 
 	/** 

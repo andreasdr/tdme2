@@ -1,0 +1,33 @@
+language: cpp
+compiler: gcc
+os: 
+  - linux
+dist: bionic
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - make
+      - g++-9
+      - libglew-dev
+      - libopenal-dev
+      - libglfw3-dev
+  coverity_scan:
+    project:
+      name: "andreasdr/tdme2"
+      description: "TDME2 - ThreeDeeMiniEngine2 is a lightweight 3D engine including tools suited for 3D game development using C++11"
+    notification_email: andreas@drewke.net
+    build_command_prepend: ""
+    build_command: "make mains"
+    branch_pattern: coverity_scan
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "T0WKu+nGPHmdWDAnVB3HkRqbwpqFf2Nn2K925tvdFYU7Dr1C74PyQCnvDtRIujEJ/xiRqLyDCqN6ysfnYw4RPPEWouSYZZ7J7t3SvsEiZF+sbcgp6lZIPBiEhPMyiU08yf7PGRtpro9ihCtF1KDo8hzDWMNw/p9IFcAH1DXE61ccRqyGdRmFSwe3uL2LgUVmba+BurcOG0O3zd9/pI4kwTvjm1cD5AuGy+rFIDwafgOYitNJ3ZPEYqnwxgnbgQAW2ww+7ymIFpUwuLUnDnlr1ZcvNCWhfZT0oeY0q5r4nDniIezL5vsS+eDSqLPB0QzJO6SeAii92IMErKI6hZsJJUjh3JGT6Lak2LXmqE4AVM2vHffxBgwD2X/hfmFu5ezBITNwzemRCDmzJdNTjiP2PHaqdXHxrixqHscNw7p+hWYGxry1xWNFvQM4G3/lQAGdpSsJL/Ucl4ERpipkwPhkl9c1hYMaCPLvOf5wJS844wz9n69g4ChozZYLib5cz2uqrO3GPZpyq2DLBU0oDVGWdgWghdiNATxb9VIp2vp7yszDqBgH9YRiB+pGip5ZW4VUH0bdfGhFlAA3V2zQTb5tpkwRBk51YSNtiOoAiC+wkFsZiPb4eY7PM338PBz9r5p55PPQ+F3JPTiAvT+UnhN5r6BjJPB0nQO7QGaFY1i/wVA="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+script: if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make mains; fi

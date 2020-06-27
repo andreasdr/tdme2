@@ -1,5 +1,5 @@
 #!/bin/sh
-tail -n +5 ../README.md > README.md
+tail -n +6 ../README.md > README.md
 rm -rf public
 doxygen doxygen.public.config
 rm README.md

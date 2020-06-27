@@ -429,8 +429,18 @@ public:
 	 * @return equality
 	 */
 
-	inline bool operator ==(Quaternion& q) {
+	inline bool operator ==(const Quaternion& q) const {
 		return this->equals(q);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param q quaternion to compare to
+	 * @return non equality
+	 */
+
+	inline bool operator !=(const Quaternion& q) const {
+		return this->equals(q) == false;
 	}
 
 	/**

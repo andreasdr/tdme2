@@ -2,31 +2,52 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/FlowMapCell.h>
+#include <tdme/utils/ReferenceCounter.h>
 
 using std::map;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::FlowMapCell;
+using tdme::utils::ReferenceCounter;
 
 /**
  * Flow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utils::FlowMap final {
+class tdme::utils::FlowMap final: public ReferenceCounter {
 friend class PathFinding;
 private:
+	bool complete;
 	float stepSize;
 	map<string, FlowMapCell> cells;
+	vector<Vector3> endPositions;
+	vector<Vector3> path;
+
+	/**
+	 * Private destructor
+	 */
+	inline ~FlowMap() {
+	}
+
+	/**
+	 * Set flow map complete flag
+	 * @param complete complete
+	 */
+	inline void setComplete(bool complete) {
+		this->complete = complete;
+	}
 
 	/**
 	 * Adds a cell to flow map
@@ -43,7 +64,7 @@ private:
 	 * Checks if a cell exists in flow map
 	 * @param id id
 	 */
-	inline bool hasCell(const string& id) {
+	inline bool hasCell(const string& id) const {
 		auto cellIt = cells.find(id);
 		return cellIt != cells.end();
 	}
@@ -99,7 +120,7 @@ public:
 	 * @param value value
 	 * @return integer position component
 	 */
-	inline int getIntegerPositionComponent(float value) {
+	inline int getIntegerPositionComponent(float value) const {
 		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
 	}
 
@@ -130,8 +151,18 @@ public:
 
 	/**
 	 * Constructor
+	 * @param path path
+	 * @param endPositions end positions
+	 * @param stepSize step size
 	 */
-	inline FlowMap(float stepSize): stepSize(stepSize) {
+	inline FlowMap(const vector<Vector3>& path, const vector<Vector3>& endPositions, float stepSize, bool complete = true): path(path), endPositions(endPositions), stepSize(stepSize), complete(complete) {
+	}
+
+	/**
+	 * @return if flow map is complete
+	 */
+	inline bool isComplete() const {
+		return complete;
 	}
 
 	/**
@@ -139,7 +170,23 @@ public:
 	 */
 	inline float getStepSize() const {
 		return stepSize;
-	} 
+	}
+
+	/**
+	 * Returns end positions
+	 * @return end positions
+	 */
+	inline const vector<Vector3>& getEndPositions() const {
+		return endPositions;
+	}
+
+	/**
+	 * Returns path flow map is generated on
+	 * @return path
+	 */
+	inline const vector<Vector3>& getPath() const {
+		return path;
+	}
 
 	/**
 	 * Get cell by id
@@ -199,8 +246,28 @@ public:
 	 * Cell map getter
 	 * @returns cell map
 	 */
-	inline const map<string, FlowMapCell>& getCellMap() {
+	inline const map<string, FlowMapCell>& getCellMap() const {
 		return cells;
+	}
+
+	/**
+	 * Merge given flow map into this flow map, please note that given flow map step size needs to match this flow maps step size
+	 * This only applies to a series of flow maps created sequentially and in correct order along a path
+	 * @param flowMap flow map
+	 */
+	inline void merge(const FlowMap* flowMap) {
+		// complete
+		complete = flowMap->complete;
+		// add path
+		for (auto& pathNode: flowMap->path) {
+			path.push_back(pathNode);
+		}
+		// add cells
+		for (auto& cellIt: flowMap->cells) {
+			cells[cellIt.first] = cellIt.second;
+		}
+		// end positions
+		endPositions = flowMap->endPositions;
 	}
 
 };

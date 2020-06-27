@@ -661,18 +661,13 @@ void GUI::handleEvents()
 	// call tick and input event handler at very last
 	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
-
 		if (screen->isVisible() == false) continue;
-
 		screen->tick();
-
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();
 		}
-
 		if (screen->isPopUp() == true) break;
 	}
-
 
 	//
 	mouseEvents.clear();
@@ -947,6 +942,7 @@ void GUI::fakeKeyboardModifierEvent() {
 
 void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	// TODO: maybe move logic into GUIScreenNode
+	// FIXME: always keep aspect ratio
 	auto screenNodeWidthConstrained = width;
 	auto screenNodeHeightConstrained = height;
 
@@ -980,7 +976,7 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->reshapeRequested = true;
+	screenNode->reshapeRequested = false;
 }
 
 void GUI::addMouseOutCandidateElementNode(GUINode* node) {

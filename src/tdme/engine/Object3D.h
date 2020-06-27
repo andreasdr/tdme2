@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Entity.h>
@@ -36,6 +37,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
@@ -56,7 +58,7 @@ class tdme::engine::Object3D final
 {
 
 public:
-	enum RenderPass { RENDERPASS_OBJECTS, RENDERPASS_POST_POSTPROCESSING };
+	enum RenderPass { RENDERPASS_NONE, RENDERPASS_OBJECTS, RENDERPASS_POST_POSTPROCESSING };
 
 private:
 	friend class Engine;
@@ -64,6 +66,7 @@ private:
 	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
 	friend class SkinnedObject3DRenderGroup;
+	friend class tdme::engine::subsystems::rendering::EntityRenderer;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
 	Engine* engine { nullptr };
@@ -73,6 +76,7 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
+	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
 	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
 	int64_t frameTransformationsLast { -1LL };
@@ -358,6 +362,21 @@ public:
 	 */
 	inline void setRenderPass(RenderPass renderPass) {
 		this->renderPass = renderPass;
+	}
+
+	/**
+	 * @return if to exclude from a certain effect pass
+	 */
+	inline Engine::EffectPass getExcludeFromEffectPass() const {
+		return excludeFromEffectPass;
+	}
+
+	/**
+	 * Set exclude from effect pass
+	 * @param effectPass effect pass
+	 */
+	inline void setExcludeEffectPass(Engine::EffectPass effectPass) {
+		this->excludeFromEffectPass = effectPass;
 	}
 
 	/**

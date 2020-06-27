@@ -6,7 +6,6 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/Console.h>
 
 using std::find;
 using std::vector;
@@ -15,7 +14,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::Console;
 
 GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(elementNode)
 {

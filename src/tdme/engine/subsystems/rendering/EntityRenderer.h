@@ -191,6 +191,7 @@ private:
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
 		// reset shader
 		renderer->setShader(renderer->getContext(threadIdx), string());
+		auto effectPass = renderer->getEffectPass();
 
 		// sort objects by model
 		Vector3 objectCamFromAxis;
@@ -199,6 +200,7 @@ private:
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
+			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
 			auto objectShader = object->getDistanceShader().length() == 0?
 				object->getShader():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?

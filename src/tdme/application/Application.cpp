@@ -1,14 +1,14 @@
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
-#elif defined(GLFW3)
-	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
-		#define GLEW_NO_GLU
-		#include <GL/glew.h>
-		#if defined(_WIN32)
-			#include <GL/wglew.h>
-		#endif
+#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
+	#define GLEW_NO_GLU
+	#include <GL/glew.h>
+	#if defined(_WIN32)
+		#include <GL/wglew.h>
 	#endif
+#endif
+#if defined(GLFW3)
 	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
 #else
@@ -545,6 +545,7 @@ void Application::swapBuffers() {
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	this->title = title;
+	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN) || defined(GLFW3)
 		glfwSetErrorCallback(glfwErrorCallback);
@@ -558,6 +559,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				return;
 			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		#elif defined(GLES2)
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+			glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		#else
 				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) {
@@ -665,7 +672,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 void Application::setIcon() {
 	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
 	#if defined(VULKAN) || defined(GLFW3)
-		auto texture = TextureReader::read("resources/logos", "app_logo_small.png", false, false);
+		auto logoFileName = StringUtils::replace(StringUtils::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
+		if (FileSystem::getInstance()->fileExists("resources/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+		auto texture = TextureReader::read("resources/icons", logoFileName, false, false);
 		if (texture != nullptr) {
 			auto textureData = texture->getTextureData();
 			auto textureWidth = texture->getTextureWidth();

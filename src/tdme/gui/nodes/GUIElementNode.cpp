@@ -125,6 +125,7 @@ int32_t GUIElementNode::getContentWidth()
 	auto width = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
+		if (guiSubNode->conditionsMet == false) continue;
 		auto contentWidth = guiSubNode->getAutoWidth();
 		if (contentWidth > width) {
 			width = contentWidth;
@@ -140,6 +141,7 @@ int32_t GUIElementNode::getContentHeight()
 	auto height = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
+		if (guiSubNode->conditionsMet == false) continue;
 		auto contentHeight = guiSubNode->getAutoHeight();
 		if (contentHeight > height) {
 			height = contentHeight;
@@ -161,7 +163,9 @@ void GUIElementNode::setTop(int32_t top)
 	GUIParentNode::setTop(top);
 	top += computedConstraints.alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes[i]->setTop(top);
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->conditionsMet == false) continue;
+		guiSubNode->setTop(top);
 	}
 }
 
@@ -171,17 +175,24 @@ void GUIElementNode::setLeft(int32_t left)
 	GUIParentNode::setLeft(left);
 	left += computedConstraints.alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {
-		subNodes[i]->setLeft(left);
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->conditionsMet == false) continue;
+		guiSubNode->setLeft(left);
 	}
 }
 
 void GUIElementNode::layoutSubNodes()
 {
+	if (conditionsMet == false) {
+		layouted = false;
+		return;
+	}
 	GUIParentNode::layoutSubNodes();
 	auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 	auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
+		if (guiSubNode->conditionsMet == false) continue;
 		auto doLayoutSubNodes = false;
 		if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.height = height;
@@ -201,22 +212,27 @@ void GUIElementNode::layoutSubNodes()
 
 void GUIElementNode::layout()
 {
-	if (conditionsMet == false) return;
+	if (conditionsMet == false) {
+		layouted = false;
+		return;
+	}
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto subNode = subNodes[i];
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.height > subNodesHeight) {
-				subNode->requestedConstraints.height = subNodesHeight;
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && guiSubNode->requestedConstraints.height > subNodesHeight) {
+				guiSubNode->requestedConstraints.height = subNodesHeight;
 			}
 		}
 	}
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesWidth = requestedConstraints.width - border.left - border.right- padding.left - padding.right;
 		for (auto i = 0; i < subNodes.size(); i++) {
-			auto subNode = subNodes[i];
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && subNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && subNode->requestedConstraints.width > subNodesWidth) {
-				subNode->requestedConstraints.width = subNodesWidth;
+			auto guiSubNode = subNodes[i];
+			if (guiSubNode->conditionsMet == false) continue;
+			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && guiSubNode->requestedConstraints.width > subNodesWidth) {
+				guiSubNode->requestedConstraints.width = subNodesWidth;
 			}
 		}
 	}

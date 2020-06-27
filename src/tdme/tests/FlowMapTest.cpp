@@ -88,16 +88,10 @@ void FlowMapTest::display()
 		auto cell = flowMap->getCell(startPlayerObject->getTranslation().getX(), startPlayerObject->getTranslation().getZ());
 		if (cell != nullptr) {
 			startPlayerCellDirection = cell->getDirection();
-			if ((Math::abs(startPlayerCellDirection.getX()) < Math::EPSILON || Math::abs(startPlayerCellDirection.getZ()) < Math::EPSILON) &&
-				startPlayerCellDirection == startPlayerCellDirectionLast.clone().scale(-1.0f)) {
-				//
-				startPlayerCellDirection.scale(-1.0f);
-			}
 			startPlayerCellPosition = startPlayerObject->getTranslation().clone().add(startPlayerCellDirection.clone().scale(flowMap->getStepSize()));
 			if (startPlayerObject->getAnimation() != "walk") startPlayerObject->setAnimation("walk");
 			auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
 			startPlayerObject->setRotationAngle(0, yRotationAngle);
-			startPlayerCellDirectionLast = startPlayerCellDirection;
 		} else {
 			startPlayerObject->setAnimation("still");
 			startPlayerCellDirection = Vector3();
@@ -179,9 +173,8 @@ void FlowMapTest::reshape(int32_t width, int32_t height)
 }
 
 void FlowMapTest::doPathFinding() {
-	startPlayerCellDirectionLast.set(0.0f, 0.0f, 0.0f);
 	if (flowMap != nullptr) {
-		delete flowMap;
+		flowMap->releaseReference();
 		flowMap = nullptr;
 	}
 	startPlayerObject->update();

@@ -19,7 +19,7 @@ private:
 	map<string, PostProcessingShaderImplementation*> shader;
 	PostProcessingShaderImplementation* implementation { nullptr };
 
-	bool running {  };
+	bool running { false };
 
 public:
 
@@ -69,6 +69,27 @@ public:
 	 * @param pixelHeight pixel height
 	 */
 	void setBufferPixelHeight(void* context, float pixelHeight);
+
+	/**
+	 * Set texture light position x
+	 * @param context context
+	 * @param textureLightPositionX texture light position x
+	 */
+	virtual void setTextureLightPositionX(void* context, float textureLightPositionX);
+
+	/**
+	 * Set texture light position y
+	 * @param context context
+	 * @param textureLightPositionY texture light position y
+	 */
+	virtual void setTextureLightPositionY(void* context, float textureLightPositionY);
+
+	/**
+	 * Set intensity
+	 * @param context context
+	 * @param intensity effect intensity
+	 */
+	virtual void setIntensity(void* context, float intensity);
 
 	/**
 	 * Public constructor

@@ -143,6 +143,9 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
@@ -192,6 +195,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
@@ -207,6 +211,7 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
+	src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \

@@ -283,6 +283,15 @@ public:
 		return this->equals(v);
 	}
 
+	/**
+	 * Non equality comparison operator
+	 * @param v vector to compare to
+	 * @return non equality
+	 */
+	inline bool operator !=(const Vector2& v) const {
+		return this->equals(v) == false;
+	}
+
 	/** 
 	 * @return vector as array
 	 */

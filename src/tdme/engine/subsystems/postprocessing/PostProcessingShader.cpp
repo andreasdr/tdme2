@@ -5,6 +5,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -15,6 +16,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -24,6 +26,7 @@ PostProcessingShader::PostProcessingShader(Renderer* renderer)
 {
 	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
 	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);
+	if (PostProcessingShaderLightScatteringImplementation::isSupported(renderer) == true) shader["light_scattering"] = new PostProcessingShaderLightScatteringImplementation(renderer);
 	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
 	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
 	implementation = nullptr;
@@ -94,4 +97,19 @@ void PostProcessingShader::setBufferPixelWidth(void* context, float pixelWidth) 
 void PostProcessingShader::setBufferPixelHeight(void* context, float pixelHeight) {
 	if (implementation == nullptr) return;
 	implementation->setBufferPixelHeight(context, pixelHeight);
+}
+
+void PostProcessingShader::setTextureLightPositionX(void* context, float textureLightPositionX) {
+	if (implementation == nullptr) return;
+	implementation->setTextureLightPositionX(context, textureLightPositionX);
+}
+
+void PostProcessingShader::setTextureLightPositionY(void* context, float textureLightPositionY) {
+	if (implementation == nullptr) return;
+	implementation->setTextureLightPositionY(context, textureLightPositionY);
+}
+
+void PostProcessingShader::setIntensity(void* context, float intensity) {
+	if (implementation == nullptr) return;
+	implementation->setIntensity(context, intensity);
 }

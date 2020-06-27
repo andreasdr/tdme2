@@ -250,7 +250,7 @@ public:
 	 * @return random value
 	 */
 	inline static float random() {
-		return (float)rand() / RAND_MAX;
+		return (float)rand() / (float)RAND_MAX;
 	}
 
 	/**

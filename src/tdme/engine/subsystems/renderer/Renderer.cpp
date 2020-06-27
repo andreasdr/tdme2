@@ -47,6 +47,7 @@ Renderer::Renderer()
 	cameraMatrix.identity();
 	modelViewMatrix.identity();
 	viewportMatrix.identity();
+	effectPass = 0;
 }
 
 Renderer::~Renderer() {
@@ -97,4 +98,20 @@ int32_t Renderer::getViewPortHeight() {
 }
 
 void Renderer::initializeFrame() {
+}
+
+int32_t Renderer::getEffectPass() {
+	return effectPass;
+}
+
+void Renderer::setEffectPass(int32_t effectPass) {
+	this->effectPass = effectPass;
+}
+
+const string& Renderer::getShaderPrefix() {
+	return shaderPrefix;
+}
+
+void Renderer::setShaderPrefix(const string& shaderPrefix) {
+	this->shaderPrefix = shaderPrefix;
 }

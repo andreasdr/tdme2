@@ -45,6 +45,7 @@
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -73,6 +74,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
+#include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -120,6 +122,7 @@ using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Timing;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::physics::CollisionDetection;
@@ -146,6 +149,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::engine::subsystems::skinning::SkinningShader;
+using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
@@ -170,6 +174,7 @@ GUIRenderer* Engine::guiRenderer = nullptr;
 FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
 PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
+Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 EZRShaderPre* Engine::ezrShaderPre = nullptr;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
@@ -190,6 +195,7 @@ int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
+int32_t Engine::sunTextureId = 0;
 map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
@@ -232,6 +238,8 @@ Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
+	sunSize = 0.25f;
+	sunPosition.set(0.0f, 25000.0f, -100000.0f);
 	frameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
@@ -247,6 +255,9 @@ Engine::Engine() {
 	postProcessingTemporaryFrameBuffer = nullptr;
 	//
 	isUsingPostProcessingTemporaryFrameBuffer = false;
+	//
+	effectPassFrameBuffers.fill(nullptr);
+	effectPassSkip.fill(false);
 }
 
 Engine::~Engine() {
@@ -269,10 +280,11 @@ Engine::~Engine() {
 		delete lightingShader;
 		delete particlesShader;
 		delete linesShader;
+		delete frameBufferRenderShader;
 		delete postProcessing;
 		delete postProcessingShader;
+		delete texture2DRenderShader;
 		delete guiShader;
-		delete frameBufferRenderShader;
 		delete ezrShaderPre;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
@@ -587,6 +599,10 @@ void Engine::initialize()
 	// create post processing
 	postProcessing = new PostProcessing();
 
+	// create post processing shader
+	texture2DRenderShader = new Texture2DRenderShader(renderer);
+	texture2DRenderShader->initialize();
+
 	// check if VBOs are available
 	if (renderer->isBufferObjectsAvailable()) {
 		Console::println(string("TDME::VBOs are available."));
@@ -639,6 +655,7 @@ void Engine::initialize()
 	CHECK_INITIALIZED("GUIShader", guiShader);
 	CHECK_INITIALIZED("FrameBufferRenderShader", frameBufferRenderShader);
 	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
+	CHECK_INITIALIZED("Texture2DRenderShader", texture2DRenderShader);
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
@@ -651,6 +668,7 @@ void Engine::initialize()
 	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
 	initialized &= postProcessingShader->isInitialized();
+	initialized &= texture2DRenderShader->isInitialized();
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
@@ -666,6 +684,9 @@ void Engine::initialize()
 
 	//
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
+
+	//
+	sunTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
 }
 
 void Engine::reshape(int32_t width, int32_t height)
@@ -677,13 +698,19 @@ void Engine::reshape(int32_t width, int32_t height)
 	this->width = width;
 	this->height = height;
 
+	//
+	int _width = scaledWidth != -1?scaledWidth:width;
+	int _height = scaledHeight != -1?scaledHeight:height;
+
 	// update frame buffer if we have one
-	if (frameBuffer != nullptr) frameBuffer->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
+	if (frameBuffer != nullptr) frameBuffer->reshape(_width, _height);
 
 	// update post processing frame buffer if we have one
-	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
-	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
-	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
+	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->reshape(_width, _height);
+	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->reshape(_width, _height);
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(_width, _height);
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(_width, _height);
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(_width, _height);
 
 	// update shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
@@ -1004,14 +1031,86 @@ void Engine::display()
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
 
+	//
+	auto _width = scaledWidth != -1?scaledWidth:width;
+	auto _height = scaledHeight != -1?scaledHeight:height;
+	auto sunVisible = false;
+
+	// do post processing programs effect passes
+	array<bool, EFFECTPASS_COUNT - 1> effectPassFrameBuffersInUse;
+	effectPassFrameBuffersInUse.fill(false);
+	effectPassSkip.fill(false);
+	for (auto programId: postProcessingPrograms) {
+		auto program = postProcessing->getPostProcessingProgram(programId);
+		if (program == nullptr) continue;
+		for (auto& effectPass: program->getEffectPasses()) {
+			auto effectPassIdx = effectPass.effectPassIdx;
+			auto frameBufferIdx = effectPass.effectPassIdx - 1;
+			auto frameBufferWidth = _width / effectPass.frameBufferWidthDivideFactor;
+			auto frameBufferHeight = _height / effectPass.frameBufferHeightDivideFactor;
+			if (effectPassFrameBuffers[frameBufferIdx] == nullptr) {
+				effectPassFrameBuffers[frameBufferIdx] = new FrameBuffer(frameBufferWidth, frameBufferHeight, FrameBuffer::FRAMEBUFFER_COLORBUFFER); // TODO: types of buffers
+				effectPassFrameBuffers[frameBufferIdx]->initialize();
+			} else
+			if (effectPassFrameBuffers[frameBufferIdx]->getWidth() != frameBufferWidth ||
+				effectPassFrameBuffers[frameBufferIdx]->getHeight() != frameBufferHeight) {
+				effectPassFrameBuffers[frameBufferIdx]->reshape(frameBufferWidth, frameBufferHeight);
+			}
+			effectPassFrameBuffersInUse[frameBufferIdx] = true;
+			// enable
+			effectPassFrameBuffers[frameBufferIdx]->enableFrameBuffer();
+			// clear
+			Engine::renderer->setClearColor(
+				effectPass.clearColor.getRed(),
+				effectPass.clearColor.getGreen(),
+				effectPass.clearColor.getBlue(),
+				effectPass.clearColor.getAlpha()
+			);
+			renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT);
+			// camera
+			camera->update(context, frameBufferWidth, frameBufferHeight);
+			//
+			if (effectPass.renderSun == true) {
+				sunVisible = renderSun();
+			}
+			if (effectPass.skipOnSunNotVisible == true && sunVisible == false) {
+				effectPassSkip[frameBufferIdx] = true;
+			} else {
+				// Do the effect render pass
+				render(
+					effectPassIdx,
+					"ls_",
+					false,
+					false,
+					false,
+					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+				);
+			}
+		}
+	}
+
+	// dispose effect pass frame buffers that we do not use anymore
+	for (auto i = 0; i < effectPassFrameBuffersInUse.size(); i++) {
+		if (effectPassFrameBuffersInUse[i] == false && effectPassFrameBuffers[i] != nullptr) {
+			effectPassFrameBuffers[i]->dispose();
+			delete effectPassFrameBuffers[i];
+			effectPassFrameBuffers[i] = nullptr;
+		}
+	}
+
+	// set up clear color
+	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+
 	// create post processing frame buffers if having post processing
 	if (postProcessingPrograms.size() > 0) {
 		if (postProcessingFrameBuffer1 == nullptr) {
-			postProcessingFrameBuffer1 = new FrameBuffer(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer1 = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer1->initialize();
 		}
 		if (postProcessingFrameBuffer2 == nullptr) {
-			postProcessingFrameBuffer2 = new FrameBuffer(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer2 = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer2->initialize();
 		}
 		postProcessingFrameBuffer1->enableFrameBuffer();
@@ -1034,56 +1133,20 @@ void Engine::display()
 		}
 	}
 
-	// set up clear color
-	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-
 	// clear previous frame values
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
-	// restore camera from shadow map rendering
-	camera->update(context, scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
+	// camera
+	camera->update(context, _width, _height);
 
-	// render lines objects
-	if (visibleLinesObjects.size() > 0) {
-		// use particle shader
-		if (linesShader != nullptr) linesShader->useProgram(context);
-
-		// render points based particle systems
-		object3DRenderer->render(visibleLinesObjects);
-
-		// unuse particle shader
-		if (linesShader != nullptr) linesShader->unUseProgram(context);
-	}
-
-	// do depth buffer writing aka early z rejection
-	if (ezrShaderPre != nullptr && visibleEZRObjects.size() > 0) {
-		// disable color rendering, we only want to write to the Z-Buffer
-		renderer->setColorMask(false, false, false, false);
-		// render
-		ezrShaderPre->useProgram(this);
-		// only draw opaque face entities of objects marked as EZR objects
-		object3DRenderer->render(
-			visibleEZRObjects,
-			false,
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
-		);
-		// done
-		ezrShaderPre->unUseProgram();
-		// restore disable color rendering
-		renderer->setColorMask(true, true, true, true);
-	}
-
-	// use lighting shader
-	if (visibleObjects.size() > 0) {
-		//
-		if (lightingShader != nullptr) lightingShader->useProgram(this);
-
-		// render objects
-		object3DRenderer->render(
-			visibleObjects,
-			true,
-			EntityRenderer::RENDERTYPE_NORMALS |
+	// do rendering
+	render(
+		EFFECTPASS_NONE,
+		string(),
+		true,
+		true,
+		true,
+		EntityRenderer::RENDERTYPE_NORMALS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
@@ -1092,102 +1155,7 @@ void Engine::display()
 			EntityRenderer::RENDERTYPE_TEXTURES |
 			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			EntityRenderer::RENDERTYPE_LIGHTS
-		);
-
-		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram();
-
-		// render shadows if required
-		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
-	}
-
-	// do post processing
-	isUsingPostProcessingTemporaryFrameBuffer = false;
-	if (postProcessingPrograms.size() > 0) {
-		doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, postProcessingFrameBuffer1);
-		postProcessingFrameBuffer1->enableFrameBuffer();
-	}
-
-	// render point particle systems
-	if (visiblePpses.size() > 0) {
-		// use particle shader
-		if (particlesShader != nullptr) particlesShader->useProgram(context);
-
-		// render points based particle systems
-		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
-
-		// unuse particle shader
-		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
-	}
-
-	// render objects and particles together
-	if (postProcessingPrograms.size() > 0) {
-		doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
-	}
-
-	// render objects that are have post post processing render pass
-	if (visibleObjectsPostPostProcessing.size() > 0) {
-		// use lighting shader
-		if (lightingShader != nullptr) {
-			lightingShader->useProgram(this);
-		}
-
-		// render post processing objects
-		object3DRenderer->render(
-			visibleObjectsPostPostProcessing,
-			true,
-			EntityRenderer::RENDERTYPE_NORMALS |
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
-			EntityRenderer::RENDERTYPE_MATERIALS |
-			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_TEXTURES |
-			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_LIGHTS
-		);
-
-		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram();
-
-		// render shadows if required
-		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
-	}
-
-	// render objects that are have post post processing render pass
-	if (visibleObjectsNoDepthTest.size() > 0) {
-		// use lighting shader
-		if (lightingShader != nullptr) {
-			lightingShader->useProgram(this);
-		}
-
-		//
-		renderer->disableDepthBufferTest();
-
-		// render post processing objects
-		object3DRenderer->render(
-			visibleObjectsNoDepthTest,
-			true,
-			EntityRenderer::RENDERTYPE_NORMALS |
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
-			EntityRenderer::RENDERTYPE_MATERIALS |
-			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_TEXTURES |
-			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_LIGHTS
-		);
-
-		//
-		renderer->enableDepthBufferTest();
-
-		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram();
-
-		// render shadows if required
-		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
-	}
+	);
 
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
@@ -1733,8 +1701,9 @@ Entity* Engine::doRayCasting(
 	return selectedEntity;
 }
 
-void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
+bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
 {
+	Vector3 screenCoordinate3;
 	Vector4 screenCoordinate4;
 	// convert to normalized device coordinates
 	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
@@ -1742,6 +1711,7 @@ void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 	// convert to screen coordinate
 	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * width / 2.0f);
 	screenCoordinate.setY(height - ((screenCoordinate4[1] + 1.0f) * height / 2.0f));
+	return camera->getModelViewMatrix().multiply(worldCoordinate, screenCoordinate3).getZ() <= 0.0f;
 }
 
 void Engine::dispose()
@@ -1898,15 +1868,31 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 	auto postProcessingFrameBufferIdx = 0;
 	for (auto programId: postProcessingPrograms) {
 		auto program = postProcessing->getPostProcessingProgram(programId);
-
 		if (program == nullptr) continue;
-
 		if (program->getRenderPass() != renderPass) continue;
-
+		auto effectPassSkipDetected = false;
+		for (auto& effectPass: program->getEffectPasses()) {
+			if (effectPassSkip[effectPass.effectPassIdx - 1] == true) effectPassSkipDetected = true;
+		}
+		if (effectPassSkipDetected == true) continue;
 		for (auto& step: program->getPostProcessingSteps()) {
 			auto shaderId = step.shaderId;
-			FrameBuffer* source = postProcessingFrameBuffers[postProcessingFrameBufferIdx];
+			FrameBuffer* blendToSource = nullptr;
+			FrameBuffer* source = nullptr;
 			FrameBuffer* target = nullptr;
+			if (step.blendToSource == PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN) {
+				blendToSource = postProcessingFrameBuffers[postProcessingFrameBufferIdx];
+			}
+			switch(step.source) {
+				case PostProcessingProgram::FRAMEBUFFERSOURCE_NONE:
+					break;
+				case PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN:
+					source = postProcessingFrameBuffers[postProcessingFrameBufferIdx];
+					break;
+				default:
+					source = effectPassFrameBuffers[step.source - PostProcessingProgram::FRAMEBUFFERSOURCE_EFFECTPASS0];
+					break;
+			}
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					target = postProcessingFrameBuffers[(postProcessingFrameBufferIdx + 1) % 2];
@@ -1920,7 +1906,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					target = postProcessingTemporaryFrameBuffer;
 					break;
 			}
-			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr);
+			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
@@ -1967,4 +1953,181 @@ const map<string, string> Engine::getShaderParameterTypes(const string& shaderId
 
 const map<string, string> Engine::getShaderParameterDefaults(const string& shaderId) {
 	return shaders.find(shaderId)->second.parameterDefaults;
+}
+
+void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, int32_t renderTypes) {
+	//
+	Engine::renderer->setEffectPass(effectPass);
+	Engine::renderer->setShaderPrefix(shaderPrefix);
+
+	// default context
+	auto context = Engine::renderer->getDefaultContext();
+
+	// render lines objects
+	if (visibleLinesObjects.size() > 0) {
+		// use particle shader
+		if (linesShader != nullptr) linesShader->useProgram(context);
+
+		// render points based particle systems
+		object3DRenderer->render(visibleLinesObjects);
+
+		// unuse particle shader
+		if (linesShader != nullptr) linesShader->unUseProgram(context);
+	}
+
+	// do depth buffer writing aka early z rejection
+	if (useEZR == true && ezrShaderPre != nullptr && visibleEZRObjects.size() > 0) {
+		// disable color rendering, we only want to write to the Z-Buffer
+		renderer->setColorMask(false, false, false, false);
+		// render
+		ezrShaderPre->useProgram(this);
+		// only draw opaque face entities of objects marked as EZR objects
+		object3DRenderer->render(
+			visibleEZRObjects,
+			false,
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)
+		);
+		// done
+		ezrShaderPre->unUseProgram();
+		// restore disable color rendering
+		renderer->setColorMask(true, true, true, true);
+	}
+
+	// use lighting shader
+	if (visibleObjects.size() > 0) {
+		//
+		if (lightingShader != nullptr) lightingShader->useProgram(this);
+
+		// render objects
+		object3DRenderer->render(
+			visibleObjects,
+			true,
+			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_EFFECTCOLORS) == EntityRenderer::RENDERTYPE_EFFECTCOLORS?EntityRenderer::RENDERTYPE_EFFECTCOLORS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS) == EntityRenderer::RENDERTYPE_MATERIALS?EntityRenderer::RENDERTYPE_MATERIALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES) == EntityRenderer::RENDERTYPE_TEXTURES?EntityRenderer::RENDERTYPE_TEXTURES:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
+			((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
+		);
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
+
+		// render shadows if required
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+	}
+
+	// do post processing
+	if (applyPostProcessing == true) {
+		isUsingPostProcessingTemporaryFrameBuffer = false;
+		if (postProcessingPrograms.size() > 0) {
+			doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, postProcessingFrameBuffer1);
+			postProcessingFrameBuffer1->enableFrameBuffer();
+		}
+	}
+
+	// render point particle systems
+	if (visiblePpses.size() > 0) {
+		// use particle shader
+		if (particlesShader != nullptr) particlesShader->useProgram(context);
+
+		// render points based particle systems
+		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
+
+		// unuse particle shader
+		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
+	}
+
+	// render objects and particles together
+	if (applyPostProcessing == true) {
+		if (postProcessingPrograms.size() > 0) {
+			doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
+		}
+	}
+
+	// render objects that are have post post processing render pass
+	if (visibleObjectsPostPostProcessing.size() > 0) {
+		// use lighting shader
+		if (lightingShader != nullptr) {
+			lightingShader->useProgram(this);
+		}
+
+		// render post processing objects
+		object3DRenderer->render(
+			visibleObjectsPostPostProcessing,
+			true,
+			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_EFFECTCOLORS) == EntityRenderer::RENDERTYPE_EFFECTCOLORS?EntityRenderer::RENDERTYPE_EFFECTCOLORS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS) == EntityRenderer::RENDERTYPE_MATERIALS?EntityRenderer::RENDERTYPE_MATERIALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES) == EntityRenderer::RENDERTYPE_TEXTURES?EntityRenderer::RENDERTYPE_TEXTURES:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
+			((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
+		);
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
+
+		// render shadows if required
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+	}
+
+	// render objects that are have post post processing render pass
+	if (visibleObjectsNoDepthTest.size() > 0) {
+		// use lighting shader
+		if (lightingShader != nullptr) {
+			lightingShader->useProgram(this);
+		}
+
+		//
+		renderer->disableDepthBufferTest();
+
+		// render post processing objects
+		object3DRenderer->render(
+			visibleObjectsNoDepthTest,
+			true,
+			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_EFFECTCOLORS) == EntityRenderer::RENDERTYPE_EFFECTCOLORS?EntityRenderer::RENDERTYPE_EFFECTCOLORS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS) == EntityRenderer::RENDERTYPE_MATERIALS?EntityRenderer::RENDERTYPE_MATERIALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES) == EntityRenderer::RENDERTYPE_TEXTURES?EntityRenderer::RENDERTYPE_TEXTURES:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
+			((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
+		);
+
+		//
+		renderer->enableDepthBufferTest();
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
+
+		// render shadows if required
+		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
+	}
+
+	//
+	Engine::renderer->setShaderPrefix(string());
+	Engine::renderer->setEffectPass(0);
+}
+
+bool Engine::renderSun() {
+	int _width = scaledWidth != -1?scaledWidth:width;
+	int _height = scaledHeight != -1?scaledHeight:height;
+	Vector2 sunDimension2D = Vector2(static_cast<float>(sunSize) / static_cast<float>(_width), (static_cast<float>(sunSize) / static_cast<float>(_width)) * (static_cast<float>(height) / static_cast<float>(width)));
+	Vector2 sunPosition2D;
+	auto visible = computeScreenCoordinateByWorldCoordinate(sunPosition, sunPosition2D);
+	sunPosition2D.setX(sunPosition2D.getX() / (static_cast<float>(_width) / 2.0f) - 1.0f);
+	sunPosition2D.setY(1.0f - (sunPosition2D.getY() / (static_cast<float>(_height) / 2.0f)));
+	if (visible == true) {
+		texture2DRenderShader->renderTexture(this, sunPosition2D, sunDimension2D, sunTextureId);
+	}
+	return visible;
 }

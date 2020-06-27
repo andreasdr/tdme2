@@ -71,14 +71,14 @@ protected:
 	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
-
 private:
 	Vector3 cameraPosition;
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 cameraMatrix;
 	Matrix4x4 modelViewMatrix;
 	Matrix4x4 viewportMatrix;
-
+	int32_t effectPass;
+	string shaderPrefix;
 public:
 	/**
 	 * @return default context
@@ -313,6 +313,30 @@ public:
 	 * @param name attribute name
 	 */
 	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) = 0;
+
+	/**
+	 * Get effect pass
+	 * @return effect pass
+	 */
+	virtual int32_t getEffectPass();
+
+	/**
+	 * Set effect pass
+	 * @param effectPass effect pass
+	 */
+	virtual void setEffectPass(int32_t effectPass);
+
+	/**
+	 * Get shader prefix
+	 * @return shader prefix
+	 */
+	virtual const string& getShaderPrefix();
+
+	/**
+	 * Set shader prefix
+	 * @param shaderPrefix shader prefix
+	 */
+	virtual void setShaderPrefix(const string& shaderPrefix);
 
 	/**
 	 * Get current lighting model

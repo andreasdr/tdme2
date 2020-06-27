@@ -39,6 +39,7 @@ private:
 	 */
 	static void initialize();
 
+public:
 	/** 
 	 * Get byte buffer for given context
 	 * @param bytes bytes

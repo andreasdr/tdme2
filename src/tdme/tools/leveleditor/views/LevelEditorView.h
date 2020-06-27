@@ -218,8 +218,17 @@ private:
 	 * object properties
 	 * object 3d transformations
 	 * object data  
+	 * ..
 	 */
 	void updateGUIElements();
+
+	/**
+	 * Update GUI transformations elements
+	 * level size
+	 * object 3d transformations
+	 * ..
+	 */
+	void updateGUITransformationsElements();
 
 public:
 

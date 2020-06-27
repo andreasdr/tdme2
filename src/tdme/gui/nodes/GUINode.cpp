@@ -1095,6 +1095,25 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 	}
 }
 
+void GUINode::dumpParentNodes(GUINode* node, int indent) {
+	for (auto i = 0; i < indent; i++) Console::print("  ");
+	Console::println(
+		node->id + ": " +
+		node->getNodeType() + ": " +
+		to_string(node->computedConstraints.left) + ", " +
+		to_string(node->computedConstraints.top) + ", " +
+		to_string(node->computedConstraints.width) + "; " +
+		to_string(node->computedConstraints.height) + ", " +
+		to_string(node->computedConstraints.alignmentLeft) + ", " +
+		to_string(node->computedConstraints.alignmentTop) + "; " +
+		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
+		to_string(node->computedConstraints.contentAlignmentTop) + ": " +
+		to_string(node->conditionsMet) + "; " +
+		to_string(node->layouted)
+	);
+	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 2);
+}
+
 void GUINode::cfParse(const string& term, string& function, vector<string>& arguments) {
 	auto leftParenthesis = term.find('(');
 	auto rightParenthesis = term.find_last_of(')');

@@ -85,10 +85,7 @@ void LightingShaderBaseImplementation::initialize()
 		if (uniformModelMatrix == -1) return;
 
 		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
-		if (uniformEffectColorMul == -1) return;
-
 		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
-		if (uniformEffectColorAdd == -1) return;
 	} else {
 		uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
 		if (uniformCameraMatrix == -1) return;
@@ -99,13 +96,8 @@ void LightingShaderBaseImplementation::initialize()
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
 	uniformMaterialDiffuse = renderer->getProgramUniformLocation(renderLightingProgramId, "material.diffuse");
-	if (uniformMaterialDiffuse == -1) return;
-
 	uniformMaterialSpecular = renderer->getProgramUniformLocation(renderLightingProgramId, "material.specular");
-
 	uniformMaterialEmission = renderer->getProgramUniformLocation(renderLightingProgramId, "material.emission");
-	if (uniformMaterialEmission == -1) return;
-
 	uniformMaterialShininess = renderer->getProgramUniformLocation(renderLightingProgramId, "material.shininess");
 
 	//	lights
@@ -184,7 +176,7 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	tmpColor4[3] = 0.0f;
 	if (uniformMaterialAmbient != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialAmbient, tmpColor4);
 	// diffuse
-	renderer->setProgramUniformFloatVec4(context, uniformMaterialDiffuse, material.diffuse);
+	if (uniformMaterialDiffuse != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialDiffuse, material.diffuse);
 	// specular without alpha, as we only use alpha from diffuse color
 	tmpColor4 = material.specular;
 	tmpColor4[3] = 0.0f;
@@ -192,7 +184,7 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	// emission without alpha, as we only use alpha from diffuse color
 	tmpColor4 = material.emission;
 	tmpColor4[3] = 0.0f;
-	renderer->setProgramUniformFloatVec4(context, uniformMaterialEmission, tmpColor4);
+	if (uniformMaterialEmission != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialEmission, tmpColor4);
 	// shininess
 	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, material.shininess);
 	// diffuse texture masked transparency
@@ -209,7 +201,7 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 {
 	// lights
 	auto& light = renderer->getLight(context, lightId);
-	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
+	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 1) {
 		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light.ambient);
 		if (uniformLightDiffuse[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightDiffuse[lightId], light.diffuse);

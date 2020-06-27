@@ -12,6 +12,7 @@ namespace postprocessing {
 	class PostProcessingShaderBaseImplementation;
 	class PostProcessingShaderBlurImplementation;
 	class PostProcessingShaderDefaultImplementation;
+	class PostProcessingShaderLightScatteringImplementation;
 	class PostProcessingShaderSSAOImplementation;
 	class PostProcessingShaderSSAOMapImplementation;
 }  // namespace postprocessing

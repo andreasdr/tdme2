@@ -159,8 +159,18 @@ public:
 	 * @return equality
 	 */
 
-	inline bool operator ==(Matrix4x4& m) {
+	inline bool operator ==(const Matrix4x4& m) const {
 		return this->equals(m);
+	}
+
+	/**
+	 * Non equality comparison operator
+	 * @param m matrix to compare to
+	 * @return non equality
+	 */
+
+	inline bool operator !=(const Matrix4x4& m) const {
+		return this->equals(m) == false;
 	}
 
 	/**

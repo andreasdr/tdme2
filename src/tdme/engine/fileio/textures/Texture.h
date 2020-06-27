@@ -17,7 +17,7 @@ using tdme::utils::ReferenceCounter;
  * @version $Id$
  * @author Andreas Drewke
  */
-class tdme::engine::fileio::textures::Texture: public ReferenceCounter
+class tdme::engine::fileio::textures::Texture final: public ReferenceCounter
 {
 public:
 
