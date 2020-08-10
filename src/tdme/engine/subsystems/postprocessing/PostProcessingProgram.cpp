@@ -26,8 +26,8 @@ void PostProcessingProgram::addEffectPass(
 	bool applyPostProcessing,
 	int32_t renderTypes,
 	Color4 clearColor,
-	bool renderSun,
-	bool skipOnSunNotVisible
+	bool renderLightSource,
+	bool skipOnLightSourceNotVisible
 ) {
 	PostProcessingProgramEffectPass effectPass;
 	effectPass.effectPassIdx = effectPassIdx;
@@ -39,8 +39,8 @@ void PostProcessingProgram::addEffectPass(
 	effectPass.applyPostProcessing = applyPostProcessing;
 	effectPass.renderTypes = renderTypes;
 	effectPass.clearColor = clearColor;
-	effectPass.renderSun = renderSun;
-	effectPass.skipOnSunNotVisible = skipOnSunNotVisible;
+	effectPass.renderLightSource = renderLightSource;
+	effectPass.skipOnLightSourceNotVisible = skipOnLightSourceNotVisible;
 	//effectPass
 	effectPasses.push_back(effectPass);
 }

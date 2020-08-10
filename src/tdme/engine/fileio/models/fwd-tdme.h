@@ -13,7 +13,7 @@ namespace models {
 	class GLTFReader;
 	class TMReader;
 	class TMWriter;
-	class WFObjReader;
+	class WFObjWriter;
 }  // namespace models
 }  // namespace fileio
 }  // namespace engine

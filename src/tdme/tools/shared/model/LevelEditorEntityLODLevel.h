@@ -90,6 +90,8 @@ public:
 	 * @param model model
 	 */
 	inline void setModel(Model* model) {
+		if (this->model == model) return;
+		if (this->model != nullptr) delete this->model;
 		this->model = model;
 	}
 

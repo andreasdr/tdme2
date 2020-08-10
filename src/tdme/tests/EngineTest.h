@@ -12,6 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using std::array;
 using std::vector;
@@ -23,8 +24,9 @@ using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
+using tdme::utils::ObjectDeleter;
 
-/** 
+/**
  * Engine test
  * @author andreas.drewke
  * @version $Id$
@@ -34,49 +36,32 @@ class tdme::tests::EngineTest final
 {
 
 private:
-	Engine* engine {  };
-	Engine* osEngine {  };
-	vector<Object3D*> players {  };
-	Object3D* cube {  };
-	Transformations circleTransformations {  };
-
-public: /* package */
-	Entity* entityClicked {  };
-
-private:
+	Engine* engine { nullptr };
+	Engine* osEngine { nullptr };
+	vector<Object3D*> players;
+	Object3D* cube { nullptr };
+	Transformations circleTransformations;
+	Entity* entityClicked { nullptr };
 	bool mouseClicked;
-	array<int, 2> mouseClickedXY {  };
-	bool keyLeft {  };
-	bool keyRight {  };
-	bool keyUp {  };
-	bool keyW {  };
-	bool keyA {  };
-	bool keyS {  };
-	bool keyD {  };
-
-public:
-
-	/** 
-	 * Main
-	 * @param argc argument count
-	 * @param argv argument values
-	 */
-	static void main(int argc, char** argv);
+	array<int, 2> mouseClickedXY;
+	bool keyLeft;
+	bool keyRight;
+	bool keyUp;
+	bool keyW;
+	bool keyA;
+	bool keyS;
+	bool keyD;
+	ObjectDeleter<Model> modelDeleter;
 
 private:
 
-	/** 
+	/**
 	 * Create wall model
 	 * @return
 	 */
 	Model* createWallModel();
 
-public:
-	void display() override;
-
-private:
-
-	/** 
+	/**
 	 * Do player control
 	 * @param idx idx
 	 * @param keyLeft key left
@@ -86,6 +71,24 @@ private:
 	void doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp);
 
 public:
+	/**
+	 * Main
+	 * @param argc argument count
+	 * @param argv argument values
+	 */
+	static void main(int argc, char** argv);
+
+	/**
+	 * Engine test constructor
+	 */
+	EngineTest();
+
+	/**
+	 * Engine test destructor
+	 */
+	~EngineTest();
+
+	void display() override;
 	void dispose() override;
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
@@ -100,8 +103,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Engine test
-	 */
-	EngineTest();
 };

@@ -13,6 +13,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
@@ -26,6 +27,7 @@ using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 {
@@ -38,7 +40,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTerrainImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderWaterImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderWaterImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
-	// if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
@@ -126,14 +128,16 @@ void LightingShader::updateTextureMatrix(void* context) {
 
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
-
+	auto shaderId = id;
+	if (renderer->isPBRAvailable() == false && StringUtils::startsWith(id, "pbr-") == true) {
+		shaderId = StringUtils::substring(id, 4, id.size());
+	}
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = lightingShaderContext.implementation;
-	auto shaderIt = shader.find(renderer->getShaderPrefix() + id);
+	auto shaderIt = shader.find(renderer->getShaderPrefix() + shaderId);
 	if (shaderIt == shader.end()) shaderIt = shader.find(renderer->getShaderPrefix() + "default");
 	if (shaderIt == shader.end()) shaderIt = shader.find("default");
 	lightingShaderContext.implementation = shaderIt->second;
-
 	if (currentImplementation != lightingShaderContext.implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
 		lightingShaderContext.implementation->useProgram(engine, context);

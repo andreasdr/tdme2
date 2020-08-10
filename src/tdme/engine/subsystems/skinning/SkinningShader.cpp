@@ -63,30 +63,36 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	auto shaderVersion = renderer->getShaderVersion();
+	#if defined (__APPLE__)
+		uniformMatrixCount = renderer->UNIFORM_CL_SKINNING_MATRIX_COUNT;
+		uniformInstanceCount = renderer->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
+		uniformVertexCount = renderer->UNIFORM_CL_SKINNING_VERTEX_COUNT;
+	#else
+		auto shaderVersion = renderer->getShaderVersion();
 
-	// shader
-	shaderId = renderer->loadShader(
-		renderer->SHADER_COMPUTE_SHADER,
-		"shader/" + shaderVersion + "/skinning",
-		"skinning.glsl"
-	);
-	if (shaderId == 0) return;
+		// shader
+		shaderId = renderer->loadShader(
+			renderer->SHADER_COMPUTE_SHADER,
+			"shader/" + shaderVersion + "/skinning",
+			"skinning.glsl"
+		);
+		if (shaderId == 0) return;
 
-	// create, attach and link program
-	programId = renderer->createProgram(renderer->PROGRAM_COMPUTE);
-	renderer->attachShaderToProgram(programId, shaderId);
+		// create, attach and link program
+		programId = renderer->createProgram(renderer->PROGRAM_COMPUTE);
+		renderer->attachShaderToProgram(programId, shaderId);
 
-	// link program
-	if (renderer->linkProgram(programId) == false) return;
+		// link program
+		if (renderer->linkProgram(programId) == false) return;
 
-	//
-	uniformVertexCount = renderer->getProgramUniformLocation(programId, "vertexCount");
-	if (uniformVertexCount == -1) return;
-	uniformMatrixCount = renderer->getProgramUniformLocation(programId, "matrixCount");
-	if (uniformMatrixCount == -1) return;
-	uniformInstanceCount = renderer->getProgramUniformLocation(programId, "instanceCount");
-	if (uniformInstanceCount == -1) return;
+		//
+		uniformVertexCount = renderer->getProgramUniformLocation(programId, "vertexCount");
+		if (uniformVertexCount == -1) return;
+		uniformMatrixCount = renderer->getProgramUniformLocation(programId, "matrixCount");
+		if (uniformMatrixCount == -1) return;
+		uniformInstanceCount = renderer->getProgramUniformLocation(programId, "instanceCount");
+		if (uniformInstanceCount == -1) return;
+	#endif
 
 	//
 	initialized = true;
@@ -205,7 +211,6 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 	renderer->bindSkinningVertexJointsBufferObject(context, (*modelSkinningCacheCached->vboIds)[2]);
 	renderer->bindSkinningVertexJointIdxsBufferObject(context, (*modelSkinningCacheCached->vboIds)[3]);
 	renderer->bindSkinningVertexJointWeightsBufferObject(context, (*modelSkinningCacheCached->vboIds)[4]);
-	renderer->bindSkinningMatricesBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
 
 	// bind output / result buffers
 	renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
@@ -230,6 +235,9 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 		renderer->setProgramUniformInteger(context, uniformMatrixCount, skinningJoints.size());
 		renderer->setProgramUniformInteger(context, uniformInstanceCount, object3DBase->enabledInstances);
 	}
+
+	//
+	renderer->bindSkinningMatricesBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
 
 	// skinning count
 	renderer->setProgramUniformInteger(context, uniformVertexCount, vertices.size());

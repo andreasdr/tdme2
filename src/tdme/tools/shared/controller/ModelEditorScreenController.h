@@ -38,7 +38,7 @@ using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utils::MutableString;
 
-/** 
+/**
  * Model editor screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -58,6 +58,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
 	GUIElementNode* modelReload { nullptr };
+	GUIElementNode* modelReimport { nullptr };
 	GUIElementNode* modelSave { nullptr };
 	GUIElementNode* pivotX { nullptr };
 	GUIElementNode* pivotY { nullptr };
@@ -153,12 +154,12 @@ public:
 	 */
 	SharedModelEditorView* getView();
 
-	/** 
+	/**
 	 * @return entity display sub screen controller
 	 */
 	EntityDisplaySubScreenController* getEntityDisplaySubScreenController();
 
-	/** 
+	/**
 	 * @return entity bounding volume sub screen controller
 	 */
 	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
@@ -171,7 +172,7 @@ public:
 	// overriden method
 	GUIScreenNode* getScreenNode() override;
 
-	/** 
+	/**
 	 * @return model path
 	 */
 	FileDialogPath* getModelPath();
@@ -185,25 +186,25 @@ public:
 	void initialize() override;
 	void dispose() override;
 
-	/** 
+	/**
 	 * Set screen caption
 	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
 
-	/** 
+	/**
 	 * Set up general entity data
 	 * @param name name
 	 * @param description description
 	 */
 	void setEntityData(const string& name, const string& description);
 
-	/** 
+	/**
 	 * Unset entity data
 	 */
 	void unsetEntityData();
 
-	/** 
+	/**
 	 * Set up entity properties
 	 * @param presetId preset id
 	 * @param entity entity properties
@@ -211,18 +212,18 @@ public:
 	 */
 	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
 
-	/** 
+	/**
 	 * Unset entity properties
 	 */
 	void unsetEntityProperties();
 
-	/** 
+	/**
 	 * Set pivot tab
 	 * @param pivot pivot
 	 */
 	void setPivot(const Vector3& pivot);
 
-	/** 
+	/**
 	 * Unset pivot tab
 	 */
 	void unsetPivot();
@@ -374,7 +375,7 @@ public:
 	 */
 	void unsetAnimations();
 
-	/** 
+	/**
 	 * Set up model statistics
 	 * @param statsOpaqueFaces stats opaque faces
 	 * @param statsTransparentFaces stats transparent faces
@@ -387,7 +388,7 @@ public:
 	 */
 	void unsetStatistics();
 
-	/** 
+	/**
 	 * Set up tool
 	 */
 	void setTools();
@@ -402,22 +403,27 @@ public:
 	 */
 	void onQuit();
 
-	/** 
+	/**
 	 * On model load
 	 */
 	void onModelLoad();
 
-	/** 
+	/**
 	 * On model save
 	 */
 	void onModelSave();
 
-	/** 
+	/**
 	 * On model reload
 	 */
 	void onModelReload();
 
-	/** 
+	/**
+	 * On model reload
+	 */
+	void onModelReimport();
+
+	/**
 	 * On pivot apply
 	 */
 	void onPivotApply();
@@ -446,7 +452,7 @@ public:
 	 */
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
-	/** 
+	/**
 	 * Shows the error pop up
 	 */
 	void showErrorPopUp(const string& caption, const string& message);

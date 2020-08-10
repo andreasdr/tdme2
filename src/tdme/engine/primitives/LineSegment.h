@@ -9,7 +9,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Line segment helper functions
  * @author Andreas Drewke
  * @version $Id$
@@ -18,7 +18,17 @@ class tdme::engine::primitives::LineSegment final
 {
 public:
 
-	/** 
+	/**
+	 * Compute closest point on line segment
+	 * @param p1 p1 line 1 point 1
+	 * @param q1 q1 line 1 point 2
+	 * @param p p point
+	 * @param c c closest point
+	 * @return if collides or not
+	 */
+	static void computeClosestPointOnLineSegment(const Vector3& p1, const Vector3& q1, const Vector3& p, Vector3& c);
+
+	/**
 	 * Does line segments collide
 	 * @param p1 p1 line 1 point 1
 	 * @param q1 q1 line 1 point 2
@@ -29,7 +39,7 @@ public:
 	 */
 	static bool doesLineSegmentsCollide(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2, Vector3& p);
 
-	/** 
+	/**
 	 * Computes closest points c1, c2 on line segment p1->q1, p2->q2
 	 * based on an algorithm from "Real-Time Collision Detection" / Ericson"
 	 * Credit:
@@ -44,7 +54,7 @@ public:
 	 */
 	static void computeClosestPointsOnLineSegments(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2, Vector3& c1, Vector3& c2);
 
-	/** 
+	/**
 	 * Check if segment collides with bounding box
 	 * based on an algorithm from "Real-Time Collision Detection" / Ericson
 	 * Credit:
@@ -59,7 +69,7 @@ public:
 	 */
 	static bool doesBoundingBoxCollideWithLineSegment(BoundingBox* boundingBox, const Vector3& p, const Vector3& q, Vector3& contactMin, Vector3& contactMax);
 
-	/** 
+	/**
 	 * Check if segment collides with oriented bounding box
 	 * based on an algorithm from "Real-Time Collision Detection" / Ericson
 	 * Credit:
@@ -74,7 +84,7 @@ public:
 	 */
 	static bool doesOrientedBoundingBoxCollideWithLineSegment(OrientedBoundingBox* orientedBoundingBox, const Vector3& p, const Vector3& q, Vector3& contactMin, Vector3& contactMax);
 
-	/** 
+	/**
 	 * Does line segment collides with triangle
 	 * @param p1 p1 triangle point 1
 	 * @param p2 p2 triangle point 2

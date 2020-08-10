@@ -5,11 +5,11 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::string;
 
@@ -17,11 +17,17 @@ using tdme::engine::Object3D;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
+using tdme::engine::model::ShaderModel;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
+using tdme::utils::StringUtils;
 
 Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances) {
+	if (model->getShaderModel() == ShaderModel::PBR) {
+		shaderId = StringUtils::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
+		distanceShaderId = StringUtils::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
+	}
 }
 
 Object3D::Object3D(const string& id, Model* model): Object3DInternal(id, model, 1)

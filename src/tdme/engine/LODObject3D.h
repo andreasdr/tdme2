@@ -141,6 +141,11 @@ public:
 		Model* modelLOD3
 	);
 
+	/**
+	 * Public destructor
+	 */
+	~LODObject3D();
+
 public:
 	/**
 	 * @return LOD object

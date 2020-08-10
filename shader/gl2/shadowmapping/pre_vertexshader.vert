@@ -22,8 +22,10 @@ varying vec2 vsFragTextureUV;
 
 void main(){
 	#if defined(HAVE_TREE)
+		// TODO: apply scale, rotation from model view matrix
 		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, modelTranslation);
 	#elif defined(HAVE_FOLIAGE)
+		// TODO: apply scale, rotation from model view matrix
 		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, modelTranslation);
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);

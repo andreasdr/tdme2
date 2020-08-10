@@ -16,6 +16,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
@@ -23,6 +24,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/ObjectDeleter.h>
 #include <tdme/utils/Time.h>
 
 using std::string;
@@ -42,12 +44,14 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
+using tdme::utils::ObjectDeleter;
 using tdme::utils::Time;
 
 SkinningTest::SkinningTest()
@@ -112,8 +116,8 @@ void SkinningTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(16.0f, 1.0f, 15.0f));
-	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
+	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(16.0f, 1.0f, 15.0f)));
+	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
@@ -121,7 +125,7 @@ void SkinningTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
+	auto character = modelDeleter.add(ModelReader::read("resources/tests/models/mementoman", "mementoman.dae"));
 	#if defined(GLES2)
 		auto characters = new Object3D("characters", character, 5 * 5);
 		auto characterIdx = 0;

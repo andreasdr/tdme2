@@ -36,14 +36,14 @@ void main(void) {
 	if (depth == 0.0) {
 		for (int y = 0; y < MAP_LOOKUPS_FAR; y++)
 		for (int x = 0; x < MAP_LOOKUPS_FAR; x++) {
-			if (texture(
-				depthBufferTextureUnit,
-				vsFragTextureUV.xy +
-					vec2(
-						(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
-						(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
-					)
-			).r == 0.0) {
+			vec2 textureUV = vsFragTextureUV.xy +
+				vec2(
+					(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
+					(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
+				);
+			textureUV.x = clamp(textureUV.x, 0.0, 1.0 - bufferTexturePixelWidth);
+			textureUV.y = clamp(textureUV.y, 0.0, 1.0 - bufferTexturePixelHeight);
+			if (texture(depthBufferTextureUnit, textureUV).r == 0.0) {
 				depth = 1.0;
 			}
 		}
@@ -52,14 +52,14 @@ void main(void) {
 		float intensity = clamp((depth - DISTANCE_NEAR) * 1.0 / (DISTANCE_FAR - DISTANCE_NEAR), 0.0, 1.0);
 		for (int y = 0; y < MAP_LOOKUPS_NEAR; y++)
 		for (int x = 0; x < MAP_LOOKUPS_NEAR; x++) {
-			blurredColor+= texture(
-				colorBufferTextureUnit,
-				vsFragTextureUV.xy +
-					vec2(
-						(-MAP_LOOKUPS_NEAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
-						(-MAP_LOOKUPS_NEAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
-					)
-			);
+			vec2 textureUV = vsFragTextureUV.xy +
+				vec2(
+					(-MAP_LOOKUPS_NEAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
+					(-MAP_LOOKUPS_NEAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
+				);
+			textureUV.x = clamp(textureUV.x, 0.0, 1.0 - bufferTexturePixelWidth);
+			textureUV.y = clamp(textureUV.y, 0.0, 1.0 - bufferTexturePixelHeight);
+			blurredColor+= texture(colorBufferTextureUnit, textureUV);
 		}
 		blurredColor/= MAP_LOOKUPS_NEAR * MAP_LOOKUPS_NEAR;
 		blurredColor*= intensity;
@@ -73,14 +73,14 @@ void main(void) {
 		float intensity = clamp((depth - DISTANCE_FAR) * 1.0 / (DISTANCE_MAX - DISTANCE_FAR), 0.0, 1.0);
 		for (int y = 0; y < MAP_LOOKUPS_FAR; y++)
 		for (int x = 0; x < MAP_LOOKUPS_FAR; x++) {
-			blurredColor+= texture(
-				colorBufferTextureUnit,
-				vsFragTextureUV.xy +
-					vec2(
-						(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
-						(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
-					)
-			);
+			vec2 textureUV = vsFragTextureUV.xy +
+				vec2(
+					(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
+					(-MAP_LOOKUPS_FAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
+				);
+			textureUV.x = clamp(textureUV.x, 0.0, 1.0 - bufferTexturePixelWidth);
+			textureUV.y = clamp(textureUV.y, 0.0, 1.0 - bufferTexturePixelHeight);
+			blurredColor+= texture(colorBufferTextureUnit, textureUV);
 		}
 		blurredColor/= MAP_LOOKUPS_FAR * MAP_LOOKUPS_FAR;
 		blurredColor*= intensity;

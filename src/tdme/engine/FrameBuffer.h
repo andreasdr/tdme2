@@ -102,8 +102,10 @@ public:
 	 * @param shaderId post processing shader id
 	 * @param temporary bind additional temporary frame buffer
 	 * @param blendToSource target = blendToSource + source
+	 * @param fixedLightScatteringIntensity if using fixed light scattering intensity (hack until we have shader parameters)
+	 * @param lightScatteringItensityValue light scattering itensity value (hack until we have shader parameters)
 	 */
-	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr);
+	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr, bool fixedLightScatteringIntensity = false, float lightScatteringItensityValue = 0.5f);
 
 	/**
 	 * Public constructor

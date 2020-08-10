@@ -46,8 +46,7 @@
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
-#include <tdme/gui/events/GUIChangeListener.h>
-
+#include <tdme/utils/Time.h>
 
 using tdme::tools::installer::Installer;
 
@@ -97,6 +96,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Properties;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
+using tdme::utils::Time;
 
 Installer::Installer(): installThreadMutex("install-thread-mutex")
 {
@@ -326,7 +326,7 @@ void Installer::performScreenAction() {
 									try {
 										HTTPClient httpClient;
 										httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
-										httpClient.setURL(repository);
+										httpClient.setURL(repository + "?timestamp=" + to_string(Time::getCurrentMillis()));
 										httpClient.setUsername(installer->installerProperties.get("repository_username", ""));
 										httpClient.setPassword(installer->installerProperties.get("repository_password", ""));
 										httpClient.execute();

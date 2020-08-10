@@ -64,6 +64,8 @@
 								<space width="*" />
 								<button id="button_model_reload" name="button_model_reload" text="Reload" />
 								<space width="*" />
+								<button id="button_model_reimport" name="button_model_reimport" text="Reimport" />
+								<space width="*" />
 								<button id="button_model_save" name="button_model_save" text="Save" />
 								<space width="*" />
 								<button id="button_entity_apply" name="button_model_apply" text="Apply" />

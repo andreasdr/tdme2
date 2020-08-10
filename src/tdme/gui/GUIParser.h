@@ -145,4 +145,9 @@ public:
 	 * Initialize GUI elements
 	 */
 	static void initialize();
+
+	/**
+	 * Dispose GUI elements
+	 */
+	static void dispose();
 };

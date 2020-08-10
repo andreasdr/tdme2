@@ -57,10 +57,11 @@ public:
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
-	bool isPBRAvailable() override;
 	bool isInstancedRenderingAvailable() override;
+	bool isPBRAvailable() override;
+	bool isComputeShaderAvailable() override;
+	bool isGLCLAvailable() override;
 	bool isUsingShortIndices() override;
-	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(void* context, int32_t programId) override;

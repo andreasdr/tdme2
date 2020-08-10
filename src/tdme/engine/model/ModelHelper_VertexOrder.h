@@ -17,8 +17,8 @@ class tdme::engine::model::ModelHelper_VertexOrder final
 {
 	friend class ModelHelper;
 public:
-	static ModelHelper_VertexOrder *CLOCKWISE;
-	static ModelHelper_VertexOrder *COUNTERCLOCKWISE;
+	static ModelHelper_VertexOrder* CLOCKWISE;
+	static ModelHelper_VertexOrder* COUNTERCLOCKWISE;
 
 	ModelHelper_VertexOrder(const string& name, int ordinal);
 

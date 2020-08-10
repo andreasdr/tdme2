@@ -1163,3 +1163,10 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 }
+
+void GUIParser::dispose() {
+	for (auto& elementIt: elements) {
+		delete elementIt.second;
+	}
+	elements.clear();
+}

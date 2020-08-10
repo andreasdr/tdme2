@@ -91,7 +91,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
 
-/** 
+/**
  * Engine main class
  * @author Andreas Drewke
  * @version $Id$
@@ -179,7 +179,7 @@ private:
 	static float shadowMaplightEyeDistanceScale;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
-	static int32_t sunTextureId;
+	static int32_t lightSourceTextureId;
 
 	struct Shader {
 		ShaderType type;
@@ -189,7 +189,6 @@ private:
 	};
 
 	static map<string, Shader> shaders;
-
 
 	int32_t width { -1 };
 	int32_t height { -1 };
@@ -203,8 +202,11 @@ private:
 
 	array<Light, LIGHTS_MAX> lights;
 	Color4 sceneColor;
-	float sunSize;
-	Vector3 sunPosition;
+	bool renderLightSourceEnabled;
+	float lightSourceSize;
+	Vector3 lightSourcePosition;
+	bool fixedLightScatteringIntensity;
+	float lightScatteringItensityValue;
 	FrameBuffer* frameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
@@ -231,7 +233,7 @@ private:
 
 	vector<Object3D*> visibleEZRObjects;
 
-	EntityRenderer* object3DRenderer { nullptr };
+	EntityRenderer* entityRenderer { nullptr };
 
 	static bool skinningShaderEnabled;
 	bool shadowMappingEnabled;
@@ -359,7 +361,7 @@ private:
 	 * @return object 3d renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
-		return object3DRenderer;
+		return entityRenderer;
 	}
 
 	/**
@@ -483,7 +485,7 @@ public:
 		Engine::animationBlendingTime = animationBlendingTime;
 	}
 
-	/** 
+	/**
 	 * @return shadow map light eye distance scale
 	 */
 	inline static float getShadowMapLightEyeDistanceScale() {
@@ -602,7 +604,7 @@ public:
 	 */
 	static Engine* getInstance();
 
-	/** 
+	/**
 	 * Creates an offscreen rendering instance
 	 * Note:
 	 * - the root engine must have been initialized before
@@ -614,21 +616,21 @@ public:
 	 */
 	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping);
 
-	/** 
+	/**
 	 * @return if initialized and ready to be used
 	 */
 	inline bool isInitialized() {
 		return initialized;
 	}
 
-	/** 
+	/**
 	 * @return width
 	 */
 	inline int32_t getWidth() {
 		return width;
 	}
 
-	/** 
+	/**
 	 * @return height
 	 */
 	inline int32_t getHeight() {
@@ -649,41 +651,41 @@ public:
 		return scaledHeight;
 	}
 
-	/** 
+	/**
 	 * @return GUI
 	 */
 	inline GUI* getGUI() {
 		return gui;
 	}
 
-	/** 
+	/**
 	 * @return Timing
 	 */
 	inline Timing* getTiming() {
 		return timing;
 	}
 
-	/** 
+	/**
 	 * @return Camera
 	 */
 	inline Camera* getCamera() {
 		return camera;
 	}
 
-	/** 
+	/**
 	 * @return partition
 	 */
 	inline Partition* getPartition() {
 		return partition;
 	}
 
-	/** 
+	/**
 	 * Set partition
 	 * @param partition partition
 	 */
 	void setPartition(Partition* partition);
 
-	/** 
+	/**
 	 * @return frame buffer or nullptr
 	 */
 	inline FrameBuffer* getFrameBuffer() {
@@ -697,7 +699,7 @@ public:
 		return lights.size();
 	}
 
-	/** 
+	/**
 	 * Returns light at idx (0 <= idx < 8)
 	 * @param idx idx
 	 * @return Light
@@ -722,43 +724,101 @@ public:
 	}
 
 	/**
-	 * @return sun size
+	 * Returns if rendering light source is enabled
+	 * @return rendering light source is enabled
 	 */
-	inline float getSunSize() const {
-		return sunSize;
+	inline bool isRenderLightSource() const {
+		return renderLightSourceEnabled;
 	}
 
 	/**
-	 * Set sun size
-	 * @param sunSize sun size
+	 * Set rendering light source enabled/disabled
+	 * @param renderLightSource render light source enabled
 	 */
-	inline void setSunSize(float sunSize) {
-		this->sunSize = sunSize;
+	inline void setRenderLightSource(bool renderLightSourceEnabled) {
+		this->renderLightSourceEnabled = renderLightSourceEnabled;
 	}
 
 	/**
-	 * @return sun position
+	 * Returns light source size
+	 * TODO: this is a hack until we have shader properties
+	 * @return light source size (moon, sun)
 	 */
-	inline const Vector3& getSunPosition() const {
-		return sunPosition;
+	inline float getLightSourceSize() const {
+		return lightSourceSize;
 	}
 
 	/**
-	 * Set sun position
-	 * @param subPosition sun position
+	 * Set light source size (moon, sun)
+	 * TODO: this is a hack until we have shader properties
+	 * @param lightSourceSize light source size
 	 */
-	inline void setSunPosition(const Vector3& sunPosition) {
-		this->sunPosition = sunPosition;
+	inline void setLightSourceSize(float lightSourceSize) {
+		this->lightSourceSize = lightSourceSize;
 	}
 
-	/** 
+	/**
+	 * Returns light source position(moon, sun)
+	 * TODO: this is a hack until we have shader properties
+	 * @return light source position
+	 */
+	inline const Vector3& getLightSourcePosition() const {
+		return lightSourcePosition;
+	}
+
+	/**
+	 * Set light source position(moon, sun)
+	 * TODO: this is a hack until we have shader properties
+	 * @param lightSourcePosition light source position
+	 */
+	inline void setLightSourcePosition(const Vector3& lightSourcePosition) {
+		this->lightSourcePosition = lightSourcePosition;
+	}
+
+	/**
+	 * Returns if light scattering intensity is fixed
+	 * // TODO: this is a hack until we got shader parameters
+	 * @return if light scattering intensity is fixed
+	 */
+	inline bool isFixedLightScatteringIntensity() {
+		return fixedLightScatteringIntensity;
+	}
+
+	/**
+	 * Sets if light scattering intensity is fixed
+	 * // TODO: this is a hack until we got shader parameters
+	 * @param fixedLightScatteringIntensity light scattering intensity is fixed
+	 */
+	inline void setFixedLightScatteringIntensity(float fixedLightScatteringIntensity) {
+		this->fixedLightScatteringIntensity = fixedLightScatteringIntensity;
+	}
+
+	/**
+	 * Returns light scattering intensity (base) value
+	 * // TODO: this is a hack until we got shader parameters
+	 * @return light scattering intensity base value
+	 */
+	inline float getLightScatteringItensityValue() {
+		return lightScatteringItensityValue;
+	}
+
+	/**
+	 * Set light scattering intensity base value
+	 * // TODO: this is a hack until we got shader parameters
+	 * @param lightScatteringItensityValue light scattering intensity base value
+	 */
+	inline void setLightScatteringItensityValue(float lightScatteringItensityValue) {
+		lightScatteringItensityValue = lightScatteringItensityValue;
+	}
+
+	/**
 	 * @return entity count
 	 */
 	inline int32_t getEntityCount() {
 		return entitiesById.size();
 	}
 
-	/** 
+	/**
 	 * Returns a entity by given id
 	 * @param id id
 	 * @return entity or nullptr
@@ -771,29 +831,29 @@ public:
 		return nullptr;
 	}
 
-	/** 
+	/**
 	 * Adds an entity by id
 	 * @param entity object
 	 */
 	void addEntity(Entity* entity);
 
-	/** 
+	/**
 	 * Removes an entity
 	 * @param id id
 	 */
 	void removeEntity(const string& id);
 
-	/** 
+	/**
 	 * Removes all entities and caches
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * Initialize render engine
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Reshape
 	 * @param width width
 	 * @param height height
@@ -817,12 +877,12 @@ public:
 	 */
 	void renderToScreen();
 
-	/** 
+	/**
 	 * Renders the scene
 	 */
 	void display();
 
-	/** 
+	/**
 	 * Compute world coordinate from mouse position and z value
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
@@ -831,7 +891,7 @@ public:
 	 */
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate);
 
-	/** 
+	/**
 	 * Compute world coordinate from mouse position
 	 * TODO:
 	 * this does not work with GLES2
@@ -841,7 +901,7 @@ public:
 	 */
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
 
-	/** 
+	/**
 	 * Retrieves entity by mouse position
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
@@ -921,20 +981,22 @@ public:
 	 */
 	Entity* getEntityContactPointByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
-	/** 
+	/**
 	 * Convert screen coordinate by world coordinate
 	 * @param worldCoordinate world woordinate
 	 * @param screenCoordinate screen coordinate
+	 * @param width optional render target width
+	 * @param height optional render target height
 	 * @returns if world coordinate is within frustum
 	 */
-	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
+	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate, int width = -1, int height = -1);
 
-	/** 
+	/**
 	 * Shutdown the engine
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Creates a PNG file from current screen(
 	 * 	This does not seem to work with GLES2 and offscreen engines
 	 * @param pathName path name 
@@ -1051,14 +1113,17 @@ private:
 	 * @param useEZR if to use early Z rejection
 	 * @param doShadowMapping if to apply shadow mapping
 	 * @param applyPostProcessing if to apply post processing
+	 * @param doRenderLightSource do render light source
 	 * @param renderTypes render types
 	 */
-	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, int32_t renderTypes);
+	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, int32_t renderTypes);
 
 	/**
-	 * Render sun
-	 * @return if sun is visible
+	 * Render light source
+	 * @param width render target width
+	 * @param height render target height
+	 * @return if light source is visible
 	 */
-	bool renderSun();
+	bool renderLightSource(int width, int height);
 
 };

@@ -93,7 +93,7 @@ public:
 			instanceAnimations[i]->computeTransformations(context, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
 			enabledInstances++;
 		}
-		Object3DGroup::computeTransformations(context, object3dGroups);
+		if (enabledInstances > 0) Object3DGroup::computeTransformations(context, object3dGroups);
 	} 
 
 	/**

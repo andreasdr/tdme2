@@ -2,6 +2,9 @@
 
 #if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
+	#include <OpenGL/OpenGL.h>
+	#include <OpenCL/opencl.h>
+	#include <OpenCL/cl_gl.h>
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
@@ -14,17 +17,17 @@
 #include <vector>
 #include <string>
 
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/Buffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
@@ -33,21 +36,21 @@ using std::vector;
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::renderer::GL3Renderer;
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utils::Buffer;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
+using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::utils::StringUtils;
 
-GL3Renderer::GL3Renderer() 
+GL3Renderer::GL3Renderer()
 {
 	// setup GL3 consts
 	ID_NONE = 0;
@@ -62,6 +65,9 @@ GL3Renderer::GL3Renderer()
 	#if defined (__APPLE__)
 		SHADER_COMPUTE_SHADER = -1;
 		SHADER_GEOMETRY_SHADER = -1;
+		UNIFORM_CL_SKINNING_VERTEX_COUNT = -1001;
+		UNIFORM_CL_SKINNING_MATRIX_COUNT = -1002;
+		UNIFORM_CL_SKINNING_INSTANCE_COUNT = -1003;
 	#else
 		SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
 		SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
@@ -91,6 +97,12 @@ bool GL3Renderer::isSupportingVertexArrays() {
 	return true;
 }
 
+#if defined (__APPLE__)
+	void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
+		Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
+	}
+#endif
+
 void GL3Renderer::initialize()
 {
 	glGetError();
@@ -114,6 +126,45 @@ void GL3Renderer::initialize()
 	// port-macosx requires this
 	glGenVertexArrays(1, &engineVAO);
 	glBindVertexArray(engineVAO);
+	//
+	#if defined (__APPLE__)
+		// TODO: error management
+		// shader source
+		auto skinningKernelProgramSource = FileSystem::getInstance()->getContentAsString("shader/gl3/skinning", "skinning.cl");
+		auto skinningKernelProgramSourceSize = skinningKernelProgramSource.size();
+		char* skinningKernelProgramSourceHeap = new char[skinningKernelProgramSourceSize + 1];
+		strcpy(skinningKernelProgramSourceHeap, skinningKernelProgramSource.c_str());
+
+		// context, device
+		cl_int clError = 0;
+		cl_device_id clDeviceId = 0;
+		auto clCurrentContext = CGLGetCurrentContext();
+		auto clShareGroup = CGLGetShareGroup(clCurrentContext);
+		gcl_gl_set_sharegroup(clShareGroup);
+		auto clDispatchQueue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, nullptr);
+		clDeviceId = gcl_get_device_id_with_dispatch_queue(clDispatchQueue);
+
+		// device vendor + names
+		size_t clSize = 0;
+		cl_char clDeviceVendorName[1024] = {0};
+		cl_char clDeviceDeviceName[1024] = {0};
+		clError = clGetDeviceInfo(clDeviceId, CL_DEVICE_VENDOR, sizeof(clDeviceVendorName) - 1, clDeviceVendorName, &clSize);
+		clError|= clGetDeviceInfo(clDeviceId, CL_DEVICE_NAME, sizeof(clDeviceDeviceName) - 1, clDeviceDeviceName, &clSize);
+		Console::println(string("GL3Renderer::initialize(): Using OpenCL CL device: ") + (char*)clDeviceVendorName + ": " + (char*)clDeviceDeviceName);
+
+		// CL context, skinning kernel
+		cl_context_properties properties[] = {
+			CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE,
+			(cl_context_properties)clShareGroup,
+			0
+		};
+		clContext = clCreateContext(properties, 1, &clDeviceId, clErrorCallback, nullptr, &clError);
+		clCommandQueue = clCreateCommandQueue(clContext, clDeviceId, 0, &clError);
+		clSkinningKernelProgram = clCreateProgramWithSource(clContext, 1, (const char**)&skinningKernelProgramSourceHeap, &skinningKernelProgramSourceSize, &clError);
+		clError = clBuildProgram(clSkinningKernelProgram, 1, &clDeviceId, nullptr, nullptr, nullptr);
+		auto clBuildInfo = clGetProgramBuildInfo(clSkinningKernelProgram, clDeviceId, CL_PROGRAM_BUILD_STATUS, 0, nullptr, &clSize);
+		clSkinningKernel = clCreateKernel(clSkinningKernelProgram, "computeSkinning", &clError);
+	#endif
 }
 
 void GL3Renderer::initializeFrame()
@@ -150,25 +201,33 @@ bool GL3Renderer::isNormalMappingAvailable()
 	return true;
 }
 
+bool GL3Renderer::isInstancedRenderingAvailable() {
+	return true;
+}
+
 bool GL3Renderer::isPBRAvailable()
 {
 	return true;
 }
 
-bool GL3Renderer::isInstancedRenderingAvailable() {
-	return true;
+bool GL3Renderer::isComputeShaderAvailable() {
+	int glMajorVersion;
+	int glMinorVersion;
+	glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+	return (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+}
+
+bool GL3Renderer::isGLCLAvailable() {
+	#if defined (__APPLE__)
+		return true;
+	#else
+		return false;
+	#endif
 }
 
 bool GL3Renderer::isUsingShortIndices() {
 	return false;
-}
-
-bool GL3Renderer::isGeometryShaderAvailable() {
-	#if defined (__APPLE__)
-		return false;
-	#else
-		return true;
-	#endif
 }
 
 int32_t GL3Renderer::getTextureUnits()
@@ -291,7 +350,21 @@ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& 
 
 void GL3Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
 {
-	glUniform1i(uniformId, value);
+	#if defined (__APPLE__)
+		if (uniformId == UNIFORM_CL_SKINNING_VERTEX_COUNT) {
+			clSkinningParameters.vertexCount = value;
+		} else
+		if (uniformId == UNIFORM_CL_SKINNING_MATRIX_COUNT) {
+			clSkinningParameters.matrixCount = value;
+		} else
+		if (uniformId == UNIFORM_CL_SKINNING_INSTANCE_COUNT) {
+			clSkinningParameters.instanceCount = value;
+		} else {
+			glUniform1i(uniformId, value);
+		}
+	#else
+		glUniform1i(uniformId, value);
+	#endif
 }
 
 void GL3Renderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
@@ -862,7 +935,26 @@ void GL3Renderer::checkGLError(int line)
 
 void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::dispatchCompute(): Not implemented");
+		clSkinningParameters.numGroupsX = numGroupsX;
+		clSkinningParameters.numGroupsY = numGroupsY;
+		glFinish();
+		auto& _clSkinningParameters = clSkinningParameters;
+		cl_int clError;
+		array<cl_mem, 8> boundCLMemObjects;
+		for (auto i = 0; i < _clSkinningParameters.boundGLBuffers.size(); i++) {
+			boundCLMemObjects[i] = clCreateFromGLBuffer(clContext, _clSkinningParameters.boundGLBuffersWrite[i] == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, _clSkinningParameters.boundGLBuffers[i], &clError);
+			clError = clSetKernelArg(clSkinningKernel, i, sizeof(cl_mem), &boundCLMemObjects[i]);
+		}
+		clSetKernelArg(clSkinningKernel, 8, sizeof(cl_int), &_clSkinningParameters.vertexCount);
+		clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &_clSkinningParameters.matrixCount);
+		clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &_clSkinningParameters.instanceCount);
+		size_t local_size[] = {(size_t)16, (size_t)16};
+		size_t global_size[] = {(size_t)_clSkinningParameters.numGroupsX * local_size[0], (size_t)_clSkinningParameters.numGroupsY  * local_size[1]};
+		clEnqueueAcquireGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+		clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
+		clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+		clFinish(clCommandQueue);
+		clSkinningParameters = CLSkinningParameters();
 	#else
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif
@@ -870,7 +962,7 @@ void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t num
 
 void GL3Renderer::memoryBarrier() {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::memoryBarrier(): Not implemented");
+		// no op
 	#else
 		// TODO: put barrier bits into paramters
 		glMemoryBarrier(GL_ALL_BARRIER_BITS);
@@ -879,7 +971,9 @@ void GL3Renderer::memoryBarrier() {
 
 void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -889,7 +983,9 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 
 void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -897,9 +993,16 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 	#endif
 }
 
+#if defined (__APPLE__)
+	inline void GL3Renderer::clBindGLBuffer(int32_t idx, int32_t bufferObjectId, bool write) {
+		clSkinningParameters.boundGLBuffers[idx] = bufferObjectId;
+		clSkinningParameters.boundGLBuffersWrite[idx] = write;
+	}
+#endif
+
 void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+		clBindGLBuffer(0, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
 	#endif
@@ -907,7 +1010,7 @@ void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t buffer
 
 void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+		clBindGLBuffer(1, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
 	#endif
@@ -915,7 +1018,7 @@ void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferO
 
 void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+		clBindGLBuffer(2, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
 	#endif
@@ -923,7 +1026,7 @@ void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bu
 
 void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+		clBindGLBuffer(3, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
 	#endif
@@ -931,7 +1034,7 @@ void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t
 
 void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+		clBindGLBuffer(4, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
 	#endif
@@ -939,7 +1042,7 @@ void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int3
 
 void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+		clBindGLBuffer(5, bufferObjectId, true);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
 	#endif
@@ -947,7 +1050,7 @@ void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t 
 
 void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+		clBindGLBuffer(6, bufferObjectId, true);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
 	#endif
@@ -955,7 +1058,7 @@ void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t b
 
 void GL3Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		Console::println("GL3Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+		clBindGLBuffer(7, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
 	#endif

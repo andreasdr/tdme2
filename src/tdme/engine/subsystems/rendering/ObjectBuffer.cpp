@@ -23,6 +23,13 @@ void ObjectBuffer::initialize() {
 	byteBuffers.resize(renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1);
 }
 
+void ObjectBuffer::dispose() {
+	for (auto byteBuffer: byteBuffers) {
+		delete byteBuffer;
+	}
+	byteBuffers.clear();
+}
+
 ByteBuffer* ObjectBuffer::getByteBuffer(void* context, int32_t bytes)
 {
 	auto renderer = Engine::renderer;

@@ -175,6 +175,7 @@ void ModelEditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
 		modelReload = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_model_reload"));
+		modelReimport = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_model_reimport"));
 		modelSave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_model_save"));
 		pivotX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_x"));
 		pivotY = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pivot_y"));
@@ -276,6 +277,7 @@ void ModelEditorScreenController::setEntityData(const string& name, const string
 {
 	entityBaseSubScreenController->setEntityData(name, description);
 	modelReload->getController()->setDisabled(false);
+	modelReimport->getController()->setDisabled(false);
 	modelSave->getController()->setDisabled(false);
 }
 
@@ -283,6 +285,7 @@ void ModelEditorScreenController::unsetEntityData()
 {
 	entityBaseSubScreenController->unsetEntityData();
 	modelReload->getController()->setDisabled(true);
+	modelReimport->getController()->setDisabled(true);
 	modelSave->getController()->setDisabled(true);
 }
 
@@ -1585,6 +1588,45 @@ void ModelEditorScreenController::onModelReload()
 	view->reloadFile();
 }
 
+void ModelEditorScreenController::onModelReimport()
+{
+	class OnModelLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			modelEditorScreenController->view->reimportModel(
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+			);
+			modelEditorScreenController->modelPath->setPath(
+				modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
+		OnModelLoad(ModelEditorScreenController* modelEditorScreenController): modelEditorScreenController(modelEditorScreenController) {
+		}
+
+	private:
+		ModelEditorScreenController *modelEditorScreenController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		modelPath->getPath(),
+		"Reimport model: ",
+		ModelReader::getModelExtensions(),
+		view->getFileName(),
+		true,
+		new OnModelLoad(this)
+	);
+}
+
 void ModelEditorScreenController::onPivotApply()
 {
 	try {
@@ -1687,6 +1729,9 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_model_reload") == 0) {
 				onModelReload();
+			} else
+			if (node->getId().compare("button_model_reimport") == 0) {
+				onModelReimport();
 			} else
 			if (node->getId().compare("button_model_save") == 0) {
 				onModelSave();

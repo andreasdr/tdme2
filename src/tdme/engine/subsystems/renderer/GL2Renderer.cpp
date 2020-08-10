@@ -156,20 +156,24 @@ bool GL2Renderer::isNormalMappingAvailable()
 	return false;
 }
 
+bool GL2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
 bool GL2Renderer::isPBRAvailable()
 {
 	return false;
 }
 
-bool GL2Renderer::isInstancedRenderingAvailable() {
+bool GL2Renderer::isComputeShaderAvailable() {
+	return false;
+}
+
+bool GL2Renderer::isGLCLAvailable() {
 	return false;
 }
 
 bool GL2Renderer::isUsingShortIndices() {
-	return false;
-}
-
-bool GL2Renderer::isGeometryShaderAvailable() {
 	return false;
 }
 

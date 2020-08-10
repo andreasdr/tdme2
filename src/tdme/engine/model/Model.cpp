@@ -11,6 +11,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,6 +28,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
@@ -41,6 +43,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
+	this->shaderModel = ShaderModel::SPECULAR;
 	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();
@@ -87,6 +90,11 @@ Group* Model::getSubGroupById(const string& id)
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt != animationSetups.end()) {
+		delete animationSetupIt->second;
+		animationSetups.erase(animationSetupIt);
+	}
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, "", speed);
 	animationSetups[id] = animationSetup;
 	return animationSetup;

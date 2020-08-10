@@ -9,6 +9,7 @@
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -143,6 +144,13 @@ void SharedModelEditorView::resetEntity()
 	initModelRequestedReset = true;
 }
 
+void SharedModelEditorView::reimportEntity()
+{
+	engine->reset();
+	initModelRequested = true;
+	initModelRequestedReset = false;
+}
+
 void SharedModelEditorView::initModel()
 {
 	if (entity == nullptr) return;
@@ -187,7 +195,61 @@ void SharedModelEditorView::loadFile(const string& pathName, const string& fileN
 	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
 }
 
-void SharedModelEditorView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void SharedModelEditorView::reimportModel(const string& pathName, const string& fileName)
+{
+	if (entity == nullptr) return;
+	engine->removeEntity("model");
+	struct AnimationSetupStruct {
+		bool loop;
+		string overlayFromGroupId;
+		float speed;
+	};
+	// store old animation setups
+	map<string, AnimationSetupStruct> originalAnimationSetups;
+	for (auto animationSetupIt: entity->getModel()->getAnimationSetups()) {
+		auto animationSetup = animationSetupIt.second;
+		originalAnimationSetups[animationSetup->getId()] = {
+			.loop = animationSetup->isLoop(),
+			.overlayFromGroupId = animationSetup->getOverlayFromGroupId(),
+			.speed = animationSetup->getSpeed()
+		};
+	}
+	// new model file
+	modelFile = FileSystem::getInstance()->getFileName(pathName, fileName);
+	string log;
+	try {
+		// load model
+		auto model = ModelReader::read(
+			pathName,
+			fileName
+		);
+		// restore animation setup properties
+		for (auto originalAnimationSetupIt: originalAnimationSetups) {
+			auto originalAnimationSetupId = originalAnimationSetupIt.first;
+			auto originalAnimationSetup = originalAnimationSetupIt.second;
+			auto animationSetup = model->getAnimationSetup(originalAnimationSetupId);
+			if (animationSetup == nullptr) {
+				Console::println("SharedModelEditorView::reimportModel(): missing animation setup: " + originalAnimationSetupId);
+				log+= "Missing animation setup: " + originalAnimationSetupId + ", skipping.\n";
+				continue;
+			}
+			Console::println("SharedModelEditorView::reimportModel(): reimport animation setup: " + originalAnimationSetupId);
+			animationSetup->setLoop(originalAnimationSetup.loop);
+			animationSetup->setOverlayFromGroupId(originalAnimationSetup.overlayFromGroupId);
+			animationSetup->setSpeed(originalAnimationSetup.speed);
+		}
+		// set model in entity
+		entity->setModel(model);
+	} catch (Exception& exception) {
+		modelEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+	}
+	reimportEntity();
+	if (log.size() > 0) {
+		modelEditorScreenController->showErrorPopUp("Warning", log);
+	}
+}
+
+void SharedModelEditorView::saveFile(const string& pathName, const string& fileName)
 {
 	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
 }
@@ -415,7 +477,7 @@ void SharedModelEditorView::loadModel()
 	}
 }
 
-LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(

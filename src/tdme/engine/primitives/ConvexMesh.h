@@ -61,6 +61,14 @@ private:
 	bool isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex);
 
 	/**
+	 * Checks if 2 triangles are adjacent
+	 * @param triangle1 triangle 1
+	 * @param triangle2 triangle 2
+	 * @return if triangles are adjacent
+	 */
+	bool areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2);
+
+	/**
 	 * Create convex mesh
 	 * 	Note: it also translates center into origin
 	 * @param vertices vertices

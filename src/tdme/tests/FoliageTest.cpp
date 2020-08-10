@@ -17,6 +17,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
@@ -25,6 +26,7 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Time.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using std::string;
 using std::to_string;
@@ -44,6 +46,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
@@ -51,6 +54,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
 using tdme::utils::Time;
+using tdme::utils::ObjectDeleter;
 
 FoliageTest::FoliageTest()
 {
@@ -114,8 +118,8 @@ void FoliageTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f));
-	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
+	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
+	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
@@ -123,7 +127,7 @@ void FoliageTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	auto reedModel = ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm");
+	auto reedModel = modelDeleter.add(ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm"));
 	auto foliageObject = new Object3DRenderGroup("foliage", reedModel);
 	int reedIdx = 0;
 	#if defined(GLES2)

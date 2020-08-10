@@ -76,6 +76,13 @@ PathFindingTest::PathFindingTest()
 	playerModelEntity = nullptr;
 }
 
+PathFindingTest::~PathFindingTest()
+{
+	delete world;
+	delete pathFinding;
+	delete playerModelEntity;
+}
+
 void PathFindingTest::main(int argc, char** argv)
 {
 	auto pathFindingTest = new PathFindingTest();

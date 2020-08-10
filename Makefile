@@ -45,7 +45,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework OpenCL -framework IOKit -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
@@ -283,6 +283,7 @@ SRCS = \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
+	src/tdme/engine/fileio/models/WFObjWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
 	src/tdme/engine/model/Animation.cpp \
@@ -300,6 +301,7 @@ SRCS = \
 	src/tdme/engine/model/UpVector.cpp \
 	src/tdme/engine/model/RotationOrder.cpp \
 	src/tdme/engine/model/Skinning.cpp \
+	src/tdme/engine/model/ShaderModel.cpp \
 	src/tdme/engine/model/SpecularMaterialProperties.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/Body.cpp \

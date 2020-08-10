@@ -304,6 +304,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 		}
 		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
 			Vector3 hitPoint(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
+			auto _body = static_cast<Body*>(info.body->getUserData());
 			if (hitPoint.getY() >= height) {
 				height = hitPoint.getY();
 				body = static_cast<Body*>(info.body->getUserData());

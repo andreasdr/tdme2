@@ -151,6 +151,13 @@ EntityRenderer::EntityRenderer(Engine* engine, Renderer* renderer) {
 }
 
 EntityRenderer::~EntityRenderer() {
+	if (this->renderer->isInstancedRenderingAvailable() == true) {
+		for (auto& context: contexts) {
+			delete context.bbEffectColorMuls;
+			delete context.bbEffectColorAdds;
+			delete context.bbMvMatrices;
+		}
+	}
 	for (auto batchRenderer: trianglesBatchRenderers) {
 		delete batchRenderer;
 	}
@@ -670,6 +677,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 			// draw this faces entity for each object
 			object3DRenderContext.objectsToRender = objects;
 			do {
+				auto hadFrontFaceSetup = false;
 				auto hadShaderSetup = false;
 				Matrix4x4Negative matrix4x4Negative;
 
@@ -840,9 +848,12 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
-						if (frontFace == -1) {
-							frontFace = objectFrontFace;
-							renderer->setFrontFace(context, frontFace);
+						if (hadFrontFaceSetup == false) {
+							hadFrontFaceSetup = true;
+							if (objectFrontFace != frontFace) {
+								frontFace = objectFrontFace;
+								renderer->setFrontFace(context, frontFace);
+							}
 						} else
 						if (objectFrontFace != frontFace) {
 							object3DRenderContext.objectsNotRendered.push_back(object);

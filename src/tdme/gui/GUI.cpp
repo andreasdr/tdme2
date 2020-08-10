@@ -345,6 +345,7 @@ GUIElementNode* GUI::getFocussedNode()
 
 void GUI::unfocusNode()
 {
+	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) return;
 	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
 	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focussedNode != nullptr) {

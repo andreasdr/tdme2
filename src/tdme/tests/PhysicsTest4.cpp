@@ -58,12 +58,13 @@ constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
 PhysicsTest4::PhysicsTest4()
 {
 	Application::setLimitFPS(true);
-	keyLeft = false;
-	keyRight = false;
-	keyUp = false;
-	keyDown = false;
 	engine = Engine::getInstance();
 	world = new World();
+}
+
+PhysicsTest4::~PhysicsTest4()
+{
+	delete world;
 }
 
 void PhysicsTest4::main(int argc, char** argv)
@@ -109,8 +110,8 @@ void PhysicsTest4::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.1f, 0.1f, 0.1f));
-	auto boxModel = PrimitiveModel::createModel(box, "box_model");
+	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.1f, 0.1f, 0.1f)));
+	auto boxModel = modelDeleter.add(PrimitiveModel::createModel(box, "box_model"));
 	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("box", boxModel);
@@ -122,7 +123,7 @@ void PhysicsTest4::initialize()
 	world->addRigidBody("box", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	world->getBody("box")->setLinearVelocity(world->getBody("box")->getLinearVelocity().clone().setX(1.0f));
 	try {
-		auto _terrainModel = ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm");
+		auto _terrainModel = modelDeleter.add(ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm"));
 		entity = new Object3D("terrain", _terrainModel);
 		entity->setTranslation(Vector3(1.75f, 0.0f, -1.65f));
 		entity->setReceivesShadows(true);

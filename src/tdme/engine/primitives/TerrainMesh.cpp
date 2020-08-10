@@ -53,7 +53,6 @@ TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transforma
 }
 
 TerrainMesh::~TerrainMesh() {
-	if (collisionShape != nullptr) delete collisionShape;
 	if (triangleMesh != nullptr) delete triangleMesh;
 	if (triangleVertexArray != nullptr) delete triangleVertexArray;
 }

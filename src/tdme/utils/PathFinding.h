@@ -116,7 +116,7 @@ public:
 		result.reserve(sizeof(value) * 3);
 		value = static_cast<int>(Math::ceil(x / stepSize));
 		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(Math::ceil(y / stepSize));
+		value = static_cast<int>(Math::ceil(y / 0.1f));
 		result.append((char*)&value, sizeof(value));
 		value = static_cast<int>(Math::ceil(z / stepSize));
 		result.append((char*)&value, sizeof(value));
@@ -226,11 +226,12 @@ public:
 	 * @param height y stepped up
 	 * @param stepSize step size
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
+	 * @param flowMapRequest flow map request
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @param ignoreStepUpMax ignore step up max
 	 * @return if cell is walkable
 	 */
-	bool isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
+	bool isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
 	/**
 	 * Create flow map
@@ -347,11 +348,12 @@ private:
 	 * @param height y stepped up
 	 * @param stepSize step size
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
+	 * @param flowMapRequest flow map request
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @param ignoreStepUpMax ignore step up max
 	 * @return if cell is walkable
 	 */
-	bool isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
+	bool isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
 	/**
 	 * Checks if a cell is slope walkable
@@ -366,7 +368,7 @@ private:
 	 * @param collisionTypeIds collision type ids or 0 for default
 	 * @return if cell is walkable
 	 */
-	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds = 0);
+	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds = 0);
 
 	/**
 	 * Processes one step in AStar path finding
@@ -374,10 +376,10 @@ private:
 	 * @param stepSize step size
 	 * @param scaleActorBoundingVolumes scale actor bounding volumes
 	 * @param nodesToTest nodes to test or nullptr, applies to flow cost map generation
-	 * @param zeroHeightInId have no height stored in ids, applies to flow cost map generation
+	 * @param flowMapRequest flow map request
 	 * @return step status
 	 */
-	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTest, bool zeroHeightInId);
+	void step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTest, bool flowMapRequest);
 
 	// properties
 	World* world { nullptr };

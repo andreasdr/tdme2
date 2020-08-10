@@ -43,6 +43,7 @@ BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
 BatchRendererPoints::~BatchRendererPoints()
 {
 	delete fbVerticesByteBuffer;
+	delete sbSpriteIndicesByteBuffer;
 	delete fbColorsByteBuffer;
 }
 

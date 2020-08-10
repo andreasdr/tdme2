@@ -4,13 +4,19 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingVolume;
+using tdme::utils::ObjectDeleter;
 
 /** 
  * Engine with physics test 3
@@ -22,16 +28,18 @@ class tdme::tests::PhysicsTest4 final
 {
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
-	Engine* engine {  };
-	bool keyLeft {  };
-	bool keyRight {  };
-	bool keyUp {  };
-	bool keyDown {  };
-	World* world {  };
+	Engine* engine { nullptr };
+	bool keyLeft { false };
+	bool keyRight { false };
+	bool keyUp { false };
+	bool keyDown { false };
+	World* world { nullptr };
+	ObjectDeleter<Model> modelDeleter;
+	ObjectDeleter<BoundingVolume> bvDeleter;
 
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
@@ -40,9 +48,17 @@ public:
 
 public:
 
-	/** 
-	 * Display
+	/**
+	 * Public constructor
 	 */
+	PhysicsTest4();
+
+	/**
+	 * Public destructor
+	 */
+	~PhysicsTest4();
+
+	// overriden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;
@@ -59,8 +75,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	PhysicsTest4();
 };

@@ -36,7 +36,7 @@ int64_t AnimationSetup::computeDuration()
 
 int64_t AnimationSetup::computeDuration(int32_t startFrame, int32_t endFrame)
 {
-	return static_cast< int64_t >(
-		static_cast< float >((endFrame - startFrame + 1)) / model->getFPS() * 1000.0f
+	return static_cast<int64_t>(
+		static_cast<float>(endFrame - startFrame + 1) / model->getFPS() * 1000.0f
 	);
 }

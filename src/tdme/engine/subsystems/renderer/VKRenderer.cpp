@@ -1689,15 +1689,25 @@ bool VKRenderer::isNormalMappingAvailable()
 	return true;
 }
 
+bool VKRenderer::isInstancedRenderingAvailable() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	return true;
+}
+
 bool VKRenderer::isPBRAvailable()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
-bool VKRenderer::isInstancedRenderingAvailable() {
+bool VKRenderer::isComputeShaderAvailable() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
+}
+
+bool VKRenderer::isGLCLAvailable() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	return false;
 }
 
 bool VKRenderer::isUsingShortIndices() {

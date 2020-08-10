@@ -156,9 +156,18 @@ void computeLights(in vec3 normal, in vec3 position, in vec3 eyeDirection) {
  
 void main(void) {
 	#if defined(HAVE_TREE)
-		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]));
+		mat4 shaderTransformMatrix = createTreeTransformMatrix(
+			inOrigin,
+			inVertex * mat3(modelMatrix),
+			vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2])
+		);
 	#elif defined(HAVE_FOLIAGE)
-		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]));
+		mat4 shaderTransformMatrix =
+			createFoliageTransformMatrix(
+				inOrigin,
+				inVertex * mat3(modelMatrix),
+				vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2])
+			);
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif

@@ -66,6 +66,7 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glsl") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".vert") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".frag") == true) return true;
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".cl") == true) return true;
 				// audio
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ogg") == true) return true;
 				// models

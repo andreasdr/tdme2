@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
@@ -11,6 +12,7 @@ using std::string;
 using std::to_string;
 
 using tdme::tests::AngleTest;
+using tdme::engine::primitives::LineSegment;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 

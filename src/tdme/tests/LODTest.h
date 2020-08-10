@@ -2,12 +2,18 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
-#include "../application/InputEventHandler.h"
+#include <tdme/application/InputEventHandler.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingVolume;
+using tdme::utils::ObjectDeleter;
 
 /** 
  * LOD test
@@ -18,7 +24,7 @@ class tdme::tests::LODTest final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
-	Engine* engine {  };
+	Engine* engine { nullptr };
 
 	bool keyLeft { false };
 	bool keyRight { false };
@@ -28,8 +34,9 @@ private:
 	bool keyD { false };
 	bool keyW { false };
 	bool keyS { false };
-
 	float camRotationY { 0.0f };
+	ObjectDeleter<Model> modelDeleter;
+	ObjectDeleter<BoundingVolume> bvDeleter;
 
 public:
 
@@ -39,7 +46,13 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
+
+	/**
+	 * Public constructor
+	 */
+	LODTest();
+
+	// overriden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;
@@ -56,8 +69,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	LODTest();
 };

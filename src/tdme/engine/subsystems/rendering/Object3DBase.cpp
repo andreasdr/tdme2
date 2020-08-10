@@ -81,6 +81,9 @@ Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProc
 }
 
 Object3DBase::~Object3DBase() {
+	for (auto i = 0; i < instances; i++) {
+		delete instanceAnimations[i];
+	}
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		delete object3dGroups[i];
 	}

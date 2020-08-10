@@ -12,7 +12,7 @@ using std::find;
 namespace tdme {
 namespace utils {
 
-/** 
+/**
  * Vector iterator template to be used to iterate multiple vectors at a single invocation
  * @author Andreas Drewke
  * @version $Id$
@@ -27,14 +27,14 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Clears list of array lists to iterate
 	 */
 	void clear() {
 		vectorList.clear();
 	}
 
-	/** 
+	/**
 	 * Adds vector to iterator
 	 * @param vector vector
 	 */
@@ -43,7 +43,7 @@ public:
 		vectorList.push_back(vector);
 	}
 
-	/** 
+	/**
 	 * Resets vector iterator for iterating
 	 * @return this vector iterator
 	 */
@@ -85,7 +85,7 @@ public:
 		return this;
 	}
 
-	/** 
+	/**
 	 * Clones this iterator
 	 */
 	VectorIteratorMultiple<T>* clone() {
@@ -93,7 +93,7 @@ public:
 	}
 
 	/**
-	 * Publoic constructor
+	 * Public constructor
 	 */
 	VectorIteratorMultiple() {
 		reset();

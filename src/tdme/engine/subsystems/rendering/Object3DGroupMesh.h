@@ -9,6 +9,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>

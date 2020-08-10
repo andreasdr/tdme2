@@ -19,6 +19,7 @@ namespace model {
 	class ModelHelper;
 	class ModelHelper_VertexOrder;
 	class PBRMaterialProperties;
+	class ShaderModel;
 	class UpVector;
 	class RotationOrder;
 	class Skinning;

@@ -18,6 +18,7 @@
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -51,6 +52,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
@@ -83,9 +85,10 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 		(version[0] != 1 || version[1] != 9 || version[2] != 10) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 11) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 12) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 13)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 13) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 14)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -96,6 +99,10 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	auto name = is.readString();
 	auto upVector = UpVector::valueOf(is.readString());
 	auto rotationOrder = RotationOrder::valueOf(is.readString());
+	auto shaderModel = ShaderModel::SPECULAR;
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+		shaderModel = ShaderModel::valueOf(is.readString());
+	}
 	array<float, 3> boundingBoxMinXYZ;
 	is.readFloatArray(boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
@@ -108,6 +115,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 		rotationOrder,
 		boundingBox
 	);
+	model->setShaderModel(shaderModel);
 	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
 	is.readFloatArray(importTransformationsMatrixArray);
@@ -196,19 +204,22 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 13) ) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 13)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
 	m->setSpecularMaterialProperties(smp);
-	if (version[0] == 1 && version[1] == 9 && version[2] == 13) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 13) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
 		if (is->readBoolean() == true) {
 			auto pmp = new PBRMaterialProperties();
 			is->readFloatArray(colorRGBAArray);
@@ -249,7 +260,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 	auto speed = 1.0f;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 13)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromGroupId.length() == 0) {

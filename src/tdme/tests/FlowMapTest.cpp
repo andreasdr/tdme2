@@ -76,6 +76,14 @@ FlowMapTest::FlowMapTest()
 	timeLastUpdate = -1;
 }
 
+FlowMapTest::~FlowMapTest() {
+	if (flowMap != nullptr) flowMap->releaseReference();
+	delete world;
+	delete emptyModel;
+	delete playerModelEntity;
+	delete pathFinding;
+}
+
 void FlowMapTest::main(int argc, char** argv)
 {
 	auto flowMapTest = new FlowMapTest();

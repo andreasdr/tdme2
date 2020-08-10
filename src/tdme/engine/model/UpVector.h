@@ -20,8 +20,8 @@ class tdme::engine::model::UpVector final
 	friend class Model;
 
 public:
-	static UpVector *Y_UP;
-	static UpVector *Z_UP;
+	static UpVector* Y_UP;
+	static UpVector* Z_UP;
 
 public:
 	UpVector(const string& name, int ordinal);

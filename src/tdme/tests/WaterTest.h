@@ -2,11 +2,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
+using tdme::utils::ObjectDeleter;
 
 /** 
  * Water shader test
@@ -17,7 +21,8 @@ class tdme::tests::WaterTest final
 	: public virtual Application
 {
 private:
-	Engine* engine {  };
+	Engine* engine { nullptr };
+	ObjectDeleter<Model> modelDeleter;
 
 public:
 
@@ -27,14 +32,15 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
-	void display() override;
-	void dispose() override;
-	void initialize() override;
-	void reshape(int32_t width, int32_t height) override;
 
 	/**
 	 * Public constructor
 	 */
 	WaterTest();
+
+	// overriden methods
+	void display() override;
+	void dispose() override;
+	void initialize() override;
+	void reshape(int32_t width, int32_t height) override;
 };

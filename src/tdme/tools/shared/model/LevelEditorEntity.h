@@ -32,7 +32,7 @@ using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
-/** 
+/**
  * Level Editor Model
  * @author Andreas Drewke
  * @version $Id$
@@ -67,8 +67,8 @@ private:
 	vector<LevelEditorEntityParticleSystem*> particleSystems;
 	LevelEditorEntityModel* modelSettings { nullptr };
 	bool renderGroups;
-	string shaderId;
-	string distanceShaderId;
+	string shaderId { "default"};
+	string distanceShaderId { "default"};
 	float distanceShaderDistance;
 	bool contributesShadows;
 	bool receivesShadows;
@@ -79,28 +79,47 @@ private:
 
 public:
 
-	/** 
+	/**
+	 * Creates a level editor model
+	 * @param id id
+	 * @param entityType entity type
+	 * @param name name
+	 * @param description description
+	 * @param entityFileName entity file name
+	 * @param fileName file name
+	 * @param thumbnail thumbnail
+	 * @param model model
+	 * @param pivot pivot
+	 */
+	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LevelEditorEntity();
+
+	/**
 	 * @return id
 	 */
 	inline int32_t getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return entity type
 	 */
 	inline LevelEditorEntity_EntityType* getType() {
 		return type;
 	}
 
-	/** 
+	/**
 	 * @return name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
-	/** 
+	/**
 	 * Set up model name
 	 * @param name name
 	 */
@@ -108,14 +127,14 @@ public:
 		this->name = name;
 	}
 
-	/** 
+	/**
 	 * @return description
 	 */
 	inline const string& getDescription() {
 		return description;
 	}
 
-	/** 
+	/**
 	 * Set up model description
 	 * @param description description
 	 */
@@ -123,14 +142,14 @@ public:
 		this->description = description;
 	}
 
-	/** 
+	/**
 	 * @return entity file name
 	 */
 	inline const string& getEntityFileName() {
 		return entityFileName;
 	}
 
-	/** 
+	/**
 	 * Set entity file name
 	 * @param entityFileName entity file name
 	 */
@@ -138,26 +157,40 @@ public:
 		this->entityFileName = entityFileName;
 	}
 
-	/** 
+	/**
 	 * @return file name
 	 */
 	inline const string& getFileName() {
 		return fileName;
 	}
 
-	/** 
+	/**
+	 * Set file name
+	 * @param fileName file name
+	 */
+	inline void setFileName(const string& fileName) {
+		this->fileName = fileName;
+	}
+
+	/**
 	 * @return thumbnail
 	 */
 	inline const string& getThumbnail() {
 		return thumbnail;
 	}
 
-	/** 
+	/**
 	 * @return model
 	 */
 	inline Model* getModel() {
 		return model;
 	}
+
+	/**
+	 * Set model
+	 * @param model model
+	 */
+	void setModel(Model* model);
 
 	/**
 	 * @return pivot
@@ -166,14 +199,14 @@ public:
 		return pivot;
 	}
 
-	/** 
+	/**
 	 * @return bounding volume count
 	 */
 	inline int32_t getBoundingVolumeCount() {
 		return boundingVolumes.size();
 	}
 
-	/** 
+	/**
 	 * Get bounding volume at
 	 * @param idx idx
 	 * @return level editor object bounding volume
@@ -182,7 +215,7 @@ public:
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
-	/** 
+	/**
 	 * Add bounding volume
 	 * @param idx idx
 	 * @param levelEditorEntityBoundingVolume level editor entity bounding volume
@@ -190,7 +223,7 @@ public:
 	 */
 	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
 
-	/** 
+	/**
 	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
 	 */
 	void setDefaultBoundingVolumes();
@@ -228,7 +261,7 @@ public:
 	 */
 	void setLODLevel3(LevelEditorEntityLODLevel* lodLevel);
 
-	/** 
+	/**
 	 * @return particle systems count
 	 */
 	inline int32_t getParticleSystemsCount() {
@@ -449,22 +482,4 @@ public:
 		distanceShaderParameters = parameters;
 	}
 
-	/**
-	 * Creates a level editor model
-	 * @param id id
-	 * @param entityType entity type
-	 * @param name name
-	 * @param description description
-	 * @param entityFileName entity file name
-	 * @param fileName file name
-	 * @param thumbnail thumbnail
-	 * @param model model
-	 * @param pivot pivot
-	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~LevelEditorEntity();
 };

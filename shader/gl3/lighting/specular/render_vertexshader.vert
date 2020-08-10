@@ -61,9 +61,16 @@ out vec3 vsEyeDirection;
 
 void main(void) {
 	#if defined(HAVE_TREE)
-		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
+		mat4 shaderTransformMatrix = createTreeTransformMatrix(
+			inOrigin,
+			inVertex * mat3(inModelMatrix),
+			vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2])
+		);
 	#elif defined(HAVE_FOLIAGE)
-		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
+		mat4 shaderTransformMatrix = createFoliageTransformMatrix(
+			inOrigin,
+			inVertex * mat3(inModelMatrix),
+			vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif

@@ -36,8 +36,8 @@ private:
 		bool applyPostProcessing;
 		int32_t renderTypes;
 		Color4 clearColor;
-		bool renderSun;
-		bool skipOnSunNotVisible;
+		bool renderLightSource;
+		bool skipOnLightSourceNotVisible;
 	};
 	struct PostProcessingProgramStep {
 		string shaderId;
@@ -68,8 +68,8 @@ public:
 	 * @param applyPostProcessing apply post processing
 	 * @param renderTypes render types
 	 * @param clearColor clear color
-	 * @param renderSun render sun
-	 * @param skipOnSunNotVisible skip on sun not visible
+	 * @param renderLightSource render light source
+	 * @param skipOnLightSourceNotVisible skip on light source not visible
 	 */
 	void addEffectPass(
 		int effectPassIdx,
@@ -81,8 +81,8 @@ public:
 		bool applyPostProcessing,
 		int32_t renderTypes,
 		Color4 clearColor,
-		bool renderSun,
-		bool skipOnSunNotVisible
+		bool renderLightSource,
+		bool skipOnLightSourceNotVisible
 	);
 
 	/**

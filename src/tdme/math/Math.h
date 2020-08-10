@@ -236,6 +236,15 @@ public:
 	}
 
 	/**
+	 * Returns the rounded value of given float value
+	 * @param value value
+	 * @return rounded value
+	 */
+	inline static float round(float value) {
+		return std::round(value);
+	}
+
+	/**
 	 * Returns the value of the value 1 raised to the power of value2
 	 * @param value1 value 1
 	 * @param value2 value 2

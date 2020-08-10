@@ -135,21 +135,25 @@ bool GLES2Renderer::isNormalMappingAvailable()
 	return false;
 }
 
+bool GLES2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
 bool GLES2Renderer::isPBRAvailable()
 {
 	return false;
 }
 
-bool GLES2Renderer::isInstancedRenderingAvailable() {
+bool GLES2Renderer::isComputeShaderAvailable() {
+	return false;
+}
+
+bool GLES2Renderer::isGLCLAvailable() {
 	return false;
 }
 
 bool GLES2Renderer::isUsingShortIndices() {
 	return true;
-}
-
-bool GLES2Renderer::isGeometryShaderAvailable() {
-	return false;
 }
 
 int32_t GLES2Renderer::getTextureUnits()

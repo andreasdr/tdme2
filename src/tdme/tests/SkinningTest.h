@@ -4,11 +4,17 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingVolume;
+using tdme::utils::ObjectDeleter;
 
 /** 
  * LOD test
@@ -32,6 +38,9 @@ private:
 
 	float camRotationY { 0.0f };
 
+	ObjectDeleter<Model> modelDeleter;
+	ObjectDeleter<BoundingVolume> bvDeleter;
+
 public:
 
 	/** 
@@ -40,7 +49,7 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
+
 	void display() override;
 	void dispose() override;
 	void initialize() override;

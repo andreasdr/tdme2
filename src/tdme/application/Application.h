@@ -263,7 +263,7 @@ private:
 	static int64_t timeLast;
 	static bool limitFPS;
 	string title;
-	int exitCode;
+	int exitCode { 0 };
 
 	#if defined(VULKAN) || defined(GLFW3)
 		static GLFWwindow* glfwWindow;

@@ -5,13 +5,21 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
+#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::engine::physics::World;
 using tdme::engine::model::Model;
+using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::model::Model;
+using tdme::utils::ObjectDeleter;
+using tdme::tools::shared::model::LevelEditorEntity;
 
 /** 
  * Ray Tracing Test
@@ -24,8 +32,8 @@ class tdme::tests::RayTracingTest final
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };
 	static constexpr int32_t BOX_COUNT { 4 };
-	Engine* engine {  };
-	World* world {  };
+	Engine* engine { nullptr };
+	World* world { nullptr };
 
 	bool keyLeft { false };
 	bool keyRight { false };
@@ -37,8 +45,10 @@ private:
 
 	float rotationY { 0.0f };
 	float rotationX { 0.0f };
-
 	Model* entityBoundingVolumeModel { nullptr };
+	ObjectDeleter<LevelEditorEntity> levelEditorEntityDeleter;
+	ObjectDeleter<Model> modelDeleter;
+	ObjectDeleter<BoundingVolume> bvDeleter;
 public:
 
 	/** 
@@ -47,7 +57,18 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
+
+	/**
+	 * Public constructor
+	 */
+	RayTracingTest();
+
+	/**
+	 * Public destructor
+	 */
+	~RayTracingTest();
+
+	// overriden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;
@@ -64,8 +85,4 @@ public:
 	void onMouseButton(int button, int state, int x, int y) override;
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/**
-	 * Public constructor
-	 */
-	RayTracingTest();
 };

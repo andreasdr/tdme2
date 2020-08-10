@@ -21,9 +21,18 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 class tdme::engine::subsystems::manager::MeshManager final
 {
 private:
-	map<string, MeshManager_MeshManaged*> meshes {  };
+	map<string, MeshManager_MeshManaged*> meshes;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	MeshManager();
+
+	/**
+	 * Destructor
+	 */
+	~MeshManager();
 
 	/** 
 	 * Get mesh from managed meshes
@@ -45,13 +54,4 @@ public:
 	 */
 	void removeMesh(const string& meshId);
 
-	/**
-	 * Public constructor
-	 */
-	MeshManager();
-
-	/**
-	 * Destructor
-	 */
-	~MeshManager();
 };

@@ -12,4 +12,5 @@ out vec4 outColor;
 // main
 void main(void) {
 	outColor = texture(textureUnit, vsFragTextureUV);
+	gl_FragDepth = 1.0;
 }

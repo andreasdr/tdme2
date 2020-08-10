@@ -16,3 +16,7 @@ MeshManager_MeshManaged::MeshManager_MeshManaged(const string& id, Object3DGroup
 	this->id = id;
 	this->mesh = mesh;
 }
+
+MeshManager_MeshManaged::~MeshManager_MeshManaged() {
+	delete mesh;
+}

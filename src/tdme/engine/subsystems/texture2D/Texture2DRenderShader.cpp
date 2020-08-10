@@ -89,27 +89,27 @@ void Texture2DRenderShader::unUseProgram()
 	isRunning = false;
 }
 
-void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& position, const Vector2& dimension, int textureId) {
+void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& position, const Vector2& dimension, int textureId, int width, int height) {
 		//
 	auto context = renderer->getDefaultContext();
 
 	//
-	auto screenWidth = engine->getWidth();
-	auto screenHeight = engine->getHeight();
-	float left = position.getX();
-	float top = position.getY();
-	float width = dimension.getX();
-	float height = dimension.getY();
+	auto screenWidth = width != -1?width:(engine->getScaledWidth() == -1?engine->getWidth():engine->getScaledWidth());
+	auto screenHeight = height != -1?height:(engine->getScaledHeight() == -1?engine->getHeight():engine->getScaledHeight());
+	float textureLeft = position.getX();
+	float textureTop = position.getY();
+	float textureWidth = dimension.getX();
+	float textureHeight = dimension.getY();
 
 	// 
-	auto x0 = ((left) / (screenWidth / 2.0f)) - 1.0f;
-	auto y0 = ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f;
-	auto x1 = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
-	auto y1 = ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f;
-	auto x2 = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
-	auto y2 = ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f;
-	auto x3 = ((left) / (screenWidth / 2.0f)) - 1.0f;
-	auto y3 = ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f;
+	auto x0 = ((textureLeft) / (screenWidth / 2.0f)) - 1.0f;
+	auto y0 = ((screenHeight - textureTop) / (screenHeight / 2.0f)) - 1.0f;
+	auto x1 = ((textureLeft + textureWidth) / (screenWidth / 2.0f)) - 1.0f;
+	auto y1 = ((screenHeight - textureTop) / (screenHeight / 2.0f)) - 1.0f;
+	auto x2 = ((textureLeft + textureWidth) / (screenWidth / 2.0f)) - 1.0f;
+	auto y2 = ((screenHeight - textureTop - textureHeight) / (screenHeight / 2.0f)) - 1.0f;
+	auto x3 = ((textureLeft) / (screenWidth / 2.0f)) - 1.0f;
+	auto y3 = ((screenHeight - textureTop - textureHeight) / (screenHeight / 2.0f)) - 1.0f;
 
 	// texture coordinates
 	{
@@ -181,4 +181,5 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 	// enabe culling
 	renderer->enableCulling(context);
 	renderer->disableBlending();
+
 }

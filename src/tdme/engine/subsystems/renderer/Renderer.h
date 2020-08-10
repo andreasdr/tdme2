@@ -66,6 +66,9 @@ public:
 	int32_t LIGHTING_SPECULAR;
 	int32_t LIGHTING_PBR;
 
+	int32_t UNIFORM_CL_SKINNING_VERTEX_COUNT;
+	int32_t UNIFORM_CL_SKINNING_MATRIX_COUNT;
+	int32_t UNIFORM_CL_SKINNING_INSTANCE_COUNT;
 protected:
 	int32_t viewPortX;
 	int32_t viewPortY;
@@ -159,25 +162,30 @@ public:
 	virtual bool isNormalMappingAvailable() = 0;
 
 	/**
-	 * @return if PBR lighting is supported
-	 */
-	virtual bool isPBRAvailable() = 0;
-
-	/**
 	 * Checks if instanced rendering is available
 	 * @return instance rendering availability
 	 */
 	virtual bool isInstancedRenderingAvailable() = 0;
 
 	/**
+	 * @return if PBR lighting is supported
+	 */
+	virtual bool isPBRAvailable() = 0;
+
+	/**
+	 * @return if compute shaders are available
+	 */
+	virtual bool isComputeShaderAvailable() = 0;
+
+	/**
+	 * @return if OpenGL+CL is available
+	 */
+	virtual bool isGLCLAvailable() = 0;
+
+	/**
 	 * @return Returns if renderer is using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
-
-	/**
-	 * @return If geometry shader is available
-	 */
-	virtual bool isGeometryShaderAvailable() = 0;
 
 	/**
 	 * @return number of texture units

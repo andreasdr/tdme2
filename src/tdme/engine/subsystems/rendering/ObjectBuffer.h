@@ -19,7 +19,7 @@ using std::vector;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::ObjectBuffer
+class tdme::engine::subsystems::rendering::ObjectBuffer final
 {
 	friend class Object3DGroupMesh;
 	friend class EntityRenderer;
@@ -38,6 +38,11 @@ private:
 	 * Initialize object buffer per thread
 	 */
 	static void initialize();
+
+	/**
+	 * Disposes object buffer per thread
+	 */
+	static void dispose();
 
 public:
 	/** 

@@ -49,6 +49,14 @@ void MathOperatorTest::testVector2Operators()
 		Console::println(string(this->fail));
 	}
 
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((v1 != v2) == (v1.equals(v2) == false)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
 	// operator +
 	Console::print(string("operator +: "));
 	if (v2 + v1 == v3.add(v1)) {
@@ -154,6 +162,14 @@ void MathOperatorTest::testVector3Operators()
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((v1 == v1) == (v1.equals(v1) )) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((v1 != v2) == (v1.equals(v2) == false)) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));
@@ -268,6 +284,14 @@ void MathOperatorTest::testVector4Operators() {
 		Console::println(string(this->fail));
 	}
 
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((v1 != v2) == (v1.equals(v2) == false)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
 	// operator +
 	Console::print(string("operator +: "));
 	if (v2 + v1 == v3.add(v1)) {
@@ -370,9 +394,16 @@ void MathOperatorTest::testQuaternionOperators() {
 	Console::println(string("\nQuaternion operators\n-----------------"));
 
 	// operator ==
-
 	Console::print(string("operator ==: "));
 	if ((q1 == q1) == (q1.equals(q1) )) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((q1 != q2) == (q1.equals(q2) == false)) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));
@@ -500,6 +531,14 @@ void MathOperatorTest::testMatrix2D3x3Operators() {
 		Console::println(string(this->fail));
 	}
 
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((m1 != m2) == (m1.equals(m2) == false)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
 	// operator *
 	Console::print(string("operator *(float): "));
 	if (m2 * f == m3.scale(f)) {
@@ -548,6 +587,14 @@ void MathOperatorTest::testMatrix4x4Operators() {
 	// operator ==
 	Console::print(string("operator ==: "));
 	if ((m1 == m1) == (m1.equals(m1) )) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	// operator !=
+	Console::print(string("operator !=: "));
+	if ((m1 != m2) == (m1.equals(m2) == false)) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));

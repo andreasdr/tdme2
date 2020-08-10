@@ -69,7 +69,9 @@ public:
 	 * @param position 2D position on screen
 	 * @param dimension 2D dimenson on screen
 	 * @param textureId texture id
+	 * @param width optional render target width
+	 * @param height optional render target height
 	 */
-	void renderTexture(Engine* engine, const Vector2& position, const Vector2& dimension, int textureId);
+	void renderTexture(Engine* engine, const Vector2& position, const Vector2& dimension, int textureId, int width = -1, int height = -1);
 
 };

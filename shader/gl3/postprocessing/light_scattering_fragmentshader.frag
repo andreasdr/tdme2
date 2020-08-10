@@ -24,17 +24,24 @@ out vec4 outColor;
 
 // main
 void main(void) {
-	vec2 deltaTextureCoordinate = vec2(vsFragTextureUV.xy - vec2(textureLightPositionX, textureLightPositionY));
+	vec2 deltaTextureCoordinateTotal = vsFragTextureUV - vec2(textureLightPositionX, textureLightPositionY);
+	vec2 deltaTextureCoordinate = deltaTextureCoordinateTotal;
 	vec2 textureCoordinate = vsFragTextureUV.xy;
 	deltaTextureCoordinate *= 1.0 /  float(SAMPLES) * DENSITY;
 	float illuminationDecay = 1.0;
 	outColor = vec4(0.0, 0.0, 0.0, 0.0);
-	for(int i = 0; i < SAMPLES; i++) {
-		vec4 sample = texture(colorBufferTextureUnit, textureCoordinate);
-		sample*= illuminationDecay * WEIGHT;
-		outColor+= sample;
-		illuminationDecay *= DECAY;
-		textureCoordinate -= deltaTextureCoordinate;
+	if (length(deltaTextureCoordinateTotal - deltaTextureCoordinate) < 0.5) {
+		for(int i = 0; i < SAMPLES; i++) {
+			float lengthAtFragment = length(deltaTextureCoordinateTotal - deltaTextureCoordinate);
+			if (lengthAtFragment >= 0.5) {
+				break;
+			}
+			vec4 sample = texture(colorBufferTextureUnit, textureCoordinate);
+			sample*= illuminationDecay * WEIGHT;
+			outColor+= sample * (1.0 - (clamp(lengthAtFragment, 0.0, 0.5) / 0.5));
+			illuminationDecay *= DECAY;
+			textureCoordinate -= deltaTextureCoordinate;
+		}
 	}
 	outColor*= EXPOSURE;
 	outColor.a = 0.5 * intensity;

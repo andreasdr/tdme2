@@ -45,6 +45,7 @@ GUIFont::GUIFont()
 
 GUIFont::~GUIFont()
 {
+	for (auto& charIt: chars) delete charIt.second;
 	if (texture != nullptr) texture->releaseReference();
 }
 

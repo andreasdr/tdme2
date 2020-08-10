@@ -154,13 +154,14 @@ MutableString& MutableString::append(float f, int32_t decimals)
 MutableString& MutableString::insert(int32_t idx, float f, int32_t decimals)
 {
 	// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	auto integer = static_cast< int32_t >(f);
+	auto integer = static_cast<int>(f);
 	for (auto i = 0; i < decimals; i++) {
-		auto integerDecimal = static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i + 1))) - (10 * static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i))));
-		insert(idx + i, integerDecimal);
+		auto integerDecimal = static_cast<int>(((f - integer) * Math::pow(10.0f, i + 1))) - (10 * static_cast<int>(((f - integer) * Math::pow(10.0f, i))));
+		insert(idx + i, Math::abs(integerDecimal));
 	}
 	insert(idx, '.');
-	insert(idx, integer);
+	insert(idx, Math::abs(integer));
+	if (f < 0.0) insert(idx, '-');
 	return *this;
 }
 

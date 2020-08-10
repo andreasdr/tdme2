@@ -11,6 +11,18 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
 
+void LineSegment::computeClosestPointOnLineSegment(const Vector3& p1, const Vector3& q1, const Vector3& p, Vector3& c) {
+	// see https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
+	Vector3 lineDirection = q1.clone().sub(p1);
+	float lineLength = lineDirection.computeLength();
+	lineDirection.normalize();
+	Vector3 pSubP1 = p.clone().sub(p1);
+	float t = Vector3::computeDotProduct(pSubP1, lineDirection);
+	if (t < 0.0f) t = 0.0f;
+	if (t > lineLength) t = lineLength;
+	c.set(p1).add(lineDirection.scale(t));
+}
+
 bool LineSegment::doesLineSegmentsCollide(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2, Vector3& p)
 {
 	Vector3 c1;

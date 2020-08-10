@@ -31,7 +31,7 @@ using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
-/** 
+/**
  * TDME model editor view
  * @author Andreas Drewke
  * @version $Id$
@@ -93,7 +93,7 @@ private:
 	 * @return level editor entity
 	 * @throws tdme::utils::Exception
 	 */
-	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * On rotation event to be overloaded
@@ -107,17 +107,17 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return pop up views
 	 */
 	virtual PopUps* getPopUpsViews();
 
-	/** 
+	/**
 	 * @return entity
 	 */
 	virtual LevelEditorEntity* getEntity();
 
-	/** 
+	/**
 	 * Set entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
@@ -127,7 +127,12 @@ public:
 	 */
 	virtual void resetEntity();
 
-	/** 
+	/**
+	 * Reimport entity
+	 */
+	virtual void reimportEntity();
+
+	/**
 	 * @return current model file name
 	 */
 	virtual const string& getFileName();
@@ -143,22 +148,33 @@ public:
 	 */
 	void setLodLevel(int lodLevel);
 
-	/** 
+	/**
 	 * Issue file loading
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	virtual void loadFile(const string& pathName, const string& fileName);
 
-	/** 
-	 * Triggers saving a map
+	/**
+	 * Issue reimport model file
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
-	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	virtual void reimportModel(const string& pathName, const string& fileName);
 
-	/** 
+	/**
+	 * Triggers saving a map
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	virtual void saveFile(const string& pathName, const string& fileName);
+
+	/**
 	 * Issue file reloading
 	 */
 	virtual void reloadFile();
 
-	/** 
+	/**
 	 * Apply pivot
 	 * @param x x
 	 * @param y y
@@ -174,17 +190,17 @@ public:
 	// overriden methods
 	void handleInputEvents() override;
 
-	/** 
+	/**
 	 * Renders the scene 
 	 */
 	void display() override;
 
-	/** 
+	/**
 	 * Init GUI elements
 	 */
 	virtual void updateGUIElements();
 
-	/** 
+	/**
 	 * On init additional screens
 	 */
 	virtual void onInitAdditionalScreens();
@@ -196,14 +212,14 @@ public:
 	void dispose() override;
 	void playSound(const string& soundId) override;
 
-	/** 
+	/**
 	 * On load model
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
 	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * On set entity data hook
 	 */
 	virtual void onSetEntityData();

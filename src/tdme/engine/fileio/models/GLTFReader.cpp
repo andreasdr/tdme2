@@ -25,6 +25,7 @@
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -58,6 +59,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
@@ -98,6 +100,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		nullptr,
 		model::Model::AUTHORINGTOOL_UNKNOWN
 	);
+	model->setShaderModel(ShaderModel::PBR);
 
 	// parse nodes aka scene
 	for (auto& gltfScene: gltfModel.scenes) {

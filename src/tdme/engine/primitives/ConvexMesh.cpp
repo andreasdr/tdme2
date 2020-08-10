@@ -11,13 +11,15 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/IntBuffer.h>
@@ -26,20 +28,26 @@ using std::array;
 using std::find;
 using std::reverse;
 using std::map;
+using std::sort;
 using std::string;
 using std::to_string;
+using std::unique;
 using std::unordered_set;
 using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
+using tdme::engine::model::ModelHelper;
+using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 using tdme::utils::Float;
+using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 
 ConvexMesh::ConvexMesh()
 {
@@ -47,25 +55,36 @@ ConvexMesh::ConvexMesh()
 
 ConvexMesh::~ConvexMesh()
 {
-	if (collisionShape != nullptr) delete collisionShape;
 	if (polyhedronMesh != nullptr) delete polyhedronMesh;
 	if (polygonVertexArray != nullptr) delete polygonVertexArray;
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 }
 
-bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
+inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
+	for (auto& triangleVertex: triangle.getVertices()) {
+		if (triangleVertex.equals(vertex) == true) return true;
+	}
 	// see: http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
 	Vector3 v1;
 	Vector3 v2;
 	Vector3 v3;
 	Vector3 v2v3Cross;
-	v1.set(triangle.getVertices()[1]).sub(triangle.getVertices()[0]);
-	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]);
+	v1.set(triangle.getVertices()[1]).sub(triangle.getVertices()[0]).normalize();
+	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]).normalize();
 	v3.set(vertex).sub(triangle.getVertices()[0]);
-	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross));
-	// What is best threshold here?
+	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross).normalize());
 	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
+}
+
+inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2) {
+	auto equalVertices = 0;
+	for (auto& triangle1Vertex: triangle1.getVertices()) {
+		for (auto& triangle2Vertex: triangle2.getVertices()) {
+			if (triangle1Vertex.equals(triangle2Vertex)) equalVertices++;
+		}
+	}
+	return equalVertices == 2;
 }
 
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
@@ -118,7 +137,9 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		faces.push_back(face);
 		indexIdx+= faceVerticesCount;
 	}
-	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
+
+	//
+	polygonVertexArray = new reactphysics3d::PolygonVertexArray(
 		vertices.size(),
 		verticesByteBuffer->getBuffer(),
 		3 * sizeof(float),
@@ -129,7 +150,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
 		reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
 	);
-	auto polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
+	polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
 	// create convex mesh shape
 	auto convexMeshShape = new reactphysics3d::ConvexMeshShape(polyhedronMesh);
 	// set up new collision shape
@@ -150,6 +171,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 	{
 		auto triangle1Idx = 0;
 		unordered_set<int> trianglesProcessed;
+
 		for (auto& triangle1: triangles) {
 			if (trianglesProcessed.find(triangle1Idx) != trianglesProcessed.end()) {
 				triangle1Idx++;
@@ -157,34 +179,41 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 			}
 			trianglesCoplanar[triangle1Idx].push_back(&triangle1);
 			trianglesProcessed.insert(triangle1Idx);
-			auto triangle2Idx = 0;
-			for (auto& triangle2: triangles) {
-				if (trianglesProcessed.find(triangle2Idx) != trianglesProcessed.end()) {
+			auto triangle2Added = 0;
+			do {
+				auto triangle2Idx = 0;
+				triangle2Added = 0;
+				for (auto& triangle2: triangles) {
+					if (trianglesProcessed.find(triangle2Idx) != trianglesProcessed.end()) {
+						triangle2Idx++;
+						continue;
+					}
+					auto adjacent = areTrianglesAdjacent(triangle1, triangle2);
+					auto triangle2OnTriangle1Plane =
+						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[0]) &&
+						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[1]) &&
+						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[2]);
+					if (adjacent == true && triangle2OnTriangle1Plane == true) {
+						trianglesCoplanar[triangle1Idx].push_back(&triangle2);
+						trianglesProcessed.insert(triangle2Idx);
+						triangle2Added++;
+					}
 					triangle2Idx++;
-					continue;
 				}
-				auto triangle2OnTriangle1Plane =
-					isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[0]) &&
-					isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[1]) &&
-					isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[2]);
-				if (triangle2OnTriangle1Plane == true) {
-					trianglesCoplanar[triangle1Idx].push_back(&triangle2);
-					trianglesProcessed.insert(triangle2Idx);
-				}
-				triangle2Idx++;
-			}
+			} while (triangle2Added > 0);
 			triangle1Idx++;
 		}
 	}
 
 	// iterate triangles that are coplanar and build a polygon
-	for (auto trianglesCoplanarIt: trianglesCoplanar) {
+	for (auto& trianglesCoplanarIt: trianglesCoplanar) {
+		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
+
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
 
 		// determine polygon vertices
-		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
-		for (auto triangle: trianglesCoplanarVector) {
+		for (auto& triangle: trianglesCoplanarVector) {
 			for (auto& triangleVertex: triangle->getVertices()) {
 				bool foundVertex = false;
 				for (auto& polygonVertex: polygonVertices) {
@@ -199,6 +228,65 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 			}
 		}
 
+		// remove vertices that live on the line 2 other 2 vertices span
+		/*
+		{
+			vector<int> polygonVerticesToRemove;
+			Vector3 c;
+			for (auto i = 0; i < polygonVertices.size(); i++) {
+				for (auto j = 0; j < polygonVertices.size(); j++) {
+					if (i == j) continue;
+					for (auto k = 0; k < polygonVertices.size(); k++) {
+						if (i == k || j == k) continue;
+						LineSegment::computeClosestPointOnLineSegment(
+							polygonVertices[i],
+							polygonVertices[j],
+							polygonVertices[k],
+							c
+						);
+						if (polygonVertices[k].equals(c) == true) polygonVerticesToRemove.push_back(k);
+					}
+				}
+			}
+			sort(polygonVerticesToRemove.begin(), polygonVerticesToRemove.end());
+			polygonVerticesToRemove.erase(unique(polygonVerticesToRemove.begin(), polygonVerticesToRemove.end()), polygonVerticesToRemove.end());
+			auto polygonVerticesToRemoved = 0;
+			for (auto i: polygonVerticesToRemove) {
+				polygonVertices.erase(polygonVertices.begin() + i - polygonVerticesToRemoved);
+				polygonVerticesToRemoved++;
+			}
+		}
+		*/
+
+		// check if to skip as combined polygons could already have the current polygon
+		if (polygonVertices.size() > 2) {
+			auto skip = false;
+			auto idx = 0;
+			for (auto faceVertexCount: facesVerticesCount) {
+				unordered_set<int> foundIndices;
+				for (auto i = 0; i < faceVertexCount; i++) {
+					auto foundVertex = false;
+					for (auto& polygonVertex: polygonVertices) {
+						if (polygonVertex.equals(vertices[indices[idx]]) == true) {
+							foundIndices.insert(indices[idx]);
+							break;
+						}
+					}
+					idx++;
+				}
+				if (foundIndices.size() == polygonVertices.size()) {
+					skip = true;
+					break;
+				}
+			}
+			if (skip == true) {
+				continue;
+			}
+		}
+
+		//
+		if (polygonVertices.size() < 3) continue;
+
 		// determine polygon center, a point outside of mesh viewing the polygon
 		Vector3 polygonCenter;
 		for (auto& polygonVertex: polygonVertices) {
@@ -206,18 +294,19 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		}
 		polygonCenter.scale(1.0f / polygonVertices.size());
 
+		// plane normal
+		Vector3 triangle1Edge1;
+		Vector3 triangle1Edge2;
+		Vector3 polygonNormal;
+		triangle1Edge1.set(trianglesCoplanarVector[0]->getVertices()[1]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		triangle1Edge2.set(trianglesCoplanarVector[0]->getVertices()[2]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
+
 		// determine polygon vertices order
 		vector<int> polygonVerticesOrdered;
 		// add first vertex
 		polygonVerticesOrdered.push_back(0);
 
-		// plane normal
-		Vector3 triangle1Edge1;
-		Vector3 triangle1Edge2;
-		Vector3 polygonNormal;
-		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]);
-		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]);
-		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
 		Vector3 distanceVector;
@@ -241,11 +330,11 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 					hitVertexIdx = i;
 				}
 			}
-
 			// yep
 			polygonVerticesOrdered.push_back(hitVertexIdx);
 		}
 
+		/*
 		{
 			// vertex order
 			// 	see: https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
@@ -263,6 +352,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 				reverse(begin(polygonVerticesOrdered), end(polygonVerticesOrdered));
 			}
 		}
+		*/
 
 		// add face
 		facesVerticesCount.push_back(polygonVerticesOrdered.size());

@@ -57,6 +57,15 @@ private:
 	 */
 	void doPathFinding();
 public:
+	/**
+	 * Public constructor
+	 */
+	FlowMapTest();
+
+	/**
+	 * Public denstructor
+	 */
+	~FlowMapTest();
 
 	/** 
 	 * Main
@@ -64,14 +73,9 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
+
 	void display() override;
 	void dispose() override;
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
-
-	/**
-	 * Public constructor
-	 */
-	FlowMapTest();
 };

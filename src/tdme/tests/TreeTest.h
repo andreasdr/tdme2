@@ -1,13 +1,19 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/tests/fwd-tdme.h>
-#include "../application/InputEventHandler.h"
+#include <tdme/utils/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingVolume;
+using tdme::utils::ObjectDeleter;
 
 /** 
  * Tree test
@@ -18,7 +24,7 @@ class tdme::tests::TreeTest final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
-	Engine* engine {  };
+	Engine* engine { nullptr };
 
 	bool keyLeft { false };
 	bool keyRight { false };
@@ -31,6 +37,8 @@ private:
 
 	float camRotationY { 0.0f };
 
+	ObjectDeleter<Model> modelDeleter;
+	ObjectDeleter<BoundingVolume> bvDeleter;
 public:
 
 	/** 

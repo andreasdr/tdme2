@@ -41,6 +41,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/ObjectDeleter.h>
 
 using std::tolower;
 using std::to_string;
@@ -84,6 +85,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::ObjectDeleter;
 
 EngineTest::EngineTest()
 {
@@ -100,6 +102,10 @@ EngineTest::EngineTest()
 	engine = Engine::getInstance();
 }
 
+EngineTest::~EngineTest()
+{
+	delete osEngine;
+}
 void EngineTest::main(int argc, char** argv)
 {
 	auto engineTest = new EngineTest();
@@ -216,6 +222,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 void EngineTest::dispose()
 {
 	engine->dispose();
+	osEngine->dispose();
 }
 
 void EngineTest::initialize()
@@ -266,7 +273,7 @@ void EngineTest::initialize()
 	light2->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition().getX(), light2->getPosition().getY(), light2->getPosition().getZ())));
 	light2->setEnabled(true);
 	try {
-		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
+		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
 		auto barrel = new Object3D("barrel", _barrel);
 		barrel->setTranslation(Vector3(1.5f, 0.35f, -2.0f));
 		barrel->setContributesShadows(true);
@@ -274,7 +281,7 @@ void EngineTest::initialize()
 		barrel->setEnabled(true);
 		barrel->update();
 		engine->addEntity(barrel);
-		auto _farPlane = createWallModel();
+		auto _farPlane = modelDeleter.add(createWallModel());
 		auto farPlane = new Object3D("wall", _farPlane);
 		farPlane->setTextureMatrix(
 			(Matrix2D3x3()).identity().scale(Vector2(1.0f, -1.0f)),
@@ -284,7 +291,7 @@ void EngineTest::initialize()
 
 		farPlane->bindDiffuseTexture(osEngine->getFrameBuffer(), "wall", "wall");
 		engine->addEntity(farPlane);
-		auto _grass = ModelReader::read("resources/tests/models/grass", "grass.dae");
+		auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));
 		auto grass = new Object3D("ground", _grass);
 		grass->setEnabled(true);
 		grass->setScale(Vector3(8.0f, 1.0f, 8.0f));
@@ -316,7 +323,7 @@ void EngineTest::initialize()
 		player2->setReceivesShadows(true);
 		players.push_back(player2);
 		engine->addEntity(player2);
-		auto _cube = ModelReader::read("resources/tests/models/test", "cube.dae");
+		auto _cube = modelDeleter.add(ModelReader::read("resources/tests/models/test", "cube.dae"));
 		cube = new Object3D("cube", _cube);
 		cube->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
 		cube->setScale(Vector3(2.0f, 2.0f, 2.0f));
@@ -326,7 +333,7 @@ void EngineTest::initialize()
 		cube->setReceivesShadows(true);
 		cube->setEnabled(true);
 		engine->addEntity(cube);
-		auto _wall = ModelReader::read("resources/tests/models/wall", "wall.dae");
+		auto _wall = modelDeleter.add(ModelReader::read("resources/tests/models/wall", "wall.dae"));
 		auto wall0 = new Object3D("wall0", _wall);
 		wall0->setTranslation(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();

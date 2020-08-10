@@ -476,8 +476,10 @@ public:
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
-	bool isPBRAvailable() override;
 	bool isInstancedRenderingAvailable() override;
+	bool isPBRAvailable() override;
+	bool isComputeShaderAvailable() override;
+	bool isGLCLAvailable() override;
 	bool isUsingShortIndices() override;
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;

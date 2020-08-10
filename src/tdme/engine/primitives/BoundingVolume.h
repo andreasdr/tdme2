@@ -16,7 +16,7 @@ using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Bounding volume interface
  * @author Andreas Drewke
  * @version $Id$
@@ -49,8 +49,12 @@ protected:
 	void computeBoundingBox();
 
 public:
+	/**
+	 * Destructor
+	 */
+	virtual ~BoundingVolume();
 
-	/** 
+	/**
 	 * Transform bounding volume from given transformations
 	 * @param transformations transformations
 	 */
@@ -78,20 +82,16 @@ public:
 	 */
 	const Vector3& getCenterTransformed() const;
 
-	/** 
+	/**
 	 * Get bounding box transformed
 	 * @return bounding box
 	 */
 	BoundingBox& getBoundingBoxTransformed();
 
-	/** 
+	/**
 	 * Clones this bounding volume
 	 * @return cloned bounding volume
 	 */
 	virtual BoundingVolume* clone() const = 0;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~BoundingVolume();
 };

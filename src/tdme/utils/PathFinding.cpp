@@ -72,26 +72,31 @@ PathFinding::PathFinding(
 PathFinding::~PathFinding() {
 }
 
-bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
-	auto cacheId =
-		"straight;" +
-		to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
-		to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
-		toId(x, y, z, stepSize) + ";" +
-		to_string(collisionTypeIds) + ";" +
-		to_string(ignoreStepUpMax);
-	auto walkableCacheIt = walkableCache.find(cacheId);
-	if (walkableCacheIt != walkableCache.end()) {
-		height = walkableCacheIt->second;
-		return height > -10000.0f;
+bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+	string cacheId;
+	if (flowMapRequest == true) {
+		cacheId =
+			flowMapRequest == true?
+				"straight;" +
+				to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
+				to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
+				toId(x, y, z, stepSize) + ";" +
+				to_string(collisionTypeIds) + ";" +
+				to_string(ignoreStepUpMax):
+				"";
+		auto walkableCacheIt = walkableCache.find(cacheId);
+		if (walkableCacheIt != walkableCache.end()) {
+			height = walkableCacheIt->second;
+			return height > -10000.0f;
+		}
 	}
-	auto walkable = isWalkable(x, y, z, height, stepSize, collisionTypeIds, ignoreStepUpMax);
+	auto walkable = isWalkable(x, y, z, height, stepSize, flowMapRequest, collisionTypeIds, ignoreStepUpMax);
+	if (flowMapRequest == true) walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	if (walkable == false) return false;
-	walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
 }
 
-bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds) {
+bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds) {
 	float slopeAngle = 0.0f;
 
 	// slope angle and center
@@ -106,17 +111,20 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 		Vector3(0.0f, 1.0f, 0.0f)
 	);
 
-	auto cacheId =
-		"slope;" +
-		to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
-		to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
-		toId(x, y, z, stepSize) + ";" +
-		to_string(collisionTypeIds) +
-		to_string(slopeAngle);
-	auto walkableCacheIt = walkableCache.find(cacheId);
-	if (walkableCacheIt != walkableCache.end()) {
-		auto height = walkableCacheIt->second;
-		return height > -10000.0f;
+	string cacheId;
+	if (flowMapRequest == true) {
+		auto cacheId =
+			"slope;" +
+			to_string(static_cast<int>(stepSize * 10.0f)) + ";" +
+			to_string(static_cast<int>(scaleActorBoundingVolumes * 10.0f)) + ";" +
+			toId(x, y, z, stepSize) + ";" +
+			to_string(collisionTypeIds) +
+			to_string(slopeAngle);
+		auto walkableCacheIt = walkableCache.find(cacheId);
+		if (walkableCacheIt != walkableCache.end()) {
+			auto height = walkableCacheIt->second;
+			return true;
+		}
 	}
 
 	// set up transformations
@@ -132,18 +140,18 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
 	auto walkable = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorSlopeTestCollisionBody, collidedRigidBodies) == false;
-	walkableCache[cacheId] = walkable == false?-10000.0f:0.0f;
+	if (flowMapRequest == true) walkableCache[cacheId] = walkable == false?-10000.0f:0.0f;
 	return walkable;
 }
 
-bool PathFinding::isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+bool PathFinding::isWalkable(float x, float y, float z, float& height, float stepSize, float scaleActorBoundingVolumes, bool flowMapRequest, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
 	// determine y height of ground plate of actor bounding volume
 	float _z = z - stepSize / 2.0f;
 	height = -10000.0f;
 	Vector3 actorPosition;
-	for (auto i = 0; i < 4; i++) {
+	for (auto i = 0; i <= 4; i++) {
 		float _x = x - stepSize / 2.0f;
-		for (auto j = 0; j < 4; j++) {
+		for (auto j = 0; j <= 4; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
@@ -155,9 +163,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			_x+= stepSize / 2.0f;
+			_x+= stepSize / 4.0f;
 		}
-		_z+= stepSize / 2.0f;
+		_z+= stepSize / 4.0f;
 	}
 
 	// set up transformations
@@ -174,7 +182,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 }
 
-void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
+void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool flowMapRequest) {
 	auto nodeId = node.id;
 
 	// Find valid successors
@@ -193,11 +201,11 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 			);
 			if (nodesToTestPtr->find(successorNodeId) == nodesToTestPtr->end()) continue;
 		}
-		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ, stepSize, scaleActorBoundingVolumes):true;
+		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ, stepSize, scaleActorBoundingVolumes, flowMapRequest):true;
 		//
 		float yHeight;
 		// first node or walkable?
-		if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight, stepSize, scaleActorBoundingVolumes) == true) {
+		if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight, stepSize, scaleActorBoundingVolumes, flowMapRequest) == true) {
 			// check if successor node equals previous node / node
 			if (equals(node, successorX, yHeight, successorZ)) {
 				continue;
@@ -209,7 +217,7 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 			successorNode.costsReachPoint = 0.0f;
 			successorNode.costsEstimated = 0.0f;
 			successorNode.x = node.x + x;
-			successorNode.y = zeroHeightInId == true?0:getIntegerPositionComponent(successorNode.position.getY());
+			successorNode.y = flowMapRequest == true?0:getIntegerPositionComponent(successorNode.position.getY(), 0.1f);
 			successorNode.z = node.z + z;
 			successorNode.id = toIdInt(
 				successorNode.x,
@@ -336,7 +344,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
-	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
+	actorBoundingVolumeSlopeTest = new OrientedBoundingBox(
 		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
@@ -540,10 +548,12 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	*/
 
 	// unset actor bounding volume and remove rigid body
-	this->actorBoundingVolume = nullptr;
-	this->actorBoundingVolumeSlopeTest = nullptr;
 	world->removeBody("tdme.pathfinding.actor");
 	world->removeBody("tdme.pathfinding.actor.slopetest");
+	delete actorBoundingVolume;
+	actorBoundingVolume = nullptr;
+	delete actorBoundingVolumeSlopeTest;
+	actorBoundingVolumeSlopeTest = nullptr;
 
 	//
 	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries");
@@ -627,7 +637,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 			FlowMap::alignPositionComponent(endPosition.getZ(), flowMapStepSize)
 		);
 		float nodeYHeight;
-		isWalkableInternal(nodePosition.getX(), nodePosition.getY(), nodePosition.getZ(), nodeYHeight, flowMapStepSize, flowMapScaleActorBoundingVolumes);
+		isWalkableInternal(nodePosition.getX(), nodePosition.getY(), nodePosition.getZ(), nodeYHeight, flowMapStepSize, flowMapScaleActorBoundingVolumes, true);
 		PathFindingNode node;
 		node.position.set(nodePosition).setY(nodeYHeight);
 		node.costsAll = 0.0f;
@@ -828,10 +838,12 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	}
 
 	// unset actor bounding volume and remove rigid body
-	this->actorBoundingVolume = nullptr;
-	this->actorBoundingVolumeSlopeTest = nullptr;
 	world->removeBody("tdme.pathfinding.actor");
 	world->removeBody("tdme.pathfinding.actor.slopetest");
+	delete actorBoundingVolume;
+	actorBoundingVolume = nullptr;
+	delete actorBoundingVolumeSlopeTest;
+	actorBoundingVolumeSlopeTest = nullptr;
 
 	// dispose custom test
 	if (this->customTest != nullptr) {

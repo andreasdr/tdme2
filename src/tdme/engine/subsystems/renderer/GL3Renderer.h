@@ -1,29 +1,30 @@
 #pragma once
 
+#if defined (__APPLE__)
+	#include <OpenCL/opencl.h>
+#endif
+
 #include <array>
 #include <map>
 #include <vector>
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
+#include <tdme/utils/fwd-tdme.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::string;
 
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
-using tdme::math::Matrix4x4;
 
 /** 
  * OpenGL 3 renderer
@@ -36,6 +37,39 @@ private:
 	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
+	#if defined (__APPLE__)
+		struct CLSkinningParameters {
+			array<int32_t, 8> boundGLBuffers { -1, -1, -1, -1, -1, -1, -1, -1 };
+			array<bool, 8> boundGLBuffersWrite { false, false, false, false, false, false, false, false };
+			int32_t matrixCount { 0 };
+			int32_t instanceCount { 0 };
+			int32_t vertexCount { 0 };
+			int32_t numGroupsX { 0 };
+			int32_t numGroupsY { 0 };
+		};
+		cl_context clContext;
+		cl_program clSkinningKernelProgram;
+		cl_kernel clSkinningKernel;
+		cl_command_queue clCommandQueue;
+		CLSkinningParameters clSkinningParameters;
+
+		/**
+		 * OpenCL bind GL buffer
+		 * @param idx argument index
+		 * @param bufferObjectId OpenGL buffer object id
+		 * @param write write
+		 */
+		void clBindGLBuffer(int32_t idx, int32_t bufferObjectId, bool write);
+
+		/**
+		 * OpenCL error callback
+		 * @param errorInfo error info
+		 * @param privateInfo private info
+		 * @param cb cb?
+		 * @param userData user data
+		 */
+		static void clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData);
+	#endif
 
 public:
 	void initialize() override;
@@ -50,10 +84,11 @@ public:
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
-	bool isPBRAvailable() override;
 	bool isInstancedRenderingAvailable() override;
+	bool isPBRAvailable() override;
+	bool isComputeShaderAvailable() override;
+	bool isGLCLAvailable() override;
 	bool isUsingShortIndices() override;
-	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(void* context, int32_t programId) override;

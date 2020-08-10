@@ -71,6 +71,13 @@ LODObject3D::LODObject3D(
 	levelLOD = 1;
 }
 
+LODObject3D::~LODObject3D() {
+	// delegate to LOD objects
+	if (objectLOD1 != nullptr) delete objectLOD1;
+	if (objectLOD2 != nullptr) delete objectLOD2;
+	if (objectLOD3 != nullptr) delete objectLOD3;
+}
+
 void LODObject3D::setEngine(Engine* engine)
 {
 	if (this->engine != nullptr) this->engine->deregisterEntity(this);

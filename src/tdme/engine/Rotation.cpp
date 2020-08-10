@@ -55,3 +55,35 @@ void Rotation::update()
 	quaternion.identity();
 	quaternion.rotate(angle, axis);
 }
+
+float Rotation::interpolate(float rotationAngle, float targetRotationAngle, float timeSecondsPassed, float rotationDeegreePerSeconds) {
+	auto targetRotationAngleA = targetRotationAngle;
+	auto targetRotationAngleB = targetRotationAngle - 360.0f;
+	auto targetRotationAngleC = targetRotationAngle + 360.0f;
+	if (Math::abs(targetRotationAngleA - rotationAngle) < Math::abs(targetRotationAngleB - rotationAngle) &&
+		Math::abs(targetRotationAngleA - rotationAngle) < Math::abs(targetRotationAngleC - rotationAngle)) {
+		targetRotationAngle = targetRotationAngleA;
+	} else
+	if (Math::abs(targetRotationAngleB - rotationAngle) < Math::abs(targetRotationAngleA - rotationAngle) &&
+		Math::abs(targetRotationAngleB - rotationAngle) < Math::abs(targetRotationAngleC - rotationAngle)) {
+		targetRotationAngle = targetRotationAngleB;
+	} else
+	if (Math::abs(targetRotationAngleC - rotationAngle) < Math::abs(targetRotationAngleA - rotationAngle) &&
+		Math::abs(targetRotationAngleC - rotationAngle) < Math::abs(targetRotationAngleB - rotationAngle)) {
+		targetRotationAngle = targetRotationAngleC;
+	}
+	if (Math::abs(rotationAngle - targetRotationAngle) < 0.1f) {
+		return targetRotationAngle;
+	} else {
+		auto rotationAdd = timeSecondsPassed * rotationDeegreePerSeconds * Math::sign(targetRotationAngle - rotationAngle);
+		if (rotationAngle < targetRotationAngle && rotationAngle + rotationAdd > targetRotationAngle) {
+			rotationAngle = targetRotationAngle;
+		} else
+		if (rotationAngle > targetRotationAngle && rotationAngle + rotationAdd < targetRotationAngle) {
+			rotationAngle = targetRotationAngle;
+		} else {
+			rotationAngle+= rotationAdd;
+		}
+		return rotationAngle;
+	}
+}

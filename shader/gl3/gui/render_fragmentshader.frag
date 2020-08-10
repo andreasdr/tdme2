@@ -22,6 +22,8 @@ void main(void) {
 		vec3 maskColor = texture(maskTextureUnit, vsFragTextureUV).rgb;
 		if ((maskColor.r + maskColor.g + maskColor.b) / 3.0 > maskMaxValue) discard;
 	}
+	if (vsFragTextureUV.x < 0.0 || vsFragTextureUV.x > 1.0) discard;
+	if (vsFragTextureUV.y < 0.0 || vsFragTextureUV.y > 1.0) discard;
 	if (diffuseTextureAvailable == 1) {
 		outColor = clamp((effectColorAdd + texture(diffuseTextureUnit, vsFragTextureUV) * vsFragColor * effectColorMul), 0.0, 1.0);
 	} else {

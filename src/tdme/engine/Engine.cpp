@@ -195,7 +195,7 @@ int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
-int32_t Engine::sunTextureId = 0;
+int32_t Engine::lightSourceTextureId = 0;
 map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
@@ -222,7 +222,7 @@ void Engine::EngineThread::run() {
 				break;
 			case STATE_RENDERING:
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
+				engine->entityRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
 				rendering.objectsByShadersAndModels.clear();
 				state = STATE_SPINNING;
 				break;
@@ -238,8 +238,11 @@ Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
-	sunSize = 0.25f;
-	sunPosition.set(0.0f, 25000.0f, -100000.0f);
+	renderLightSourceEnabled = false;
+	lightSourceSize = 0.25f;
+	lightSourcePosition.set(0.0f, 25000.0f, -100000.0f);
+	fixedLightScatteringIntensity = false;
+	lightScatteringItensityValue = 1.0f;
 	frameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
@@ -270,7 +273,7 @@ Engine::~Engine() {
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMapping != nullptr) delete shadowMapping;
-	delete object3DRenderer;
+	delete entityRenderer;
 	if (instance == this) {
 		delete renderer;
 		delete textureManager;
@@ -313,8 +316,8 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create GUI
 	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
 	// create object 3d vbo renderer
-	offScreenEngine->object3DRenderer = new EntityRenderer(offScreenEngine, renderer);
-	offScreenEngine->object3DRenderer->initialize();
+	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
+	offScreenEngine->entityRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
@@ -326,7 +329,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 		offScreenEngine->lights[i] = Light(renderer, i);
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
-		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DRenderer);
+		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
 	//
 	offScreenEngine->reshape(width, height);
@@ -452,7 +455,7 @@ void Engine::reset()
 		removeEntity(entityKey);
 	}
 	partition->reset();
-	object3DRenderer->reset();
+	entityRenderer->reset();
 	if (skinningShaderEnabled == true) skinningShader->reset();
 }
 
@@ -472,8 +475,6 @@ void Engine::initialize()
 		shadowMappingEnabled = true;
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-		skinningShaderEnabled = true;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
 		// MacOSX, currently GL3 only
 		#if defined(__APPLE__)
@@ -484,8 +485,6 @@ void Engine::initialize()
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
-			skinningShaderEnabled = false;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
 		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -501,12 +500,9 @@ void Engine::initialize()
 				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL2Renderer(this);
 			}
-			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4; // TODO: Move me into renderer backend
-			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 		}
 		// GLES2 on Linux
 		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && defined(GLES2)
@@ -523,13 +519,16 @@ void Engine::initialize()
 				shadowMappingEnabled = false;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 			}
-			skinningShaderEnabled = false;
 		}
 		#else
 			Console::println("Engine::initialize(): unsupported GL!");
 			return;
 		#endif
 	#endif
+
+	// determine if we have the skinning compute shader or OpenCL program
+	skinningShaderEnabled = renderer->isComputeShaderAvailable() == true || renderer->isGLCLAvailable() == true;
+	animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
 	// engine thread count
 	if (renderer->isSupportingMultithreadedRendering() == true) {
@@ -553,8 +552,8 @@ void Engine::initialize()
 	renderer->initializeFrame();
 
 	// create object 3d renderer
-	object3DRenderer = new EntityRenderer(this, renderer);
-	object3DRenderer->initialize();
+	entityRenderer = new EntityRenderer(this, renderer);
+	entityRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
@@ -630,7 +629,7 @@ void Engine::initialize()
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = new ShadowMapping(this, renderer, object3DRenderer);
+		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
@@ -686,7 +685,7 @@ void Engine::initialize()
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
 
 	//
-	sunTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
+	lightSourceTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
 }
 
 void Engine::reshape(int32_t width, int32_t height)
@@ -1034,7 +1033,6 @@ void Engine::display()
 	//
 	auto _width = scaledWidth != -1?scaledWidth:width;
 	auto _height = scaledHeight != -1?scaledHeight:height;
-	auto sunVisible = false;
 
 	// do post processing programs effect passes
 	array<bool, EFFECTPASS_COUNT - 1> effectPassFrameBuffersInUse;
@@ -1070,16 +1068,18 @@ void Engine::display()
 			// camera
 			camera->update(context, frameBufferWidth, frameBufferHeight);
 			//
-			if (effectPass.renderSun == true) {
-				sunVisible = renderSun();
+			auto lightSourceVisible = false;
+			if (effectPass.renderLightSource == true) {
+				lightSourceVisible = renderLightSource(frameBufferWidth, frameBufferHeight);
 			}
-			if (effectPass.skipOnSunNotVisible == true && sunVisible == false) {
+			if (effectPass.skipOnLightSourceNotVisible == true && lightSourceVisible == false) {
 				effectPassSkip[frameBufferIdx] = true;
 			} else {
 				// Do the effect render pass
 				render(
 					effectPassIdx,
 					"ls_",
+					false,
 					false,
 					false,
 					false,
@@ -1146,6 +1146,7 @@ void Engine::display()
 		true,
 		true,
 		true,
+		renderLightSourceEnabled,
 		EntityRenderer::RENDERTYPE_NORMALS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
@@ -1701,16 +1702,18 @@ Entity* Engine::doRayCasting(
 	return selectedEntity;
 }
 
-bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
+bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate, int width, int height)
 {
 	Vector3 screenCoordinate3;
 	Vector4 screenCoordinate4;
+	auto _width = width != -1?width:(scaledWidth != -1?scaledWidth:this->width);
+	auto _height = height != -1?height:(scaledHeight != -1?scaledHeight:this->height);
 	// convert to normalized device coordinates
 	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
 	screenCoordinate4.scale(1.0f / screenCoordinate4.getW());
 	// convert to screen coordinate
-	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * width / 2.0f);
-	screenCoordinate.setY(height - ((screenCoordinate4[1] + 1.0f) * height / 2.0f));
+	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * _width / 2.0f);
+	screenCoordinate.setY(_height - ((screenCoordinate4[1] + 1.0f) * _height / 2.0f));
 	return camera->getModelViewMatrix().multiply(worldCoordinate, screenCoordinate3).getZ() <= 0.0f;
 }
 
@@ -1742,12 +1745,15 @@ void Engine::dispose()
 	gui->dispose();
 	if (this == Engine::instance) {
 		guiRenderer->dispose();
+		GUIParser::dispose();
 	}
 
 	// dispose object 3d VBO renderer
-	object3DRenderer->dispose();
-	if (instance == this) {
-		guiRenderer->dispose();
+	entityRenderer->dispose();
+
+	// dispose object buffer if main engine
+	if (this == Engine::instance) {
+		ObjectBuffer::dispose();
 	}
 
 	// set current engine
@@ -1906,7 +1912,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					target = postProcessingTemporaryFrameBuffer;
 					break;
 			}
-			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource);
+			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource, fixedLightScatteringIntensity, lightScatteringItensityValue);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
@@ -1955,7 +1961,7 @@ const map<string, string> Engine::getShaderParameterDefaults(const string& shade
 	return shaders.find(shaderId)->second.parameterDefaults;
 }
 
-void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, int32_t renderTypes) {
+void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
@@ -1969,7 +1975,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (linesShader != nullptr) linesShader->useProgram(context);
 
 		// render points based particle systems
-		object3DRenderer->render(visibleLinesObjects);
+		entityRenderer->render(visibleLinesObjects);
 
 		// unuse particle shader
 		if (linesShader != nullptr) linesShader->unUseProgram(context);
@@ -1982,7 +1988,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		// render
 		ezrShaderPre->useProgram(this);
 		// only draw opaque face entities of objects marked as EZR objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleEZRObjects,
 			false,
 			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
@@ -2000,7 +2006,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (lightingShader != nullptr) lightingShader->useProgram(this);
 
 		// render objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjects,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
@@ -2036,7 +2042,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
+		if (visiblePpses.size() > 0) entityRenderer->render(visiblePpses);
 
 		// unuse particle shader
 		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
@@ -2057,7 +2063,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		}
 
 		// render post processing objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjectsPostPostProcessing,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
@@ -2089,7 +2095,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		renderer->disableDepthBufferTest();
 
 		// render post processing objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjectsNoDepthTest,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
@@ -2113,21 +2119,26 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
 	}
 
+	if (doRenderLightSource == true) {
+		auto _width = scaledWidth != -1?scaledWidth:width;
+		auto _height = scaledHeight != -1?scaledHeight:height;
+		//
+		renderLightSource(_width, _height);
+	}
+
 	//
 	Engine::renderer->setShaderPrefix(string());
 	Engine::renderer->setEffectPass(0);
 }
 
-bool Engine::renderSun() {
-	int _width = scaledWidth != -1?scaledWidth:width;
-	int _height = scaledHeight != -1?scaledHeight:height;
-	Vector2 sunDimension2D = Vector2(static_cast<float>(sunSize) / static_cast<float>(_width), (static_cast<float>(sunSize) / static_cast<float>(_width)) * (static_cast<float>(height) / static_cast<float>(width)));
-	Vector2 sunPosition2D;
-	auto visible = computeScreenCoordinateByWorldCoordinate(sunPosition, sunPosition2D);
-	sunPosition2D.setX(sunPosition2D.getX() / (static_cast<float>(_width) / 2.0f) - 1.0f);
-	sunPosition2D.setY(1.0f - (sunPosition2D.getY() / (static_cast<float>(_height) / 2.0f)));
+bool Engine::renderLightSource(int width, int height) {
+	auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
+	Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
+	Vector2 lightSourcePosition2D;
+	auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D, width, height);
+	lightSourcePosition2D.sub(lightSourceDimension2D.clone().scale(0.5f));
 	if (visible == true) {
-		texture2DRenderShader->renderTexture(this, sunPosition2D, sunDimension2D, sunTextureId);
+		texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, lightSourceTextureId, width, height);
 	}
 	return visible;
 }
