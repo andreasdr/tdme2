@@ -35,6 +35,17 @@ private:
 	PopUps* popUps { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param screenFileName screen file name
+	 */
+	GUITest(const string& screenFileName);
+
+	/**
+	 * Public destructor
+	 */
+	~GUITest();
+
 	void initialize() override;
 	void dispose() override;
 	void reshape(int32_t width, int32_t height) override;
@@ -48,10 +59,4 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-
-	/**
-	 * Public constructor
-	 * @param screenFileName screen file name
-	 */
-	GUITest(const string& screenFileName);
 };

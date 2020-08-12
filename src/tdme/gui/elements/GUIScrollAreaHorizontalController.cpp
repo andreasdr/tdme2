@@ -93,7 +93,11 @@ void GUIScrollAreaHorizontalController::initialize()
 
 void GUIScrollAreaHorizontalController::dispose()
 {
-	if (actionListener != nullptr) node->getScreenNode()->removeActionListener(actionListener);
+	if (actionListener != nullptr) {
+		node->getScreenNode()->removeActionListener(actionListener);
+		delete actionListener;
+		actionListener = nullptr;
+	}
 }
 
 void GUIScrollAreaHorizontalController::postLayout()

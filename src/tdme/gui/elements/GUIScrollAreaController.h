@@ -40,7 +40,7 @@ public:
 
 private:
 	MutableString value;
-	GUIActionListener* actionListener;
+	GUIActionListener* actionListener { nullptr };
 
 	/**
 	 * Private constructor

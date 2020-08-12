@@ -23,4 +23,11 @@ public:
 	 */
 	static int parseInt(const string& str);
 
+	/**
+	 * Check if given string is a integer string
+	 * @param str string
+	 * @return given string is integer
+	 */
+	static bool isInt(const string& str);
+
 };

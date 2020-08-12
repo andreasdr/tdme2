@@ -69,6 +69,10 @@ GUITest::GUITest(const string& screenFileName)
 	this->popUps = new PopUps();
 }
 
+GUITest::~GUITest() {
+	delete popUps;
+}
+
 void GUITest::initialize()
 {
 	class ScreenLoaderAction: public Action {

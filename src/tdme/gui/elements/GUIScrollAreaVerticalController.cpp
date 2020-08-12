@@ -94,7 +94,11 @@ void GUIScrollAreaVerticalController::initialize()
 
 void GUIScrollAreaVerticalController::dispose()
 {
-	if (actionListener != nullptr) node->getScreenNode()->removeActionListener(actionListener);
+	if (actionListener != nullptr) {
+		node->getScreenNode()->removeActionListener(actionListener);
+		delete actionListener;
+		actionListener = nullptr;
+	}
 }
 
 void GUIScrollAreaVerticalController::postLayout()
