@@ -18,9 +18,9 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/views/EntityBaseView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::map;
 using std::vector;
@@ -41,9 +41,9 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 MutableString EntityBaseSubScreenController::TEXT_EMPTY = MutableString("");
 

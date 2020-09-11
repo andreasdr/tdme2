@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::gui::events::GUIActionListener_Type;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 GUIActionListener_Type::GUIActionListener_Type(const string& name, int ordinal)
 	: Enum(name, ordinal)

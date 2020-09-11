@@ -6,8 +6,8 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/ExceptionBase.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -16,8 +16,8 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::ExceptionBase;
-using tdme::utils::StringUtils;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::StringTools;
 
 void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName) /* throws(Exception) */
 {

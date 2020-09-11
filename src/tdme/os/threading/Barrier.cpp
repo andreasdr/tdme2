@@ -1,14 +1,12 @@
 /**
  * @version $Id: a5817099da41ca9b6651ef724eeb90d29510f8e1 $
  */
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Mutex.h>
 
-#if defined(_WIN32) && defined(_MSC_VER)
-	#include <windows.h>
-#endif
-
 using std::string;
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::Mutex;
 
@@ -35,7 +33,7 @@ bool Barrier::wait() {
 	m.lock();
 
 	// one thread entered the barrier
-	entered++;
+	AtomicOperations::increment(entered);
 
 	// did we reach barrier?
 	if (entered == count) {
@@ -44,12 +42,7 @@ bool Barrier::wait() {
 		m.unlock();
 
 		// notify exited thread
-		#if defined(_WIN32) && defined(_MSC_VER)
-			InterlockedIncrement(&exited);
-		#else
-			__sync_add_and_fetch(&exited, 1);
-		#endif
-
+		AtomicOperations::increment(exited);
 
 		// exit
 		return true;
@@ -61,11 +54,7 @@ bool Barrier::wait() {
 		m.unlock();
 
 		// notify exited thread
-		#if defined(_WIN32) && defined(_MSC_VER)
-			InterlockedIncrement(&exited);
-		#else
-			__sync_add_and_fetch(&exited, 1);
-		#endif
+		AtomicOperations::increment(exited);
 
 		//
 		return false;

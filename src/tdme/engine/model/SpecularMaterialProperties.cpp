@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Math.h>
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 using std::string;
 
@@ -15,7 +15,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::math::Math;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 SpecularMaterialProperties::SpecularMaterialProperties()
 {
@@ -30,12 +30,23 @@ SpecularMaterialProperties::SpecularMaterialProperties()
 	diffuseTextureMaskedTransparencyThreshold = 0.1f;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
+	textureAtlasSize = 1;
 }
 
 SpecularMaterialProperties::~SpecularMaterialProperties() {
 	if (diffuseTexture != nullptr) diffuseTexture->releaseReference();
 	if (specularTexture != nullptr) specularTexture->releaseReference();
 	if (normalTexture != nullptr) normalTexture->releaseReference();
+}
+
+void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
+	if (this->diffuseTexture != nullptr) this->diffuseTexture->releaseReference();
+	diffuseTexturePathName.clear();
+	diffuseTextureFileName = diffuseTexture->getId() + ".png";
+	diffuseTransparencyTexturePathName.clear();
+	diffuseTransparencyTextureFileName.clear();
+	this->diffuseTexture = diffuseTexture;
+	checkDiffuseTextureTransparency();
 }
 
 void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
@@ -51,13 +62,19 @@ void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const
 			diffuseTexturePathName,
 			diffuseTextureFileName,
 			diffuseTransparencyTexturePathName,
-			diffuseTransparencyTextureFileName
+			diffuseTransparencyTextureFileName,
+			true,
+			textureAtlasSize > 1?false:true
 		);
+		if (diffuseTexture != nullptr) diffuseTexture->setAtlasSize(textureAtlasSize);
 	} else {
 		diffuseTexture = TextureReader::read(
 			diffuseTexturePathName,
-			diffuseTextureFileName
+			diffuseTextureFileName,
+			true,
+			textureAtlasSize > 1?false:true
 		);
+		if (diffuseTexture != nullptr) diffuseTexture->setAtlasSize(textureAtlasSize);
 	}
 	checkDiffuseTextureTransparency();
 }

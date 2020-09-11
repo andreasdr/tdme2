@@ -1,12 +1,12 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 Texture::~Texture() {
 	delete textureData;

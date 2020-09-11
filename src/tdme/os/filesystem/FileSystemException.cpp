@@ -1,5 +1,5 @@
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using tdme::os::filesystem::FileSystemException;
 

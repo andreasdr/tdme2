@@ -31,7 +31,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 #include "Body.h"
 
 using std::string;
@@ -53,7 +53,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 constexpr uint16_t Body::TYPEIDS_ALL;
 constexpr uint16_t Body::TYPEID_STATIC;

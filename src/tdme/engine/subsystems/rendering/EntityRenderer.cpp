@@ -15,6 +15,7 @@
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PointsParticleSystem.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Face.h>
@@ -59,10 +60,10 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/threading/Semaphore.h>
 #include <tdme/os/threading/Thread.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/Pool.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/Pool.h>
+#include <tdme/utilities/Console.h>
 
 using std::find;
 using std::map;
@@ -81,6 +82,7 @@ using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Face;
@@ -124,10 +126,10 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::os::threading::Semaphore;
 using tdme::os::threading::Thread;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::Pool;
-using tdme::utils::Console;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::Pool;
+using tdme::utilities::Console;
 
 constexpr int32_t EntityRenderer::BATCHRENDERER_MAX;
 constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
@@ -1011,8 +1013,15 @@ void EntityRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, 
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
 		if (renderer->getLighting(context) == renderer->LIGHTING_SPECULAR) {
 			auto& rendererMaterial = renderer->getSpecularMaterial(context);
+			auto diffuseTexture = specularMaterialProperties->getDiffuseTexture();
 			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
+			rendererMaterial.textureAtlasSize = specularMaterialProperties->getTextureAtlasSize();
+			rendererMaterial.textureAtlasPixelDimension = { 0.0f, 0.0f };
+			if (rendererMaterial.textureAtlasSize > 1 && diffuseTexture != nullptr) {
+				rendererMaterial.textureAtlasPixelDimension[0] = 1.0f / diffuseTexture->getTextureWidth();
+				rendererMaterial.textureAtlasPixelDimension[1] = 1.0f / diffuseTexture->getTextureHeight();
+			}
 			renderer->onUpdateMaterial(context);
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 				specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {

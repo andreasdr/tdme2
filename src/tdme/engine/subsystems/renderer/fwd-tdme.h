@@ -1,7 +1,6 @@
 // Forward declarations for tdme.engine.subsystems.renderer
 #pragma once
 
-
 namespace tdme {
 namespace engine {
 namespace subsystems {

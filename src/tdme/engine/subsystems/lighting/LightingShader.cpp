@@ -12,8 +12,8 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
@@ -26,8 +26,8 @@ using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 {
@@ -129,8 +129,8 @@ void LightingShader::updateTextureMatrix(void* context) {
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 	auto shaderId = id;
-	if (renderer->isPBRAvailable() == false && StringUtils::startsWith(id, "pbr-") == true) {
-		shaderId = StringUtils::substring(id, 4, id.size());
+	if (renderer->isPBRAvailable() == false && StringTools::startsWith(id, "pbr-") == true) {
+		shaderId = StringTools::substring(id, 4, id.size());
 	}
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = lightingShaderContext.implementation;

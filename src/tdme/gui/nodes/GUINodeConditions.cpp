@@ -30,19 +30,19 @@ bool GUINodeConditions::has(const string& condition) const {
 
 void GUINodeConditions::set(const string& condition) {
 	this->conditions = {{ condition }};
-	updateElementNode();
+	updateElementNode(conditions);
 }
 
 void GUINodeConditions::set(const vector<string>& conditions) {
 	this->conditions = conditions;
-	updateElementNode();
+	updateElementNode(conditions);
 }
 
 bool GUINodeConditions::add(const string& condition)
 {
 	auto conditionsChanged = has(condition) == false;
 	if (conditionsChanged == true) conditions.push_back(condition);
-	if (conditionsChanged == true) updateElementNode();
+	if (conditionsChanged == true) updateElementNode({condition});
 	return conditionsChanged;
 }
 
@@ -50,7 +50,7 @@ bool GUINodeConditions::remove(const string& condition)
 {
 	auto conditionsChanged = has(condition);
 	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
-	if (conditionsChanged == true) updateElementNode();
+	if (conditionsChanged == true) updateElementNode({});
 	return conditionsChanged;
 }
 
@@ -58,26 +58,28 @@ bool GUINodeConditions::removeAll()
 {
 	auto conditionsChanged = conditions.empty() == false;
 	conditions.clear();
-	if (conditionsChanged == true) updateElementNode();
+	if (conditionsChanged == true) updateElementNode({});
 	return conditionsChanged;
 }
 
-void GUINodeConditions::updateNode(GUINode* node) const {
+void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
 	node->conditionsMet = node->checkConditions();
 	node->layouted = false;
+	node->onSetConditions(conditions);
 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
 	if (parentNode != nullptr) {
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 			auto guiSubNode = parentNode->subNodes[i];
-			updateNode(guiSubNode);
+			updateNode(guiSubNode, conditions);
 		}
 	}
 }
 
-void GUINodeConditions::updateElementNode() const {
+void GUINodeConditions::updateElementNode(const vector<string>& conditions) const {
 	if (elementNode == nullptr) return;
+	elementNode->onSetConditions(conditions);
 	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
 		auto guiSubNode = elementNode->subNodes[i];
-		updateNode(guiSubNode);
+		updateNode(guiSubNode, conditions);
 	}
 }

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
@@ -23,9 +23,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ObjectDeleter.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -50,9 +50,9 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::ObjectDeleter;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 LODTest::LODTest()
 {

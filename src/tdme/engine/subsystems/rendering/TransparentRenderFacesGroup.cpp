@@ -10,7 +10,7 @@
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
@@ -24,8 +24,8 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::Key;
-using tdme::utils::Console;
+using tdme::utilities::Key;
+using tdme::utilities::Console;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
 {

@@ -6,7 +6,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -17,9 +17,9 @@ using std::map;
 using std::vector;
 using std::string;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
@@ -36,6 +36,11 @@ private:
 	int activeTextureUnit;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GLES2Renderer();
+
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;
@@ -157,9 +162,4 @@ private:
 	 */
 	void checkGLError();
 
-public:
-	/**
-	 * Public constructor
-	 */
-	GLES2Renderer();
 };

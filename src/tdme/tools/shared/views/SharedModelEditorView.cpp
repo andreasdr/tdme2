@@ -11,7 +11,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -41,10 +41,10 @@
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Properties.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 
 using std::string;
@@ -58,7 +58,7 @@ using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::gui::GUI;
@@ -88,10 +88,10 @@ using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Properties;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 SharedModelEditorView::SharedModelEditorView(PopUps* popUps) 
 {
@@ -279,7 +279,7 @@ void SharedModelEditorView::computeNormals() {
 		}
 	};
 	popUps->getProgressBarScreenController()->show();
-	ModelHelper::computeNormals(entity->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
+	ModelTools::computeNormals(entity->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
 	popUps->getProgressBarScreenController()->close();
 	resetEntity();
 }
@@ -479,7 +479,7 @@ void SharedModelEditorView::loadModel()
 
 LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
 			pathName,
 			fileName
@@ -498,7 +498,7 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 			description,
 			"",
 			pathName + "/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+			StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			pivot
 			);
@@ -555,7 +555,7 @@ void SharedModelEditorView::updateRendering() {
 	object->setShader(entity->getShader());
 	object->setDistanceShader(entity->getDistanceShader());
 	object->setDistanceShaderDistance(entity->getDistanceShaderDistance());
-	ModelHelper::prepareForShader(entity->getModel(), entity->getShader());
+	ModelTools::prepareForShader(entity->getModel(), entity->getShader());
 	resetEntity();
 }
 

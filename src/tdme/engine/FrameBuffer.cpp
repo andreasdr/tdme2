@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::engine::FrameBuffer;
 using tdme::engine::Engine;
@@ -15,7 +15,7 @@ using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers) 
 {

@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
@@ -29,9 +29,9 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <rapidjson/document.h>
 
@@ -47,7 +47,7 @@ using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
@@ -66,9 +66,9 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::Float;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Float;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 using rapidjson::Document;
 using rapidjson::Value;
@@ -251,8 +251,8 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	auto groupId = group->getId();
 	if (parentName.length() > 0) groupId = parentName + "." + groupId;
 	auto modelName = groupId;
-	modelName = StringUtils::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
-	modelName = StringUtils::regexReplace(modelName, "[0-9]+$", "");
+	modelName = StringTools::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
+	modelName = StringTools::regexReplace(modelName, "[0-9]+$", "");
 	auto haveName = entityLibrary->getEntityCount() == 0;
 	if (haveName == false) {
 		for (auto i = 0; i < 10000; i++) {
@@ -383,12 +383,12 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			modelImportRotationMatrix.multiply(rotation, rotation);
 			model->getImportTransformationsMatrix().multiply(translation, translation);
 
-			ModelHelper::cloneGroup(meshGroup.group, model);
+			ModelTools::cloneGroup(meshGroup.group, model);
 			if (model->getSubGroups().begin() != model->getSubGroups().end()) {
 				model->getSubGroups().begin()->second->setTransformationsMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
-			ModelHelper::prepareForIndexedRendering(model);
+			ModelTools::prepareForIndexedRendering(model);
 			// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
 			// TODO: maybe make this conditional
 			{

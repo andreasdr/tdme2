@@ -1,6 +1,6 @@
 #include <tdme/os/network/Network.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/network/httpclient/HTTPClient.h>
 
 using std::string;
@@ -11,8 +11,8 @@ using std::vector;
 
 using tdme::network::httpclient::HTTPClient;
 using tdme::os::network::Network;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();

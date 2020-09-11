@@ -12,8 +12,8 @@
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/utils/FlowMap.h>
-#include <tdme/utils/PathFinding.h>
+#include <tdme/utilities/FlowMap.h>
+#include <tdme/utilities/PathFinding.h>
 
 using std::vector;
 
@@ -25,8 +25,8 @@ using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::utils::FlowMap;
-using tdme::utils::PathFinding;
+using tdme::utilities::FlowMap;
+using tdme::utilities::PathFinding;
 
 /** 
  * Engine with physics test 2

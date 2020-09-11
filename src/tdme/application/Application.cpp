@@ -50,14 +50,14 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/HexEncDec.h>
-#include <tdme/utils/RTTI.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/HexEncDec.h>
+#include <tdme/utilities/RTTI.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::array;
 using std::string;
@@ -71,14 +71,14 @@ using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Character;
-using tdme::utils::Console;
-using tdme::utils::HexEncDec;
-using tdme::utils::RTTI;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::Time;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
+using tdme::utilities::HexEncDec;
+using tdme::utilities::RTTI;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 string Application::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
@@ -144,7 +144,7 @@ void Application::exit(int exitCode) {
 		string pathToExecutable = _pathToExecutable;
 
 		#if defined(_MSC_VER) == false
-			auto addr2lineToolCmd = StringUtils::substring(pathToExecutable, 0, StringUtils::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
+			auto addr2lineToolCmd = StringTools::substring(pathToExecutable, 0, StringTools::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
 			if (FileSystem::getInstance()->fileExists(addr2lineToolCmd) == false) {
 				Console::println("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
 				mutex.unlock();
@@ -158,14 +158,14 @@ void Application::exit(int exitCode) {
 				//
 				return EXCEPTION_EXECUTE_HANDLER;
 			}
-			addr2lineToolCmd = "\"" + StringUtils::replace(addr2lineToolCmd, "\\", "\\\\") + "\"";
+			addr2lineToolCmd = "\"" + StringTools::replace(addr2lineToolCmd, "\\", "\\\\") + "\"";
 		#endif
 
 		auto backtraceExecutableLine = "windowsExceptionHandler(): path to executable: " + pathToExecutable;
 		Console::println(backtraceExecutableLine);
 		backtraceLines.push_back(backtraceExecutableLine);
 
-		pathToExecutable = string("\"") + StringUtils::replace(pathToExecutable, "\\", "\\\\") + "\"";
+		pathToExecutable = string("\"") + StringTools::replace(pathToExecutable, "\\", "\\\\") + "\"";
 
 		SymSetOptions(
 			SYMOPT_UNDNAME |
@@ -279,7 +279,7 @@ void Application::exit(int exitCode) {
 					t.tokenize(addr2LineOutput, " ");
 					if (t.hasMoreTokens() == true) {
 						auto addr2lineFunctionName = t.nextToken();
-						addr2LineOutput = StringUtils::replace(StringUtils::replace(addr2LineOutput, addr2lineFunctionName, RTTI::demangle(addr2lineFunctionName.c_str())), "\n", "");
+						addr2LineOutput = StringTools::replace(StringTools::replace(addr2LineOutput, addr2lineFunctionName, RTTI::demangle(addr2lineFunctionName.c_str())), "\n", "");
 					}
 					auto backtraceLine = to_string(frameIdx) + ": " + addr2LineOutput;
 					Console::println(backtraceLine);
@@ -672,7 +672,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 void Application::setIcon() {
 	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
 	#if defined(VULKAN) || defined(GLFW3)
-		auto logoFileName = StringUtils::replace(StringUtils::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
+		auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
 		if (FileSystem::getInstance()->fileExists("resources/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
 		auto texture = TextureReader::read("resources/icons", logoFileName, false, false);
 		if (texture != nullptr) {

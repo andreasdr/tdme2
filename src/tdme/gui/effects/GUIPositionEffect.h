@@ -13,7 +13,7 @@ using tdme::gui::renderer::GUIRenderer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::effects::GUIPositionEffect: public GUIEffect
+class tdme::gui::effects::GUIPositionEffect final: public GUIEffect
 {
 
 private:

@@ -62,10 +62,15 @@ public:
 		this->action = action;
 	}
 
-	/** 
+	/**
 	 * Start this effect
 	 */
 	virtual void start();
+
+	/**
+	 * Stop this effect
+	 */
+	virtual void stop();
 
 	/** 
 	 * Updates the effect to GUI renderer and updates time

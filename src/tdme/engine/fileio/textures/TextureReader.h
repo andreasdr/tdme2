@@ -9,7 +9,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 #include <ext/libpng/png.h>
 
@@ -20,7 +20,7 @@ using std::string;
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::threading::Mutex;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 /** 
  * Texture reader class

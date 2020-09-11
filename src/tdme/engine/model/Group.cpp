@@ -110,6 +110,13 @@ int32_t Group::getFaceCount() const
 	return faceCount;
 }
 
+FacesEntity* Group::getFacesEntity(const string& id) {
+	for (auto& facesEntity: facesEntities) {
+		if (facesEntity.getId() == id) return &facesEntity;
+	}
+	return nullptr;
+}
+
 void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 {
 	this->facesEntities.resize(facesEntities.size());

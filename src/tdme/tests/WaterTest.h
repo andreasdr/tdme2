@@ -5,12 +5,12 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::model::Model;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 
 /** 
  * Water shader test

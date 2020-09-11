@@ -48,6 +48,16 @@ protected:
 	string shaderParametersHash;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	SingleThreadedRenderer();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~SingleThreadedRenderer();
+
 	// overriden methods
 	virtual int32_t getLighting(void* context) override;
 	virtual void setLighting(void* context, int32_t lighting) override;
@@ -64,16 +74,6 @@ public:
 	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
-
-	/**
-	 * Public constructor
-	 */
-	SingleThreadedRenderer();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~SingleThreadedRenderer();
 
 private:
 

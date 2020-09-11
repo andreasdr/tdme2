@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::gui::events::GUIMouseEvent_Type;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 GUIMouseEvent_Type::GUIMouseEvent_Type(const string& name, int ordinal) : Enum(name, ordinal)
 {

@@ -31,13 +31,13 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using std::array;
 using std::vector;
@@ -71,13 +71,13 @@ using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Float;
-using tdme::utils::MutableString;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::Exception;
-using tdme::utils::ExceptionBase;
-using tdme::utils::Console;
+using tdme::utilities::Float;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::Console;
 
 MutableString LevelEditorScreenController::CHECKBOX_CHECKED = MutableString("1");
 MutableString LevelEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");

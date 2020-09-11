@@ -7,7 +7,7 @@ using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIColorEffect::GUIColorEffect()
+GUIColorEffect::GUIColorEffect(): GUIEffect()
 {
 }
 

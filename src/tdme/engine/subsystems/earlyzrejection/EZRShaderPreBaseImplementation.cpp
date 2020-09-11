@@ -8,7 +8,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
@@ -19,7 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 EZRShaderPreBaseImplementation::EZRShaderPreBaseImplementation(Renderer* renderer)
 {
@@ -59,6 +59,10 @@ void EZRShaderPreBaseImplementation::initialize()
 	}
 	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
+	uniformTextureAtlasSize = renderer->getProgramUniformLocation(programId, "textureAtlasSize");
+	if (uniformTextureAtlasSize == -1) return;
+	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(programId, "textureAtlasPixelDimension");
+	if (uniformTextureAtlasPixelDimension == -1) return;
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1) return;
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
@@ -111,6 +115,8 @@ void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* co
 	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+	renderer->setProgramUniformInteger(context, uniformTextureAtlasSize, material.textureAtlasSize);
+	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
 void EZRShaderPreBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)

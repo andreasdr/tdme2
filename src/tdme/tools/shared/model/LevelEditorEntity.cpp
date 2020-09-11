@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::engine::model::Model;
@@ -21,7 +21,7 @@ using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
@@ -64,7 +64,38 @@ char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUN
 	"model_bv.29",
 	"model_bv.30",
 	"model_bv.31",
-	"model_bv.32"
+	"model_bv.32",
+	"model_bv.33",
+	"model_bv.34",
+	"model_bv.35",
+	"model_bv.36",
+	"model_bv.37",
+	"model_bv.38",
+	"model_bv.39",
+	"model_bv.40",
+	"model_bv.41",
+	"model_bv.42",
+	"model_bv.43",
+	"model_bv.44",
+	"model_bv.45",
+	"model_bv.46",
+	"model_bv.47",
+	"model_bv.48",
+	"model_bv.49",
+	"model_bv.50",
+	"model_bv.51",
+	"model_bv.52",
+	"model_bv.53",
+	"model_bv.54",
+	"model_bv.55",
+	"model_bv.56",
+	"model_bv.57",
+	"model_bv.58",
+	"model_bv.59",
+	"model_bv.60",
+	"model_bv.61",
+	"model_bv.62",
+	"model_bv.63"
 };
 
 LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
@@ -87,8 +118,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	} else
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
 		if (model->getShaderModel() == ShaderModel::PBR) {
-			shaderId = StringUtils::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
-			distanceShaderId = StringUtils::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
+			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
+			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
 		this->modelSettings = new LevelEditorEntityModel(this);
 		this->physics = new LevelEditorEntityPhysics();

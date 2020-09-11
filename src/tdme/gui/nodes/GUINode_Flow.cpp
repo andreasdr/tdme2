@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::gui::nodes::GUINode_Flow;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 GUINode_Flow::GUINode_Flow(const string& name, int ordinal)
 	: Enum(name, ordinal)

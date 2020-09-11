@@ -14,10 +14,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 
 using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::GUI;
@@ -34,10 +34,10 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::MutableString;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 
 GUIInputInternalNode::GUIInputInternalNode(
 	GUIScreenNode* screenNode,
@@ -129,7 +129,7 @@ void GUIInputInternalNode::dispose()
 
 void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);

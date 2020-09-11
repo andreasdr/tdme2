@@ -10,7 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>

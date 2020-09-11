@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Color4.h>
@@ -27,7 +28,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::array;
 using std::map;
@@ -36,6 +38,7 @@ using std::string;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;
@@ -58,7 +61,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 void TMWriter::write(Model* model, const string& pathName, const string& fileName)
 {
@@ -66,7 +70,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(14));
+	os.writeByte(static_cast< uint8_t >(15));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -99,6 +103,12 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	os->writeFloatArray(smp->getSpecularColor().getArray());
 	os->writeFloatArray(smp->getEmissionColor().getArray());
 	os->writeFloat(smp->getShininess());
+	os->writeInt(smp->getTextureAtlasSize());
+	if (smp->getTextureAtlasSize() > 1) {
+		if (PNGTextureWriter::write(smp->getDiffuseTexture(), smp->getDiffuseTexturePathName(), smp->getDiffuseTextureFileName(), false, false) == false) {
+			Console::println("TMWriter::writeMaterial(): writing atlas texture: " + smp->getDiffuseTexturePathName() + "/" + smp->getDiffuseTextureFileName() + ": failed!");
+		}
+	}
 	os->writeString(smp->getDiffuseTexturePathName());
 	os->writeString(smp->getDiffuseTextureFileName());
 	os->writeString(smp->getDiffuseTransparencyTexturePathName());
@@ -107,6 +117,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	os->writeString(smp->getSpecularTextureFileName());
 	os->writeString(smp->getNormalTexturePathName());
 	os->writeString(smp->getNormalTextureFileName());
+	os->writeBoolean(smp->hasDiffuseTextureTransparency());
 	os->writeBoolean(smp->hasDiffuseTextureMaskedTransparency());
 	os->writeFloat(smp->getDiffuseTextureMaskedTransparencyThreshold());
 	os->writeFloatArray(m->getTextureMatrix().getArray());

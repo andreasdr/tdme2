@@ -9,7 +9,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
@@ -18,7 +18,7 @@ using tdme::engine::Object3DModel;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 
 /** 
  * Engine with physics test 1

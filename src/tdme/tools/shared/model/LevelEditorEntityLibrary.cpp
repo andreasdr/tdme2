@@ -13,9 +13,9 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ExceptionBase.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::remove;
 using std::to_string;
@@ -32,9 +32,9 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::utils::Console;
-using tdme::utils::ExceptionBase;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::StringTools;
 
 constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
 
@@ -68,7 +68,7 @@ int32_t LevelEditorEntityLibrary::allocateEntityId()
 LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
 		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(
@@ -82,7 +82,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& 
 			description,
 			"",
 			pathName + "/" + fileName,
-			StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+			StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 			model,
 			Vector3(0.0f, 0.0f, 0.0f)
 		);
@@ -104,7 +104,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 		description,
 		"",
 		cacheId,
-		StringUtils::replace(StringUtils::replace(StringUtils::replace(modelId, "\\", "_"), "/", "_"), ":", "_") + ".png",
+		StringTools::replace(StringTools::replace(StringTools::replace(modelId, "\\", "_"), "/", "_"), ":", "_") + ".png",
 		nullptr,
 		Vector3()
 	);
@@ -126,7 +126,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& 
 		description,
 		"",
 		cacheId,
-		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
+		StringTools::replace(StringTools::replace(StringTools::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
 		model,
 		Vector3()
 	);

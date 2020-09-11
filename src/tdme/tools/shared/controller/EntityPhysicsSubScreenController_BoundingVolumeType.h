@@ -3,11 +3,11 @@
 #include <string>
 
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 

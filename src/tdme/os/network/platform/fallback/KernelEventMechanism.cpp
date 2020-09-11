@@ -34,7 +34,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// skip if not initialized
 	if (initialized == false) return;
 
@@ -116,7 +116,7 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	// run select
 	auto result = select(psd->maxFd + 1, &rfds, &wfds, NULL, &timeout);
 	if (result == -1) {
-		throw NIOKEMException("select failed");
+		throw NetworkKEMException("select failed");
 	}
 
 	// compile list of events

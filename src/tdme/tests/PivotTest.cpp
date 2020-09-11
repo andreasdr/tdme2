@@ -16,9 +16,9 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ObjectDeleter.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -39,9 +39,9 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::ObjectDeleter;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 PivotTest::PivotTest()
 {

@@ -13,7 +13,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
@@ -36,10 +36,10 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ExceptionBase.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 using std::to_string;
@@ -55,7 +55,7 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -79,10 +79,10 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ExceptionBase;
-using tdme::utils::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::MutableString;
 
 void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal)
 {
@@ -353,7 +353,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 				vertices[triangles[i * 3 + 2]]
 			};
 			array<Vector3, 3> faceNormals;
-			ModelHelper::computeNormals(faceVertices, faceNormals);
+			ModelTools::computeNormals(faceVertices, faceNormals);
 			for (auto& normal : faceNormals) {
 				normals.push_back(normal);
 			}
@@ -380,7 +380,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	group->setFacesEntities(groupFacesEntities);
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model);
 	return model;
 }
 
@@ -408,7 +408,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 				triangle.getVertices()[2],
 			};
 			array<Vector3, 3> faceNormals;
-			ModelHelper::computeNormals(faceVertices, faceNormals);
+			ModelTools::computeNormals(faceVertices, faceNormals);
 			for (auto& normal : faceNormals) {
 				normals.push_back(normal);
 			}
@@ -436,6 +436,6 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	group->setFacesEntities(groupFacesEntities);
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model);
 	return model;
 }

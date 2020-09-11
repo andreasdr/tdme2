@@ -15,9 +15,9 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Pool.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Pool.h>
 
 using std::vector;
 using std::string;
@@ -32,8 +32,8 @@ using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Pool;
-using tdme::utils::Console;
+using tdme::utilities::Pool;
+using tdme::utilities::Console;
 
 /** 
  * Transparent render faces pool

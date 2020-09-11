@@ -14,7 +14,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::vector;

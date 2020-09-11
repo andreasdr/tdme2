@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
 
@@ -12,7 +12,7 @@ using std::array;
 using std::string;
 
 using tdme::audio::AudioEntity;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 /** 
  * Audio stream

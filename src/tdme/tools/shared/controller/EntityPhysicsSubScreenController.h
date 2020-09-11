@@ -12,7 +12,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::vector;
@@ -29,7 +29,7 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Entity physics sub screen controller

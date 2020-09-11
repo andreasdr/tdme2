@@ -20,7 +20,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::vector;
 using std::string;

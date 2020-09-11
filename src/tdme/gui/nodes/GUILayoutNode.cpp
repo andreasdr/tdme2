@@ -13,7 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
@@ -29,7 +29,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 GUILayoutNode::GUILayoutNode(
 	GUIScreenNode* screenNode,
@@ -313,6 +313,6 @@ void GUILayoutNode::setLeft(int32_t left)
 
 GUILayoutNode_Alignment* GUILayoutNode::createAlignment(const string& alignment)
 {
-	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringUtils::toUpperCase(alignment) : "NONE");
+	return GUILayoutNode_Alignment::valueOf(alignment.empty() == false && alignment.length() > 0 ? StringTools::toUpperCase(alignment) : "NONE");
 }
 

@@ -14,11 +14,11 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::map;
 using std::vector;
@@ -34,8 +34,8 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::Console;
-using tdme::utils::VectorIteratorMultiple;
+using tdme::utilities::Console;
+using tdme::utilities::VectorIteratorMultiple;
 
 /** 
  * Oct tree partition implementation

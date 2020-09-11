@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 GUISpaceNode::GUISpaceNode(
 	GUIScreenNode* screenNode,
@@ -59,14 +59,14 @@ int32_t GUISpaceNode::getContentHeight()
 GUINode_RequestedConstraints GUISpaceNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	GUINode_RequestedConstraints constraints;
-	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
-	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), 1);
-	constraints.heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
-	constraints.height = getRequestedConstraintsValue(StringUtils::trim(height), 1);
+	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.left = getRequestedConstraintsValue(StringTools::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringTools::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.top = getRequestedConstraintsValue(StringTools::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringTools::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), 1);
+	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), 1);
 	return constraints;
 }
 
@@ -77,7 +77,7 @@ void GUISpaceNode::dispose()
 
 void GUISpaceNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
 }

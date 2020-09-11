@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 TestThread::TestThread(int id, SharedData *data) : Thread("test"), id(id), data(data) {
 }

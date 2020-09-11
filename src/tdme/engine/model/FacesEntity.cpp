@@ -53,8 +53,8 @@ void FacesEntity::determineFeatures()
 	textureCoordinatesAvailable = false;
 	tangentBitangentAvailable = false;
 	for (auto& face: faces) {
-		auto& vertexIndices = face.getVertexIndices();
-		if (vertexIndices[0] != -1 && vertexIndices[1] != -1 && vertexIndices[2] != -1) textureCoordinatesAvailable = true;
+		auto& textureCoordinateIndices = face.getTextureCoordinateIndices();
+		if (textureCoordinateIndices[0] != -1 && textureCoordinateIndices[1] != -1 && textureCoordinateIndices[2] != -1) textureCoordinatesAvailable = true;
 		auto& tangentIndices = face.getTangentIndices();
 		auto& biTangentIndices = face.getBitangentIndices();
 		if (tangentIndices[0] != -1 && tangentIndices[1] != -1 && tangentIndices[2] != -1 &&

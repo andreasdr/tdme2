@@ -17,7 +17,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementat
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer): renderer(renderer)
 {

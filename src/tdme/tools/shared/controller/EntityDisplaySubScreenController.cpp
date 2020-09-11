@@ -7,9 +7,9 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::gui::events::GUIActionListener_Type;
@@ -19,9 +19,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::utils::MutableString;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 MutableString EntityDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
 MutableString EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");

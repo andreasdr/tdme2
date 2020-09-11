@@ -63,6 +63,10 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 
 	//	uniforms
 	renderUniformShadowMapLookUps = renderer->getProgramUniformLocation(renderProgramId, "shadowMapLookUps");
+	uniformTextureAtlasSize = renderer->getProgramUniformLocation(renderProgramId, "textureAtlasSize");
+	if (uniformTextureAtlasSize == -1) return;
+	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(renderProgramId, "textureAtlasPixelDimension");
+	if (uniformTextureAtlasPixelDimension == -1) return;
 	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "textureUnit");
 	if (renderUniformTextureUnit == -1) return;
 	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramId, "texturePixelWidth");
@@ -168,6 +172,8 @@ void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* rende
 	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+	renderer->setProgramUniformInteger(context, uniformTextureAtlasSize, material.textureAtlasSize);
+	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
 void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId) {

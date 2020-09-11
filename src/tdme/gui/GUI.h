@@ -18,8 +18,8 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Time.h>
 
 using std::map;
 using std::set;
@@ -38,7 +38,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::Time;
+using tdme::utilities::Time;
 
 /**
  * GUI module class

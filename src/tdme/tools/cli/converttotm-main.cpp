@@ -6,16 +6,16 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {

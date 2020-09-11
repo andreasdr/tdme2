@@ -9,7 +9,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -21,12 +21,12 @@ using tdme::engine::model::ShaderModel;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances) {
 	if (model->getShaderModel() == ShaderModel::PBR) {
-		shaderId = StringUtils::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
-		distanceShaderId = StringUtils::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
+		shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
+		distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 	}
 }
 

@@ -12,7 +12,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::map;
@@ -21,10 +21,10 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
 
 /** 
  * OpenGL 3 renderer

@@ -38,7 +38,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -70,7 +70,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 		// failed to reallocate
 		if (reallocated == false) {
 			psd->kqMutex.unlock();
-			throw NIOKEMException("kqueue change list too small");
+			throw NetworkKEMException("kqueue change list too small");
 		}
 	}
 	// handle read interest
@@ -124,16 +124,16 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 	psd->kqChangeList[0] = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqChangeListMax);
 	psd->kqChangeList[1] = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqChangeListMax);
 	if (psd->kqChangeList == NULL) {
-		throw NIOKEMException("Could not allocate kqueue change list array");
+		throw NetworkKEMException("Could not allocate kqueue change list array");
 	}
 	if (psd->kqChangeList[0] == NULL) {
 		free(psd->kqChangeList);
-		throw NIOKEMException("Could not allocate kqueue change list 0");
+		throw NetworkKEMException("Could not allocate kqueue change list 0");
 	}
 	if (psd->kqChangeList[1] == NULL) {
 		free(psd->kqChangeList[0]);
 		free(psd->kqChangeList);
-		throw NIOKEMException("Could not allocate kqueue change list 1");
+		throw NetworkKEMException("Could not allocate kqueue change list 1");
 	}
 
 	// kqueue event list, maxCCU * (read + write change)
@@ -143,7 +143,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 		free(psd->kqChangeList[0]);
 		free(psd->kqChangeList[1]);
 		free(psd->kqChangeList);
-		throw NIOKEMException("Could not allocate kqueue event list");
+		throw NetworkKEMException("Could not allocate kqueue event list");
 	}
 
 	// start kqueue and get the descriptor
@@ -152,7 +152,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 		shutdownKernelEventMechanism() ;
 		std::string msg = "Could not create kqueue: ";
 		msg+= strerror(errno);
-		throw NIOKEMException(msg);
+		throw NetworkKEMException(msg);
 	}
 
 	//
@@ -218,7 +218,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 			} else {
 				std::string msg = "kevent failed: ";
 				msg+= strerror(errno);
-				throw NIOKEMException(msg);
+				throw NetworkKEMException(msg);
 			}
 		} else {
 			//

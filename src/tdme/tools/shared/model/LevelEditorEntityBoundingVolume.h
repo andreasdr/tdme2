@@ -24,7 +24,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 class tdme::tools::shared::model::LevelEditorEntityBoundingVolume final
 {
 private:
-	volatile static uint32_t modelIdx;
+	static volatile uint32_t modelIdx;
 	int32_t id;
 	LevelEditorEntity* levelEditorEntity { nullptr };
 	string modelMeshFile;

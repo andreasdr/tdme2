@@ -25,8 +25,8 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::set;
 using std::string;
@@ -55,8 +55,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 GUIParentNode::GUIParentNode(
 	GUIScreenNode* screenNode,
@@ -177,16 +177,16 @@ GUIParentNode_Overflow* GUIParentNode::getOverflowY()
 
 GUIParentNode_Overflow* GUIParentNode::createOverflow(const string& overflow)
 {
-	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), "hidden") == true) {
+	if (StringTools::equalsIgnoreCase(StringTools::trim(overflow), "hidden") == true) {
 		return GUIParentNode_Overflow::HIDDEN;
 	} else
-	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), "downsize-children") == true) {
+	if (StringTools::equalsIgnoreCase(StringTools::trim(overflow), "downsize-children") == true) {
 		return GUIParentNode_Overflow::DOWNSIZE_CHILDREN;
 	} else
-	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), "scroll") == true) {
+	if (StringTools::equalsIgnoreCase(StringTools::trim(overflow), "scroll") == true) {
 		return GUIParentNode_Overflow::SCROLL;
 	} else
-	if (overflow.empty() == true || StringUtils::trim(overflow).length() == 0) {
+	if (overflow.empty() == true || StringTools::trim(overflow).length() == 0) {
 		return GUIParentNode_Overflow::HIDDEN;
 	} else {
 		throw GUIParserException(
@@ -222,14 +222,14 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	GUINode_RequestedConstraints constraints;
-	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
-	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
-	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
-	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
-	constraints.heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints.height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
+	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.left = getRequestedConstraintsValue(StringTools::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringTools::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.top = getRequestedConstraintsValue(StringTools::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringTools::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), -1);
+	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), -1);
 	return constraints;
 }
 
@@ -354,7 +354,7 @@ void GUIParentNode::layoutOnDemand() {
 
 void GUIParentNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	auto renderAreaLeftCurrent = guiRenderer->getRenderAreaLeft();
 	auto renderAreaTopCurrent = guiRenderer->getRenderAreaTop();

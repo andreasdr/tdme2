@@ -1,9 +1,9 @@
 #pragma once
 
 #include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 

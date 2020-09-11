@@ -16,8 +16,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Time.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
 using tdme::gui::elements::GUIInputController;
@@ -37,8 +37,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
-using tdme::utils::MutableString;
-using tdme::utils::Time;
+using tdme::utilities::MutableString;
+using tdme::utilities::Time;
 
 constexpr int64_t GUIInputInternalController::CURSOR_MODE_DURATION;
 constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;

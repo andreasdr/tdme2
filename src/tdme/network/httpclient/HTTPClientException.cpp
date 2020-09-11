@@ -8,7 +8,7 @@ using tdme::network::httpclient::HTTPClientException;
 
 using std::string;
 
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 HTTPClientException::HTTPClientException(const string &message) throw() : ExceptionBase(message) {
 }

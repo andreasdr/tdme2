@@ -13,7 +13,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -36,7 +36,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::TextureCoordinate;
@@ -193,7 +193,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>
 				combinedModelGroupFacesEntity = &combinedModelGroupFacesEntities[combinedModelGroupFacesEntities.size() - 1];
 				auto combinedModelGroupFacesEntityMaterial = combinedModel->getMaterials()[facesEntity.getMaterial()->getId()];
 				if (combinedModelGroupFacesEntityMaterial == nullptr) {
-					combinedModelGroupFacesEntityMaterial = ModelHelper::cloneMaterial(facesEntity.getMaterial());
+					combinedModelGroupFacesEntityMaterial = ModelTools::cloneMaterial(facesEntity.getMaterial());
 					combinedModel->getMaterials()[combinedModelGroupFacesEntityMaterial->getId()] = combinedModelGroupFacesEntityMaterial;
 				}
 				combinedModelGroupFacesEntity->setMaterial(combinedModelGroupFacesEntityMaterial);
@@ -332,10 +332,10 @@ void Object3DRenderGroup::updateRenderGroup() {
 	for (auto combinedModel: combinedModels) {
 		if (combinedModel != nullptr) {
 			// post process combined model
-			ModelHelper::shrinkToFit(combinedModel);
-			ModelHelper::createDefaultAnimation(combinedModel, 0);
-			ModelHelper::setupJoints(combinedModel);
-			ModelHelper::fixAnimationLength(combinedModel);
+			ModelTools::shrinkToFit(combinedModel);
+			ModelTools::createDefaultAnimation(combinedModel, 0);
+			ModelTools::setupJoints(combinedModel);
+			ModelTools::fixAnimationLength(combinedModel);
 		}
 	}
 

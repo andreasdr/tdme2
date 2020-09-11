@@ -10,7 +10,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
@@ -18,7 +18,7 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::model::Model;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 using tdme::tools::shared::model::LevelEditorEntity;
 
 /** 

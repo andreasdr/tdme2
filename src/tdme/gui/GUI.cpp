@@ -31,9 +31,9 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Time.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::map;
 using std::remove;
@@ -64,9 +64,9 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Time;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 map<string, GUIFont*>* GUI::fontCache = new map<string, GUIFont*>();
 map<string, Texture*>* GUI::imageCache = new map<string, Texture*>();

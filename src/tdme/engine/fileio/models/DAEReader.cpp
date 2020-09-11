@@ -20,7 +20,7 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -33,12 +33,12 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -67,7 +67,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -79,12 +79,12 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Float;
-using tdme::utils::Integer;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
@@ -139,7 +139,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 	string xmlSceneId;
 	auto xmlScene = getChildrenByTagName(xmlRoot, "scene").at(0);
 	for (auto xmlInstanceVisualscene: getChildrenByTagName(xmlScene, "instance_visual_scene")) {
-		xmlSceneId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url"))), 1);
+		xmlSceneId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceVisualscene->Attribute("url"))), 1);
 	}
 
 	// parse visual scenes
@@ -173,13 +173,13 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 			}
 		}
 	}
-	if (ModelHelper::hasDefaultAnimation(model) == false) ModelHelper::createDefaultAnimation(model, 0);
+	if (ModelTools::hasDefaultAnimation(model) == false) ModelTools::createDefaultAnimation(model, 0);
 	// set up joints
-	ModelHelper::setupJoints(model);
+	ModelTools::setupJoints(model);
 	// fix animation length
-	ModelHelper::fixAnimationLength(model);
+	ModelTools::fixAnimationLength(model);
 	// prepare for indexed rendering
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model);
 	//
 	return model;
 }
@@ -204,13 +204,13 @@ UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot)
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = string(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText()));
-			if (StringUtils::equalsIgnoreCase(upAxis, "Y_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 				return UpVector::Y_UP;
 			} else
-			if (StringUtils::equalsIgnoreCase(upAxis, "Z_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
 				return UpVector::Z_UP;
 			} else
-			if (StringUtils::equalsIgnoreCase(upAxis, "X_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
 				throw ModelFileIOException("X-Up is not supported");
 			} else {
 				throw ModelFileIOException("Unknown Up vector");
@@ -226,12 +226,12 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
 		for (auto xmlAssetUpAxis: getChildrenByTagName(xmlAsset, "up_axis")) {
 			auto upAxis = string(AVOID_NULLPTR_STRING(xmlAssetUpAxis->GetText()));
-			if (StringUtils::equalsIgnoreCase(upAxis, "Y_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
-			if (StringUtils::equalsIgnoreCase(upAxis, "Z_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
 				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 			} else
-			if (StringUtils::equalsIgnoreCase(upAxis, "X_UP") == true) {
+			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
 				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f)));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
@@ -300,8 +300,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			// find sampler source
 			string xmlSamplerSource;
 			auto xmlChannel = getChildrenByTagName(xmlAnimation, "channel").at(0);
-			if (StringUtils::startsWith(string(AVOID_NULLPTR_STRING(xmlChannel->Attribute("target"))), xmlNodeId + "/") == true) {
-				xmlSamplerSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlChannel->Attribute("source"))), 1);
+			if (StringTools::startsWith(string(AVOID_NULLPTR_STRING(xmlChannel->Attribute("target"))), xmlNodeId + "/") == true) {
+				xmlSamplerSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlChannel->Attribute("source"))), 1);
 			}
 			// check for sampler source
 			if (xmlSamplerSource.length() == 0) {
@@ -313,10 +313,10 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			auto xmlSampler = getChildrenByTagName(xmlAnimation, "sampler").at(0);
 			for (auto xmlSamplerInput: getChildrenByTagName(xmlSampler, "input")) {
 				if (string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("semantic"))) == "OUTPUT") {
-					xmlSamplerOutputSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source"))), 1);
+					xmlSamplerOutputSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source"))), 1);
 				} else
 				if (string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("semantic"))) == "INPUT") {
-					xmlSamplerInputSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source"))), 1);
+					xmlSamplerInputSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlSamplerInput->Attribute("source"))), 1);
 				}
 			}
 			// check for sampler source
@@ -373,7 +373,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 
 							auto frames = static_cast< int32_t >(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
 							if (frames > 0) {
-								ModelHelper::createDefaultAnimation(model, frames);
+								ModelTools::createDefaultAnimation(model, frames);
 								auto animation = new Animation();
 								vector<Matrix4x4> transformationsMatrices;
 								transformationsMatrices.resize(frames);
@@ -423,7 +423,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 	if (xmlInstanceGeometryElements.empty() == false) {
 		auto xmlInstanceGeometryElement = xmlInstanceGeometryElements.at(0);
 		// fetch instance geometry url
-		xmlInstanceGeometryId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceGeometryElement->Attribute("url"))), 1);
+		xmlInstanceGeometryId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceGeometryElement->Attribute("url"))), 1);
 		// determine bound materials
 		map<string, string> materialSymbols;
 		for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometryElement, "bind_material"))
@@ -433,14 +433,14 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, &materialSymbols);
+		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, materialSymbols);
 		return group;
 	}
 
 	// otherwise check for "instance_node"
 	string xmlInstanceNodeId;
 	for (auto xmlInstanceNodeElement: getChildrenByTagName(xmlNode, "instance_node")) {
-		xmlInstanceNodeId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceNodeElement->Attribute("url"))), 1);
+		xmlInstanceNodeId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceNodeElement->Attribute("url"))), 1);
 	}
 	// do we have a instance node id?
 	if (xmlInstanceNodeId.length() > 0) {
@@ -457,7 +457,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			}
 			// parse geometry
 			for (auto xmlInstanceGeometry: getChildrenByTagName(xmlLibraryNode, "instance_geometry")) {
-				auto xmlGeometryId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceGeometry->Attribute("url"))), 1);
+				auto xmlGeometryId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceGeometry->Attribute("url"))), 1);
 				// parse material symbols
 				map<string, string> materialSymbols;
 				for (auto xmlBindMaterial: getChildrenByTagName(xmlInstanceGeometry, "bind_material"))
@@ -467,7 +467,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
 			}
 		}
 	}
@@ -494,7 +494,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 			string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 	}
 
-	auto xmlInstanceControllerId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceController->Attribute("url"))), 1);
+	auto xmlInstanceControllerId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceController->Attribute("url"))), 1);
 	auto xmlLibraryControllers = getChildrenByTagName(xmlRoot, "library_controllers").at(0);
 	for (auto xmlLibraryController: getChildrenByTagName(xmlLibraryControllers, "controller")) {
 		// our controller ?
@@ -517,7 +517,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	}
 
 	// get geometry id
-	xmlGeometryId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlSkin->Attribute("source"))), 1);
+	xmlGeometryId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlSkin->Attribute("source"))), 1);
 
 	// parse bind shape matrix
 	auto xmlMatrix = string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkin, "bind_shape_matrix").at(0)->GetText()));
@@ -537,7 +537,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	auto skinning = new Skinning();
 
 	// parse geometry
-	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
 
 	// parse joints
 	string xmlJointsSource;
@@ -545,10 +545,10 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	auto xmlJoints = getChildrenByTagName(xmlSkin, "joints").at(0);
 	for (auto xmlJointsInput: getChildrenByTagName(xmlJoints, "input")) {
 		if (string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("semantic"))) == "JOINT") {
-			xmlJointsSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source"))), 1);
+			xmlJointsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source"))), 1);
 		} else
 		if (string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("semantic"))) == "INV_BIND_MATRIX") {
-			xmlJointsInverseBindMatricesSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source"))), 1);
+			xmlJointsInverseBindMatricesSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlJointsInput->Attribute("source"))), 1);
 		}
 	}
 
@@ -612,14 +612,14 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	auto xmlVertexWeightInputs = getChildrenByTagName(xmlVertexWeights, "input");
 	for (auto xmlVertexWeightInput: xmlVertexWeightInputs) {
 		if (string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic"))) == "JOINT") {
-			if ((StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1) == xmlJointsSource) == false) {
+			if ((StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1) == xmlJointsSource) == false) {
 				throw ModelFileIOException("joint inverse bind matrices source do not match");
 			}
 			xmlJointOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
 		} else
 		if (string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic"))) == "WEIGHT") {
 			xmlWeightOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
-			xmlWeightsSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1);
+			xmlWeightsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1);
 		}
 	}
 
@@ -693,7 +693,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	return group;
 }
 
-void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols)
+void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
 {
 	vector<FacesEntity> facesEntities = group->getFacesEntities();
 	auto verticesOffset = group->getVertices().size();
@@ -723,7 +723,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 			for (auto xmlPolygons: xmlPolygonsList) {
 				vector<Face> faces;
 				FacesEntity facesEntity(group, xmlNodeId);
-				if (StringUtils::toLowerCase((xmlPolygons->Value())) == "polylist") {
+				if (StringTools::toLowerCase((xmlPolygons->Value())) == "polylist") {
 					StringTokenizer t;
 					t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText())), " \t\n\r\f");
 					while (t.hasMoreTokens()) {
@@ -747,10 +747,10 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 				auto xmlColorOffset = -1;
 				string xmlColorSource;
 				auto xmlMaterialId = string(AVOID_NULLPTR_STRING(xmlPolygons->Attribute("material")));
-				auto materialSymbolIt = materialSymbols->find(xmlMaterialId);
-				if (materialSymbolIt != materialSymbols->end()) {
+				auto materialSymbolIt = materialSymbols.find(xmlMaterialId);
+				if (materialSymbolIt != materialSymbols.end()) {
 					xmlMaterialId = materialSymbolIt->second;
-					xmlMaterialId = StringUtils::substring(xmlMaterialId, 1);
+					xmlMaterialId = StringTools::substring(xmlMaterialId, 1);
 				}
 
 				if (xmlMaterialId.length() > 0) {
@@ -770,25 +770,25 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 					// check for vertices sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "VERTEX") {
 						xmlVerticesOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
-						xmlVerticesSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
+						xmlVerticesSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlVerticesOffset);
 					} else
 					// check for normals sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "NORMAL") {
 						xmlNormalsOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
-						xmlNormalsSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
+						xmlNormalsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlNormalsOffset);
 					} else
 					// check for texture coordinate sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "TEXCOORD") {
 						xmlTexCoordOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
-						xmlTexCoordSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
+						xmlTexCoordSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlTexCoordOffset);
 					} else
 					// check for color coordinate sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "COLOR") {
 						xmlColorOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
-						xmlColorSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
+						xmlColorSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlColorOffset);
 					}
 				}
@@ -797,11 +797,11 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 				for (auto xmlVertices: getChildrenByTagName(xmlMesh, "vertices")) {
 					if (string(AVOID_NULLPTR_STRING(xmlVertices->Attribute("id"))) == xmlVerticesSource) {
 						for (auto xmlVerticesInput: getChildrenByTagName(xmlVertices, "input")) {
-							if (StringUtils::equalsIgnoreCase(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic"))), "position") == true) {
-								xmlVerticesSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source"))), 1);
+							if (StringTools::equalsIgnoreCase(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic"))), "position") == true) {
+								xmlVerticesSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source"))), 1);
 							} else
-							if (StringUtils::equalsIgnoreCase(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic"))), "normal") == true) {
-								xmlNormalsSource = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source"))), 1);
+							if (StringTools::equalsIgnoreCase(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("semantic"))), "normal") == true) {
+								xmlNormalsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVerticesInput->Attribute("source"))), 1);
 							}
 						}
 					}
@@ -962,7 +962,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 	for (auto xmlMaterial: getChildrenByTagName(xmlLibraryMaterials, "material")) {
 		if (string(AVOID_NULLPTR_STRING(xmlMaterial->Attribute("id"))) == xmlNodeId) {
 			auto xmlInstanceEffect = getChildrenByTagName(xmlMaterial, "instance_effect").at(0);
-			xmlEffectId = StringUtils::substring(string(AVOID_NULLPTR_STRING(xmlInstanceEffect->Attribute("url"))), 1);
+			xmlEffectId = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlInstanceEffect->Attribute("url"))), 1);
 		}
 	}
 	if (xmlEffectId.length() == 0) {
@@ -1246,15 +1246,15 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 const string DAEReader::makeFileNameRelative(const string& fileName)
 {
 	// check if absolute path
-	if (StringUtils::startsWith(fileName, "/") == true ||
-		StringUtils::regexMatch(fileName, "^[A-Z]\\:\\\\.*$") == true) {
+	if (StringTools::startsWith(fileName, "/") == true ||
+		StringTools::regexMatch(fileName, "^[A-Z]\\:\\\\.*$") == true) {
 		int indexSlash = fileName.find_last_of(L'/');
 		int indexBackslash = fileName.find_last_of(L'\\');
 		if (indexSlash != -1 || indexBackslash != -1) {
 			if (indexSlash > indexBackslash) {
-				return StringUtils::substring(fileName, indexSlash + 1);
+				return StringTools::substring(fileName, indexSlash + 1);
 			} else {
-				return StringUtils::substring(fileName, indexBackslash + 1);
+				return StringTools::substring(fileName, indexBackslash + 1);
 			}
 		}
 	}
@@ -1268,8 +1268,8 @@ const string DAEReader::getTextureFileNameById(TiXmlElement* xmlRoot, const stri
 	for (auto xmlImage: getChildrenByTagName(xmlLibraryImages, "image")) {
 		if (string(AVOID_NULLPTR_STRING(xmlImage->Attribute("id"))) == xmlTextureId) {
 			xmlTextureFilename = string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlImage, "init_from").at(0)->GetText()));
-			if (StringUtils::startsWith(xmlTextureFilename, "file://") == true) {
-				xmlTextureFilename = StringUtils::substring(xmlTextureFilename, 7);
+			if (StringTools::startsWith(xmlTextureFilename, "file://") == true) {
+				xmlTextureFilename = StringTools::substring(xmlTextureFilename, 7);
 			}
 			break;
 		}

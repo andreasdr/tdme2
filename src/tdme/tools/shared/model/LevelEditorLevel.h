@@ -11,7 +11,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::map;

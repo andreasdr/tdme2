@@ -6,15 +6,15 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Entity display sub screen controller

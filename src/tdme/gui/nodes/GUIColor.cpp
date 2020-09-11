@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/gui/GUIParserException.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::string;
@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIColor;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::gui::GUIParserException;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 GUIColor GUIColor::GUICOLOR_WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 GUIColor GUIColor::GUICOLOR_BLACK(0.0f, 0.0f, 0.0f, 1.0f);
@@ -69,7 +69,7 @@ GUIColor::GUIColor(const string& colorString) : Color4Base()
 		throw GUIParserException("No color given");
 	}
 	for (auto i = 0; i < COLOR_NAMES.size(); i++) {
-		if (StringUtils::equalsIgnoreCase(COLOR_NAMES[i], colorString) == true) {
+		if (StringTools::equalsIgnoreCase(COLOR_NAMES[i], colorString) == true) {
 			this->data[0] = COLOR_INSTANCES[i]->data[0];
 			this->data[1] = COLOR_INSTANCES[i]->data[1];
 			this->data[2] = COLOR_INSTANCES[i]->data[2];
@@ -77,7 +77,7 @@ GUIColor::GUIColor(const string& colorString) : Color4Base()
 			return;
 		}
 	}
-	if (StringUtils::startsWith(colorString, "#") == false || (colorString.length() != 7 && colorString.length() != 9)) {
+	if (StringTools::startsWith(colorString, "#") == false || (colorString.length() != 7 && colorString.length() != 9)) {
 		throw GUIParserException(
 			"Invalid color '" +
 			(colorString) +

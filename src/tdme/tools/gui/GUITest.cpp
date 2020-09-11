@@ -24,9 +24,9 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
 
@@ -57,9 +57,9 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
 
 GUITest::GUITest(const string& screenFileName)
 {

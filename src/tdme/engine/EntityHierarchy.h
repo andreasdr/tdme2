@@ -19,7 +19,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::remove;
 using std::string;
@@ -39,7 +39,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 /**
  * Entity hierarchy to be used with engine class

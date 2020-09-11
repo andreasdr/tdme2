@@ -6,7 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::vector;

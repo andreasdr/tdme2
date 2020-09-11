@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 
 GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstraints_RequestedConstraintsType(const string& name, int ordinal)

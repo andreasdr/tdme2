@@ -10,7 +10,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUIRadioButtonController;
 using tdme::gui::GUI;
@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 string GUIRadioButtonController::CONDITION_SELECTED = "selected";
 string GUIRadioButtonController::CONDITION_UNSELECTED = "unselected";

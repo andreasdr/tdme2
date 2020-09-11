@@ -5,7 +5,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::engine::Camera;
 using tdme::math::Math;
@@ -13,7 +13,7 @@ using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 Camera::Camera(Renderer* renderer)
 {

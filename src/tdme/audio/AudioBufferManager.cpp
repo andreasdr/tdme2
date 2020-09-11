@@ -5,7 +5,7 @@
 
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::string;
@@ -13,7 +13,7 @@ using std::string;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 AudioBufferManager::AudioBufferManager() 
 {

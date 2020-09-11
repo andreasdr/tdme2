@@ -10,8 +10,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::tools::shared::views::Gizmo;
 
@@ -25,8 +25,8 @@ using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 Gizmo::Gizmo(Engine* engine, const string& id, float gizmoBaseScale)
 {
@@ -311,9 +311,9 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 
 bool Gizmo::determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGroup) {
 	if (selectedEntity != nullptr &&
-		StringUtils::startsWith(selectedEntity->getId(), id + ".tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
+		StringTools::startsWith(selectedEntity->getId(), id + ".tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
 		auto selectedEntityGroupId = selectedEntityGroup->getId();
-		if (StringUtils::startsWith(selectedEntityGroupId, "all_") == true) selectedEntityGroupId = StringUtils::substring(selectedEntityGroupId, 4);
+		if (StringTools::startsWith(selectedEntityGroupId, "all_") == true) selectedEntityGroupId = StringTools::substring(selectedEntityGroupId, 4);
 		if (selectedEntityGroupId == "translate_x") setGizmoMode(GIZMOMODE_TRANSLATE_X); else
 		if (selectedEntityGroupId == "translate_y") setGizmoMode(GIZMOMODE_TRANSLATE_Z); else
 		if (selectedEntityGroupId == "translate_z") setGizmoMode(GIZMOMODE_TRANSLATE_Y); else

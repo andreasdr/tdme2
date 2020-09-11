@@ -7,11 +7,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
-#include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 
@@ -22,7 +21,6 @@ using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
-using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
@@ -44,9 +42,9 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI screen node that represents a screen that can be rendered via GUI system
  * @author Andreas Drewke
  * @version $Id$
@@ -80,11 +78,9 @@ private:
 	bool visible;
 	bool popUp;
 
-	map<string, GUIEffect*> effects;
-	int32_t guiEffectOffsetX;
-	int32_t guiEffectOffsetY;
-
 	bool reshapeRequested;
+
+	map<int64_t, string> timedExpressions;
 
 public:
 
@@ -95,83 +91,61 @@ public:
 		return applicationRootPath;
 	}
 
-	/** 
+	/**
 	 * @return GUI
 	 */
 	GUI* getGUI();
 
-	/** 
+	/**
 	 * Set GUI
 	 * @param gui gui
 	 */
 	void setGUI(GUI* gui);
 
-	/** 
+	/**
 	 * @return screen width
 	 */
 	inline int32_t getScreenWidth() {
 		return screenWidth;
 	}
 
-	/** 
+	/**
 	 * @return screen height
 	 */
 	inline int32_t getScreenHeight() {
 		return screenHeight;
 	}
 
-	/** 
+	/**
 	 * @return is visible
 	 */
 	inline bool isVisible() {
 		return visible;
 	}
 
-	/** 
+	/**
 	 * Set visible
 	 * @param visible visible
 	 */
 	void setVisible(bool visible);
 
-	/** 
+	/**
 	 * @return is pop up
 	 */
 	inline bool isPopUp() {
 		return popUp;
 	}
 
-	/** 
+	/**
 	 * Set pop up
 	 * @param popUp pop up
 	 */
 	void setPopUp(bool popUp);
 
-	/** 
+	/**
 	 * @return floating nodes
 	 */
 	const vector<GUINode*>& getFloatingNodes();
-
-	/** 
-	 * @return GUI effect offset X
-	 */
-	int32_t getGUIEffectOffsetX();
-
-	/** 
-	 * Set GUI effect offset X
-	 * @param guiEffectOffsetX gui effect offset X
-	 */
-	void setGUIEffectOffsetX(int32_t guiEffectOffsetX);
-
-	/** 
-	 * @return GUI effect offset Y 
-	 */
-	int32_t getGUIEffectOffsetY();
-
-	/** 
-	 * Set GUI effect offset Y
-	 * @param guiEffectOffsetY gui effect offset Y
-	 */
-	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
 
 protected:
 	bool isContentNode() override;
@@ -253,61 +227,61 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return content width
 	 */
 	int32_t getContentWidth() override;
 
-	/** 
+	/**
 	 * @return content height
 	 */
 	int32_t getContentHeight() override;
 
-	/** 
+	/**
 	 * Layout
 	 */
 	void layout() override;
 
-	/** 
+	/**
 	 * Layout node content (e.g. child nodes or content)
 	 * this does also does call layouted nodes post layout method
 	 * @param node node
 	 */
 	void layout(GUINode* node);
 
-	/** 
+	/**
 	 * Set screen size
 	 * @param width width
 	 * @param height height
 	 */
 	void setScreenSize(int32_t width, int32_t height);
 
-	/** 
+	/**
 	 * Get GUI node by id
 	 * @param nodeId nodeId
 	 * @return GUI node or null
 	 */
 	GUINode* getNodeById(const string& nodeId);
 
-	/** 
+	/**
 	 * Allocate node id
 	 * @return node id
 	 */
 	const string allocateNodeId();
 
-	/** 
+	/**
 	 * Render screen
 	 * @param guiRenderer gui renderer
 	 */
 	void render(GUIRenderer* guiRenderer) override;
 
-	/** 
+	/**
 	 * Render floating nodes
 	 * @param guiRenderer gui renderer
 	 */
 	void renderFloatingNodes(GUIRenderer* guiRenderer);
 
-	/** 
+	/**
 	 * Determine focussed nodes
 	 * @param parentNode parent node
 	 * @param focusableNodes focusable nodes
@@ -318,49 +292,49 @@ public:
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
-	/** 
+	/**
 	 * Add action listener
 	 * @param listener listener
 	 */
 	void addActionListener(GUIActionListener* listener);
 
-	/** 
+	/**
 	 * Remove action listener
 	 * @param listener listener
 	 */
 	void removeActionListener(GUIActionListener* listener);
 
-	/** 
+	/**
 	 * @return input event handler
 	 */
 	GUIInputEventHandler* getInputEventHandler();
 
-	/** 
+	/**
 	 * Set input event handler 
 	 * @param inputEventHandler input event handler
 	 */
 	void setInputEventHandler(GUIInputEventHandler* inputEventHandler);
 
-	/** 
+	/**
 	 * Delegate action performed
 	 * @param type type
 	 * @param node node
 	 */
 	void delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
 
-	/** 
+	/**
 	 * Add change listener
 	 * @param listener listener
 	 */
 	void addChangeListener(GUIChangeListener* listener);
 
-	/** 
+	/**
 	 * Remove change listener
 	 * @param listener listener
 	 */
 	void removeChangeListener(GUIChangeListener* listener);
 
-	/** 
+	/**
 	 * Delegate value changed
 	 * @param node node
 	 */
@@ -419,39 +393,18 @@ public:
 	 */
 	void removeTickNode(GUINode* node);
 
-	/** 
+	/**
 	 * Get values
 	 * @param values values
 	 */
 	void getValues(map<string, MutableString>& values);
 
-	/** 
+	/**
 	 * Set values
 	 * @param values values
 	 */
 	void setValues(const map<string, MutableString>& values);
 
-	/** 
-	 * Add effect, effect already registered with the is will be removed
-	 * @param id id
-	 * @param effect effect
-	 */
-	void addEffect(const string& id, GUIEffect* effect);
-
-	/** 
-	 * Get effect
-	 * @param id id
-	 * @return effect or null
-	 */
-	GUIEffect* getEffect(const string& id);
-
-	/** 
-	 * Remove effect
-	 * @param id id
-	 */
-	void removeEffect(const string& id);
-
-public:
 	/**
 	 * Create size constraints
 	 * @param minWidth min width
@@ -460,4 +413,11 @@ public:
 	 * @param maxHeight max height
 	 */
 	static GUIScreenNode_SizeConstraints createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight);
+
+	/**
+	 * Add a timed expression
+	 * @param time time
+	 * @param expression expression
+	 */
+	void addTimedExpression(int64_t time, const string& expression);
 };

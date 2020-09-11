@@ -3,11 +3,14 @@
 #include <array>
 #include <set>
 #include <string>
+#include <vector>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/effects/GUIEffect.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -27,15 +30,16 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::set;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::gui::nodes::GUINode;
 
@@ -43,6 +47,8 @@ using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::GUI;
+using tdme::gui::effects::GUIEffect;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -62,10 +68,10 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::Console;
-using tdme::utils::Integer;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 GUINode::GUINode(
 	GUIScreenNode* screenNode,
@@ -106,12 +112,23 @@ GUINode::GUINode(
 	this->showOn = showOn;
 	this->hideOn = hideOn;
 	this->controller = nullptr;
+	this->guiEffectOffsetX = 0;
+	this->guiEffectOffsetY = 0;
 	this->conditionsMet = false;
 	this->layouted = false;
+	this->haveOutEffect = false;
 }
 
 GUINode::~GUINode() {
 	if (controller != nullptr) delete controller;
+	// remove effects
+	vector<string> effectsToRemove;
+	for (auto effectIt: effects) {
+		effectsToRemove.push_back(effectIt.first);
+	}
+	for (auto effectToRemoveId: effectsToRemove) {
+		removeEffect(effectToRemoveId);
+	}
 }
 
 GUIScreenNode* GUINode::getScreenNode()
@@ -248,22 +265,22 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 GUINode_Alignments GUINode::createAlignments(const string& horizontal, const string& vertical)
 {
 	GUINode_Alignments alignments;
-	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "LEFT");
-	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "TOP");
+	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringTools::toUpperCase(horizontal) : "LEFT");
+	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringTools::toUpperCase(vertical) : "TOP");
 	return alignments;
 }
 
 GUINode_RequestedConstraints GUINode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	GUINode_RequestedConstraints constraints;
-	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
-	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
-	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
-	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);
-	constraints.heightType = getRequestedConstraintsType(StringUtils::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
-	constraints.height = getRequestedConstraintsValue(StringUtils::trim(height), -1);
+	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.left = getRequestedConstraintsValue(StringTools::trim(left), 0);
+	constraints.topType = getRequestedConstraintsType(StringTools::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
+	constraints.top = getRequestedConstraintsValue(StringTools::trim(top), 0);
+	constraints.widthType = getRequestedConstraintsType(StringTools::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), -1);
+	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
+	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), -1);
 	return constraints;
 }
 
@@ -278,7 +295,7 @@ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedCons
 	if (constraint.compare("*") == 0) {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::STAR;
 	} else
-	if (StringUtils::endsWith(constraint, "%")) {
+	if (StringTools::endsWith(constraint, "%")) {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT;
 	} else {
 		return GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
@@ -296,7 +313,7 @@ int32_t GUINode::getRequestedConstraintsValue(const string& constraint, int32_t 
 	if (constraint.compare("*") == 0) {
 		return -1;
 	} else
-	if (StringUtils::endsWith(constraint, "%")) {
+	if (StringTools::endsWith(constraint, "%")) {
 		return (Integer::parseInt(constraint.substr(0, constraint.length() - 1)));
 	} else {
 		return (Integer::parseInt(constraint));
@@ -323,7 +340,7 @@ GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& default
 
 GUINode_Flow* GUINode::createFlow(const string& flow)
 {
-	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringUtils::toUpperCase(flow) : "INTEGRATED");
+	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringTools::toUpperCase(flow) : "INTEGRATED");
 }
 
 GUINode_Border GUINode::createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor)
@@ -392,14 +409,14 @@ GUINodeConditions GUINode::createConditions(const string& conditions)
 			arguments--;
 		} else
 		if (arguments == 0 && c == ',') {
-			guiNodeConditions.add(StringUtils::trim(condition));
+			guiNodeConditions.add(StringTools::trim(condition));
 			condition.clear();
 		} else {
 			condition+= c;
 		}
 	}
 	if (condition.empty() == false) {
-		guiNodeConditions.add(StringUtils::trim(condition));
+		guiNodeConditions.add(StringTools::trim(condition));
 		condition.clear();
 	}
 	return guiNodeConditions;
@@ -460,7 +477,17 @@ void GUINode::layoutOnDemand() {
 
 void GUINode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
+
+	vector<Action*> actions;
+	for (auto& effectIt: effects) {
+		auto effect = effectIt.second;
+		if (effect->isActive() == true) {
+			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
+			effect->apply(guiRenderer);
+		}
+	}
+	for (auto action: actions) action->performAction();
 
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
@@ -1119,7 +1146,7 @@ void GUINode::cfParse(const string& term, string& function, vector<string>& argu
 	auto rightParenthesis = term.find_last_of(')');
 	function = "hasCondition";
 	if (leftParenthesis != string::npos && rightParenthesis != string::npos && leftParenthesis < rightParenthesis) {
-		function = StringUtils::trim(StringUtils::substring(term, 0, leftParenthesis));
+		function = StringTools::trim(StringTools::substring(term, 0, leftParenthesis));
 	}
 	arguments.clear();
 	auto argumentStartIdx = leftParenthesis != string::npos?leftParenthesis + 1:0;
@@ -1133,7 +1160,7 @@ void GUINode::cfParse(const string& term, string& function, vector<string>& argu
 			argument+= c;
 			if (quote == true) {
 				quote = false;
-				arguments.push_back(StringUtils::trim(argument));
+				arguments.push_back(StringTools::trim(argument));
 				argument.clear();
 			}
 		} else
@@ -1146,14 +1173,14 @@ void GUINode::cfParse(const string& term, string& function, vector<string>& argu
 			}
 		} else
 		if (quote == false && doubleQuote == false && c == ',') {
-			arguments.push_back(StringUtils::trim(argument));
+			arguments.push_back(StringTools::trim(argument));
 			argument.clear();
 		} else {
 			argument+= c;
 		}
 	}
 	if (argument.empty() == false) {
-		arguments.push_back(StringUtils::trim(argument));
+		arguments.push_back(StringTools::trim(argument));
 		argument.clear();
 	}
 }
@@ -1212,3 +1239,112 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
 	}
 }
+
+int32_t GUINode::getGUIEffectOffsetX()
+{
+	return guiEffectOffsetX;
+}
+
+void GUINode::setGUIEffectOffsetX(int32_t guiEffectOffsetX)
+{
+	this->guiEffectOffsetX = guiEffectOffsetX;
+}
+
+int32_t GUINode::getGUIEffectOffsetY()
+{
+	return guiEffectOffsetY;
+}
+
+void GUINode::setGUIEffectOffsetY(int32_t guiEffectOffsetY)
+{
+	this->guiEffectOffsetY = guiEffectOffsetY;
+}
+
+void GUINode::addEffect(const string& id, GUIEffect* effect)
+{
+	removeEffect(id);
+	effects[id] = effect;
+}
+
+GUIEffect* GUINode::getEffect(const string& id)
+{
+	auto effectIt = effects.find(id);
+	if (effectIt == effects.end()) return nullptr;
+	return effectIt->second;
+}
+
+void GUINode::removeEffect(const string& id)
+{
+	auto effectIt = effects.find(id);
+	if (effectIt == effects.end()) return;
+	delete effectIt->second;
+	effects.erase(effectIt);
+}
+
+void GUINode::onSetConditions(const vector<string>& conditions) {
+	auto haveInEffect = false;
+	for (auto& condition: conditions) {
+		{
+			auto effect = getEffect("tdme.xmleffect.in.color.on." + condition);
+			if (effect != nullptr && effect->isActive() == false) {
+				haveInEffect = true;
+				effect->start();
+			}
+		}
+		{
+			auto effect = getEffect("tdme.xmleffect.in.position.on." + condition);
+			if (effect != nullptr && effect->isActive() == false) {
+				haveInEffect = true;
+				effect->start();
+			}
+		}
+	}
+	if (haveInEffect == true) {
+		for (auto& effectIt: effects) {
+			if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.out.") == true) {
+				effectIt.second->stop();
+			}
+		}
+	} else {
+		auto issuedOutEffect = false;
+		for (auto& condition: conditions) {
+			{
+				auto effect = getEffect("tdme.xmleffect.out.color.on." + condition);
+				if (effect != nullptr && effect->isActive() == false) {
+					issuedOutEffect = true;
+					haveOutEffect = true;
+					effect->start();
+				}
+			}
+			{
+				auto effect = getEffect("tdme.xmleffect.out.position.on." + condition);
+				if (effect != nullptr && effect->isActive() == false) {
+					issuedOutEffect = true;
+					haveOutEffect = true;
+					effect->start();
+				}
+			}
+		}
+		if (issuedOutEffect == true) {
+			for (auto& effectIt: effects) {
+				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true) {
+					effectIt.second->stop();
+				}
+			}
+		}
+	}
+}
+
+bool GUINode::haveActiveOutEffect() {
+	if (haveOutEffect == false) return false;
+	// do not change condition met if we have a active effect
+	haveOutEffect = false;
+	for (auto effectIt: effects) {
+		if (effectIt.second->isActive() == true) {
+			haveOutEffect = true;
+			break;
+		}
+	}
+	return haveOutEffect;
+}
+

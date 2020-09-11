@@ -16,8 +16,6 @@ namespace model {
 	class JointWeight;
 	class Material;
 	class Model;
-	class ModelHelper;
-	class ModelHelper_VertexOrder;
 	class PBRMaterialProperties;
 	class ShaderModel;
 	class UpVector;

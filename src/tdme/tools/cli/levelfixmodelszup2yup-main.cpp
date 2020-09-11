@@ -15,8 +15,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using tdme::application::Application;
 using tdme::engine::Transformations;
@@ -32,8 +32,8 @@ using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {

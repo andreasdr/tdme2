@@ -15,10 +15,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Time.h>
 
 using std::array;
 using std::to_string;
@@ -35,10 +35,10 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
-using tdme::utils::Console;
-using tdme::utils::Float;
-using tdme::utils::MutableString;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
+using tdme::utilities::MutableString;
+using tdme::utilities::Time;
 
 using tdme::gui::elements::GUIKnobController;
 

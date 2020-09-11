@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -122,7 +122,7 @@ private:
 	 * @param xmlNode xml node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Group
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
 
@@ -136,7 +136,7 @@ private:
 	 * @param materialSymbols material symbols
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols); // TODO: std container: maybe use call by reference
+	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols);
 
 	/** 
 	 * Reads a material

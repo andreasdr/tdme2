@@ -3,11 +3,11 @@
 #include <string>
 
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type final
 	: public Enum

@@ -14,8 +14,8 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 using std::string;
@@ -31,7 +31,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 /** 
  * Transparent render faces group

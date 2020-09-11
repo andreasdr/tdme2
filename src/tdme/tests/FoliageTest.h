@@ -7,13 +7,13 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 
 /** 
  * Foliage test

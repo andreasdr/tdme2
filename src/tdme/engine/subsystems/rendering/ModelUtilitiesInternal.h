@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::string;

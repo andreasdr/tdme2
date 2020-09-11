@@ -7,14 +7,14 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 /** 
  * Collision response entity
@@ -26,9 +26,9 @@ class tdme::engine::physics::CollisionResponse_Entity final
 	friend class CollisionResponse;
 
 private:
-	float distance {  };
-	Vector3 normal {  };
-	vector<Vector3> hitPoints {  };
+	float distance;
+	Vector3 normal;
+	vector<Vector3> hitPoints;
 
 public:
 

@@ -9,7 +9,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::string;
@@ -23,7 +23,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::views::EntityBaseView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Entity base sub screen controller

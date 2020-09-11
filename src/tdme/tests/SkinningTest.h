@@ -7,14 +7,14 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 
 /** 
  * LOD test

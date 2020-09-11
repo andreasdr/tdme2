@@ -7,7 +7,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIElementController.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -16,7 +16,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * GUI check box controller

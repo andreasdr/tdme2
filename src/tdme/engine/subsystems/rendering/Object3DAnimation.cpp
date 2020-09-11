@@ -16,7 +16,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::vector;
@@ -32,7 +32,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::rendering::AnimationState;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

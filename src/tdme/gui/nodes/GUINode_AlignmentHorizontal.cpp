@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 GUINode_AlignmentHorizontal::GUINode_AlignmentHorizontal(const string& name, int ordinal)
 	: Enum(name, ordinal)

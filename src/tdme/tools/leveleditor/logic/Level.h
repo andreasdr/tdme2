@@ -10,7 +10,7 @@
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
@@ -25,7 +25,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Level Editor Level Logic
@@ -267,9 +267,10 @@ public:
 	 * @param id id
 	 * @param transformations transformations
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param index use a optional index or all bounding volumes
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1);
 
 	/**
 	 * Create rigid body
@@ -277,9 +278,10 @@ public:
 	 * @param levelEditorObject level editor object
 	 * @param translation translation
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param index use a optional index or all bounding volumes
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1);
 
 	/**
 	 * Add level to physics world

@@ -89,7 +89,7 @@ private:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return level editor entity
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
 

@@ -13,7 +13,7 @@ using std::string;
 
 using tdme::audio::AudioStream;
 using tdme::audio::decoder::VorbisDecoder;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 /** 
  * Vorbis audio stream

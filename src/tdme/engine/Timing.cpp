@@ -1,9 +1,9 @@
 #include <tdme/engine/Timing.h>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 using tdme::engine::Timing;
-using tdme::utils::Time;
+using tdme::utilities::Time;
 
 Timing::Timing() 
 {

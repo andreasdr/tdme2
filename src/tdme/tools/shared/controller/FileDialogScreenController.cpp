@@ -17,10 +17,10 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::vector;
 using std::string;
@@ -38,10 +38,10 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 FileDialogScreenController::FileDialogScreenController() 
 {
@@ -100,7 +100,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 		bool accept(const string& pathName, const string& fileName) override {
 			if (FileSystem::getStandardFileSystem()->isPath(pathName + "/" + fileName) == true) return true;
 			for (auto& extension : fileDialogScreenController->extensions) {
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), "." + extension) == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), "." + extension) == true) return true;
 
 			}
 			return false;
@@ -120,7 +120,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	auto success = true;
 	auto directory = cwd;
 	if (directory.length() > 50) {
-		directory = "..." + StringUtils::substring(directory, directory.length() - 50 + 3);
+		directory = "..." + StringTools::substring(directory, directory.length() - 50 + 3);
 	}
 
 	caption->setText(MutableString(captionText).append(directory));
@@ -242,14 +242,14 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "filedialog_filename") {
 		try {
 			if (enableFilter == true) {
-				auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
+				auto filterString = StringTools::toLowerCase(node->getController()->getValue().getString());
 				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
 					setupFileDialogListBoxFiles(fileList, selectedFile);
 				} else {
 					vector<string> fileListFiltered;
 					for (auto file: fileList) {
-						if (StringUtils::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+						if (StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
 					}
 					setupFileDialogListBoxFiles(fileListFiltered);
 					filtered = true;

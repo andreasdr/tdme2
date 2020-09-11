@@ -4,7 +4,7 @@
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
@@ -33,10 +33,10 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -44,7 +44,7 @@ using std::to_string;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -72,10 +72,10 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::StringUtils;
-using tdme::utils::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
+using tdme::utilities::MutableString;
 
 LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
 {
@@ -272,7 +272,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 	// partition object
 	map<string, Model*> modelsByPartition;
 	map<string, Vector3> modelsPosition;
-	ModelHelper::partition(
+	ModelTools::partition(
 		levelEditorObject->getEntity()->getModel(),
 		levelEditorObject->getTransformations(),
 		modelsByPartition,
@@ -286,7 +286,7 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 		for (auto modelsByPartitionIt: modelsByPartition) {
 			auto key = modelsByPartitionIt.first;
 			auto model = modelsByPartitionIt.second;
-			auto fileNamePartition = StringUtils::substring(fileName, 0, StringUtils::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
+			auto fileNamePartition = StringTools::substring(fileName, 0, StringTools::lastIndexOf(fileName, '.') - 1) + "." + key + ".tm";
 
 			// create entity
 			TMWriter::write(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <string>
 #include <vector>
 #include <set>
@@ -8,6 +9,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -21,14 +23,16 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::set;
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -48,7 +52,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI node base class
  * @author Andreas Drewke
  * @version $Id$
@@ -128,10 +132,14 @@ protected:
 	GUINodeConditions showOn;
 	GUINodeConditions hideOn;
 	GUINodeController* controller { nullptr };
+	map<string, GUIEffect*> effects;
+	int32_t guiEffectOffsetX;
+	int32_t guiEffectOffsetY;
 	bool conditionsMet;
 	bool layouted;
+	bool haveOutEffect;
 
-	/** 
+	/**
 	 * @return node type
 	 */
 	virtual const string getNodeType() = 0;
@@ -254,43 +262,61 @@ protected:
 	 */
 	virtual ~GUINode();
 
+	/**
+	 * On set condition
+	 * @param conditions conditions
+	 */
+	virtual void onSetConditions(const vector<string>& conditions);
+
+	/**
+	 * Determine if we have a out effect active
+	 */
+	virtual bool haveActiveOutEffect();
+
+	/**
+	 * Determine if to render
+	 */
+	inline virtual bool shouldRender() {
+		return conditionsMet == true || haveActiveOutEffect() == true;
+	}
+
 public:
-	/** 
+	/**
 	 * @return scren node
 	 */
 	virtual GUIScreenNode* getScreenNode();
 
-	/** 
+	/**
 	 * @return parent node
 	 */
 	virtual GUIParentNode* getParentNode();
 
-	/** 
+	/**
 	 * @return id
 	 */
 	virtual const string& getId();
 
-	/** 
+	/**
 	 * @return content width including border, margin
 	 */
 	virtual int32_t getContentWidth() = 0;
 
-	/** 
+	/**
 	 * @return content height including border, margin
 	 */
 	virtual int32_t getContentHeight() = 0;
 
-	/** 
+	/**
 	 * @return auto width if auto width requested or content width
 	 */
 	virtual int32_t getAutoWidth();
 
-	/** 
+	/**
 	 * @return auto height if auto height requested or content height
 	 */
 	virtual int32_t getAutoHeight();
 
-	/** 
+	/**
 	 * @return border
 	 */
 	virtual GUINode_Border& getBorder();
@@ -310,7 +336,7 @@ public:
 	 */
 	virtual GUINode_ComputedConstraints& getComputedConstraints();
 
-	/** 
+	/**
 	 * Create alignments
 	 * @param horizontal horizontal
 	 * @param vertical vertical
@@ -318,7 +344,7 @@ public:
 	 */
 	static GUINode_Alignments createAlignments(const string& horizontal, const string& vertical);
 
-	/** 
+	/**
 	 * Create requested constraints
 	 * @param left left
 	 * @param top top
@@ -328,7 +354,7 @@ public:
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
-	/** 
+	/**
 	 * Get color
 	 * @param color color
 	 * @param defaultColor default color
@@ -337,14 +363,14 @@ public:
 	 */
 	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor);
 
-	/** 
+	/**
 	 * Create flow
 	 * @param flow flow
 	 * @return flow
 	 */
 	static GUINode_Flow* createFlow(const string& flow);
 
-	/** 
+	/**
 	 * Create border
 	 * @param allBorder all border
 	 * @param left left
@@ -360,7 +386,7 @@ public:
 	 */
 	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor);
 
-	/** 
+	/**
 	 * Create padding
 	 * @param allPadding all padding
 	 * @param left left
@@ -371,7 +397,7 @@ public:
 	 */
 	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom);
 
-	/** 
+	/**
 	 * Create scale 9 grid
 	 * @param all all
 	 * @param left left
@@ -388,12 +414,12 @@ public:
 	 */
 	static GUINodeConditions createConditions(const string& conditions);
 
-	/** 
+	/**
 	 * Dispose node
 	 */
 	virtual void dispose();
 
-	/** 
+	/**
 	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
@@ -410,7 +436,7 @@ public:
 	 */
 	virtual void render(GUIRenderer* guiRenderer);
 
-	/** 
+	/**
 	 * Is event belonging to node
 	 * @param event event
 	 * @param position x,y position in node coordinate system 
@@ -418,14 +444,14 @@ public:
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
 
-	/** 
+	/**
 	 * Is event belonging to node
 	 * @param event event
 	 * @return boolean
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event);
 
-	/** 
+	/**
 	 * Get event off node relative position
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
@@ -434,7 +460,7 @@ public:
 	 */
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
 
-	/** 
+	/**
 	 * @return first parent node in tree with controller node attached
 	 */
 	virtual GUIParentNode* getParentControllerNode();
@@ -454,34 +480,34 @@ public:
 	 */
 	virtual void handleKeyboardEvent(GUIKeyboardEvent* event);
 
-	/** 
+	/**
 	 * @return controller
 	 */
 	virtual GUINodeController* getController();
 
-	/** 
+	/**
 	 * Set up node controller
 	 * @param controller controller
 	 */
 	virtual void setController(GUINodeController* controller);
 
-	/** 
+	/**
 	 * Scroll to node Y
 	 */
 	virtual void scrollToNodeY();
 
-	/** 
+	/**
 	 * Scroll to node Y
 	 * @param toNode stop at node to node
 	 */
 	virtual void scrollToNodeY(GUIParentNode* toNode);
 
-	/** 
+	/**
 	 * Scroll to node X
 	 */
 	virtual void scrollToNodeX();
 
-	/** 
+	/**
 	 * Scroll to node X
 	 * @param toNode stop at node to node
 	 */
@@ -492,6 +518,48 @@ public:
 	 * @param backgroundImage background image
 	 */
 	virtual void setBackgroundImage(const string& backgroundImage);
+
+	/**
+	 * @return GUI effect offset X
+	 */
+	int32_t getGUIEffectOffsetX();
+
+	/**
+	 * Set GUI effect offset X
+	 * @param guiEffectOffsetX gui effect offset X
+	 */
+	void setGUIEffectOffsetX(int32_t guiEffectOffsetX);
+
+	/**
+	 * @return GUI effect offset Y
+	 */
+	int32_t getGUIEffectOffsetY();
+
+	/**
+	 * Set GUI effect offset Y
+	 * @param guiEffectOffsetY gui effect offset Y
+	 */
+	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
+
+	/**
+	 * Add effect, effect already registered with the is will be removed
+	 * @param id id
+	 * @param effect effect
+	 */
+	void addEffect(const string& id, GUIEffect* effect);
+
+	/**
+	 * Get effect
+	 * @param id id
+	 * @return effect or null
+	 */
+	GUIEffect* getEffect(const string& id);
+
+	/**
+	 * Remove effect
+	 * @param id id
+	 */
+	void removeEffect(const string& id);
 
 	/**
 	 * Dump node

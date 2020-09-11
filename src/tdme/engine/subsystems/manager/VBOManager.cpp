@@ -6,7 +6,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/threading/ReadWriteLock.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::string;
@@ -15,7 +15,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::ReadWriteLock;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 VBOManager::VBOManager(Renderer* renderer): rwLock("vbomanager-rwlock") {
 	this->renderer = renderer;

@@ -7,7 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/httpclient/fwd-tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
-#include <tdme/os/network/NIOException.h>
+#include <tdme/os/network/NetworkException.h>
 
 using std::string;
 using std::stringstream;
@@ -15,7 +15,7 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
-using tdme::os::network::NIOException;
+using tdme::os::network::NetworkException;
 
 /**
  * Basic HTTP client
@@ -205,7 +205,7 @@ public:
 	/**
 	 * Execute HTTP request
 	 * @throws tdme::network::httpclient::HTTPClientException
-	 * @throws tdme::os::network::NIOException
+	 * @throws tdme::os::network::NetworkException
 	 */
 	void execute();
 

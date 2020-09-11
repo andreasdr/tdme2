@@ -15,7 +15,7 @@ using tdme::gui::renderer::GUIRenderer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::effects::GUIColorEffect: public GUIEffect
+class tdme::gui::effects::GUIColorEffect final: public GUIEffect
 {
 
 private:

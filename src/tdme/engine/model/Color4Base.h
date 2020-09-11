@@ -18,7 +18,7 @@ using tdme::math::Math;
 class tdme::engine::model::Color4Base
 {
 protected:
-	array<float, 4> data {  };
+	array<float, 4> data;
 
 public:
 	/**

@@ -20,12 +20,12 @@
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ExceptionBase.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -49,12 +49,12 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ExceptionBase;
-using tdme::utils::Integer;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 EntitySoundsSubScreenController::EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
 {
@@ -291,17 +291,17 @@ void EntitySoundsSubScreenController::onValueChanged(GUIElementNode* node, Level
 void EntitySoundsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
 {
 	if (type != GUIActionListener_Type::PERFORMED) return;
-	if (StringUtils::startsWith(node->getId(), "sounds_sound_apply_") == true) {
-		auto soundIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("sounds_sound_apply_").size()));
+	if (StringTools::startsWith(node->getId(), "sounds_sound_apply_") == true) {
+		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_apply_").size()));
 		onSoundApply(soundIdx, entity);
 		setSounds(entity);
 	} else
-	if (StringUtils::startsWith(node->getId(), "sounds_sound_clear_") == true) {
-		auto soundIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("sounds_sound_clear_").size()));
+	if (StringTools::startsWith(node->getId(), "sounds_sound_clear_") == true) {
+		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_clear_").size()));
 		onSoundClear(soundIdx);
 	} else
-	if (StringUtils::startsWith(node->getId(), "sounds_sound_load_") == true) {
-		auto soundIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("sounds_sound_load_").size()));
+	if (StringTools::startsWith(node->getId(), "sounds_sound_load_") == true) {
+		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_load_").size()));
 		onSoundLoad(soundIdx);
 	}
 }

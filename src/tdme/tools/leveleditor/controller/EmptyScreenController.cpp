@@ -14,9 +14,9 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::string;
 
@@ -33,9 +33,9 @@ using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::utils::MutableString;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
 {

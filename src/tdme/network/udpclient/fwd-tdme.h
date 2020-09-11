@@ -4,9 +4,9 @@
 namespace tdme {
 namespace network {
 namespace udpclient {
-	class NIOClientException;
-	class NIOUDPClient;
-	class NIOUDPClientMessage;
+	class NetworkClientException;
+	class UDPClient;
+	class UDPClientMessage;
 } // namespace udpclient
 } // namespace network
 } // namespace tdme

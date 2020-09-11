@@ -1,9 +1,9 @@
 #include <tdme/gui/GUIParserException.h>
 
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using tdme::gui::GUIParserException;
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 GUIParserException::GUIParserException(const string& message) : ExceptionBase(message)
 {

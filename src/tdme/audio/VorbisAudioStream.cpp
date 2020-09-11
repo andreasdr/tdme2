@@ -2,21 +2,21 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/audio/decoder/VorbisDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::audio::VorbisAudioStream;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 VorbisAudioStream::VorbisAudioStream(const string& id, const string& pathName, const string& fileName) : AudioStream(id)
 {

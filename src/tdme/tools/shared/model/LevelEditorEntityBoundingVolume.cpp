@@ -1,9 +1,5 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
-#if defined(_WIN32) && defined(_MSC_VER)
-	#include <windows.h>
-#endif
-
 #include <string>
 
 #include <tdme/engine/Object3DModel.h>
@@ -19,11 +15,12 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -42,11 +39,12 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::AtomicOperations;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::utils::Exception;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 volatile uint32_t LevelEditorEntityBoundingVolume::modelIdx = 0;
 
@@ -72,13 +70,7 @@ void LevelEditorEntityBoundingVolume::setupNone()
 }
 
 int32_t LevelEditorEntityBoundingVolume::allocateModelIdx() {
-	uint32_t currentModelIdx = 0;
-	#if defined(_WIN32) && defined(_MSC_VER)
-		currentModelIdx = InterlockedIncrement(&modelIdx);
-	#else
-		currentModelIdx = __sync_add_and_fetch(&modelIdx, 1);
-	#endif
-	return currentModelIdx;
+	return AtomicOperations::increment(modelIdx);
 }
 
 void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float radius)
@@ -162,7 +154,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 	model = nullptr;
 	modelMeshFile = pathName + "/" + fileName;
 	try {
-		Model* convexMeshModel = ModelReader::read(
+		auto convexMeshModel = ModelReader::read(
 			pathName,
 			fileName
 		);
@@ -174,6 +166,6 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: " + modelMeshFile + ": "));
 		Console::println(string(exception.what()));
+		setupNone();
 	}
-	if (boundingVolume == nullptr) boundingVolume = new ConvexMesh();
 }

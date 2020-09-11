@@ -12,8 +12,8 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Pool.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Pool.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 using std::string;
@@ -28,8 +28,8 @@ using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Pool;
-using tdme::utils::Console;
+using tdme::utilities::Pool;
+using tdme::utilities::Console;
 
 constexpr int32_t TransparentRenderFacesPool::FACES_MAX;
 

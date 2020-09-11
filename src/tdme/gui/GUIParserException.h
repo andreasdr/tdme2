@@ -3,12 +3,12 @@
 #include <string>
 
 #include <tdme/gui/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using std::string;
 
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 /** 
  * GUI parser exception

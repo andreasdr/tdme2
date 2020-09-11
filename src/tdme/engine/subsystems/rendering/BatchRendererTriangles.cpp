@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -16,8 +16,8 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;

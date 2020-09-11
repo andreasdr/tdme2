@@ -5,15 +5,15 @@
 #include <string>
 #include <vector>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <ext/libpng/png.h>
 
@@ -21,16 +21,16 @@ using std::vector;
 using std::string;
 using std::to_string;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 vector<string> TextureReader::extensions = {"png"};
 Mutex* TextureReader::textureCacheMutex = new Mutex("texturecache-mutex");
@@ -62,7 +62,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	if (texture == nullptr) {
 		// nope try to load
 		try {
-			if (StringUtils::endsWith(StringUtils::toLowerCase(canonicalFileName), ".png") == true) {
+			if (StringTools::endsWith(StringTools::toLowerCase(canonicalFileName), ".png") == true) {
 				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName, powerOfTwo);
 				if (texture != nullptr && useCache == true) {
 					(*textureCache)[texture->getId()] = texture;

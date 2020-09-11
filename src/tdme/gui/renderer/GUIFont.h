@@ -9,8 +9,8 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MutableString.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /**
  * GUI Font

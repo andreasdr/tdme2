@@ -19,4 +19,6 @@ struct tdme::engine::subsystems::renderer::Renderer_SpecularMaterial
 	float shininess { 0.0f };
 	int diffuseTextureMaskedTransparency { 0 };
 	float diffuseTextureMaskedTransparencyThreshold { 0.0f };
+	int textureAtlasSize { 1 };
+	array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
 };

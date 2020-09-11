@@ -2,9 +2,9 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -18,8 +18,8 @@ using std::to_string;
 
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;

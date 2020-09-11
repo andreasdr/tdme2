@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
@@ -34,10 +34,10 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/ObjectDeleter.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -74,10 +74,10 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::utils::Console;
-using tdme::utils::MutableString;
-using tdme::utils::ObjectDeleter;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::MutableString;
+using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 constexpr int32_t RayTracingTest::RIGID_TYPEID_STANDARD;
 

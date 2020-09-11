@@ -21,7 +21,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -63,12 +63,12 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Properties.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Console.h>
 
 using std::find;
 using std::remove;
@@ -96,7 +96,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
@@ -137,12 +137,12 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Character;
-using tdme::utils::Float;
-using tdme::utils::Properties;
-using tdme::utils::StringUtils;
-using tdme::utils::Exception;
-using tdme::utils::Console;
+using tdme::utilities::Character;
+using tdme::utilities::Float;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTools;
+using tdme::utilities::Exception;
+using tdme::utilities::Console;
 
 vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
 	"blue",
@@ -238,8 +238,8 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 			bool filterEntity(Entity* entity) override {
 				return
 						entity->getId() != "tdme.leveleditor.placeentity" &&
-						StringUtils::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
-						StringUtils::startsWith(entity->getId(), "le.tdme.leveleditor.gizmo.") == false;
+						StringTools::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
+						StringTools::startsWith(entity->getId(), "le.tdme.leveleditor.gizmo.") == false;
 			}
 
 			/**
@@ -297,7 +297,7 @@ LevelEditorObject* LevelEditorView::getSelectedObject()
 	if (selectedEntityIds.size() != 1) return nullptr;
 
 	auto selectedObject = level->getObjectById(selectedEntityIds[0]);
-	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
+	return selectedObject != nullptr && StringTools::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -456,7 +456,7 @@ void LevelEditorView::handleInputEvents()
 							rotations.update();
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
-								if (_selectedEntity != nullptr && StringUtils::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
 									auto levelEditorObject = level->getObjectById(_selectedEntity->getId());
 									if (levelEditorObject == nullptr) continue;
 									auto translation = levelEditorObject->getTransformations().getTranslation();
@@ -503,7 +503,7 @@ void LevelEditorView::handleInputEvents()
 					if (selectedEntityIds.size() == 1) {
 						for (auto selectedEntityId: selectedEntityIds) {
 							auto _selectedEntity = engine->getEntity(selectedEntityId);
-							if (_selectedEntity != nullptr && StringUtils::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+							if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
 								setGizmoRotation(_selectedEntity->getTransformations());
 							}
 						}
@@ -809,7 +809,7 @@ void LevelEditorView::updateGUIElements()
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
@@ -837,7 +837,7 @@ void LevelEditorView::updateGUIElements()
 void LevelEditorView::updateGUITransformationsElements() {
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			levelEditorScreenController->setObject(
 				selectedEntity->getTranslation(),
@@ -1088,7 +1088,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundGroup->setFacesEntities(groupFacesEntities);
 	groundPlate->getGroups()[groundGroup->getId()] = groundGroup;
 	groundPlate->getSubGroups()[groundGroup->getId()] = groundGroup;
-	ModelHelper::prepareForIndexedRendering(groundPlate);
+	ModelTools::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }
 
@@ -1097,7 +1097,7 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 	if (selectedEntityIds.size() != 1) return false;
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.")) return false;
+	if (selectedEntity == nullptr || StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.")) return false;
 
 	auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 	if (levelEditorObject == nullptr) return false;
@@ -1178,7 +1178,7 @@ void LevelEditorView::removeObjects()
 	vector<Entity*> entitiesToRemove;
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			level->removeObject(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
@@ -1212,7 +1212,7 @@ void LevelEditorView::colorObject()
 		} else {
 			color = colorProperty->getValue();
 			for (auto i = 0; i < OBJECTCOLOR_NAMES.size(); i++) {
-				if (StringUtils::equalsIgnoreCase(color, OBJECTCOLOR_NAMES[i]) == true) {
+				if (StringTools::equalsIgnoreCase(color, OBJECTCOLOR_NAMES[i]) == true) {
 					color = OBJECTCOLOR_NAMES[(i + 1) % OBJECTCOLOR_NAMES.size()];
 					break;
 				}
@@ -1229,7 +1229,7 @@ void LevelEditorView::colorObject()
 
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
@@ -1475,7 +1475,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 	try {
 		bool haveModelFile = false;
 		for (auto &modelExtension: ModelReader::getModelExtensions()) {
-			if (StringUtils::endsWith(StringUtils::toLowerCase(file), "." + modelExtension) == true) {
+			if (StringTools::endsWith(StringTools::toLowerCase(file), "." + modelExtension) == true) {
 				haveModelFile = true;
 				break;
 			}
@@ -1541,7 +1541,7 @@ void LevelEditorView::copyObjects()
 	pasteObjects_.clear();
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			pasteObjects_.push_back(levelEntity);
@@ -1696,7 +1696,7 @@ void LevelEditorView::updateGizmo() {
 	auto objectCount = 0;
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			if (levelEditorObject == nullptr) continue;
 			gizmoCenter.add(levelEditorObject->getTransformations().getTranslation());

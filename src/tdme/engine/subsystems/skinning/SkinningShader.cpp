@@ -16,10 +16,10 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
 
 using std::copy;
 using std::begin;
@@ -42,10 +42,10 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Console;
-using tdme::utils::IntBuffer;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::FloatBuffer;
 
 SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex")
 {

@@ -45,6 +45,8 @@
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
@@ -86,12 +88,10 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Console.h>
-
-#include <ext/libpng/png.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::remove;
@@ -122,6 +122,8 @@ using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Timing;
+using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
@@ -161,9 +163,9 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Float;
-using tdme::utils::Console;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Float;
+using tdme::utilities::Console;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
@@ -1793,67 +1795,19 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 		return false;
 	}
 
-	//
-	{
-		// see: https://gist.github.com/niw/5963798
-		FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
-		if (!fp) {
-			Console::println("Engine::makeScreenshot(): Failed to create file: " + pathName + "/" + fileName);
-			return false;
-		}
-
-		png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (!png) {
-			fclose(fp);
-			return false;
-		}
-
-		png_infop info = png_create_info_struct(png);
-		if (!info) {
-			fclose(fp);
-			return false;
-		}
-
-		if (setjmp(png_jmpbuf(png))) {
-			fclose(fp);
-			return false;
-		}
-
-		png_init_io(png, fp);
-
-		// output is 8bit depth, RGBA format.
-		png_set_IHDR(
-			png,
-			info,
-			width,
-			height,
-			8,
-			PNG_COLOR_TYPE_RGBA,
-			PNG_INTERLACE_NONE,
-			PNG_COMPRESSION_TYPE_DEFAULT,
-			PNG_FILTER_TYPE_DEFAULT
-		);
-		png_write_info(png, info);
-
-		// Remove the alpha channel for PNG_COLOR_TYPE_RGB format
-		// png_set_filler(png, 0, PNG_FILLER_AFTER);
-
-		png_bytep* row_pointers = new png_bytep[height];
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * 4 * (height - 1 - y);
-
-		png_write_image(png, row_pointers);
-		png_write_end(png, NULL);
-
-		free (row_pointers);
-
-		fclose(fp);
-
-		png_destroy_write_struct(&png, &info);
-	}
-
-
-	//
-	delete pixels;
+	// create texture, write and delete
+	auto texture = new Texture(
+		"tdme.engine.makescreenshot",
+		32,
+		width,
+		height,
+		width,
+		height,
+		pixels
+	);
+	texture->acquireReference();
+	PNGTextureWriter::write(texture, pathName, fileName);
+	texture->releaseReference();
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();

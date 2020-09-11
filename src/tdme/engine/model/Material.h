@@ -39,6 +39,16 @@ private:
 	Matrix2D3x3 textureMatrix;
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 */
+	Material(const string& id);
+
+	/**
+	 * Destructor
+	 */
+	~Material();
 
 	/** 
 	 * @return material id
@@ -102,14 +112,4 @@ public:
 		this->textureMatrix = textureMatrix;
 	}
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 */
-	Material(const string& id);
-
-	/**
-	 * Destructor
-	 */
-	~Material();
 };

@@ -9,7 +9,7 @@
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -28,7 +28,7 @@ using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Trigger screen controller

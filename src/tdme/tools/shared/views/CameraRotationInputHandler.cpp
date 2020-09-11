@@ -13,8 +13,8 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::engine::Camera;
@@ -28,8 +28,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
-using tdme::utils::Character;
-using tdme::utils::Console;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler)
 {

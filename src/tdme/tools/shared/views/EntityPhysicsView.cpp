@@ -32,8 +32,8 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::tools::shared::views::EntityPhysicsView;
 
@@ -68,8 +68,8 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Character;
-using tdme::utils::Console;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
 
 EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps): Gizmo(Engine::getInstance(), "epv", 2.0f)
 {

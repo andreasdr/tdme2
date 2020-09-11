@@ -6,7 +6,7 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 
@@ -15,7 +15,7 @@ using std::string;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Progress bar screen controller

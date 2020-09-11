@@ -23,8 +23,8 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::engine::Engine;
@@ -50,8 +50,8 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 TriggerView::TriggerView(PopUps* popUps) 
 {

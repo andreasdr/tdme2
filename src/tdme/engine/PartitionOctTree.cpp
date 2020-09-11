@@ -14,8 +14,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
+#include <tdme/utilities/Console.h>
 
 using std::list;
 using std::map;
@@ -33,8 +33,8 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::VectorIteratorMultiple;
-using tdme::utils::Console;
+using tdme::utilities::VectorIteratorMultiple;
+using tdme::utilities::Console;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
 

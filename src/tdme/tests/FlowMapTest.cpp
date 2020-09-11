@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
@@ -28,10 +28,10 @@
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/FlowMap.h>
-#include <tdme/utils/FlowMapCell.h>
-#include <tdme/utils/PathFinding.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/FlowMap.h>
+#include <tdme/utilities/FlowMapCell.h>
+#include <tdme/utilities/PathFinding.h>
 
 using std::string;
 using std::to_string;
@@ -62,11 +62,11 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::utils::Console;
-using tdme::utils::FlowMap;
-using tdme::utils::FlowMapCell;
-using tdme::utils::PathFinding;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::FlowMap;
+using tdme::utilities::FlowMapCell;
+using tdme::utilities::PathFinding;
+using tdme::utilities::Time;
 
 FlowMapTest::FlowMapTest()
 {

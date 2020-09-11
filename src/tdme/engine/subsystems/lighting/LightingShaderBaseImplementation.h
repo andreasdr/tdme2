@@ -31,6 +31,8 @@ protected:
 	int32_t renderLightingProgramId { -1 };
 	int32_t renderLightingFragmentShaderId { -1 };
 	int32_t renderLightingVertexShaderId { -1 };
+	int32_t uniformTextureAtlasSize { -1 };
+	int32_t uniformTextureAtlasPixelDimension { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };

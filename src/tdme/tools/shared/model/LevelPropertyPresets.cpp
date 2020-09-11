@@ -17,8 +17,8 @@
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Console.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -38,8 +38,8 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::Exception;
-using tdme::utils::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Console;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
 

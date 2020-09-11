@@ -43,6 +43,7 @@ private:
 	string normalTextureFileName;
 	Texture* normalTexture;
 	Matrix2D3x3 textureMatrix;
+	int textureAtlasSize;
 
 	/**
 	 * Checks and set ups diffuse texture transparency
@@ -50,6 +51,15 @@ private:
 	void checkDiffuseTextureTransparency();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	SpecularMaterialProperties();
+
+	/**
+	 * Destructor
+	 */
+	~SpecularMaterialProperties();
 
 	/**
 	 * @return ambient color
@@ -127,6 +137,21 @@ public:
 	}
 
 	/**
+	 * @return texture atlas size
+	 */
+	inline int32_t getTextureAtlasSize() const {
+		return textureAtlasSize;
+	}
+
+	/**
+	 * Set texture atlas size
+	 * @param textureAtlasSize texture atlas size
+	 */
+	inline void setTextureAtlasSize(int32_t textureAtlasSize) {
+		this->textureAtlasSize = textureAtlasSize;
+	}
+
+	/**
 	 * @return diffuse texture path name
 	 */
 	inline const string& getDiffuseTexturePathName() const {
@@ -134,10 +159,26 @@ public:
 	}
 
 	/**
+	 * Set diffuse texture path name
+	 * @param diffuseTexturePathName diffuse texture path name
+	 */
+	inline void setDiffuseTexturePathName(const string& diffuseTexturePathName) {
+		this->diffuseTexturePathName = diffuseTexturePathName;
+	}
+
+	/**
 	 * @return diffuse texture file name
 	 */
 	inline const string& getDiffuseTextureFileName() const {
 		return diffuseTextureFileName;
+	}
+
+	/**
+	 * Set diffuse texture file name
+	 * @return diffuse texture file name
+	 */
+	inline void setDiffuseTextureFileName(const string& diffuseTextureFileName) {
+		this->diffuseTextureFileName = diffuseTextureFileName;
 	}
 
 	/**
@@ -153,6 +194,12 @@ public:
 	inline const string& getDiffuseTransparencyTextureFileName() const {
 		return diffuseTransparencyTextureFileName;
 	}
+
+	/**
+	 * Set up a diffuse texture by the texture itself
+	 * @param diffuseTexture diffuse texture
+	 */
+	void setDiffuseTexture(Texture* diffuseTexture);
 
 	/**
 	 * Set up a diffuse texture
@@ -292,6 +339,14 @@ public:
 	}
 
 	/**
+	 * Set diffuse texture transparency
+	 * @param diffuseTextureTransparency diffuse texture has transparency
+	 */
+	inline void setDiffuseTextureTransparency(bool textureTransparency) {
+		diffuseTextureTransparency = textureTransparency;
+	}
+
+	/**
 	 * @return if texture has transparency with masked transparency disabled
 	 */
 	inline bool hasTextureTransparency() const {
@@ -313,13 +368,4 @@ public:
 		this->textureMatrix = textureMatrix;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	SpecularMaterialProperties();
-
-	/**
-	 * Destructor
-	 */
-	~SpecularMaterialProperties();
 };

@@ -4,6 +4,8 @@
 #include <unordered_map>
 
 #include <tdme/gui/GUIParserException.h>
+#include <tdme/gui/effects/GUIColorEffect.h>
+#include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>
 #include <tdme/gui/elements/GUICheckbox.h>
 #include <tdme/gui/elements/GUIDropDown.h>
@@ -28,6 +30,7 @@
 #include <tdme/gui/elements/GUITabs.h>
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
@@ -49,11 +52,12 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -62,6 +66,8 @@ using std::unordered_map;
 
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
+using tdme::gui::effects::GUIColorEffect;
+using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUICheckbox;
 using tdme::gui::elements::GUIDropDown;
@@ -86,6 +92,7 @@ using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
+using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
@@ -105,11 +112,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::Float;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
@@ -129,7 +137,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	// replace attributes from element
 	auto newXML = xml;
 	for (auto parametersIt: parameters) {
-		newXML = StringUtils::replace(newXML, "{$" + parametersIt.first + "}", escapeQuotes(parametersIt.second));
+		newXML = StringTools::replace(newXML, "{$" + parametersIt.first + "}", escapeQuotes(parametersIt.second));
 	}
 
 	//
@@ -201,8 +209,8 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("show-on")))),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("hide-on")))),
-		StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
-		StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true")
+		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
+		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true")
 	);
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
 	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time
@@ -238,6 +246,91 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 	for (auto *node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
+			if (nodeTagName == "effect-in") {
+				// TODO: Refactor this and next sub block into a method
+				GUIEffect* effect = nullptr;
+				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
+				if (type == "color") {
+					effect = new GUIColorEffect();
+					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				} else
+				if (type == "position") {
+					effect = new GUIPositionEffect();
+					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				}
+				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
+				if (effect != nullptr && action.empty() == false) {
+					class EffectAction: public virtual Action
+					{
+					public:
+						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
+						}
+						void performAction() override {
+							GUIElementNode::executeExpression(guiScreenNode, expression);
+						}
+					private:
+						GUIScreenNode* guiScreenNode;
+						string expression;
+					};
+					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
+				}
+			} else
+			if (nodeTagName == "effect-out") {
+				GUIEffect* effect = nullptr;
+				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
+				if (type == "color") {
+					effect = new GUIColorEffect();
+					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				} else
+				if (type == "position") {
+					effect = new GUIPositionEffect();
+					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				}
+				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
+				if (effect != nullptr && action.empty() == false) {
+					class EffectAction: public virtual Action
+					{
+					public:
+						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
+						}
+						void performAction() override {
+							GUIElementNode::executeExpression(guiScreenNode, expression);
+						}
+					private:
+						GUIScreenNode* guiScreenNode;
+						string expression;
+					};
+					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
+				}
+			} else
 			if (nodeTagName == "panel") {
 				auto guiPanelNode = new GUIPanelNode(
 					guiParentNode->getScreenNode(),
@@ -472,10 +565,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("name")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("value")))),
-					StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("selected")))), "true"),
-					StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("disabled")))), "true"),
-					StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("focusable")))), "true"),
-					StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("ignore-events")))), "true"),
+					StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("selected")))), "true"),
+					StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("disabled")))), "true"),
+					StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("focusable")))), "true"),
+					StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("ignore-events")))), "true"),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-initialize"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-click"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-doubleclick"))),
@@ -541,7 +634,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					StringUtils::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
+					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -558,7 +651,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
 					),
-					StringUtils::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
+					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
 					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value"))))
 				);
 				guiParentNode->addSubNode(guiImageNode);
@@ -618,9 +711,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
-					MutableString(unescapeQuotes(string(StringUtils::trim(AVOID_NULLPTR_STRING(node->Attribute("text"))))))
+					MutableString(unescapeQuotes(string(StringTools::trim(AVOID_NULLPTR_STRING(node->Attribute("text"))))))
 				);
 				guiParentNode->addSubNode(guiTextNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -679,9 +772,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
-					MutableString(StringUtils::trim(AVOID_NULLPTR_STRING(node->GetText())))
+					MutableString(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText())))
 				);
 				guiParentNode->addSubNode(guiTextNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -740,7 +833,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color-disabled"))),
 					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text"))))),
@@ -924,20 +1017,20 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, con
 	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
 		auto attributeKey = string(attribute->Name());
 		auto attributeValue = string(attribute->Value());
-		newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
 	}
 
 	// replace attributes from element
 	for (auto newGuiElementAttributesIt : attributes) {
 		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-		newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
 	}
 
 	// replace remaining unset parameters with empty spaces
-	newGuiElementTemplateXML = StringUtils::regexReplace(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
+	newGuiElementTemplateXML = StringTools::regexReplace(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
 	// replace inner XML
-	newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
+	newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
 
 	// add root tag
 	newGuiElementTemplateXML =  "<gui-element>\n" + newGuiElementTemplateXML + "</gui-element>\n";
@@ -974,16 +1067,16 @@ const string GUIParser::getInnerXml(TiXmlElement* node)
 const string GUIParser::unescapeQuotes(const string& str)
 {
 	string result;
-	result = StringUtils::replace(str, "&quot;", "\"");
-	result = StringUtils::replace(result, "&#39;", "'");
+	result = StringTools::replace(str, "&quot;", "\"");
+	result = StringTools::replace(result, "&#39;", "'");
 	return result;
 }
 
 const string GUIParser::escapeQuotes(const string& str)
 {
 	string result;
-	result = StringUtils::replace(str, "\"", "&quot;");
-	result = StringUtils::replace(result, "'", "&#39;");
+	result = StringTools::replace(str, "\"", "&quot;");
+	result = StringTools::replace(result, "'", "&#39;");
 	return result;
 }
 

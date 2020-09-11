@@ -1,0 +1,388 @@
+diff --git a/src/tdme/gui/GUIParser.cpp b/src/tdme/gui/GUIParser.cpp
+index c73c41cb..a1285e32 100644
+--- a/src/tdme/gui/GUIParser.cpp
++++ b/src/tdme/gui/GUIParser.cpp
+@@ -277,16 +277,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
+ 					class EffectAction: public virtual Action
+ 					{
+ 					public:
+-						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
++						EffectAction(GUIScreenNode* guiScreenNode, const string& condition, const string& expression): guiScreenNode(guiScreenNode), condition(condition), expression(expression) {
+ 						}
+ 						void performAction() override {
+-							GUIElementNode::executeExpression(guiScreenNode, expression);
++							GUIElementNode::executeExpression(guiScreenNode, expression, condition);
+ 						}
+ 					private:
+ 						GUIScreenNode* guiScreenNode;
++						string condition;
+ 						string expression;
+ 					};
+-					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
++					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), AVOID_NULLPTR_STRING(node->Attribute("on")), action));
+ 				}
+ 			} else
+ 			if (nodeTagName == "effect-out") {
+@@ -319,16 +320,17 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
+ 					class EffectAction: public virtual Action
+ 					{
+ 					public:
+-						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
++						EffectAction(GUIScreenNode* guiScreenNode, const string& condition, const string& expression): guiScreenNode(guiScreenNode), condition(condition), expression(expression) {
+ 						}
+ 						void performAction() override {
+-							GUIElementNode::executeExpression(guiScreenNode, expression);
++							GUIElementNode::executeExpression(guiScreenNode, expression, condition);
+ 						}
+ 					private:
+ 						GUIScreenNode* guiScreenNode;
++						string condition;
+ 						string expression;
+ 					};
+-					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
++					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), AVOID_NULLPTR_STRING(node->Attribute("on")), action));
+ 				}
+ 			} else
+ 			if (nodeTagName == "panel") {
+diff --git a/src/tdme/gui/nodes/GUIElementNode.cpp b/src/tdme/gui/nodes/GUIElementNode.cpp
+index 077e37cb..396b82d1 100644
+--- a/src/tdme/gui/nodes/GUIElementNode.cpp
++++ b/src/tdme/gui/nodes/GUIElementNode.cpp
+@@ -293,7 +293,8 @@ const string& GUIElementNode::getOnChangeExpression() {
+ 	return onChangeExpression;
+ }
+ 
+-void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression) {
++void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression, const string& effectCondition) {
++	Console::println("Executing: " + effectCondition + ": " + expression);
+ 	StringTokenizer t1;
+ 	StringTokenizer t2;
+ 	t1.tokenize(expression, ";");
+@@ -417,7 +418,7 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string&
+ 			StringTools::endsWith(command,")") == true) {
+ 			int64_t delay = Integer::parseInt(StringTools::substring(command, command.find('(') + 1, command.rfind(')')));
+ 			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
+-			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
++			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value, effectCondition);
+ 		} else {
+ 			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: " + subCommand);
+ 		}
+diff --git a/src/tdme/gui/nodes/GUIElementNode.h b/src/tdme/gui/nodes/GUIElementNode.h
+index 8908ec36..da029fca 100644
+--- a/src/tdme/gui/nodes/GUIElementNode.h
++++ b/src/tdme/gui/nodes/GUIElementNode.h
+@@ -217,8 +217,9 @@ public:
+ 	 * Execute expression
+ 	 * @param screenNode screen node
+ 	 * @param expression expression
++	 * @param effectCondition effect condition
+ 	 */
+-	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
++	static void executeExpression(GUIScreenNode* screenNode, const string& expression, const string& effectCondition = string());
+ 
+ 	/** 
+ 	 * @return active conditions
+diff --git a/src/tdme/gui/nodes/GUINode.cpp b/src/tdme/gui/nodes/GUINode.cpp
+index 41d68dc1..6fc7bbb8 100644
+--- a/src/tdme/gui/nodes/GUINode.cpp
++++ b/src/tdme/gui/nodes/GUINode.cpp
+@@ -1282,18 +1282,23 @@ void GUINode::removeEffect(const string& id)
+ }
+ 
+ void GUINode::onSetConditions(const vector<string>& conditions) {
++	for (auto& condition: conditions) {
++		screenNode->cancelTimedExpression(condition);
++	}
+ 	auto haveInEffect = false;
+ 	for (auto& condition: conditions) {
+ 		{
+ 			auto effect = getEffect("tdme.xmleffect.in.color.on." + condition);
+-			if (effect != nullptr && effect->isActive() == false) {
++			if (effect != nullptr) {
++				Console::println(string("GUINode::onSetConditions(): ") + "tdme.xmleffect.in.color.on." + condition);
+ 				haveInEffect = true;
+ 				effect->start();
+ 			}
+ 		}
+ 		{
+ 			auto effect = getEffect("tdme.xmleffect.in.position.on." + condition);
+-			if (effect != nullptr && effect->isActive() == false) {
++			if (effect != nullptr) {
++				Console::println(string("GUINode::onSetConditions(): ") + "tdme.xmleffect.in.position.on." + condition);
+ 				haveInEffect = true;
+ 				effect->start();
+ 			}
+@@ -1302,6 +1307,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
+ 	if (haveInEffect == true) {
+ 		for (auto& effectIt: effects) {
+ 			if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.out.") == true) {
++				Console::println(string("GUINode::onSetConditions(): Stopping ") + effectIt.first);
+ 				effectIt.second->stop();
+ 			}
+ 		}
+@@ -1310,7 +1316,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
+ 		for (auto& condition: conditions) {
+ 			{
+ 				auto effect = getEffect("tdme.xmleffect.out.color.on." + condition);
+-				if (effect != nullptr && effect->isActive() == false) {
++				if (effect != nullptr) {
++					Console::println(string("GUINode::onSetConditions(): ") + "tdme.xmleffect.out.color.on." + condition);
+ 					issuedOutEffect = true;
+ 					haveOutEffect = true;
+ 					effect->start();
+@@ -1318,7 +1325,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
+ 			}
+ 			{
+ 				auto effect = getEffect("tdme.xmleffect.out.position.on." + condition);
+-				if (effect != nullptr && effect->isActive() == false) {
++				if (effect != nullptr) {
++					Console::println(string("GUINode::onSetConditions(): ") + "tdme.xmleffect.out.position.on." + condition);
+ 					issuedOutEffect = true;
+ 					haveOutEffect = true;
+ 					effect->start();
+@@ -1328,6 +1336,7 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
+ 		if (issuedOutEffect == true) {
+ 			for (auto& effectIt: effects) {
+ 				if (StringTools::startsWith(effectIt.first, "tdme.xmleffect.in.") == true) {
++					Console::println(string("GUINode::onSetConditions(): Stopping ") + effectIt.first);
+ 					effectIt.second->stop();
+ 				}
+ 			}
+@@ -1335,6 +1344,12 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
+ 	}
+ }
+ 
++void GUINode::onUnsetConditions(const vector<string>& conditions) {
++	for (auto& condition: conditions) {
++		screenNode->cancelTimedExpression(condition);
++	}
++}
++
+ bool GUINode::haveActiveOutEffect() {
+ 	if (haveOutEffect == false) return false;
+ 	// do not change condition met if we have a active effect
+@@ -1345,6 +1360,7 @@ bool GUINode::haveActiveOutEffect() {
+ 			break;
+ 		}
+ 	}
++	if (haveOutEffect == true) Console::println("GUINode::haveActiveOutEffect(): " + getId() + ": have active out effect");
+ 	return haveOutEffect;
+ }
+ 
+diff --git a/src/tdme/gui/nodes/GUINode.h b/src/tdme/gui/nodes/GUINode.h
+index c2d8afbb..3b3e54ef 100644
+--- a/src/tdme/gui/nodes/GUINode.h
++++ b/src/tdme/gui/nodes/GUINode.h
+@@ -268,6 +268,12 @@ protected:
+ 	 */
+ 	virtual void onSetConditions(const vector<string>& conditions);
+ 
++	/**
++	 * On unset condition
++	 * @param conditions conditions
++	 */
++	virtual void onUnsetConditions(const vector<string>& conditions);
++
+ 	/**
+ 	 * Determine if we have a out effect active
+ 	 */
+diff --git a/src/tdme/gui/nodes/GUINodeConditions.cpp b/src/tdme/gui/nodes/GUINodeConditions.cpp
+index a232323f..453f094c 100644
+--- a/src/tdme/gui/nodes/GUINodeConditions.cpp
++++ b/src/tdme/gui/nodes/GUINodeConditions.cpp
+@@ -29,20 +29,22 @@ bool GUINodeConditions::has(const string& condition) const {
+ }
+ 
+ void GUINodeConditions::set(const string& condition) {
++	auto conditionsUnset = this->conditions;
+ 	this->conditions = {{ condition }};
+-	updateElementNode(conditions);
++	updateElementNode(conditions, conditionsUnset);
+ }
+ 
+ void GUINodeConditions::set(const vector<string>& conditions) {
++	auto conditionsUnset = this->conditions;
+ 	this->conditions = conditions;
+-	updateElementNode(conditions);
++	updateElementNode(conditions, conditionsUnset);
+ }
+ 
+ bool GUINodeConditions::add(const string& condition)
+ {
+ 	auto conditionsChanged = has(condition) == false;
+ 	if (conditionsChanged == true) conditions.push_back(condition);
+-	if (conditionsChanged == true) updateElementNode({condition});
++	if (conditionsChanged == true) updateElementNode({condition}, {});
+ 	return conditionsChanged;
+ }
+ 
+@@ -50,36 +52,38 @@ bool GUINodeConditions::remove(const string& condition)
+ {
+ 	auto conditionsChanged = has(condition);
+ 	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
+-	if (conditionsChanged == true) updateElementNode({});
++	if (conditionsChanged == true) updateElementNode({}, {condition});
+ 	return conditionsChanged;
+ }
+ 
+ bool GUINodeConditions::removeAll()
+ {
+ 	auto conditionsChanged = conditions.empty() == false;
++	auto conditionsUnset = this->conditions;
+ 	conditions.clear();
+-	if (conditionsChanged == true) updateElementNode({});
++	if (conditionsChanged == true) updateElementNode({}, {conditionsUnset});
+ 	return conditionsChanged;
+ }
+ 
+-void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
++void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditionsSet, const vector<string>& conditionsUnset) const {
+ 	node->conditionsMet = node->checkConditions();
+ 	node->layouted = false;
+-	node->onSetConditions(conditions);
++	// node->onUnsetConditions(conditionsUnset);
++	node->onSetConditions(conditionsSet);
+ 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
+ 	if (parentNode != nullptr) {
+ 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
+ 			auto guiSubNode = parentNode->subNodes[i];
+-			updateNode(guiSubNode, conditions);
++			updateNode(guiSubNode, conditionsSet, conditionsUnset);
+ 		}
+ 	}
+ }
+ 
+-void GUINodeConditions::updateElementNode(const vector<string>& conditions) const {
++void GUINodeConditions::updateElementNode(const vector<string>& conditionsSet, const vector<string>& conditionsUnset) const {
+ 	if (elementNode == nullptr) return;
+ 	elementNode->onSetConditions(conditions);
+ 	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
+ 		auto guiSubNode = elementNode->subNodes[i];
+-		updateNode(guiSubNode, conditions);
++		updateNode(guiSubNode, conditionsSet, conditionsUnset);
+ 	}
+ }
+diff --git a/src/tdme/gui/nodes/GUINodeConditions.h b/src/tdme/gui/nodes/GUINodeConditions.h
+index 9d721e0d..3ee21df8 100644
+--- a/src/tdme/gui/nodes/GUINodeConditions.h
++++ b/src/tdme/gui/nodes/GUINodeConditions.h
+@@ -27,15 +27,17 @@ private:
+ 	/**
+ 	 * Update node
+ 	 * @param node node
+-	 * @param conditions conditions that have been set
++	 * @param conditionsSet conditions that have been set
++	 * @param conditionsUnset conditions that have been unset
+ 	 */
+-	void updateNode(GUINode* node, const vector<string>& conditions) const;
++	void updateNode(GUINode* node, const vector<string>& conditionsSet, const vector<string>& conditionsUnset) const;
+ 
+ 	/**
+ 	 * Update element node
+-	 * @param conditions conditions that have been set
++	 * @param conditionsSet conditions that have been set
++	 * @param conditionsUnset conditions that have been unset
+ 	 */
+-	void updateElementNode(const vector<string>& conditions) const;
++	void updateElementNode(const vector<string>& conditionsSet, const vector<string>& conditionsUnset) const;
+ 
+ public:
+ 
+diff --git a/src/tdme/gui/nodes/GUIScreenNode.cpp b/src/tdme/gui/nodes/GUIScreenNode.cpp
+index c8f884c4..8e17b59e 100644
+--- a/src/tdme/gui/nodes/GUIScreenNode.cpp
++++ b/src/tdme/gui/nodes/GUIScreenNode.cpp
+@@ -449,10 +449,14 @@ void GUIScreenNode::removeTickNode(GUINode* node) {
+ void GUIScreenNode::tick() {
+ 	auto now = Time::getCurrentMillis();
+ 	vector<int64_t> timedExpressionsToRemove;
+-	for (auto& timedExpressionIt: timedExpressions) {
++	auto timedExpressionsCopy = timedExpressions;
++	for (auto& timedExpressionIt: timedExpressionsCopy) {
+ 		if (now >= timedExpressionIt.first) {
+ 			timedExpressionsToRemove.push_back(timedExpressionIt.first);
+-			GUIElementNode::executeExpression(this, timedExpressionIt.second);
++			auto& timedExpression = timedExpressionIt.second;
++			for (auto& expressionByEffectConditionIt: timedExpression.expressionByEffectCondition) {
++				GUIElementNode::executeExpression(this, expressionByEffectConditionIt.second, expressionByEffectConditionIt.first);
++			}
+ 		}
+ 	}
+ 	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
+@@ -517,6 +521,25 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
+ 	return constraints;
+ }
+ 
+-void GUIScreenNode::addTimedExpression(int64_t time, const string& expression) {
+-	timedExpressions[time]+= timedExpressions[time].empty() == false?";" + expression:expression;
++void GUIScreenNode::addTimedExpression(int64_t time, const string& expression, const string& effectCondition) {
++	Console::println("GUIScreenNode::addTimedExpression(): " + to_string(time) + " on " + effectCondition + ": " + expression);
++	timedExpressions[time].expressionByEffectCondition[effectCondition]+= timedExpressions[time].expressionByEffectCondition[effectCondition].empty() == false?";" + expression:expression;
+ }
++
++void GUIScreenNode::cancelTimedExpression(const string& effectCondition) {
++	vector<int64_t> timedExpressionsToRemove;
++	for (auto& timedExpressionIt: timedExpressions) {
++		auto& timedExpression = timedExpressionIt.second;
++		auto expressionByEffectConditionIt = timedExpression.expressionByEffectCondition.find(effectCondition);
++		if (expressionByEffectConditionIt != timedExpression.expressionByEffectCondition.end()) {
++			Console::println("GUIScreenNode::cancelTimedExpression(): on " + effectCondition + ": " + expressionByEffectConditionIt->second);
++			timedExpression.expressionByEffectCondition.erase(expressionByEffectConditionIt);
++			if (timedExpression.expressionByEffectCondition.size() == 0) {
++				timedExpressionsToRemove.push_back(timedExpressionIt.first);
++			}
++		}
++	}
++	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
++		timedExpressions.erase(timedExpressionToRemove);
++	}
++}
+\ No newline at end of file
+diff --git a/src/tdme/gui/nodes/GUIScreenNode.h b/src/tdme/gui/nodes/GUIScreenNode.h
+index ed35ee82..6a50cc3a 100644
+--- a/src/tdme/gui/nodes/GUIScreenNode.h
++++ b/src/tdme/gui/nodes/GUIScreenNode.h
+@@ -80,7 +80,10 @@ private:
+ 
+ 	bool reshapeRequested;
+ 
+-	map<int64_t, string> timedExpressions;
++	struct TimedExpression {
++		map<string, string> expressionByEffectCondition;
++	};
++	map<int64_t, TimedExpression> timedExpressions;
+ 
+ public:
+ 
+@@ -418,6 +421,14 @@ public:
+ 	 * Add a timed expression
+ 	 * @param time time
+ 	 * @param expression expression
++	 * @param effectCondition effect condition
+ 	 */
+-	void addTimedExpression(int64_t time, const string& expression);
++	void addTimedExpression(int64_t time, const string& expression, const string& effectCondition = string());
++
++	/**
++	 * Cancel a timed expression
++	 * @param effectCondition effect condition
++	 */
++	void cancelTimedExpression(const string& effectCondition);
++
+ };
+diff --git a/src/tdme/utilities/Console.cpp b/src/tdme/utilities/Console.cpp
+index 8bbab42e..f9bfd2da 100644
+--- a/src/tdme/utilities/Console.cpp
++++ b/src/tdme/utilities/Console.cpp
+@@ -60,8 +60,9 @@ void Console::LogWriterThread::flush() {
+ void Console::println(const string& str)
+ {
+ 	mutex->lock();
+-	cout << str << endl;
+-	messages->push_back(str);
++	auto time = Time::getCurrentMillis();
++	cout << to_string(time) + "|" + str << endl;
++	messages->push_back(to_string(Time::getCurrentMillis()) + "|" + str);
+ 	mutex->unlock();
+ }
+ 

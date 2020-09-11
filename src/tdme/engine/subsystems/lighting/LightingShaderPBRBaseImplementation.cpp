@@ -12,8 +12,8 @@
 #include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Float.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
 
 using std::to_string;
 using std::string;
@@ -29,8 +29,8 @@ using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Console;
-using tdme::utils::Float;
+using tdme::utilities::Console;
+using tdme::utilities::Float;
 
 LightingShaderPBRBaseImplementation::LightingShaderPBRBaseImplementation(Renderer* renderer)
 {

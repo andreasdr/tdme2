@@ -5,7 +5,7 @@ namespace os {
 namespace network {
 
 /**
- * @brief type definiton for io interest, see NIONetworkServerClient::INTEREST_*
+ * @brief type definiton for network UI interest
  */
 typedef uint8_t NIOInterest;
 const NIOInterest NIO_INTEREST_NONE = 0;

@@ -24,7 +24,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -39,9 +39,9 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using std::tolower;
 using std::to_string;
@@ -68,7 +68,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
@@ -83,9 +83,9 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ObjectDeleter;
 
 EngineTest::EngineTest()
 {
@@ -147,7 +147,7 @@ Model* EngineTest::createWallModel()
 	wallGroup->setFacesEntities(groupFacesEntities);
 	wall->getGroups()["wall"] = wallGroup;
 	wall->getSubGroups()["wall"] = wallGroup;
-	ModelHelper::prepareForIndexedRendering(wall);
+	ModelTools::prepareForIndexedRendering(wall);
 	return wall;
 }
 

@@ -11,16 +11,16 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ObjectDeleter.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::tests::WaterTest;
 
-using tdme::utils::Time;
+using tdme::utilities::Time;
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -30,8 +30,8 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::Console;
+using tdme::utilities::ObjectDeleter;
 
 WaterTest::WaterTest()
 {

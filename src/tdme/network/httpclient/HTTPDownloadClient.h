@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/httpclient/fwd-tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
-#include <tdme/os/network/NIOException.h>
+#include <tdme/os/network/NetworkException.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -15,7 +15,7 @@ using std::string;
 using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
-using tdme::os::network::NIOException;
+using tdme::os::network::NetworkException;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 

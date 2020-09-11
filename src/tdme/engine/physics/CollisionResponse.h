@@ -8,8 +8,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 
@@ -17,7 +17,7 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 /** 
  * Collision response
@@ -32,18 +32,9 @@ class tdme::engine::physics::CollisionResponse final
 
 private:
 	static constexpr int32_t HITPOINT_COUNT { 30 };
-	vector<CollisionResponse_Entity> entities {  };
-	CollisionResponse_Entity* selectedEntity {  };
+	vector<CollisionResponse_Entity> entities;
+	CollisionResponse_Entity* selectedEntity { nullptr };
 	vector<Vector3> fallbackHitPointsVector;
-
-	/**
-	 * Invert normals
-	 */
-	inline void invertNormals() {
-		for (auto i = 0; i < entities.size(); i++) {
-			entities[i].getNormal().scale(-1.0f);
-		}
-	}
 
 public:
 

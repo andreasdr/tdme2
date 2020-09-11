@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
@@ -23,7 +23,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::vector;
@@ -37,7 +37,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
@@ -50,7 +50,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 constexpr int32_t PrimitiveModel::SPHERE_SEGMENTS_X;
 
@@ -138,7 +138,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model);
 	//
 	return model;
 }
@@ -222,7 +222,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::prepareForIndexedRendering(model);
 	//
 	return model;
 }
@@ -288,7 +288,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(faceVertices, faceNormals);
+				ModelTools::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -305,7 +305,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(faceVertices, faceNormals);
+				ModelTools::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -328,8 +328,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
-	ModelHelper::computeNormals(model);
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::computeNormals(model);
+	ModelTools::prepareForIndexedRendering(model);
 	//
 	return model;
 }
@@ -444,7 +444,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(faceVertices, faceNormals);
+				ModelTools::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -460,7 +460,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(faceVertices, faceNormals);
+				ModelTools::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -483,8 +483,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
-	ModelHelper::computeNormals(model);
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::computeNormals(model);
+	ModelTools::prepareForIndexedRendering(model);
 	//
 	return model;
 }

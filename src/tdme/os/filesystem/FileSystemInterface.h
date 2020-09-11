@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 

@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
@@ -12,13 +12,13 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 
 using tdme::tools::viewer::TDMEModelEditor;
 
-using tdme::utils::Time;
+using tdme::utilities::Time;
 
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
@@ -27,7 +27,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::View;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 string TDMEModelEditor::VERSION = "1.9.9";
 

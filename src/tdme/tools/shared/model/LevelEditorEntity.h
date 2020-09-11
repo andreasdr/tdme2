@@ -12,7 +12,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::map;
@@ -44,7 +44,7 @@ class tdme::tools::shared::model::LevelEditorEntity final
 
 public:
 	static constexpr int32_t ID_NONE { -1 };
-	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 32 };
+	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 64 };
 	static constexpr int32_t MODEL_SOUNDS_COUNT { 32 };
 	static char MODEL_BOUNDINGVOLUME_EDITING_ID[];
 	static char MODEL_BOUNDINGVOLUMES_ID[];

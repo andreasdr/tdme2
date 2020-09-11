@@ -32,8 +32,8 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
 using std::remove;
@@ -59,8 +59,8 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using tdme::utils::Console;
-using tdme::utils::VectorIteratorMultiple;
+using tdme::utilities::Console;
+using tdme::utilities::VectorIteratorMultiple;
 
 World::World(): world(reactphysics3d::Vector3(0.0, -9.81, 0.0))
 {

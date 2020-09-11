@@ -3,11 +3,11 @@
 #include <string>
 
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 using tdme::engine::model::Model;
 using tdme::engine::model::ShaderModel;
 

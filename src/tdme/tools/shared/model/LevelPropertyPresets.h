@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 #include <ext/tinyxml/tinyxml.h>
 

@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -23,7 +23,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleE
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem() 
 {

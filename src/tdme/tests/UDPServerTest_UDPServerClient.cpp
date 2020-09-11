@@ -2,19 +2,19 @@
 
 #include <string>
 
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::string;
 using std::to_string;
 using std::string;
 using std::endl;
 
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 EchoUDPServerClient::EchoUDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
-	NIOUDPServerClient(clientId, ip, port) {
+	UDPServerClient(clientId, ip, port) {
 }
 
 EchoUDPServerClient::~EchoUDPServerClient() {

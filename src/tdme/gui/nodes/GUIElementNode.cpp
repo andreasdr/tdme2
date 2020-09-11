@@ -1,6 +1,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
 #include <set>
+#include <string>
 
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -20,12 +21,15 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::set;
+using std::to_string;
 
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
@@ -45,10 +49,12 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::Console;
-using tdme::utils::Float;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Integer;
+using tdme::utilities::Float;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 GUIElementNode::GUIElementNode(
 	GUIScreenNode* screenNode,
@@ -287,7 +293,7 @@ const string& GUIElementNode::getOnChangeExpression() {
 	return onChangeExpression;
 }
 
-void GUIElementNode::executeExpression(const string& expression) {
+void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression) {
 	StringTokenizer t1;
 	StringTokenizer t2;
 	t1.tokenize(expression, ";");
@@ -298,23 +304,23 @@ void GUIElementNode::executeExpression(const string& expression) {
 		string nodeId;
 		string subCommand;
 		if (t2.countTokens() > 0) {
-			command = StringUtils::trim(t2.nextToken());
-			if (t2.countTokens() > 1) value = StringUtils::trim(t2.nextToken());
+			command = StringTools::trim(t2.nextToken());
+			if (t2.countTokens() > 1) value = StringTools::trim(t2.nextToken());
 		}
 		t2.tokenize(command, ".");
 		if (t2.countTokens() == 2) {
-			nodeId = StringUtils::trim(t2.nextToken());
-			subCommand = StringUtils::trim(t2.nextToken());
+			nodeId = StringTools::trim(t2.nextToken());
+			subCommand = StringTools::trim(t2.nextToken());
 		}
 		// element (controller) values
 		if (subCommand == "value") {
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			auto nodeController = nodeElementNode != nullptr?nodeElementNode->getController():nullptr;
-			if (StringUtils::startsWith(value, "'") == true && StringUtils::endsWith(value, "'") == true) {
-				if (nodeController != nullptr) nodeController->setValue(MutableString(StringUtils::substring(value, 1, value.size() - 1)));
+			if (StringTools::startsWith(value, "'") == true && StringTools::endsWith(value, "'") == true) {
+				if (nodeController != nullptr) nodeController->setValue(MutableString(StringTools::substring(value, 1, value.size() - 1)));
 			} else
-			if (StringUtils::endsWith(value, ".value") == true) {
-				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringUtils::substring(value, 0, value.length() - string(".value").size())));
+			if (StringTools::endsWith(value, ".value") == true) {
+				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
 				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
 				if (nodeController != nullptr && nodeValueController != nullptr) nodeController->setValue(nodeValueController->getValue());
 			} else {
@@ -399,13 +405,19 @@ void GUIElementNode::executeExpression(const string& expression) {
 		// image node specific data
 		if (subCommand == "maskmaxvalue") {
 			auto imageNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(nodeId));
-			if (StringUtils::endsWith(value, ".value") == true) {
-				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringUtils::substring(value, 0, value.length() - string(".value").size())));
+			if (StringTools::endsWith(value, ".value") == true) {
+				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
 				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
 				if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
 			} else {
 				imageNode->setMaskMaxValue(Float::parseFloat(value));
 			}
+		} else
+		if (StringTools::startsWith(command,"delay(") == true &&
+			StringTools::endsWith(command,")") == true) {
+			int64_t delay = Integer::parseInt(StringTools::substring(command, command.find('(') + 1, command.rfind(')')));
+			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
+			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
 		} else {
 			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: " + subCommand);
 		}
@@ -413,7 +425,7 @@ void GUIElementNode::executeExpression(const string& expression) {
 }
 
 void GUIElementNode::executeOnChangeExpression() {
-	if (onChangeExpression.size() > 0) executeExpression(onChangeExpression);
+	if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()
@@ -439,7 +451,7 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 GUINode_Alignments GUIElementNode::createAlignments(const string& horizontal, const string& vertical)
 {
 	GUINode_Alignments alignments;
-	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "LEFT");
-	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "TOP");
+	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringTools::toUpperCase(horizontal) : "LEFT");
+	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringTools::toUpperCase(vertical) : "TOP");
 	return alignments;
 }

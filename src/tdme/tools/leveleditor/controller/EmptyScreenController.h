@@ -7,7 +7,7 @@
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Empty screen controller

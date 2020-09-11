@@ -10,7 +10,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::to_string;
 using std::string;
@@ -25,7 +25,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 bool LightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
 	return true;

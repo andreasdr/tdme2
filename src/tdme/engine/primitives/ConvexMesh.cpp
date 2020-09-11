@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <map>
-#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -11,26 +10,23 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/ModelHelper.h>
-#include <tdme/engine/model/ModelHelper_VertexOrder.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
 
 using std::array;
 using std::find;
 using std::reverse;
 using std::map;
 using std::sort;
-using std::string;
-using std::to_string;
 using std::unique;
 using std::unordered_set;
 using std::vector;
@@ -38,16 +34,16 @@ using std::vector;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
-using tdme::engine::model::ModelHelper;
-using tdme::engine::model::ModelHelper_VertexOrder;
+using tdme::utilities::ModelTools;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Float;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Float;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
 
 ConvexMesh::ConvexMesh()
 {

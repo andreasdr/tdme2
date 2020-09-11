@@ -2,10 +2,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ExceptionBase.h>
 
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 /**
  * Model file IO exception

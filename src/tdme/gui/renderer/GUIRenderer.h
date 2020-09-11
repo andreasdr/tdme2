@@ -4,9 +4,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -18,9 +18,9 @@
 using std::array;
 using std::vector;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;

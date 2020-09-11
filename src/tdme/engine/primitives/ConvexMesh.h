@@ -10,7 +10,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 
 using std::vector;
@@ -19,9 +19,9 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
 using tdme::math::Vector3;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
 
 /** 
  * Convex mesh physics primitive

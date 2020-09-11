@@ -22,7 +22,7 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
@@ -36,8 +36,8 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::map;
 using std::to_string;
@@ -56,7 +56,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
@@ -70,8 +70,8 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 Model* GLTFReader::read(const string& pathName, const string& fileName)
 {
@@ -201,11 +201,11 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	}
 
 	// create default animations
-	ModelHelper::createDefaultAnimation(model, maxFrames);
+	ModelTools::createDefaultAnimation(model, maxFrames);
 	// set up joints
-	ModelHelper::setupJoints(model);
+	ModelTools::setupJoints(model);
 	// fix animation length
-	ModelHelper::fixAnimationLength(model);
+	ModelTools::fixAnimationLength(model);
 
 	//
 	return model;
@@ -613,6 +613,7 @@ void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model
 } 
 
 bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels) {
+	// TODO: Use engine/fileio/textures/PNGTextureWriter
 	// see: https://gist.github.com/niw/5963798
 	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
 	if (!fp) {

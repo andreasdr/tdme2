@@ -9,10 +9,10 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::ofstream;
 using std::string;
@@ -23,10 +23,10 @@ using tdme::application::Application;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 namespace tdme {
 namespace tools {
@@ -57,30 +57,30 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// shader
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glsl") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".vert") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".frag") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glsl") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".vert") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".frag") == true) return true;
 				// audio
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ogg") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ogg") == true) return true;
 				// models
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dae") == true) return true;
 				// meta
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) return true;
 				// level
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tl") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tl") == true) return true;
 				// particle system
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) return true;
 				// xml
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".xml") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".xml") == true) return true;
 				// images
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
 				//
 				if (fileName.find(".") == string::npos) return true;
 				//
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".properties") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".properties") == true) return true;
 				//
 				return false;
 			}

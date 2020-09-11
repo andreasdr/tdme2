@@ -14,7 +14,7 @@ using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementati
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 EZRShaderPre::EZRShaderPre(Renderer* renderer): renderer(renderer)
 {

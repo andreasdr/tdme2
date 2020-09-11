@@ -1,6 +1,6 @@
-#include <tdme/utils/HashLink.h>
+#include <tdme/utilities/HashLink.h>
 
-using tdme::utils::HashLink;
+using tdme::utilities::HashLink;
 
 int main(int argc, char *argv[]) {
 	HashLink::execute("resources/scripts", "Main.hl");

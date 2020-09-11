@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -32,10 +32,10 @@
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 #include <rapidjson/document.h>
 
@@ -47,7 +47,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
@@ -70,10 +70,10 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::Float;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 using rapidjson::Document;
 using rapidjson::Value;
@@ -141,20 +141,20 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 
 	if (jEntityRoot.FindMember("bv") != jEntityRoot.MemberEnd()) {
-		levelEditorEntity->addBoundingVolume(
+		auto boundingVolume = parseBoundingVolume(
 			0,
-			parseBoundingVolume(
-				0,
-				levelEditorEntity,
-				pathName,
-				jEntityRoot["bv"]
-			)
+			levelEditorEntity,
+			pathName,
+			jEntityRoot["bv"]
 		);
+		if (boundingVolume->getBoundingVolume() != nullptr) levelEditorEntity->addBoundingVolume(0, boundingVolume);
 	} else
 	if (jEntityRoot.FindMember("bvs") != jEntityRoot.MemberEnd()) {
 		auto jBoundingVolumes = jEntityRoot["bvs"].GetArray();
+		auto bvIdx = 0;
 		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
-			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, pathName, jBoundingVolumes[i]));
+			auto boundingVolume = parseBoundingVolume(bvIdx, levelEditorEntity, pathName, jBoundingVolumes[i]);
+			if (boundingVolume->getBoundingVolume() != nullptr) levelEditorEntity->addBoundingVolume(bvIdx++, boundingVolume);
 		}
 	}
 	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && levelEditorEntity->getPhysics() != nullptr) {
@@ -216,14 +216,14 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
-	if (levelEditorEntity->getModel() != nullptr) ModelHelper::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
+	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
 	return levelEditorEntity;
 }
 
 const string ModelMetaDataFileImport::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
 		(
-			StringUtils::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
+			StringTools::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
 				FileSystem::getInstance()->getPathName(fileName):
 				pathName + "/" +  FileSystem::getInstance()->getPathName(fileName)
 		 ),
@@ -239,10 +239,10 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
 	auto bvTypeString = (jBv["type"].GetString());
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "none") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "none") == true) {
 		entityBoundingVolume->setupNone();
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "sphere") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "sphere") == true) {
 		entityBoundingVolume->setupSphere(
 			Vector3(
 				static_cast< float >(jBv["cx"].GetFloat()),
@@ -252,7 +252,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			static_cast< float >(jBv["r"].GetFloat())
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "capsule") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "capsule") == true) {
 		entityBoundingVolume->setupCapsule(
 			Vector3(
 				static_cast< float >(jBv["ax"].GetFloat()),
@@ -267,7 +267,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			static_cast< float >(jBv["r"].GetFloat())
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "aabb") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "aabb") == true) {
 		entityBoundingVolume->setupAabb(
 			Vector3(
 				static_cast< float >(jBv["mix"].GetFloat()),
@@ -281,7 +281,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			)
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "obb") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "obb") == true) {
 		entityBoundingVolume->setupObb(
 			Vector3(
 				static_cast< float >(jBv["cx"].GetFloat()),
@@ -310,7 +310,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 			)
 		);
 	} else
-	if (StringUtils::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
+	if (StringTools::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
 			string fileName = jBv["file"].GetString();
 			entityBoundingVolume->setupConvexMesh(

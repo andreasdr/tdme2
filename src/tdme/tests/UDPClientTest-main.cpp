@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include <tdme/network/udpclient/NIOUDPClient.h>
-#include <tdme/network/udpclient/NIOUDPClientMessage.h>
+#include <tdme/network/udpclient/UDPClient.h>
+#include <tdme/network/udpclient/UDPClientMessage.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::cin;
 using std::cout;
@@ -15,13 +15,13 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-using tdme::utils::Console;
+using tdme::utilities::Console;
 using tdme::os::network::Network;
 using tdme::os::threading::Thread;
-using tdme::network::udpclient::NIOUDPClient;
-using tdme::network::udpclient::NIOUDPClientMessage;
+using tdme::network::udpclient::UDPClient;
+using tdme::network::udpclient::UDPClientMessage;
 
-NIOUDPClient* client = NULL;
+UDPClient* client = NULL;
 
 class InputThread: public Thread {
 public:
@@ -66,14 +66,14 @@ int main(int argc, char *argv[]) {
 	inputThread->start();
 
 	// UDP client
-	client = new NIOUDPClient("127.0.0.1", 10000);
+	client = new UDPClient("127.0.0.1", 10000);
 	client->start();
 
 	// handle incoming messages
 	while(client->isStopRequested() == false) {
 		Thread::sleep(1L);
 		// process incoming messages
-		NIOUDPClientMessage* message = client->receiveMessage();
+		UDPClientMessage* message = client->receiveMessage();
 		if (message != nullptr) {
 			if (client->processSafeMessage(message) == true) {
 				Console::println("Received message: " + message->getFrame()->str());

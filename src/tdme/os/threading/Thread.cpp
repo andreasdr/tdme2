@@ -11,7 +11,7 @@
 #include <thread>
 #include <iostream>
 
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 #include "Thread.h"
 #include "ThreadingError.h"
@@ -19,7 +19,7 @@
 using std::string;
 
 using tdme::os::threading::Thread;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 Thread::Thread(const string& name, size_t stackSize): name(name), pThreadCreated(false), stopRequested(false), stackSize(stackSize) {
 }

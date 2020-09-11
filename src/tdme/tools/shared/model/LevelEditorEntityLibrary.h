@@ -7,7 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::vector;
@@ -59,7 +59,7 @@ public:
 	 * @param fileName file name
 	 * @param pivot pivot
 	 * @return level editor entity
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	LevelEditorEntity* addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
 
@@ -72,7 +72,7 @@ public:
 	 * @param height height
 	 * @param depth depth
 	 * @return level editor entity
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	LevelEditorEntity* addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth) /* throws(Exception) */;
 
@@ -82,7 +82,7 @@ public:
 	 * @param name name
 	 * @param description description
 	 * @return level editor entity
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	LevelEditorEntity* addEmpty(int32_t id, const string& name, const string& description) /* throws(Exception) */;
 
@@ -92,7 +92,7 @@ public:
 	 * @param name name
 	 * @param description description
 	 * @return level editor entity
-	 * @throws tdme::utils::Exception
+	 * @throws tdme::utilities::Exception
 	 */
 	LevelEditorEntity* addParticleSystem(int32_t id, const string& name, const string& description) /* throws(Exception) */;
 

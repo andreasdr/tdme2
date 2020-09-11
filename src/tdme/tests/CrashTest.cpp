@@ -1,12 +1,12 @@
 #include <tdme/tests/CrashTest.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::tests::CrashTest;
 
 using tdme::application::Application;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 class XXX {
 public:

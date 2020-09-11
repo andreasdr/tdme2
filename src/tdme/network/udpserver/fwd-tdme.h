@@ -4,12 +4,12 @@
 namespace tdme {
 namespace network {
 namespace udpserver {
-	class NIONetworkServerException;
-	class NIOServerClient;
-	class NIOUDPServer;
-	class NIOUDPServerClient;
-	class NIOUDPServerGroup;
-	class NIOUDPServerIOThread;
+	class NetworkServerException;
+	class ServerClient;
+	class UDPServer;
+	class UDPServerClient;
+	class UDPServerGroup;
+	class UDPServerIOThread;
 } // namespace udpserver
 } // namespace network
 } // namespace tdme

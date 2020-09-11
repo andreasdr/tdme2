@@ -9,7 +9,7 @@ using std::string;
 
 using tdme::engine::model::Model;
 
-/** 
+/**
  * Animation setup
  * @author Andreas Drewke
  * @version $Id$
@@ -41,21 +41,21 @@ public:
 	 */
 	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId, float speed = 1.0);
 
-	/** 
+	/**
 	 * @return model this animation belongs to
 	 */
 	inline Model* getModel() {
 		return model;
 	}
 
-	/** 
+	/**
 	 * @return id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return start frame
 	 */
 	inline int32_t getStartFrame() {
@@ -68,7 +68,7 @@ public:
 	 */
 	void setStartFrame(int32_t startFrame);
 
-	/** 
+	/**
 	 * @return end frame
 	 */
 	inline int32_t getEndFrame() {
@@ -81,21 +81,21 @@ public:
 	 */
 	void setEndFrame(int32_t endFrame);
 
-	/** 
+	/**
 	 * @return frames
 	 */
 	inline int32_t getFrames() {
 		return frames;
 	}
 
-	/** 
+	/**
 	 * @return looping enabled
 	 */
 	inline bool isLoop() {
 		return loop;
 	}
 
-	/** 
+	/**
 	 * Set loop
 	 * @param loop loop
 	 */
@@ -119,12 +119,12 @@ public:
 		this->overlayFromGroupId = overlayFromGroupId;
 	}
 
-	/** 
+	/**
 	 * @return animation duration in milliseconds
 	 */
 	int64_t computeDuration();
 
-	/** 
+	/**
 	 * Compute animation duration
 	 * @param startFrame start frame
 	 * @param endFrame end frame

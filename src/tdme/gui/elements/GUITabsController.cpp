@@ -5,7 +5,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::elements::GUITabContentController;
@@ -13,7 +13,7 @@ using tdme::gui::elements::GUITabController;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 GUITabsController::GUITabsController(GUINode* node) 
 	: GUINodeController(node)

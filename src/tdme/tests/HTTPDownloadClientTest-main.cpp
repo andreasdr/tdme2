@@ -1,6 +1,6 @@
 #include <tdme/os/network/Network.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -9,8 +9,8 @@ using std::to_string;
 using tdme::network::httpclient::HTTPDownloadClient;
 using tdme::os::network::Network;
 using tdme::os::threading::Thread;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 int main(int argc, char *argv[]) {
 	Network::initialize();

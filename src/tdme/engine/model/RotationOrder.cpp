@@ -1,10 +1,10 @@
 #include <tdme/engine/model/RotationOrder.h>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::model::RotationOrder;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 using tdme::math::Vector3;
 
 RotationOrder::RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex) : Enum(name, ordinal)

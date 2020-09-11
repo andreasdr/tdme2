@@ -11,7 +11,7 @@
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 using std::vector;
@@ -19,7 +19,7 @@ using std::vector;
 using tdme::audio::decoder::AudioDecoder;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 /**
  * OGG/Vorbis audio decoder

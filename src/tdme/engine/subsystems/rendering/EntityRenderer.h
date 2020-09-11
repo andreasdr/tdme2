@@ -22,9 +22,9 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Pool.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Pool.h>
 
 using std::unordered_map;
 using std::string;
@@ -49,8 +49,8 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Pool;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Pool;
 
 /** 
  * Rendering class

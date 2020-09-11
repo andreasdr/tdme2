@@ -37,13 +37,13 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
 #include <tdme/tools/modeleditor/TDMEModelEditor.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using std::vector;
 using std::string;
@@ -82,13 +82,13 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::viewer::TDMEModelEditor;
-using tdme::utils::Float;
-using tdme::utils::Integer;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ExceptionBase;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 
 ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view) 
 {
@@ -1565,7 +1565,7 @@ void ModelEditorScreenController::onModelSave()
 	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == false) {
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == false) {
 			fileName = Tools::removeFileEnding(fileName) + ".tmm";
 		}
 	}

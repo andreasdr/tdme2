@@ -5,7 +5,7 @@
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/audio/VorbisAudioStream.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::tests::AudioTest;
 using tdme::audio::Audio;
@@ -13,7 +13,7 @@ using tdme::audio::AudioEntity;
 using tdme::audio::Sound;
 using tdme::audio::VorbisAudioStream;
 using tdme::os::threading::Thread;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 void AudioTest::main()
 {

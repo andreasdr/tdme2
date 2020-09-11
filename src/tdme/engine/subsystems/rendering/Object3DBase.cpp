@@ -26,7 +26,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::vector;
@@ -54,7 +54,7 @@ using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

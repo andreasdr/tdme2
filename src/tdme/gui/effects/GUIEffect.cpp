@@ -28,6 +28,13 @@ void GUIEffect::start()
 	timePassed = 0.0f;
 }
 
+void GUIEffect::stop()
+{
+	active = false;
+	timeLeft = timeTotal;
+	timePassed = 0.0f;
+}
+
 bool GUIEffect::update(GUIRenderer* guiRenderer)
 {
 	if (active == false) return false;
@@ -41,4 +48,3 @@ bool GUIEffect::update(GUIRenderer* guiRenderer)
 	}
 	return false;
 }
-

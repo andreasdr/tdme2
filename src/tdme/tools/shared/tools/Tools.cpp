@@ -19,7 +19,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -39,13 +39,13 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/Properties.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Exception.h>
 
 using std::array;
 using std::string;
@@ -69,7 +69,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
@@ -88,13 +88,13 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Float;
-using tdme::utils::Integer;
-using tdme::utils::Properties;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
@@ -285,7 +285,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundGroup->setFacesEntities(groupFacesEntities);
 	ground->getGroups()["ground"] = groundGroup;
 	ground->getSubGroups()["ground"] = groundGroup;
-	ModelHelper::prepareForIndexedRendering(ground);
+	ModelTools::prepareForIndexedRendering(ground);
 	return ground;
 }
 
@@ -438,18 +438,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
 {
-	auto newFileName = StringUtils::replace(fileName, '\\', '/');
+	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto cutFileNameIdx = -1;
 	if (cutFileNameIdx == -1) {
 		cutFileNameIdx = fileName.rfind("/resources/");
 		if (cutFileNameIdx != -1) {
-			newFileName = StringUtils::substring(fileName, cutFileNameIdx + 1);
+			newFileName = StringTools::substring(fileName, cutFileNameIdx + 1);
 		}
 	}
 	if (cutFileNameIdx == -1) {
 		cutFileNameIdx = fileName.rfind("resources/");
 		if (cutFileNameIdx != -1) {
-			newFileName = StringUtils::substring(fileName, cutFileNameIdx);
+			newFileName = StringTools::substring(fileName, cutFileNameIdx);
 		}
 	}
 	return newFileName;
@@ -457,15 +457,15 @@ const string Tools::getRelativeResourcesFileName(const string& gameRoot, const s
 
 const string Tools::getGameRootPath(const string& fileName)
 {
-	auto newFileName = StringUtils::replace(fileName, '\\', '/');
+	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto filesRootIdx = -1;
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName.rfind("/resources/");
-		if (filesRootIdx != -1) return StringUtils::substring(fileName, 0, filesRootIdx);
+		if (filesRootIdx != -1) return StringTools::substring(fileName, 0, filesRootIdx);
 	}
 	if (filesRootIdx == -1) {
 		filesRootIdx = fileName.rfind("resources/");
-		if (filesRootIdx != -1) return StringUtils::substring(fileName, 0, filesRootIdx);
+		if (filesRootIdx != -1) return StringTools::substring(fileName, 0, filesRootIdx);
 	}
 	return "";
 }

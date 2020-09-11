@@ -20,10 +20,10 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::string;
 
@@ -45,10 +45,10 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::utils::Float;
-using tdme::utils::MutableString;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
 

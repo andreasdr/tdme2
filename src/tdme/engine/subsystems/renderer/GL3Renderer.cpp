@@ -19,16 +19,19 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Buffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/ShortBuffer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::map;
@@ -38,17 +41,19 @@ using std::to_string;
 
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::subsystems::renderer::GL3Renderer;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Console;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
+using tdme::utilities::StringTools;
 
 GL3Renderer::GL3Renderer()
 {
@@ -243,8 +248,8 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	if (handle == 0) return 0;
 
 	// shader source
-	auto shaderSource = StringUtils::replace(
-		StringUtils::replace(
+	auto shaderSource = StringTools::replace(
+		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
 			definitions + "\n\n"
@@ -537,17 +542,67 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 
 void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
-	if (texture->isRepeat() == true) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	} else {
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
+		texture->getTextureData()->getBuffer()
+	);
+	if (texture->getAtlasSize() > 1) {
+		if (texture->isUseMipMap() == true) {
+			float maxLodBias;
+			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
+			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
+			auto mipmapTexture = texture;
+			auto borderSize = 32;
+			auto maxLevel = 0;
+			while (borderSize >= 8) {
+				maxLevel++;
+				borderSize/= 2;
+			}
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
+			borderSize = 32;
+			auto level = 0;
+			while (borderSize >= 8) {
+				level++;
+				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture, level, borderSize);
+				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();
+				generatedMipmapTexture = mipmapTexture;
+				glTexImage2D(
+					GL_TEXTURE_2D,
+					level,
+					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
+					mipmapTexture->getTextureWidth(),
+					mipmapTexture->getTextureHeight(),
+					0,
+					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
+					GL_UNSIGNED_BYTE,
+					mipmapTexture->getTextureData()->getBuffer()
+				);
+				borderSize/= 2;
+			}
+		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isRepeat() == true) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		} else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {

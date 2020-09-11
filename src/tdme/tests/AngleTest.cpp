@@ -5,7 +5,7 @@
 
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::string;
@@ -14,7 +14,7 @@ using std::to_string;
 using tdme::tests::AngleTest;
 using tdme::engine::primitives::LineSegment;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 void AngleTest::main()
 {

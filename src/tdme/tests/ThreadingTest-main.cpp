@@ -2,7 +2,7 @@
 
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 #include "ThreadingTest_ConsumerThread.h"
 #include "ThreadingTest_ProducerThread.h"
@@ -14,7 +14,7 @@ using std::to_string;
 
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 #define TESTTHREAD_THREADS_COUNT	4
 

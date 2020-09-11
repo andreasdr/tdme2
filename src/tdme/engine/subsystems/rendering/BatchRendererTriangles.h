@@ -4,8 +4,8 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/FloatBuffer.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -20,8 +20,8 @@
 using std::array;
 using std::vector;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;

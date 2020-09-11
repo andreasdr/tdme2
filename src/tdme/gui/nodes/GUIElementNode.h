@@ -215,8 +215,10 @@ public:
 
 	/**
 	 * Execute expression
+	 * @param screenNode screen node
+	 * @param expression expression
 	 */
-	void executeExpression(const string& expression);
+	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
 
 	/** 
 	 * @return active conditions

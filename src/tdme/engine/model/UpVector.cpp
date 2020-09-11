@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::engine::model::UpVector;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 UpVector::UpVector(const string& name, int ordinal): Enum(name, ordinal)
 {

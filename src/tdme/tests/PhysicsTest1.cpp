@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
@@ -25,16 +25,16 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::tests::PhysicsTest1;
 
-using tdme::utils::Time;
+using tdme::utilities::Time;
 
 using tdme::application::Application;
 using tdme::engine::Camera;
@@ -57,9 +57,9 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ObjectDeleter;
 
 constexpr int32_t PhysicsTest1::RIGID_TYPEID_STANDARD;
 

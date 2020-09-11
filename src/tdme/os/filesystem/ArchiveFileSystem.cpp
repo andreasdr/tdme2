@@ -14,11 +14,11 @@
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::ifstream;
 using std::ios;
@@ -30,10 +30,10 @@ using std::vector;
 using tdme::math::Math;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
-using tdme::utils::StringUtils;
-using tdme::utils::StringTokenizer;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::StringTools;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName), ifsMutex("afs-ifs-mutex")
 {
@@ -86,10 +86,10 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 {
 	// TODO: this currently lists all files beginning from given path, also files in sub folders
 	auto _pathName = pathName;
-	if (_pathName.empty() == false && StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
+	if (_pathName.empty() == false && StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
 	for (auto& fileInformationIt: fileInformations) {
 		auto fileName = fileInformationIt.second.name;
-		if (StringUtils::startsWith(fileName, _pathName) == true) {
+		if (StringTools::startsWith(fileName, _pathName) == true) {
 			try {
 				if (filter != nullptr && filter->accept(
 					getPathName(fileName),
@@ -99,7 +99,7 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 				Console::println("StandardFileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + exception.what());
 				continue;
 			}
-			files.push_back(StringUtils::substring(fileName, pathName.size()));
+			files.push_back(StringTools::substring(fileName, pathName.size()));
 		}
 	}
 	sort(files.begin(), files.end());
@@ -116,7 +116,7 @@ bool ArchiveFileSystem::isDrive(const string& pathName) {
 bool ArchiveFileSystem::fileExists(const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = fileName;
-	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
 
 	//
 	return fileInformations.find(relativeFileName) != fileInformations.end();
@@ -125,7 +125,7 @@ bool ArchiveFileSystem::fileExists(const string& fileName) {
 bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
-	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
 
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
@@ -144,7 +144,7 @@ void ArchiveFileSystem::setExecutable(const string& pathName, const string& file
 uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
-	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
 
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
@@ -229,7 +229,7 @@ void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& 
 const string ArchiveFileSystem::getContentAsString(const string& pathName, const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
-	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
 
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
@@ -275,7 +275,7 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
-	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+	if (StringTools::startsWith(relativeFileName, "./")  == true) relativeFileName = StringTools::substring(relativeFileName, 2);
 
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
@@ -312,7 +312,7 @@ void ArchiveFileSystem::setContent(const string& pathName, const string& fileNam
 void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content)
 {
 	auto contentAsString = getContentAsString(pathName, fileName);
-	contentAsString = StringUtils::replace(contentAsString, "\r", "");
+	contentAsString = StringTools::replace(contentAsString, "\r", "");
 	StringTokenizer t;
 	t.tokenize(contentAsString, "\n");
 	while (t.hasMoreTokens() == true) {
@@ -326,8 +326,8 @@ void ArchiveFileSystem::setContentFromStringArray(const string& pathName, const 
 }
 
 const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
-	string unixPathName = StringUtils::replace(pathName, "\\", "/");
-	string unixFileName = StringUtils::replace(fileName, "\\", "/");
+	string unixPathName = StringTools::replace(pathName, "\\", "/");
+	string unixFileName = StringTools::replace(fileName, "\\", "/");
 
 	auto pathString = getFileName(unixPathName, unixFileName);
 
@@ -360,7 +360,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 
 	// process path components
 	string canonicalPath = "";
-	bool slash = StringUtils::startsWith(pathString, "/");
+	bool slash = StringTools::startsWith(pathString, "/");
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == "") {
@@ -374,8 +374,8 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	// add cwd if required
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
-		(StringUtils::startsWith(canonicalPathString, "/") == false &&
-		StringUtils::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
+		(StringTools::startsWith(canonicalPathString, "/") == false &&
+		StringTools::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
 
@@ -388,17 +388,17 @@ const string ArchiveFileSystem::getCurrentWorkingPathName() {
 }
 
 const string ArchiveFileSystem::getPathName(const string& fileName) {
-	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
-	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
+	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return ".";
-	return StringUtils::substring(unixFileName, 0, lastPathSeparator);
+	return StringTools::substring(unixFileName, 0, lastPathSeparator);
 }
 
 const string ArchiveFileSystem::getFileName(const string& fileName) {
-	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
-	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
+	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
-	return StringUtils::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
+	return StringTools::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
 
 void ArchiveFileSystem::createPath(const string& pathName) {

@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 using std::string;
@@ -18,7 +18,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax) 
 {

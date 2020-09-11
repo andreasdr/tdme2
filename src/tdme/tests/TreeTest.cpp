@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
@@ -14,7 +14,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -23,9 +23,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/ObjectDeleter.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -42,7 +42,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -50,9 +50,9 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utils::Console;
-using tdme::utils::ObjectDeleter;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 TreeTest::TreeTest()
 {
@@ -126,7 +126,7 @@ void TreeTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto treePine = modelDeleter.add(ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.tm"));
-	ModelHelper::prepareForShader(treePine, "tree");
+	ModelTools::prepareForShader(treePine, "tree");
 	int treeIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {

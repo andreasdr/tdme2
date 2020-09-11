@@ -167,7 +167,7 @@
         - includes a simple script language
             - to react on events with like on-mouse-click, ... and on-change for elements
             - to manipulate conditions of elements, values of element controller and node properties
-        - supports position and color based effects
+        - supports position and color based effects in combination with conditions that can also be defined via XML
     - Networking module, which consists of
         - UDP server
             - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
@@ -217,6 +217,8 @@
     - documentation
 
 - What is WIP or planned
+    - Optimizing models with specular lighting regarding render calls by reducing groups and materials to a minumum
+    - GUI effects via XML definitions
     - Light scattering effect / effects
     - Simple script language
     - Shader parameters

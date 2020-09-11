@@ -45,10 +45,10 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedParticleSystemView.h>
 #include <tdme/tools/modeleditor/TDMEModelEditor.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::vector;
 using std::string;
@@ -95,10 +95,10 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::viewer::TDMEModelEditor;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Integer;
-using tdme::utils::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
 
 string ParticleSystemScreenController::TYPE_NONE = "None";
 string ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = "Object Particle System";

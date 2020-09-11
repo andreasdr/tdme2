@@ -4,15 +4,15 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
-#include <tdme/utils/VectorIteratorMultiple.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
-using tdme::utils::VectorIteratorMultiple;
+using tdme::utilities::VectorIteratorMultiple;
 
 /** 
  * Partition interface

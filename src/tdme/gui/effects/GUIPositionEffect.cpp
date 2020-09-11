@@ -7,7 +7,7 @@ using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIPositionEffect::GUIPositionEffect() 
+GUIPositionEffect::GUIPositionEffect(): GUIEffect()
 {
 }
 

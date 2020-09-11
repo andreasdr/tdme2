@@ -8,9 +8,9 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 
@@ -31,8 +31,8 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::Exception;
-using tdme::utils::MutableString;
+using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
 
 /** 
  * GUI multi line text node

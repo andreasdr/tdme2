@@ -6,8 +6,8 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
 
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Engine;
@@ -15,8 +15,8 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
 
 Texture2DRenderShader::Texture2DRenderShader(Renderer* renderer)
 {

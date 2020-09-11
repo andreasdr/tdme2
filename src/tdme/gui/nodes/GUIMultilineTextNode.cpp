@@ -15,10 +15,10 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/math/Math.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::vector;
 using std::string;
@@ -37,10 +37,10 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 GUIMultilineTextNode::GUIMultilineTextNode(
 	GUIScreenNode* screenNode,
@@ -151,8 +151,8 @@ void GUIMultilineTextNode::computeContentAlignment() {
 				do {
 					//
 					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
-					lineLeft = StringUtils::substring(lineToRender, separationAt + 1);
-					lineToRender = StringUtils::substring(lineToRender, 0, separationAt + 1);
+					lineLeft = StringTools::substring(lineToRender, separationAt + 1);
+					lineToRender = StringTools::substring(lineToRender, 0, separationAt + 1);
 					// determine current line width
 					lineWidth = font->getTextWidth(MutableString(lineToRender));
 					// track dimension
@@ -211,7 +211,7 @@ void GUIMultilineTextNode::dispose()
 
 void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	//
 	GUINode::render(guiRenderer);
@@ -288,8 +288,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				do {
 					//
 					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
-					lineLeft = StringUtils::substring(lineToRender, separationAt + 1);
-					lineToRender = StringUtils::substring(lineToRender, 0, separationAt + 1);
+					lineLeft = StringTools::substring(lineToRender, separationAt + 1);
+					lineToRender = StringTools::substring(lineToRender, 0, separationAt + 1);
 					// determine current line width
 					lineWidth = font->getTextWidth(MutableString(lineToRender));
 					// horizontal alignment

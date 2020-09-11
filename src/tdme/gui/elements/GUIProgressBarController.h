@@ -4,14 +4,14 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIElementController.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * GUI progress bar controller

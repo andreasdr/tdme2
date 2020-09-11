@@ -17,7 +17,7 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
@@ -30,7 +30,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::string;
@@ -45,7 +45,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
@@ -58,7 +58,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -199,9 +199,9 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	Console::println("FBXReader::read(): prepare for indexed rendering");
 
 	//
-	ModelHelper::setupJoints(model);
-	ModelHelper::fixAnimationLength(model);
-	ModelHelper::prepareForIndexedRendering(model);
+	ModelTools::setupJoints(model);
+	ModelTools::fixAnimationLength(model);
+	ModelTools::prepareForIndexedRendering(model);
 
 	Console::println("FBXReader::read(): done");
 

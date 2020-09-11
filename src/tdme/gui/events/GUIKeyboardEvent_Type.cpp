@@ -1,9 +1,9 @@
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using tdme::gui::events::GUIKeyboardEvent_Type;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 GUIKeyboardEvent_Type::GUIKeyboardEvent_Type(const string& name, int ordinal)
 	: Enum(name, ordinal)

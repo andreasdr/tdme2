@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/TextureCoordinate.h>
@@ -14,8 +14,8 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;

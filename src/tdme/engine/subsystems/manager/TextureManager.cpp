@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::string;
@@ -17,7 +17,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::Mutex;
-using tdme::utils::Console;;
+using tdme::utilities::Console;;
 
 TextureManager::TextureManager(Renderer* renderer): mutex("texturemanager-mutex") {
 	this->renderer = renderer;

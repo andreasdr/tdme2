@@ -3,13 +3,13 @@
 #include <vector>
 
 #include <tdme/engine/Entity.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::vector;
 
 using tdme::engine::PartitionNone;
 using tdme::engine::Entity;
-using tdme::utils::VectorIteratorMultiple;
+using tdme::utilities::VectorIteratorMultiple;
 
 PartitionNone::PartitionNone() 
 {

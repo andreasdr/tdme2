@@ -19,11 +19,11 @@
 #include <vector>
 
 #include <tdme/os/filesystem/FileNameFilter.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::getline;
 using std::ifstream;
@@ -38,10 +38,10 @@ using std::to_string;
 using tdme::os::filesystem::StandardFileSystem;
 
 using tdme::os::filesystem::FileNameFilter;
-using tdme::utils::StringUtils;
-using tdme::utils::StringTokenizer;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::StringTools;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 StandardFileSystem::StandardFileSystem()
 {
@@ -58,7 +58,7 @@ const string StandardFileSystem::getFileName(const string& pathName, const strin
 void StandardFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
 	auto _pathName = pathName;
-	if (StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
+	if (StringTools::endsWith(pathName, "/") == false) _pathName+= "/";
 
 	DIR *dir;
 	struct dirent *dirent;
@@ -106,7 +106,7 @@ bool StandardFileSystem::isPath(const string& pathName) {
 }
 
 bool StandardFileSystem::isDrive(const string& pathName) {
-	return StringUtils::regexMatch(pathName, "^[a-zA-Z]\\:[\\/\\\\]?$");
+	return StringTools::regexMatch(pathName, "^[a-zA-Z]\\:[\\/\\\\]?$");
 }
 
 bool StandardFileSystem::fileExists(const string& fileName) {
@@ -220,8 +220,8 @@ void StandardFileSystem::setContentFromStringArray(const string& pathName, const
 }
 
 const string StandardFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
-	string unixPathName = StringUtils::replace(pathName, "\\", "/");
-	string unixFileName = StringUtils::replace(fileName, "\\", "/");
+	string unixPathName = StringTools::replace(pathName, "\\", "/");
+	string unixFileName = StringTools::replace(fileName, "\\", "/");
 
 	auto pathString = getFileName(unixPathName, unixFileName);
 
@@ -254,7 +254,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 
 	// process path components
 	string canonicalPath = "";
-	bool slash = StringUtils::startsWith(pathString, "/");
+	bool slash = StringTools::startsWith(pathString, "/");
 	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == "") {
@@ -268,8 +268,8 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	// add cwd if required
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
-		(StringUtils::startsWith(canonicalPathString, "/") == false &&
-		StringUtils::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
+		(StringTools::startsWith(canonicalPathString, "/") == false &&
+		StringTools::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
 
@@ -288,17 +288,17 @@ const string StandardFileSystem::getCurrentWorkingPathName() {
 }
 
 const string StandardFileSystem::getPathName(const string& fileName) {
-	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
-	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
+	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return ".";
-	return StringUtils::substring(unixFileName, 0, lastPathSeparator);
+	return StringTools::substring(unixFileName, 0, lastPathSeparator);
 }
 
 const string StandardFileSystem::getFileName(const string& fileName) {
-	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
-	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
+	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
-	return StringUtils::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
+	return StringTools::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
 
 void StandardFileSystem::createPath(const string& pathName) {

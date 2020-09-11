@@ -8,8 +8,8 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 
 using std::vector;
 
@@ -17,7 +17,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 /** 
  * Render transparent render points pool

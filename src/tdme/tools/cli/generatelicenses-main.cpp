@@ -5,10 +5,10 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -18,10 +18,10 @@ using tdme::application::Application;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 void scanDir(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
@@ -52,7 +52,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 }
 
 void processFile(const string& indent, const string& fileName) {
-	auto _fileName = StringUtils::startsWith(fileName, "./") == true?StringUtils::substring(fileName, 2, fileName.size()):fileName;
+	auto _fileName = StringTools::startsWith(fileName, "./") == true?StringTools::substring(fileName, 2, fileName.size()):fileName;
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, lines);
 	Console::println(indent + _fileName);
@@ -61,7 +61,7 @@ void processFile(const string& indent, const string& fileName) {
 	Console::println();
 	Console::println();
 	for (auto& line: lines) {
-		if (StringUtils::trim(line).size() == 0) {
+		if (StringTools::trim(line).size() == 0) {
 			Console::println();
 		} else {
 			Console::println(indent + "\t" + line);

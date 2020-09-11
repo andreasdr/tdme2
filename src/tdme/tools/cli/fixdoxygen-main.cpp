@@ -5,10 +5,10 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -18,10 +18,10 @@ using tdme::application::Application;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 void scanDir(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
@@ -32,7 +32,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".h") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".h") == true) return true;
 				return false;
 			}
 	};
@@ -43,7 +43,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	FileSystem::getInstance()->list(folder, files, &listFilter);
 
 	for (auto fileName: files) {
-		if (StringUtils::endsWith(fileName, ".h") == true) {
+		if (StringTools::endsWith(fileName, ".h") == true) {
 			totalFiles.push_back(folder + "/" + fileName);
 		} else {
 			scanDir(folder + "/" + fileName, totalFiles);
@@ -91,7 +91,7 @@ void processFile(const string& fileName) {
 		if (hadMethod) {
 			method+= line;
 			if (line.find(";") != string::npos || line.find("{") != string::npos) {
-				method = StringUtils::trim(method);
+				method = StringTools::trim(method);
 				// parse parameter names
 				if (paramCount > 0) {
 					// Console::println(fileName + ": " + method + ": " + to_string(paramCount) + " / " + to_string(docLineStartIdx) + " - " + to_string(docLineEndIdx));
@@ -108,7 +108,7 @@ void processFile(const string& fileName) {
 								StringTokenizer t;
 								t.tokenize(methodName, "\t\n ");
 								while (t.hasMoreTokens() == true) methodName = t.nextToken();
-								methodName = StringUtils::trim(methodName);
+								methodName = StringTools::trim(methodName);
 								paramBegin = true;
 							} else { 
 								methodName+= method[i];
@@ -131,7 +131,7 @@ void processFile(const string& fileName) {
 						} else
 						if (smallerCount == 0 && roundBracketCount == 0){
 							if (method[i] == ',') {
-								param = StringUtils::trim(param);
+								param = StringTools::trim(param);
 								params.push_back(param);
 								param = "";
 								paramIgnore = false;
@@ -142,7 +142,7 @@ void processFile(const string& fileName) {
 						}
 					}
 					if (param.length() > 0) {
-						param = StringUtils::trim(param);
+						param = StringTools::trim(param);
 						params.push_back(param);
 						param = "";
 					}

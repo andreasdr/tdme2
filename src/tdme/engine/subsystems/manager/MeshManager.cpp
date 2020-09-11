@@ -5,7 +5,7 @@
 
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::string;
@@ -13,7 +13,7 @@ using std::string;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 MeshManager::MeshManager() 
 {

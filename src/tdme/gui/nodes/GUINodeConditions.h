@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::vector;
 using std::string;
@@ -27,13 +27,15 @@ private:
 	/**
 	 * Update node
 	 * @param node node
+	 * @param conditions conditions that have been set
 	 */
-	void updateNode(GUINode* node) const;
+	void updateNode(GUINode* node, const vector<string>& conditions) const;
 
 	/**
 	 * Update element node
+	 * @param conditions conditions that have been set
 	 */
-	void updateElementNode() const;
+	void updateElementNode(const vector<string>& conditions) const;
 
 public:
 

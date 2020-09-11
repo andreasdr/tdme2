@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.h>
 #include <tdme/engine/Entity.h>
 

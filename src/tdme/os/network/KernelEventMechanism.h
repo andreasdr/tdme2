@@ -3,12 +3,12 @@
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOInterest.h>
-#include <tdme/os/network/NIONetworkSocket.h>
-#include <tdme/os/network/NIOKEMException.h>
+#include <tdme/os/network/NetworkSocket.h>
+#include <tdme/os/network/NetworkKEMException.h>
 
 using tdme::os::network::NIOInterest;
-using tdme::os::network::NIONetworkSocket;
-using tdme::os::network::NIOKEMException;
+using tdme::os::network::NetworkSocket;
+using tdme::os::network::NetworkKEMException;
 
 /**
  * Interface to kernel event mechanismns
@@ -18,7 +18,7 @@ class tdme::os::network::KernelEventMechanism {
 public:
 	/**
 	 * @brief Public constructor
-	 * @throws tdme::os::network::NIOKEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	KernelEventMechanism();
 
@@ -30,7 +30,7 @@ public:
 	/**
 	 * @brief initializes the kernel event mechanism
 	 * @param maxCCU supported max ccu
-	 * @throws tdme::os::network::NIOKEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void initKernelEventMechanism(const unsigned int maxCCU) ;
 
@@ -42,7 +42,7 @@ public:
 	/**
 	 * @brief do the kernel event mechanism
 	 * @return number of events
-	 * @throws tdme::os::network::NIOKEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	int doKernelEventMechanism();
 
@@ -51,7 +51,7 @@ public:
 	 * @param index kernel event index
 	 * @param &interest kernel event io interest
 	 * @param cookie kernel event cookie
-	 * @throws tdme::os::network::NIOKEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie);
 
@@ -61,9 +61,9 @@ public:
 	 * @param lastInterest last nio interest
 	 * @param interest nio interest
 	 * @param cookie cookie
-	 * @throws tdme::os::network::NIOKEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
-	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
+	void setSocketInterest(const NetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
 
 private:
 	//

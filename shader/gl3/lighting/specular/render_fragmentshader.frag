@@ -69,6 +69,9 @@ struct Light {
 uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
+uniform int textureAtlasSize;
+uniform vec2 textureAtlasPixelDimension;
+
 #if defined(HAVE_SOLID_SHADING)
 #else
 	uniform sampler2D specularTextureUnit;
@@ -215,6 +218,22 @@ vec4 fragColor;
 #endif
 
 void main(void) {
+	// texture coordinate, also take atlas into account
+	vec2 fragTextureUV;
+	if (textureAtlasSize > 1) {
+		#define ATLAS_TEXTURE_BORDER	32
+		vec2 diffuseTextureAtlasIdx = floor(vsFragTextureUV / 1000.0);
+		vec2 diffuseTextureAtlasCoord = vsFragTextureUV - 500.0 - diffuseTextureAtlasIdx * 1000.0;
+		vec2 diffuseTextureAtlasTextureDimensions = vec2(1.0 / float(textureAtlasSize));
+		fragTextureUV =
+			mod(diffuseTextureAtlasCoord, vec2(1.0 - textureAtlasPixelDimension)) /
+			float(textureAtlasSize) *
+			vec2((diffuseTextureAtlasTextureDimensions - (float(ATLAS_TEXTURE_BORDER) * 2.0 * textureAtlasPixelDimension)) / diffuseTextureAtlasTextureDimensions) +
+			vec2(float(ATLAS_TEXTURE_BORDER) * textureAtlasPixelDimension) +
+			diffuseTextureAtlasTextureDimensions * diffuseTextureAtlasIdx;
+	} else {
+		fragTextureUV = vsFragTextureUV;
+	}
 	#if defined(HAVE_TERRAIN_SHADER)
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
 		vec3 uvMappingBlending = abs(normal);
@@ -225,8 +244,7 @@ void main(void) {
 	#else
 		vec4 diffuseTextureColor;
 		if (diffuseTextureAvailable == 1) {
-			// fetch from texture
-			diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
+			diffuseTextureColor = texture(diffuseTextureUnit, fragTextureUV);
 			// check if to handle diffuse texture masked transparency
 			if (diffuseTextureMaskedTransparency == 1) {
 				// discard if beeing transparent
@@ -250,7 +268,7 @@ void main(void) {
 		// specular
 		materialShininess = material.shininess;
 		if (specularTextureAvailable == 1) {
-			vec3 specularTextureValue = texture(specularTextureUnit, vsFragTextureUV).rgb;
+			vec3 specularTextureValue = texture(specularTextureUnit, fragTextureUV).rgb;
 			materialShininess =
 				((0.33 * specularTextureValue.r) +
 				(0.33 * specularTextureValue.g) +
@@ -259,7 +277,7 @@ void main(void) {
 
 		// compute normal
 		if (normalTextureAvailable == 1) {
-			vec3 normalVector = normalize(texture(normalTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0);
+			vec3 normalVector = normalize(texture(normalTextureUnit, fragTextureUV).rgb * 2.0 - 1.0);
 			normal = vec3(0.0, 0.0, 0.0);
 			normal+= vsTangent * normalVector.x;
 			normal+= vsBitangent * normalVector.y;

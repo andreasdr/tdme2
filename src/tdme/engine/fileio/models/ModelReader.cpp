@@ -10,9 +10,9 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::vector;
@@ -25,9 +25,9 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::StringTools;
 
 vector<string> ModelReader::extensions = {"dae", "glb", "tm"};
 
@@ -38,13 +38,13 @@ const vector<string>& ModelReader::getModelExtensions() {
 Model* ModelReader::read(const string& pathName, const string& fileName)
 {
 	try {
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dae") == true) {
 			return DAEReader::read(pathName, fileName);
 		} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glb") == true) {
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) {
 			return GLTFReader::read(pathName, fileName);
 		} else
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) {
 			return TMReader::read(pathName, fileName);
 		} else {
 			throw ModelFileIOException(string("Unsupported mode file: ") + pathName + "/" + fileName);

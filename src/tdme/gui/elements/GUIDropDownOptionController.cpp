@@ -12,7 +12,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
@@ -27,7 +27,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 string GUIDropDownOptionController::CONDITION_SELECTED = "selected";
 string GUIDropDownOptionController::CONDITION_UNSELECTED = "unselected";

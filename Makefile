@@ -284,6 +284,7 @@ SRCS = \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
 	src/tdme/engine/fileio/models/WFObjWriter.cpp \
+	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
 	src/tdme/engine/model/Animation.cpp \
@@ -295,8 +296,6 @@ SRCS = \
 	src/tdme/engine/model/JointWeight.cpp \
 	src/tdme/engine/model/Material.cpp \
 	src/tdme/engine/model/Model.cpp \
-	src/tdme/engine/model/ModelHelper.cpp \
-	src/tdme/engine/model/ModelHelper_VertexOrder.cpp \
 	src/tdme/engine/model/PBRMaterialProperties.cpp \
 	src/tdme/engine/model/UpVector.cpp \
 	src/tdme/engine/model/RotationOrder.cpp \
@@ -483,31 +482,31 @@ SRCS = \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
 	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
-	src/tdme/network/udpclient/NIOClientException.cpp \
-	src/tdme/network/udpclient/NIOUDPClient.cpp \
-	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
-	src/tdme/network/udpserver/NIONetworkServerException.cpp \
-	src/tdme/network/udpserver/NIOServerClient.cpp \
-	src/tdme/network/udpserver/NIOServerClientRequestHandlerHubException.cpp \
-	src/tdme/network/udpserver/NIOServerRequest.cpp \
-	src/tdme/network/udpserver/NIOServerWorkerThread.cpp \
-	src/tdme/network/udpserver/NIOServerWorkerThreadPool.cpp \
-	src/tdme/network/udpserver/NIOUDPServer.cpp \
-	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
-	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
+	src/tdme/network/udpclient/NetworkClientException.cpp \
+	src/tdme/network/udpclient/UDPClient.cpp \
+	src/tdme/network/udpclient/UDPClientMessage.cpp \
+	src/tdme/network/udpserver/NetworkServerException.cpp \
+	src/tdme/network/udpserver/ServerClient.cpp \
+	src/tdme/network/udpserver/ServerClientRequestHandlerHubException.cpp \
+	src/tdme/network/udpserver/ServerRequest.cpp \
+	src/tdme/network/udpserver/ServerWorkerThread.cpp \
+	src/tdme/network/udpserver/ServerWorkerThreadPool.cpp \
+	src/tdme/network/udpserver/UDPServer.cpp \
+	src/tdme/network/udpserver/UDPServerClient.cpp \
+	src/tdme/network/udpserver/UDPServerIOThread.cpp \
 	src/tdme/os/filesystem/ArchiveFileSystem.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
 	src/tdme/os/network/Network.cpp \
-	src/tdme/os/network/NIOException.cpp \
-	src/tdme/os/network/NIOIOException.cpp \
-	src/tdme/os/network/NIOIOSocketClosedException.cpp \
-	src/tdme/os/network/NIOKEMException.cpp \
-	src/tdme/os/network/NIONetworkSocket.cpp \
-	src/tdme/os/network/NIOSocketException.cpp \
-	src/tdme/os/network/NIOUDPSocket.cpp \
-	src/tdme/os/network/NIOTCPSocket.cpp \
+	src/tdme/os/network/NetworkException.cpp \
+	src/tdme/os/network/NetworkIOException.cpp \
+	src/tdme/os/network/NetworkSocketClosedException.cpp \
+	src/tdme/os/network/NetworkKEMException.cpp \
+	src/tdme/os/network/NetworkSocket.cpp \
+	src/tdme/os/network/NetworkSocketException.cpp \
+	src/tdme/os/network/UDPSocket.cpp \
+	src/tdme/os/network/TCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
@@ -606,23 +605,24 @@ SRCS = \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
-	src/tdme/utils/Base64EncDec.cpp \
-	src/tdme/utils/Character.cpp \
-	src/tdme/utils/Enum.cpp \
-	src/tdme/utils/Float.cpp \
-	src/tdme/utils/HashLink.cpp \
-	src/tdme/utils/HexEncDec.cpp \
-	src/tdme/utils/Integer.cpp \
-	src/tdme/utils/IntEncDec.cpp \
-	src/tdme/utils/MutableString.cpp \
-	src/tdme/utils/PathFinding.cpp \
-	src/tdme/utils/Properties.cpp \
-	src/tdme/utils/ReferenceCounter.cpp \
-	src/tdme/utils/RTTI.cpp \
-	src/tdme/utils/StringUtils.cpp \
-	src/tdme/utils/StringTokenizer.cpp \
-	src/tdme/utils/ExceptionBase.cpp \
-	src/tdme/utils/Console.cpp \
+	src/tdme/utilities/Base64EncDec.cpp \
+	src/tdme/utilities/Character.cpp \
+	src/tdme/utilities/Enum.cpp \
+	src/tdme/utilities/Float.cpp \
+	src/tdme/utilities/HashLink.cpp \
+	src/tdme/utilities/HexEncDec.cpp \
+	src/tdme/utilities/Integer.cpp \
+	src/tdme/utilities/IntEncDec.cpp \
+	src/tdme/utilities/MutableString.cpp \
+	src/tdme/utilities/ModelTools.cpp \
+	src/tdme/utilities/PathFinding.cpp \
+	src/tdme/utilities/Properties.cpp \
+	src/tdme/utilities/ReferenceCounter.cpp \
+	src/tdme/utilities/RTTI.cpp \
+	src/tdme/utilities/StringTools.cpp \
+	src/tdme/utilities/StringTokenizer.cpp \
+	src/tdme/utilities/ExceptionBase.cpp \
+	src/tdme/utilities/Console.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \
@@ -869,7 +869,8 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/create-installer-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
+	src/tdme/tools/cli/optimizemodel-main.cpp
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)

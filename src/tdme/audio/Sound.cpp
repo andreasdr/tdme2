@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/audio/AudioBufferManager.h>
@@ -18,14 +18,14 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::to_string;
 using std::string;
 using std::string;
 
 using tdme::audio::Sound;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::audio::AudioBufferManager;
@@ -33,7 +33,7 @@ using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 Sound::Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)
 {

@@ -3,19 +3,19 @@
 #include <sstream>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udpserver/NIOUDPServer.h>
-#include <tdme/network/udpserver/NIOUDPServerClient.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/network/udpserver/UDPServer.h>
+#include <tdme/network/udpserver/UDPServerClient.h>
+#include <tdme/utilities/Exception.h>
 
 #include "UDPServerTest_UDPServer.h"
 
 using std::stringstream;
 
-using tdme::network::udpserver::NIOUDPServer;
-using tdme::network::udpserver::NIOUDPServerClient;
-using tdme::utils::Exception;
+using tdme::network::udpserver::UDPServer;
+using tdme::network::udpserver::UDPServerClient;
+using tdme::utilities::Exception;
 
-class EchoUDPServerClient : public NIOUDPServerClient {
+class EchoUDPServerClient : public UDPServerClient {
 	friend class EchoUDPServer;
 
 public:

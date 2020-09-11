@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/Enum.h>
+#include <tdme/utilities/Enum.h>
 
 using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::utils::Enum;
+using tdme::utilities::Enum;
 
 LevelEditorEntity_EntityType::LevelEditorEntity_EntityType(const string& name, int ordinal): Enum(name, ordinal)
 {

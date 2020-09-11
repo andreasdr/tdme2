@@ -13,10 +13,10 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::vector;
@@ -32,10 +32,10 @@ using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Integer;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::MutableString;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::MutableString;
 
 MutableString GUIFont::LINEHEIGHT_STRING = MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 
@@ -60,21 +60,21 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 	auto page = lines[lineIdx++];
 	font->texture = TextureReader::read(
 		pathName,
-		StringUtils::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),
+		StringTools::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),
 		false
 	);
 	auto done = false;
 	while (lineIdx < lines.size()) {
 		auto line = lines[lineIdx++];
-		if (StringUtils::startsWith(line, "chars c")) {
+		if (StringTools::startsWith(line, "chars c")) {
 		} else
-		if (StringUtils::startsWith(line, "char")) {
+		if (StringTools::startsWith(line, "char")) {
 			auto def = font->parseCharacter(line);
 			font->chars[def->id] = def;
 		}
-		if (StringUtils::startsWith(line, "kernings c")) {
+		if (StringTools::startsWith(line, "kernings c")) {
 		} else
-		if (StringUtils::startsWith(line, "kerning")) {
+		if (StringTools::startsWith(line, "kerning")) {
 			/*
 			// TODO: not yet supported in the moment
 			StringTokenizer t;

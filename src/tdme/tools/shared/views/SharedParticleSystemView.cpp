@@ -49,11 +49,11 @@
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/View.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Properties.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -106,11 +106,11 @@ using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
-using tdme::utils::Character;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Properties;
-using tdme::utils::StringUtils;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTools;
 
 SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine::getInstance(), "spsv")
 {
@@ -521,7 +521,7 @@ void SharedParticleSystemView::loadParticleSystem()
 
 LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;

@@ -38,15 +38,15 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ExceptionBase.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/Properties.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using tdme::tools::installer::Installer;
 
@@ -88,15 +88,15 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::ExceptionBase;
-using tdme::utils::Integer;
-using tdme::utils::MutableString;
-using tdme::utils::Properties;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 Installer::Installer(): installThreadMutex("install-thread-mutex")
 {
@@ -173,7 +173,7 @@ void Installer::initializeScreens() {
 		string componentsXML = "<space height=\"10\" />\n";
 		for (auto componentIdx = 1; true; componentIdx++) {
 			auto componentName = installerProperties.get("component" + to_string(componentIdx), "");
-			auto componentRequired = StringUtils::trim(StringUtils::toLowerCase(installerProperties.get("component" + to_string(componentIdx) + "_required", "false"))) == "true";
+			auto componentRequired = StringTools::trim(StringTools::toLowerCase(installerProperties.get("component" + to_string(componentIdx) + "_required", "false"))) == "true";
 			auto componentInstalled = false;
 			for (auto installedComponentName: installedComponents) {
 				if (installedComponentName == componentName) {
@@ -304,9 +304,9 @@ void Installer::performScreenAction() {
 								vector<string> files;
 								FileSystem::getStandardFileSystem()->list("installer", files);
 								for (auto file: files) {
-									if (StringUtils::startsWith(file, completionFileName) == true) {
+									if (StringTools::startsWith(file, completionFileName) == true) {
 										Console::println("CheckForUpdateThread: Have upload completion file: " + file);
-										installer->timestamp = StringUtils::substring(file, completionFileName.size());
+										installer->timestamp = StringTools::substring(file, completionFileName.size());
 										repairHaveLocalFile = true;
 									}
 								}
@@ -334,7 +334,7 @@ void Installer::performScreenAction() {
 										auto pos = 0;
 										while ((pos = response.find(completionFileName, pos)) != string::npos) {
 											pos+= completionFileName.size();
-											auto timestampWebNew = StringUtils::substring(response, pos, pos + 14);
+											auto timestampWebNew = StringTools::substring(response, pos, pos + 14);
 											pos+= 14;
 											if ((installer->timestamp.empty() == true && (timestampWeb.empty() == true || timestampWebNew > timestampWeb)) ||
 												(installer->timestamp.empty() == false && ((timestampWeb.empty() == true || timestampWebNew > timestampWeb) && timestampWebNew > installer->timestamp))) {
@@ -368,7 +368,7 @@ void Installer::performScreenAction() {
 											Console::println("CheckForUpdateThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 											continue;
 										}
-										auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
+										auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringTools::replace(StringTools::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
 
 										//
 										Console::println("CheckForUpdateThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
@@ -564,7 +564,7 @@ void Installer::performScreenAction() {
 									if (componentName.empty() == true) break;
 
 									// component file name
-									auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
+									auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringTools::replace(StringTools::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
 
 									// check if marked
 									installer->installThreadMutex.lock();
@@ -647,8 +647,8 @@ void Installer::performScreenAction() {
 												if (
 													(installer->installerMode == INSTALLERMODE_REPAIR ||
 													installer->installerMode == INSTALLERMODE_UPDATE) &&
-													(StringUtils::endsWith(StringUtils::toLowerCase(generatedFileName), ".exe") == true ||
-													StringUtils::endsWith(StringUtils::toLowerCase(generatedFileName), ".dll") == true)) {
+													(StringTools::endsWith(StringTools::toLowerCase(generatedFileName), ".exe") == true ||
+													StringTools::endsWith(StringTools::toLowerCase(generatedFileName), ".dll") == true)) {
 													windowsUpdateRenameFiles.push_back(FileSystem::getStandardFileSystem()->getFileName(generatedFileName));
 													windowsGeneratedFile+= ".update";
 												}
@@ -665,7 +665,7 @@ void Installer::performScreenAction() {
 											);
 											if (archiveFileSystem->isExecutable(archiveFileSystem->getPathName(file), archiveFileSystem->getFileName(file)) == true) {
 												#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__)
-													auto startMenuName = installer->installerProperties.get("startmenu_" + StringUtils::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
+													auto startMenuName = installer->installerProperties.get("startmenu_" + StringTools::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
 													if (startMenuName.empty() == false) {
 														FileSystem::getStandardFileSystem()->setExecutable(
 															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
@@ -688,7 +688,7 @@ void Installer::performScreenAction() {
 														);
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
-														auto iconFileName = StringUtils::toLowerCase(executableFileName) + "-icon.png";
+														auto iconFileName = StringTools::toLowerCase(executableFileName) + "-icon.png";
 														if (archiveFileSystem->fileExists("resources/icons/" + iconFileName) == false &&
 															FileSystem::getInstance()->fileExists(executablePathName + "/resources/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
 														FileSystem::getStandardFileSystem()->setContentFromString(
@@ -709,8 +709,8 @@ void Installer::performScreenAction() {
 													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
 													auto startMenuName = installer->installerProperties.get(
 														"startmenu_" +
-														StringUtils::substring(
-															StringUtils::toLowerCase(executable),
+														StringTools::substring(
+															StringTools::toLowerCase(executable),
 															0,
 															executable.rfind('.')
 														),
@@ -727,20 +727,20 @@ void Installer::performScreenAction() {
 														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
 														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
 														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
-														auto iconFileName = StringUtils::replace(StringUtils::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
+														auto iconFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
 														if (archiveFileSystem->fileExists("resources/win32/" + iconFileName) == false &&
 															FileSystem::getInstance()->fileExists(executablePathName + "/resources/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
 														Console::println(
-															StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
-															"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
-															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\" " +
+															StringTools::replace(StringTools::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+															"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
+															"\"" + StringTools::replace(linkFile, "/", "\\") + "\" " +
 															"\"resources\\win32\\" + iconFileName + "\" "
 														);
 														Console::println(
 															Application::execute(
-																StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
-																"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
-																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\" " +
+																StringTools::replace(StringTools::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+																"\"" + StringTools::replace(generatedFileName, "/", "\\") + "\" " +
+																"\"" + StringTools::replace(linkFile, "/", "\\") + "\" " +
 																"\"resources\\win32\\" + iconFileName + "\" "
 															)
 														);
@@ -914,8 +914,8 @@ void Installer::performScreenAction() {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
 									#if defined(_WIN32)
 										if (installer->installerMode == INSTALLERMODE_UNINSTALL &&
-											(StringUtils::endsWith(log[i], ".dll") == true ||
-											StringUtils::endsWith(log[i], ".exe") == true)) {
+											(StringTools::endsWith(log[i], ".dll") == true ||
+											StringTools::endsWith(log[i], ".exe") == true)) {
 											auto file = FileSystem::getStandardFileSystem()->getFileName(log[i]);
 											uninstallFinishBatch+=
 												":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
@@ -956,7 +956,7 @@ void Installer::performScreenAction() {
 							for (auto i = 1; i < log.size(); i++) {
 								auto folderCandidate = FileSystem::getStandardFileSystem()->getPathName(log[i]);
 								if (FileSystem::getStandardFileSystem()->isPath(folderCandidate) == true) {
-									while (StringUtils::startsWith(folderCandidate, installFolder) == true) {
+									while (StringTools::startsWith(folderCandidate, installFolder) == true) {
 										folders.push_back(folderCandidate);
 										folderCandidate = FileSystem::getStandardFileSystem()->getPathName(folderCandidate);
 									}
@@ -990,8 +990,8 @@ void Installer::performScreenAction() {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
 								for (auto installerFile: installerFiles) {
-									if (StringUtils::endsWith(installerFile, ".ta") == true ||
-										StringUtils::endsWith(installerFile, ".ta.sha256") == true) {
+									if (StringTools::endsWith(installerFile, ".ta") == true ||
+										StringTools::endsWith(installerFile, ".ta.sha256") == true) {
 										try {
 											FileSystem::getStandardFileSystem()->removeFile(
 												installFolder + "installer",
@@ -1042,14 +1042,14 @@ void Installer::performScreenAction() {
 							} else {
 								// TODO: Maybe show a finishing screen
 								string drive;
-								if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+								if (installFolder[1] == ':') drive = StringTools::substring(installFolder, 0, 2) + " && ";
 								system(
 									(
 										string() +
 										drive +
 										"cd " +
 										"\"" + installFolder + "/" + "\"" +
-										" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringUtils::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
+										" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringTools::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
 								);
 								Application::exit(0);
 							}
@@ -1086,7 +1086,7 @@ void Installer::initialize()
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
 		#if defined(_WIN32)
-			homeFolder = StringUtils::replace(string(getenv("USERPROFILE")), '\\', '/');
+			homeFolder = StringTools::replace(string(getenv("USERPROFILE")), '\\', '/');
 		#else
 			homeFolder = string(getenv("HOME"));
 		#endif
@@ -1142,7 +1142,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			performScreenAction();
 		} else
 		if (node->getId() == "button_install") {
-			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->setValue(MutableString(StringUtils::replace(dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString(), "\\", "/")));
+			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->setValue(MutableString(StringTools::replace(dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString(), "\\", "/")));
 			screen = SCREEN_INSTALLING;
 			performScreenAction();
 		} else
@@ -1164,7 +1164,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 				#if defined(_WIN32)
 					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 					string drive;
-					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+					if (installFolder[1] == ':') drive = StringTools::substring(installFolder, 0, 2) + " && ";
 					string finishCommand;
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
@@ -1191,7 +1191,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 				#if defined(_WIN32)
 					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 					string drive;
-					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+					if (installFolder[1] == ':') drive = StringTools::substring(installFolder, 0, 2) + " && ";
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
 						system(
@@ -1231,11 +1231,11 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 
 			vector<string> extensions;
 			auto pathToShow = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
-			pathToShow = StringUtils::replace(pathToShow, "\\", "/");
+			pathToShow = StringTools::replace(pathToShow, "\\", "/");
 			while (FileSystem::getStandardFileSystem()->fileExists(pathToShow) == false || FileSystem::getStandardFileSystem()->isPath(pathToShow) == false) {
 				pathToShow = FileSystem::getStandardFileSystem()->getPathName(pathToShow);
 			}
-			if (StringUtils::startsWith(pathToShow, "/") == false) pathToShow = homeFolder;
+			if (StringTools::startsWith(pathToShow, "/") == false) pathToShow = homeFolder;
 			popUps->getFileDialogScreenController()->show(
 				pathToShow,
 				"Install in: ",
@@ -1260,8 +1260,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			screen = SCREEN_CHECKFORUPDATE;
 			performScreenAction();
 		} else
-		if (StringUtils::startsWith(node->getId(), "component") == true) {
-			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
+		if (StringTools::startsWith(node->getId(), "component") == true) {
+			auto componentIdx = Integer::parseInt(StringTools::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}
@@ -1296,8 +1296,8 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		vector<string> files;
 		FileSystem::getStandardFileSystem()->list("installer", files);
 		for (auto file: files) {
-			if (StringUtils::startsWith(file, installerArchiveFileNameStart) == true &&
-				StringUtils::endsWith(file, ".sha256") == false) {
+			if (StringTools::startsWith(file, installerArchiveFileNameStart) == true &&
+				StringTools::endsWith(file, ".sha256") == false) {
 				Console::println("Installer::main(): Have installer tdme archive file: " + file);
 				installerArchiveFileName = file;
 			}

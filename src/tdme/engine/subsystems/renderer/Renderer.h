@@ -6,7 +6,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
@@ -21,10 +21,10 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
@@ -83,6 +83,16 @@ private:
 	int32_t effectPass;
 	string shaderPrefix;
 public:
+	/**
+	 * Public constructor
+	 */
+	Renderer();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Renderer();
+
 	/**
 	 * @return default context
 	 */
@@ -1082,12 +1092,12 @@ public:
 	virtual void doneGuiMode() = 0;
 
 	/**
-	 * Public constructor
+	 * Generate mip map for atlas texture currently
+	 * @param id id
+	 * @param texture texture
+	 * @param level level
+	 * @param atlasBorderSize atlasBorderSize
 	 */
-	Renderer();
+	Texture* generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize);
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Renderer();
 };

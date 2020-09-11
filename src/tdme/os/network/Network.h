@@ -21,6 +21,7 @@ public:
 	/**
 	 * Get IP by host name
 	 * @param hostName host name
+	 * @throws tdme::os::network::NetworkException
 	 * @return ip of given host
 	 */
 	static const string getIpByHostName(const string &hostName);

@@ -15,7 +15,7 @@
 
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::map;
@@ -25,7 +25,7 @@ using std::string;
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 Audio::Audio() 
 {

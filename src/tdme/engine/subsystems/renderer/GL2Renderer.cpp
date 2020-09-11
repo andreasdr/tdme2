@@ -14,19 +14,19 @@
 #include <vector>
 #include <string>
 
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
+#include <tdme/utilities/Buffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::map;
@@ -35,19 +35,19 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
+using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Console;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 GL2Renderer::GL2Renderer() 
 {
@@ -189,8 +189,8 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	// exit if no handle returned
 	if (handle == 0) return 0;
 	// shader source
-	auto shaderSource = StringUtils::replace(
-		StringUtils::replace(
+	auto shaderSource = StringTools::replace(
+		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
 			definitions + "\n\n"
@@ -199,15 +199,15 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 		functions + "\n\n"
 	);
 	// some adjustments to have GLES2 shader working with GL2
-	shaderSource = StringUtils::replace(shaderSource, "#version 100", "#version 120");
-	shaderSource = StringUtils::replace(shaderSource, "\r", "");
+	shaderSource = StringTools::replace(shaderSource, "#version 100", "#version 120");
+	shaderSource = StringTools::replace(shaderSource, "\r", "");
 	{
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
 		shaderSource.clear();
 		while (t.hasMoreTokens() == true) {
 			auto line = t.nextToken();
-			if (StringUtils::startsWith(line, "precision") == true) continue;
+			if (StringTools::startsWith(line, "precision") == true) continue;
 			shaderSource+= line + "\n";
 		}
 	}

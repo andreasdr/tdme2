@@ -5,7 +5,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -17,7 +17,7 @@ using std::to_string;
 
 using tdme::engine::fileio::models::WFObjWriter;
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -42,7 +42,7 @@ void WFObjWriter::addFace(vector<int> faceVertexIndices) {
 	}
 	array<Vector3, 3> minFaceVertices { vertices[faceVertexIndices[0]], vertices[faceVertexIndices[1]], vertices[faceVertexIndices[2]]};
 	Vector3 faceNormal;
-	ModelHelper::computeNormal(minFaceVertices, faceNormal);
+	ModelTools::computeNormal(minFaceVertices, faceNormal);
 	auto faceNormalIdx = 0;
 	for (auto i = 0; i < normals.size(); i++) {
 		if (faceNormal.equals(normals[i]) == true) break;

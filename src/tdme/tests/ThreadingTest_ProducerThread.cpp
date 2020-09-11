@@ -4,14 +4,14 @@
 
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 ProducerThread::ProducerThread(int id, Queue<int>* queue) : Thread("producer"), id(id), queue(queue) {
 }

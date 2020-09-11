@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
 using tdme::gui::nodes::GUINodeController;
@@ -12,7 +12,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * GUI vertical scroll bar internal controller

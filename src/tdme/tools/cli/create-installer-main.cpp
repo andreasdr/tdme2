@@ -10,12 +10,12 @@
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Properties.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::ofstream;
 using std::string;
@@ -27,12 +27,12 @@ using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Properties;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Properties;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 namespace tdme {
 namespace tools {
@@ -63,32 +63,32 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// shader
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glsl") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".vert") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".frag") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".cl") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glsl") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".vert") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".frag") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".cl") == true) return true;
 				// audio
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ogg") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ogg") == true) return true;
 				// models
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fbx") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glb") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dae") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fbx") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) return true;
 				// meta
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) return true;
 				// level
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tl") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tl") == true) return true;
 				// particle system
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) return true;
 				// xml
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".xml") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".xml") == true) return true;
 				// images
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ico") == true) return true;
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ico") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
 				// fonts
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
 				// files without ending
 				//	TODO: fix me, paths get submitted here too as filename
 				if (fileName.rfind(".") == string::npos ||
@@ -97,9 +97,9 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 					return true;
 				}
 				// properties
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".properties") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".properties") == true) return true;
 				// tdme archive
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ta") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ta") == true) return true;
 				//
 				return false;
 			}
@@ -139,16 +139,16 @@ static void scanDirLibraries(const string& folder, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// static libraries
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".a") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".a") == true) return true;
 				// dynamic libraries
 				#if defined(_WIN32)
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dll") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".lib") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dll") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".lib") == true) return true;
 				#elif defined(__APPLE__)
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dylib") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dylib") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
 				#else
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
 				#endif
 				//
 				return false;
@@ -189,7 +189,7 @@ static void scanDirHeaders(const string& folder, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// headers
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".h") == true) return true;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".h") == true) return true;
 				//
 				return false;
 			}
@@ -229,9 +229,9 @@ static void scanDirExecutables(const string& folder, vector<string>& totalFiles)
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				#if defined(_WIN32)
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".exe") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dll") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".bat") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".exe") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dll") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".bat") == true) return true;
 				#elif defined(__APPLE__)
 					// TODO: fix me, paths get submitted here too as filename
 					if (fileName.rfind(".") == string::npos ||
@@ -239,9 +239,9 @@ static void scanDirExecutables(const string& folder, vector<string>& totalFiles)
 						fileName.rfind(".") < fileName.rfind("/"))) {
 						return true;
 					}
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dylib") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dylib") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".sh") == true) return true;
 				#else
 					// TODO: fix me, paths get submitted here too as filename
 					if (fileName.rfind(".") == string::npos ||
@@ -249,8 +249,8 @@ static void scanDirExecutables(const string& folder, vector<string>& totalFiles)
 						fileName.rfind(".") < fileName.rfind("/"))) {
 						return true;
 					}
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
-					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".sh") == true) return true;
 				#endif
 				//
 				return false;
@@ -290,10 +290,10 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		content
 	);
 
-	auto fileNameToUse = StringUtils::startsWith(fileName, baseFolder + "/") == true?StringUtils::substring(fileName, (baseFolder + "/").size(), fileName.size()):fileName;
+	auto fileNameToUse = StringTools::startsWith(fileName, baseFolder + "/") == true?StringTools::substring(fileName, (baseFolder + "/").size(), fileName.size()):fileName;
 	// remove prefix if requested
 	if (executableFile == true && fileName.find_last_of('/') != string::npos) {
-		fileNameToUse = StringUtils::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
+		fileNameToUse = StringTools::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
 	}
 
 	Console::print(archiveFileName + ": Processing file: " + fileNameToUse);
@@ -391,7 +391,7 @@ int main(int argc, char** argv)
 	string tdmeFolder = "../tdme2";
 	auto cpu = Application::getCPUName();
 	auto os = Application::getOSName();
-	auto fileNameTime = StringUtils::replace(StringUtils::replace(StringUtils::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
+	auto fileNameTime = StringTools::replace(StringTools::replace(StringTools::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
 
 	//
 	Properties installerProperties;
@@ -408,7 +408,7 @@ int main(int argc, char** argv)
 		}
 
 		//
-		auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
+		auto componentFileName = os + "-" + cpu + "-" + StringTools::replace(StringTools::replace(componentName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
 		//
 		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 

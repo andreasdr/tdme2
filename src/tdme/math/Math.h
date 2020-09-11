@@ -307,4 +307,14 @@ public:
 		return std::log(value);
 	}
 
+	/**
+	 * Returns modulo of value, so that return value is 0.0f <= value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
+	inline static float mod(float value, float range) {
+		return std::fmod(value, range);
+	}
+
 };

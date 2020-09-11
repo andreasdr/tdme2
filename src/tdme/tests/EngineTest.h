@@ -11,8 +11,8 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/ObjectDeleter.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using std::array;
 using std::vector;
@@ -24,7 +24,7 @@ using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
-using tdme::utils::ObjectDeleter;
+using tdme::utilities::ObjectDeleter;
 
 /**
  * Engine test

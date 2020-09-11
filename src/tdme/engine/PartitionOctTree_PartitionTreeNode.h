@@ -9,7 +9,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
