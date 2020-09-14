@@ -411,7 +411,7 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
-	map<string, map<string, vector<Transformations*>>> renderGroupEntitiesByModelAndPartition;
+	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
@@ -431,7 +431,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
-			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(&object->getTransformations());
+			renderGroupEntitiesByShaderPartitionModel[object->getEntity()->getShader() + "." + object->getEntity()->getDistanceShader() + "." + to_string(static_cast<int>(object->getEntity()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][object->getEntity()->getModel()->getId()].push_back(&object->getTransformations());
 		} else {
 			Entity* entity = createEntity(object);
 			if (entity == nullptr) continue;
@@ -450,30 +450,32 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 
 	// do render groups
+	auto renderGroupIdx = 0;
 	progressStepCurrent = 0;
-	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(renderGroupEntitiesByModelAndPartition.size()) * 1.0f);
-		progressStepCurrent++;
-
-		for (auto itPartition: itModel.second) {
-			auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
+	for (auto itShader: renderGroupEntitiesByShaderPartitionModel) {
+		Console::println("Level::addLevel(): adding render group: " + itShader.first);
+		for (auto itPartition: itShader.second) {
+			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(renderGroupEntitiesByShaderPartitionModel.size()) * 1.0f);
+			progressStepCurrent++;
 			auto object3DRenderGroup = new Object3DRenderGroup(
-				"tdme.rendergroup." + itModel.first + "." + itPartition.first,
-				levelEditorEntity->getModel(),
+				"tdme.rendergroup." + itPartition.first + "." + to_string(renderGroupIdx++),
 				renderGroupsLODLevels,
 				renderGroupsLOD2MinDistance,
 				renderGroupsLOD3MinDistance,
 				renderGroupsLOD2ReduceBy,
 				renderGroupsLOD3ReduceBy
 			);
-			object3DRenderGroup->setShader(levelEditorEntity->getShader());
-			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
-			object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
-			auto objectIdx = -1;
-			for (auto transformation: itPartition.second) {
-				objectIdx++;
-				if (objectIdx % renderGroupsReduceBy != 0) continue;
-				object3DRenderGroup->addObject(*transformation);
+			for (auto itModel: itPartition.second) {
+				auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
+				object3DRenderGroup->setShader(levelEditorEntity->getShader());
+				object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
+				object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+				auto objectIdx = -1;
+				for (auto transformation: itModel.second) {
+					objectIdx++;
+					if (objectIdx % renderGroupsReduceBy != 0) continue;
+					object3DRenderGroup->addObject(levelEditorEntity->getModel(), *transformation);
+				}
 			}
 			object3DRenderGroup->updateRenderGroup();
 			engine->addEntity(object3DRenderGroup);

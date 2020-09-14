@@ -562,7 +562,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 			auto mipmapTexture = texture;
 			auto borderSize = 32;
 			auto maxLevel = 0;
-			while (borderSize >= 8) {
+			while (borderSize >= 4) {
 				maxLevel++;
 				borderSize/= 2;
 			}
@@ -570,7 +570,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
 			borderSize = 32;
 			auto level = 0;
-			while (borderSize >= 8) {
+			while (borderSize >= 4) {
 				level++;
 				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture, level, borderSize);
 				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();

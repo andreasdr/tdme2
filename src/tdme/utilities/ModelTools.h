@@ -271,7 +271,7 @@ public:
 	 * @param texturePathName texturePathName
 	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static Model* optimizeModel(Model* model, const string& texturePathName, const vector<string>& excludeDiffuseTextureFileNamePatterns = vector<string>());
+	static Model* optimizeModel(Model* model, const string& texturePathName = string(), const vector<string>& excludeDiffuseTextureFileNamePatterns = vector<string>());
 private:
 
 	/**

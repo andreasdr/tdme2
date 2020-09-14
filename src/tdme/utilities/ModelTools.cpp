@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
@@ -35,6 +36,7 @@ using std::array;
 using std::map;
 using std::string;
 using std::to_string;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Transformations;
@@ -95,13 +97,15 @@ void ModelTools::prepareForIndexedRendering(const map<string, Group*>& groups)
 		auto& groupTextureCoordinates = group->getTextureCoordinates();
 		auto& groupTangents = group->getTangents();
 		auto& groupBitangents = group->getBitangents();
+		auto& groupOrigins = group->getOrigins();
 		vector<int32_t> vertexMapping;
 		vector<Vector3> indexedVertices;
 		vector<Vector3> indexedNormals;
 		vector<TextureCoordinate> indexedTextureCoordinates;
 		vector<Vector3> indexedTangents;
 		vector<Vector3> indexedBitangents;
-		// construct indexed vertex data suitable for GL
+		vector<Vector3> indexedOrigins;
+		// construct indexed vertex data suitable for indexed rendering
 		auto preparedIndices = 0;
 		auto newFacesEntities = group->getFacesEntities();
 		for (auto& newFacesEntity: newFacesEntities) {
@@ -124,6 +128,7 @@ void ModelTools::prepareForIndexedRendering(const map<string, Group*>& groups)
 					auto textureCoordinate = groupTextureCoordinates.size() > 0 ? &groupTextureCoordinates[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
 					auto tangent = groupTangents.size() > 0 ? &groupTangents[groupTangentIndex] : static_cast< Vector3* >(nullptr);
 					auto bitangent = groupBitangents.size() > 0 ? &groupBitangents[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
+					auto origin = groupOrigins.size() > 0 ? &groupOrigins[groupVertexIndex] : static_cast< Vector3* >(nullptr);
 					auto newIndex = preparedIndices;
 					for (auto i = 0; i < preparedIndices; i++)
 					if (indexedVertices[i].equals(*vertex) &&
@@ -136,11 +141,12 @@ void ModelTools::prepareForIndexedRendering(const map<string, Group*>& groups)
 					}
 					if (newIndex == preparedIndices) {
 						vertexMapping.push_back(groupVertexIndex);
-						indexedVertices.push_back(*vertex);;
-						indexedNormals.push_back(*normal);;
+						indexedVertices.push_back(*vertex);
+						indexedNormals.push_back(*normal);
 						if (textureCoordinate != nullptr) indexedTextureCoordinates.push_back(*textureCoordinate);
 						if (tangent != nullptr) indexedTangents.push_back(*tangent);
 						if (bitangent != nullptr) indexedBitangents.push_back(*bitangent);
+						if (origin != nullptr) indexedOrigins.push_back(*origin);
 						preparedIndices++;
 					}
 					indexedFaceVertexIndices[idx] = newIndex;
@@ -162,6 +168,9 @@ void ModelTools::prepareForIndexedRendering(const map<string, Group*>& groups)
 		}
 		group->setTangents(indexedTangents);
 		group->setBitangents(indexedBitangents);
+		if (groupOrigins.size() > 0) {
+			group->setOrigins(indexedOrigins);
+		}
 		// process sub groups
 		prepareForIndexedRendering(group->getSubGroups());
 	}
@@ -317,6 +326,7 @@ void ModelTools::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targe
 		clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
 		clonedGroup->setTangents(sourceGroup->getTangents());
 		clonedGroup->setBitangents(sourceGroup->getBitangents());
+		clonedGroup->setOrigins(sourceGroup->getOrigins());
 		auto facesEntities = clonedGroup->getFacesEntities();
 		for (auto& facesEntity: facesEntities) {
 			if (facesEntity.getMaterial() == nullptr) continue;
@@ -843,40 +853,49 @@ void ModelTools::prepareForOptimization(Group* group, const Matrix4x4& parentTra
 
 void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	if (sourceGroup->getFacesEntities().size() > 0) {
+		unordered_set<int> processedTextureCoordinates;
 		auto& sourceVertices = sourceGroup->getVertices();
 		auto& sourceNormals = sourceGroup->getNormals();
 		auto& sourceTangents = sourceGroup->getTangents();
 		auto& sourceBitangents = sourceGroup->getBitangents();
 		auto& sourceTextureCoordinates = sourceGroup->getTextureCoordinates();
+		auto& sourceOrigins = sourceGroup->getOrigins();
 		auto targetGroup = targetModel->getGroups()["tdme.group.optimized"];
 		auto targetVertices = targetGroup->getVertices();
 		auto targetNormals = targetGroup->getNormals();
 		auto targetTangents = targetGroup->getTangents();
 		auto targetBitangents = targetGroup->getBitangents();
 		auto targetTextureCoordinates = targetGroup->getTextureCoordinates();
+		auto targetOrigins = targetGroup->getOrigins();
 		auto targetOffset = targetVertices.size();
-		auto targetTextureCoordinatesOffset = targetTextureCoordinates.size();
 		for (auto& v: sourceVertices) targetVertices.push_back(v);
 		for (auto& v: sourceNormals) targetNormals.push_back(v);
 		for (auto& v: sourceTangents) targetTangents.push_back(v);
 		for (auto& v: sourceBitangents) targetBitangents.push_back(v);
+		for (auto& v: sourceTextureCoordinates) targetTextureCoordinates.push_back(v);
+		for (auto& v: sourceOrigins) targetOrigins.push_back(v);
 		targetGroup->setVertices(targetVertices);
 		targetGroup->setNormals(targetNormals);
 		targetGroup->setTangents(targetTangents);
 		targetGroup->setBitangents(targetBitangents);
-		auto targetFacesEntities = targetGroup->getFacesEntities();
+		targetGroup->setOrigins(targetOrigins);
+		vector<FacesEntity> targetFacesEntitiesKeptMaterials;
+		for (auto& targetFacesEntity: targetGroup->getFacesEntities()) {
+			if (StringTools::startsWith(targetFacesEntity.getId(), "tdme.facesentity.kept.") == false) continue;
+			targetFacesEntitiesKeptMaterials.push_back(targetFacesEntity);
+		}
 		FacesEntity* tmpFacesEntity = nullptr;
 		auto targetFaces = (tmpFacesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		auto targetFacesMaskedTransparency = (tmpFacesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized.maskedtransparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		auto targetFacesTransparency = (tmpFacesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized.transparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
-		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
-			auto material = facesEntity.getMaterial();
+		for (auto& sourceFacesEntity: sourceGroup->getFacesEntities()) {
+			auto material = sourceFacesEntity.getMaterial();
 
 			//
 			string keptMaterialId;
 			for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
-				if (StringTools::startsWith(facesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
-					keptMaterialId = facesEntity.getMaterial()->getId();
+				if (StringTools::startsWith(sourceFacesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
+					keptMaterialId = sourceFacesEntity.getMaterial()->getId();
 					break;
 				}
 			}
@@ -897,35 +916,25 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 				textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
 				textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
 			}
-			for (auto& face: facesEntity.getFaces()) {
+			for (auto& face: sourceFacesEntity.getFaces()) {
 				auto sourceVertexIndices = face.getVertexIndices();
 				auto sourceNormalIndices = face.getNormalIndices();
 				auto sourceTangentIndices = face.getTangentIndices();
 				auto sourceBitangentIndices = face.getBitangentIndices();
 				auto sourceTextureCoordinateIndices = face.getTextureCoordinateIndices();
-				{
-					auto textureCoordinateArray = sourceTextureCoordinateIndices[0] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[0]].getArray();
-					textureCoordinateArray[0]*= textureXScale;
-					textureCoordinateArray[0]+= textureXOffset;
-					textureCoordinateArray[1]*= textureYScale;
-					textureCoordinateArray[1]+= textureYOffset;
-					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
-				}
-				{
-					auto textureCoordinateArray = sourceTextureCoordinateIndices[1] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[1]].getArray();
-					textureCoordinateArray[0]*= textureXScale;
-					textureCoordinateArray[0]+= textureXOffset;
-					textureCoordinateArray[1]*= textureYScale;
-					textureCoordinateArray[1]+= textureYOffset;
-					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
-				}
-				{
-					auto textureCoordinateArray = sourceTextureCoordinateIndices[2] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[2]].getArray();
-					textureCoordinateArray[0]*= textureXScale;
-					textureCoordinateArray[0]+= textureXOffset;
-					textureCoordinateArray[1]*= textureYScale;
-					textureCoordinateArray[1]+= textureYOffset;
-					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+				// TODO: could happen that in one group are two faces entities with different textures that reference the same texture coordinate, in this case the following breaks the texture coordinates
+				for (auto i = 0; i < sourceTextureCoordinateIndices.size(); i++) {
+					if (sourceTextureCoordinateIndices[i] != -1 &&
+						sourceTextureCoordinates.size() > 0 &&
+						processedTextureCoordinates.find(sourceTextureCoordinateIndices[i]) == processedTextureCoordinates.end()) {
+						auto textureCoordinateArray = sourceTextureCoordinates[sourceTextureCoordinateIndices[i]].getArray();
+						textureCoordinateArray[0]*= textureXScale;
+						textureCoordinateArray[0]+= textureXOffset;
+						textureCoordinateArray[1]*= textureYScale;
+						textureCoordinateArray[1]+= textureYOffset;
+						targetTextureCoordinates[sourceTextureCoordinateIndices[i] + targetOffset] = TextureCoordinate(textureCoordinateArray);
+						processedTextureCoordinates.insert(sourceTextureCoordinateIndices[i]);
+					}
 				}
 				if (keptMaterialId.empty() == false) {
 					targetFacesKeptMaterial.push_back(
@@ -937,9 +946,9 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 							sourceNormalIndices[0] + targetOffset,
 							sourceNormalIndices[1] + targetOffset,
 							sourceNormalIndices[2] + targetOffset,
-							targetTextureCoordinatesOffset + 0,
-							targetTextureCoordinatesOffset + 1,
-							targetTextureCoordinatesOffset + 2
+							sourceTextureCoordinateIndices[0] + targetOffset,
+							sourceTextureCoordinateIndices[1] + targetOffset,
+							sourceTextureCoordinateIndices[2] + targetOffset
 						)
 					);
 				} else
@@ -954,9 +963,9 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 								sourceNormalIndices[0] + targetOffset,
 								sourceNormalIndices[1] + targetOffset,
 								sourceNormalIndices[2] + targetOffset,
-								targetTextureCoordinatesOffset + 0,
-								targetTextureCoordinatesOffset + 1,
-								targetTextureCoordinatesOffset + 2
+								sourceTextureCoordinateIndices[0] + targetOffset,
+								sourceTextureCoordinateIndices[1] + targetOffset,
+								sourceTextureCoordinateIndices[2] + targetOffset
 							)
 						);
 					} else {
@@ -969,9 +978,9 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 								sourceNormalIndices[0] + targetOffset,
 								sourceNormalIndices[1] + targetOffset,
 								sourceNormalIndices[2] + targetOffset,
-								targetTextureCoordinatesOffset + 0,
-								targetTextureCoordinatesOffset + 1,
-								targetTextureCoordinatesOffset + 2
+								sourceTextureCoordinateIndices[0] + targetOffset,
+								sourceTextureCoordinateIndices[1] + targetOffset,
+								sourceTextureCoordinateIndices[2] + targetOffset
 							)
 						);
 					}
@@ -985,48 +994,45 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 							sourceNormalIndices[0] + targetOffset,
 							sourceNormalIndices[1] + targetOffset,
 							sourceNormalIndices[2] + targetOffset,
-							targetTextureCoordinatesOffset + 0,
-							targetTextureCoordinatesOffset + 1,
-							targetTextureCoordinatesOffset + 2
+							sourceTextureCoordinateIndices[0] + targetOffset,
+							sourceTextureCoordinateIndices[1] + targetOffset,
+							sourceTextureCoordinateIndices[2] + targetOffset
 						)
 					);
 				}
-				targetTextureCoordinatesOffset+= 3;
 			}
 			if (targetFacesKeptMaterial.size() > 0) {
-				auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.kept." + keptMaterialId);
-				if (targetGroup->getFacesEntity("tdme.facesentity.kept." + keptMaterialId) == nullptr) {
-					targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.kept." + keptMaterialId));
-					facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
+				FacesEntity* facesEntity = nullptr;
+				for (auto& targetFacesEntityKeptMaterial: targetFacesEntitiesKeptMaterials) {
+					if (targetFacesEntityKeptMaterial.getId() == "tdme.facesentity.kept." + keptMaterialId) {
+						facesEntity = &targetFacesEntityKeptMaterial;
+						break;
+					}
+				}
+				if (facesEntity == nullptr) {
+					targetFacesEntitiesKeptMaterials.push_back(FacesEntity(targetGroup, "tdme.facesentity.kept." + keptMaterialId));
+					facesEntity = &targetFacesEntitiesKeptMaterials[targetFacesEntitiesKeptMaterials.size() - 1];
 				}
 				facesEntity->setFaces(targetFacesKeptMaterial);
 				facesEntity->setMaterial(targetModel->getMaterials()[keptMaterialId]);
 			}
 		}
 		targetGroup->setTextureCoordinates(targetTextureCoordinates);
+		vector<FacesEntity> targetFacesEntities;
 		if (targetFaces.size() > 0) {
-			auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized");
-			if (targetGroup->getFacesEntity("tdme.facesentity.optimized") == nullptr) {
-				targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized"));
-				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
-			}
-			facesEntity->setFaces(targetFaces);
+			targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized"));
+			targetFacesEntities[targetFacesEntities.size() - 1].setFaces(targetFaces);
 		}
 		if (targetFacesMaskedTransparency.size() > 0) {
-			auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized.maskedtransparency");
-			if (targetGroup->getFacesEntity("tdme.facesentity.optimized.maskedtransparency") == nullptr) {
-				targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized.maskedtransparency"));
-				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
-			}
-			facesEntity->setFaces(targetFacesMaskedTransparency);
+			targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized.maskedtransparency"));
+			targetFacesEntities[targetFacesEntities.size() - 1].setFaces(targetFacesMaskedTransparency);
 		}
 		if (targetFacesTransparency.size() > 0) {
-			auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized.transparency");
-			if (targetGroup->getFacesEntity("tdme.facesentity.optimized.transparency") == nullptr) {
-				targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized.transparency"));
-				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
-			}
-			facesEntity->setFaces(targetFacesMaskedTransparency);
+			targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.optimized.transparency"));
+			targetFacesEntities[targetFacesEntities.size() - 1].setFaces(targetFacesTransparency);
+		}
+		for (auto& targetFacesEntityKeptMaterial: targetFacesEntitiesKeptMaterials) {
+			targetFacesEntities.push_back(targetFacesEntityKeptMaterial);
 		}
 		targetGroup->setFacesEntities(targetFacesEntities);
 	}
@@ -1276,9 +1282,6 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	//
 	delete model;
-
-	// prepare for indexed rendering
-	ModelTools::prepareForIndexedRendering(optimizedModel);
 
 	// done
 	return optimizedModel;

@@ -67,8 +67,7 @@ private:
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
 	Entity* combinedEntity;
-	vector<Transformations> objectsTransformations;
-	Model* model;
+	map<Model*, vector<Transformations>> transformationsByModel;
 	vector<Model*> combinedModels;
 	string shaderId { "default" };
 	string distanceShaderId { "" };
@@ -141,7 +140,6 @@ public:
 	 */
 	Object3DRenderGroup(
 		const string& id,
-		Model* model,
 		int lodLevels = 1,
 		float modelLOD2MinDistance = 25.0f,
 		float modelLOD3MinDistance = 50.0f,
@@ -162,19 +160,6 @@ public:
 public:
 
 	/**
-	 * @return associated model
-	 */
-	inline Model* getModel() {
-		return model;
-	}
-
-	/**
-	 * Set model
-	 * @param model model
-	 */
-	void setModel(Model* model);
-
-	/**
 	 * @return entity
 	 */
 	inline Entity* getEntity() {
@@ -183,9 +168,10 @@ public:
 
 	/**
 	 * Adds a instance this render group
+	 * @param model model
 	 * @param transformations transformations
 	 */
-	void addObject(const Transformations& transformations);
+	void addObject(Model* model, const Transformations& transformations);
 
 	// overriden methods
 	void dispose() override;

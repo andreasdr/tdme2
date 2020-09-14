@@ -48,7 +48,6 @@ using tdme::math::Matrix4x4;
 
 Object3DRenderGroup::Object3DRenderGroup(
 	const string& id,
-	Model* model,
 	int lodLevels,
 	float modelLOD2MinDistance,
 	float modelLOD3MinDistance,
@@ -70,7 +69,6 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->lodReduceBy[2] = modelLOD3ReduceBy;
 	this->modelLOD2MinDistance = modelLOD2MinDistance;
 	this->modelLOD3MinDistance = modelLOD3MinDistance;
-	setModel(model);
 }
 
 Object3DRenderGroup::~Object3DRenderGroup() {
@@ -78,24 +76,6 @@ Object3DRenderGroup::~Object3DRenderGroup() {
 	for (auto combinedModel: combinedModels) {
 		if (combinedModel != nullptr) delete combinedModel;
 	}
-}
-
-void Object3DRenderGroup::setModel(Model* model) {
-	// dispose old object and combined model
-	if (combinedEntity != nullptr) {
-		combinedEntity->dispose();
-		delete combinedEntity;
-		combinedEntity = nullptr;
-	}
-	for (auto& combinedModel: combinedModels) {
-		if (combinedModel != nullptr) {
-			delete combinedModel;
-			combinedModel = nullptr;
-		}
-	}
-
-	// set up new model
-	this->model = model;
 }
 
 void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
@@ -311,21 +291,25 @@ void Object3DRenderGroup::updateRenderGroup() {
 		);
 	}
 
-	auto lodLevel = 0;
-	for (auto combinedModel: combinedModels) {
-		auto reduceByFactor = lodReduceBy[lodLevel];
-		lodLevel++;
-		auto objectCount = 0;
-		vector<Transformations> reducedObjectsTransformations;
-		for (auto& objectTransformations: objectsTransformations) {
-			if (objectCount % reduceByFactor != 0) {
+	for (auto& transformationsByModelIt: transformationsByModel) {
+		auto model = transformationsByModelIt.first;
+		auto& objectsTransformations = transformationsByModelIt.second;
+		auto lodLevel = 0;
+		for (auto combinedModel: combinedModels) {
+			auto reduceByFactor = lodReduceBy[lodLevel];
+			lodLevel++;
+			auto objectCount = 0;
+			vector<Transformations> reducedObjectsTransformations;
+			for (auto& objectTransformations: objectsTransformations) {
+				if (objectCount % reduceByFactor != 0) {
+					objectCount++;
+					continue;
+				}
+				reducedObjectsTransformations.push_back(objectTransformations);
 				objectCount++;
-				continue;
 			}
-			reducedObjectsTransformations.push_back(objectTransformations);
-			objectCount++;
+			combineObjects(model, reducedObjectsTransformations, combinedModel);
 		}
-		combineObjects(model, reducedObjectsTransformations, combinedModel);
 	}
 
 	// create new combined object
@@ -337,6 +321,11 @@ void Object3DRenderGroup::updateRenderGroup() {
 			ModelTools::setupJoints(combinedModel);
 			ModelTools::fixAnimationLength(combinedModel);
 		}
+	}
+
+	// optimize models
+	for (auto i = 0; i < combinedModels.size(); i++) {
+		combinedModels[i] = ModelTools::optimizeModel(combinedModels[i]);
 	}
 
 	if (combinedModels.size() == 1) {
@@ -383,8 +372,8 @@ void Object3DRenderGroup::updateRenderGroup() {
 	updateBoundingBox();
 }
 
-void Object3DRenderGroup::addObject(const Transformations& transformations) {
-	objectsTransformations.push_back(transformations);
+void Object3DRenderGroup::addObject(Model* model, const Transformations& transformations) {
+	transformationsByModel[model].push_back(transformations);
 }
 
 void Object3DRenderGroup::setEngine(Engine* engine)
