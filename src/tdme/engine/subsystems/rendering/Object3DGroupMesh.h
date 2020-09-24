@@ -63,6 +63,7 @@ private:
 	vector<Vector3> transformedBitangents;
 	vector<TextureCoordinate> transformedTextureCoordinates;
 	vector<map<string, Matrix4x4*>*> skinningMatrices;
+	vector<vector<Matrix4x4*>> jointsSkinningMatrices;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
 	int32_t cSkinningMaxVertexWeights;

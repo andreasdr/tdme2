@@ -452,11 +452,19 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	// do render groups
 	auto renderGroupIdx = 0;
 	progressStepCurrent = 0;
-	for (auto itShader: renderGroupEntitiesByShaderPartitionModel) {
+	auto progressStepMax = 0;
+	if (progressCallback != nullptr) {
+		for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
+			for (auto& itPartition: itShader.second) {
+				for (auto& itModel: itPartition.second) {
+					progressStepMax++;
+				}
+			}
+		}
+	}
+	for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 		Console::println("Level::addLevel(): adding render group: " + itShader.first);
-		for (auto itPartition: itShader.second) {
-			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(renderGroupEntitiesByShaderPartitionModel.size()) * 1.0f);
-			progressStepCurrent++;
+		for (auto& itPartition: itShader.second) {
 			auto object3DRenderGroup = new Object3DRenderGroup(
 				"tdme.rendergroup." + itPartition.first + "." + to_string(renderGroupIdx++),
 				renderGroupsLODLevels,
@@ -465,7 +473,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 				renderGroupsLOD2ReduceBy,
 				renderGroupsLOD3ReduceBy
 			);
-			for (auto itModel: itPartition.second) {
+			for (auto& itModel: itPartition.second) {
+				if (progressCallback != nullptr) {
+					progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
+				}
+				progressStepCurrent++;
 				auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 				object3DRenderGroup->setShader(levelEditorEntity->getShader());
 				object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());

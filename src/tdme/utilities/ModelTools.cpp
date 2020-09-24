@@ -1104,7 +1104,14 @@ Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& te
 	return atlasTexture;
 }
 
+bool ModelTools::isOptimizedModel(Model* model) {
+	return model->getGroups()["tdme.group.optimized"] != nullptr;
+}
+
 Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
+	// exit early if model has been optimized already
+	if (isOptimizedModel(model) == true) return model;
+
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
@@ -1144,7 +1151,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// create diffuse atlas texture
-	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas.", diffuseTextureAtlasTextures);
+	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas", diffuseTextureAtlasTextures);
 	//PNGTextureWriter::write(diffuseAtlasTexture, ".", diffuseAtlasTexture->getId() + ".png", false);
 
 	// create model with optimizations applied
@@ -1204,6 +1211,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// also have a material with masked transparency
 	auto optimizedMaterialMaskedTransparency = cloneMaterial(optimizedMaterial, "tdme.material.optimized.maskedtransparency");
+	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
 	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
 
 	// also have a material with transparency

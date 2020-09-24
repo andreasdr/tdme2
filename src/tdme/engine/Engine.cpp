@@ -1085,6 +1085,7 @@ void Engine::display()
 					false,
 					false,
 					false,
+					false,
 					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
 					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
@@ -1149,6 +1150,7 @@ void Engine::display()
 		true,
 		true,
 		renderLightSourceEnabled,
+		true,
 		EntityRenderer::RENDERTYPE_NORMALS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
@@ -1915,7 +1917,7 @@ const map<string, string> Engine::getShaderParameterDefaults(const string& shade
 	return shaders.find(shaderId)->second.parameterDefaults;
 }
 
-void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, int32_t renderTypes) {
+void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
@@ -1991,7 +1993,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 	}
 
 	// render point particle systems
-	if (visiblePpses.size() > 0) {
+	if (doRenderParticleSystems == true && visiblePpses.size() > 0) {
 		// use particle shader
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 

@@ -47,7 +47,7 @@ namespace archive {
 
 using tdme::tools::cli::archive::FileInformation;
 
-void scanDir(const string& folder, vector<string>& totalFiles) {
+void scanPath(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -77,6 +77,8 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
+				// wss
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".wss") == true) return true;
 				//
 				if (fileName.find(".") == string::npos) return true;
 				//
@@ -89,13 +91,13 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	FileSystem::getInstance()->list(folder, files, &listFilter);
+	FileSystem::getInstance()->list(path, files, &listFilter);
 
 	for (auto fileName: files) {
-		if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
-			totalFiles.push_back(folder + "/" + fileName);
+		if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+			totalFiles.push_back(path + "/" + fileName);
 		} else {
-			scanDir(folder + "/" + fileName, totalFiles);
+			scanPath(path + "/" + fileName, totalFiles);
 		}
 	}
 }
@@ -208,8 +210,8 @@ int main(int argc, char** argv)
 	// scan files
 	Console::println("Scanning files");
 	vector<string> files;
-	scanDir("resources", files);
-	scanDir("shader", files);
+	scanPath("resources", files);
+	scanPath("shader", files);
 
 	// processing
 	Console::println("Processing files");

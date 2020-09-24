@@ -8,6 +8,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/math/fwd-tdme.h>
@@ -18,7 +19,9 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
+using tdme::engine::model::Animation;
 using tdme::engine::model::Group;
+using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::math::Matrix4x4;
@@ -42,20 +45,35 @@ private:
 
 	/**
 	 * Determine skinned group count
-	 * @param map* groups
+	 * @param groups groups
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(const map<string, Group*>&, int32_t count);
+	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups, int32_t count);
 
 	/**
 	 * Determine skinned groups
-	 * @param map* groups
+	 * @param groups groups
 	 * @param skinningGroups skinning groups
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(const map<string, Group*>&, vector<Group*>& skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(const map<string, Group*>& groups, vector<Group*>& skinningGroups, int32_t idx);
 
 protected:
+	struct FlattenedGroup {
+		const string groupId;
+		const Matrix4x4* groupTransformationsMatrix;
+		Matrix4x4* groupOverridenTransformationsMatrix;
+		const Animation* groupAnimation;
+		AnimationState* groupAnimationState;
+		const Matrix4x4* parentTransformationsMatrix;
+		Matrix4x4* transformationsMatrix;
+	};
+	struct GroupSkinningJoint {
+		const Joint* joint;
+		const Matrix4x4* groupTransformationsMatrix;
+		Matrix4x4* skinningGroupTransformationsMatrix;
+	};
+
 	Model* model;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 	map<string, Matrix4x4*> overridenTransformationsMatrices;
@@ -64,44 +82,71 @@ protected:
 	bool hasAnimations;
 	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
 	vector<Group*> skinningGroups;
+	vector<vector<GroupSkinningJoint>> skinningGroupsGroupSkinningJoints;
 	vector<AnimationState> baseAnimations;
 	int baseAnimationIdx;
 	map<string, AnimationState*> overlayAnimationsById;
 	map<string, AnimationState*> overlayAnimationsByJointId;
+	vector<vector<FlattenedGroup>> groupLists;
 
 	/**
 	 * Creates all groups transformation matrices
 	 * @param matrices matrices
-	 * @param groups groups
-	 */
-	void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups);
-
-	/**
-	 * Calculates all groups transformation matrices
+	 * @param groupList flattened group list
 	 * @param groups groups
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param animationState animation state
-	 * @param transformationsMatrices transformations matrices which need to be set up
-	 * @param depth depth
 	 */
-	void computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth);
+	void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedGroup>& groupList, const map<string, Group*>& groups, Matrix4x4* parentTransformationsMatrix = nullptr, AnimationState* animationState = nullptr);
+
+	/**
+	 * Update group list
+	 * @param groupList flattened group list
+	 * @param groupIdx group index
+	 * @param groups groups
+	 * @param animationState animation state
+	 */
+	void updateGroupList(vector<FlattenedGroup>& groupList, int& groupIdx, const map<string, Group*>& groups, AnimationState* animationState = nullptr);
+
+	/**
+	 * Update group list
+	 * @param groupList flattened group list
+	 */
+	inline void updateGroupList(vector<FlattenedGroup>& groupList) {
+		auto groupIdx = 0;
+		updateGroupList(groupList, groupIdx, model->getSubGroups());
+	}
+
+	/**
+	 * Update group lists
+	 */
+	inline void updateGroupLists() {
+		for (auto& groupList: groupLists) updateGroupList(groupList);
+	}
+
+	/**
+	 * Calculates all groups transformation matrices
+	 * @param groupList flattened group list
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param animationState animation state
+	 */
+	void computeTransformationsMatrices(vector<FlattenedGroup>& groupList, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState);
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
-	 * @param objectTransformationsMatrix object transformations matrix
+	 * @param groupList flattened group list
+	 * @param instanceTransformationsMatrix object transformations matrix
 	 * @param baseAnimation base animation
-	 * @param transformationsMatrices transformations matrices
 	 * @param context context
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(const Matrix4x4& objectTransformationsMatrix, AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeTransformations(vector<FlattenedGroup>& groupList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * Update skinning transformations matrices
-	 * @param transformationsMatrices transformations matrices
 	 */
-	void updateSkinningTransformationsMatrices(const map<string, Matrix4x4*>& transformationsMatrices);
+	void updateSkinningTransformationsMatrices();
 
 	/**
 	 * Get skinning groups matrices

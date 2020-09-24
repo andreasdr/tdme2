@@ -143,7 +143,7 @@ void Installer::initializeScreens() {
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
-			{"installfolder", installFolder.empty() == true?homeFolder + "/Applications/" + installerProperties.get("installfolder", "TDME2-based-application"):installFolder}
+			{"installfolder", installFolder.empty() == true?homeFolder + "/Applications/" + installerProperties.get("install_path", "TDME2-based-application"):installFolder}
 		};
 		engine->getGUI()->addScreen(
 			"installer_welcome",

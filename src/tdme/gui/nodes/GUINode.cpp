@@ -1102,16 +1102,16 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 	for (auto i = 0; i < indent; i++) Console::print("  ");
 	Console::println(
 		node->id + ": " +
-		node->getNodeType() + ": " +
+		node->getNodeType() + ": constaints: " +
 		to_string(node->computedConstraints.left) + ", " +
 		to_string(node->computedConstraints.top) + ", " +
 		to_string(node->computedConstraints.width) + "; " +
-		to_string(node->computedConstraints.height) + ", " +
+		to_string(node->computedConstraints.height) + ", alignment: " +
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
-		to_string(node->computedConstraints.alignmentTop) + "; " +
+		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": " +
-		to_string(node->conditionsMet) + "; " +
+		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
@@ -1126,16 +1126,16 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 	for (auto i = 0; i < indent; i++) Console::print("  ");
 	Console::println(
 		node->id + ": " +
-		node->getNodeType() + ": " +
+		node->getNodeType() + ": constaints: " +
 		to_string(node->computedConstraints.left) + ", " +
 		to_string(node->computedConstraints.top) + ", " +
 		to_string(node->computedConstraints.width) + "; " +
-		to_string(node->computedConstraints.height) + ", " +
+		to_string(node->computedConstraints.height) + ", alignment: " +
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
-		to_string(node->computedConstraints.alignmentTop) + "; " +
+		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": " +
-		to_string(node->conditionsMet) + "; " +
+		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
 	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 2);

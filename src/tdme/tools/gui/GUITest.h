@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/tools/gui/fwd-tdme.h>
@@ -15,6 +16,7 @@ using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
@@ -33,6 +35,7 @@ private:
 	string screenFileName;
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
+	GUIScreenNode* screenNode { nullptr };
 
 public:
 	/**

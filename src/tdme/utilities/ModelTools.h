@@ -266,6 +266,11 @@ public:
 	static void prepareForShader(Model* model, const string& shader);
 
 	/**
+	 * @returns if model has been optimized
+	 */
+	static bool isOptimizedModel(Model* model);
+
+	/**
 	 * Optimizes model in terms of material / group reduction
 	 * @param model model
 	 * @param texturePathName texturePathName

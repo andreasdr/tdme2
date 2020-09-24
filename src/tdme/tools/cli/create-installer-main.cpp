@@ -53,7 +53,7 @@ namespace installer {
 
 using tdme::tools::cli::installer::FileInformation;
 
-static void scanDirResources(const string& folder, vector<string>& totalFiles) {
+static void scanPathResources(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -87,8 +87,8 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
-				// fonts
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
+				// wss
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".wss") == true) return true;
 				// files without ending
 				//	TODO: fix me, paths get submitted here too as filename
 				if (fileName.rfind(".") == string::npos ||
@@ -108,28 +108,28 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirResources: file does not exist: " + folder);
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("Error: scanPathResources: file does not exist: " + path);
 	} else
-	if (FileSystem::getInstance()->isPath(folder) == false) {
-		if (listFilter.accept(".", folder) == true) {
-			totalFiles.push_back(folder);
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanDirResources: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanPathResources: file exist, but does not match filter: " + path);
 		}
 	} else {
-		FileSystem::getInstance()->list(folder, files, &listFilter);
+		FileSystem::getInstance()->list(path, files, &listFilter);
 		for (auto fileName: files) {
-			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
-				totalFiles.push_back(folder + "/" + fileName);
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+				totalFiles.push_back(path + "/" + fileName);
 			} else {
-				scanDirResources(folder + "/" + fileName, totalFiles);
+				scanPathResources(path + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-static void scanDirLibraries(const string& folder, vector<string>& totalFiles) {
+static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -158,28 +158,28 @@ static void scanDirLibraries(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirLibraries: file does not exist: " + folder);
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("Error: scanPathLibraries: file does not exist: " + path);
 	} else
-	if (FileSystem::getInstance()->isPath(folder) == false) {
-		if (listFilter.accept(".", folder) == true) {
-			totalFiles.push_back(folder);
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanDirLibraries: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanPathLibraries: file exist, but does not match filter: " + path);
 		}
 	} else {
-		FileSystem::getInstance()->list(folder, files, &listFilter);
+		FileSystem::getInstance()->list(path, files, &listFilter);
 		for (auto fileName: files) {
-			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
-				totalFiles.push_back(folder + "/" + fileName);
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+				totalFiles.push_back(path + "/" + fileName);
 			} else {
-				scanDirLibraries(folder + "/" + fileName, totalFiles);
+				scanPathLibraries(path + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-static void scanDirHeaders(const string& folder, vector<string>& totalFiles) {
+static void scanPathHeaders(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -198,28 +198,28 @@ static void scanDirHeaders(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirHeaders: file does not exist: " + folder);
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("Error: scanPathHeaders: file does not exist: " + path);
 	} else
-	if (FileSystem::getInstance()->isPath(folder) == false) {
-		if (listFilter.accept(".", folder) == true) {
-			totalFiles.push_back(folder);
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanDirHeaders: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanPathHeaders: file exist, but does not match filter: " + path);
 		}
 	} else {
-		FileSystem::getInstance()->list(folder, files, &listFilter);
+		FileSystem::getInstance()->list(path, files, &listFilter);
 		for (auto fileName: files) {
-			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
-				totalFiles.push_back(folder + "/" + fileName);
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+				totalFiles.push_back(path + "/" + fileName);
 			} else {
-				scanDirHeaders(folder + "/" + fileName, totalFiles);
+				scanPathHeaders(path + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-static void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
+static void scanPathExecutables(const string& path, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -260,28 +260,28 @@ static void scanDirExecutables(const string& folder, vector<string>& totalFiles)
 	ListFilter listFilter;
 	vector<string> files;
 
-	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirExecutables: file does not exist: " + folder);
+	if (FileSystem::getInstance()->fileExists(path) == false) {
+		Console::println("Error: scanPathExecutables: file does not exist: " + path);
 	} else
-	if (FileSystem::getInstance()->isPath(folder) == false) {
-		if (listFilter.accept(".", folder) == true) {
-			totalFiles.push_back(folder);
+	if (FileSystem::getInstance()->isPath(path) == false) {
+		if (listFilter.accept(".", path) == true) {
+			totalFiles.push_back(path);
 		} else {
-			Console::println("Error: scanDirExecutables: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanPathExecutables: file exist, but does not match filter: " + path);
 		}
 	} else {
-		FileSystem::getInstance()->list(folder, files, &listFilter);
+		FileSystem::getInstance()->list(path, files, &listFilter);
 		for (auto fileName: files) {
-			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
-				totalFiles.push_back(folder + "/" + fileName);
+			if (FileSystem::getInstance()->isPath(path + "/" + fileName) == false) {
+				totalFiles.push_back(path + "/" + fileName);
 			} else {
-				scanDirExecutables(folder + "/" + fileName, totalFiles);
+				scanPathExecutables(path + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile, const string& baseFolder = string()) {
+void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile, const string& basePath = string()) {
 	// read content
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(
@@ -290,7 +290,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		content
 	);
 
-	auto fileNameToUse = StringTools::startsWith(fileName, baseFolder + "/") == true?StringTools::substring(fileName, (baseFolder + "/").size(), fileName.size()):fileName;
+	auto fileNameToUse = StringTools::startsWith(fileName, basePath + "/") == true?StringTools::substring(fileName, (basePath + "/").size(), fileName.size()):fileName;
 	// remove prefix if requested
 	if (executableFile == true && fileName.find_last_of('/') != string::npos) {
 		fileNameToUse = StringTools::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
@@ -388,7 +388,7 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	string tdmeFolder = "../tdme2";
+	string tdmePath = "../tdme2";
 	auto cpu = Application::getCPUName();
 	auto os = Application::getOSName();
 	auto fileNameTime = StringTools::replace(StringTools::replace(StringTools::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
@@ -445,29 +445,29 @@ int main(int argc, char** argv)
 			// scan files
 			if (type == "exe") {
 				StringTokenizer t;
-				t.tokenize(installerProperties.get("exe_folder", ""), ",");
+				t.tokenize(installerProperties.get("exe_path", ""), ",");
 				while (t.hasMoreTokens() == true) {
-					scanDirExecutables(t.nextToken() + "/" + file, filesBin);
+					scanPathExecutables(t.nextToken() + "/" + file, filesBin);
 				}
 			} else
 			if (type == "!exe") {
 				StringTokenizer t;
-				t.tokenize(installerProperties.get("exe_folder", ""), ",");
+				t.tokenize(installerProperties.get("exe_path", ""), ",");
 				while (t.hasMoreTokens() == true) {
-					scanDirExecutables(tdmeFolder + "/" + t.nextToken() + "/" + file, filesBin);
+					scanPathExecutables(tdmePath + "/" + t.nextToken() + "/" + file, filesBin);
 				}
 			} else
 			if (type == "res") {
-				scanDirResources(file, filesData);
+				scanPathResources(file, filesData);
 			} else
 			if (type == "!res") {
-				scanDirResources(tdmeFolder + "/" + file, filesData);
+				scanPathResources(tdmePath + "/" + file, filesData);
 			} else
 			if (type == "lib") {
-				scanDirLibraries(file, filesData);
+				scanPathLibraries(file, filesData);
 			} else
 			if (type == "api") {
-				scanDirHeaders(file, filesData);
+				scanPathHeaders(file, filesData);
 			} else {
 				Console::println("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
 			}
@@ -478,12 +478,12 @@ int main(int argc, char** argv)
 
 		// add files to archive
 		for (auto fileName: filesData) {
-			processFile(fileName, fileInformations, "installer/" + componentFileName, false, tdmeFolder);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, false, tdmePath);
 		}
 
 		// add files to archive
 		for (auto fileName: filesBin) {
-			processFile(fileName, fileInformations, "installer/" + componentFileName, true, tdmeFolder);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, true, tdmePath);
 		}
 
 		// add file informations

@@ -226,8 +226,8 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 		for (auto i = 0; i < object3DBase->instances; i++) {
 			if (object3DBase->instanceEnabled[i] == false) continue;
 			object3DBase->setCurrentInstance(i);
-			for (auto& joint: skinningJoints) {
-				fbMatrices.put((skinningMatrix.set(*object3DGroupMesh->skinningMatrices[i]->find(joint.getGroupId())->second).multiply(object3DBase->getTransformationsMatrix()).getArray()));
+			for (auto jointSkinningMatrix: object3DGroupMesh->jointsSkinningMatrices[i]) {
+				fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(object3DBase->getTransformationsMatrix()).getArray()));
 			}
 		}
 		object3DBase->setCurrentInstance(currentInstance);

@@ -1111,12 +1111,13 @@ private:
 	 * @param effectPass effect pass
 	 * @param shaderPrefix shader prefix
 	 * @param useEZR if to use early Z rejection
-	 * @param doShadowMapping if to apply shadow mapping
+	 * @param applyShadowMapping if to apply shadow mapping
 	 * @param applyPostProcessing if to apply post processing
 	 * @param doRenderLightSource do render light source
+	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, int32_t renderTypes);
+	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light source

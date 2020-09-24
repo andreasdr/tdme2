@@ -163,6 +163,8 @@ void GUIScreenNode::layout()
 
 void GUIScreenNode::layout(GUINode* node)
 {
+	Console::println("GUIScreenNode::layout(): " + node->getId());
+
 	// check if parent nodes have conditions met
 	{
 		auto _node = node;

@@ -87,6 +87,14 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
 	mesh->skinningMatrices = skinningMatrices;
+	if (skinning != nullptr) {
+		mesh->jointsSkinningMatrices.resize(instances);
+		for (auto i = 0; i < instances; i++) {
+			for (auto& joint: skinning->getJoints()) {
+				mesh->jointsSkinningMatrices[i].push_back(skinningMatrices[i]->find(joint.getGroupId())->second);
+			}
+		}
+	}
 	// set up transformed vertices, normals and friends
 	if (mesh->instances > 1 || (skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
