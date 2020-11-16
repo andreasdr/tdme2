@@ -14,6 +14,9 @@
 #include <tdme/gui/elements/GUIImageButton.h>
 #include <tdme/gui/elements/GUIInput.h>
 #include <tdme/gui/elements/GUIKnob.h>
+#include <tdme/gui/elements/GUIMenuHeader.h>
+#include <tdme/gui/elements/GUIMenuHeaderItem.h>
+#include <tdme/gui/elements/GUIMenuItem.h>
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
@@ -22,7 +25,9 @@
 #include <tdme/gui/elements/GUISelectBox.h>
 #include <tdme/gui/elements/GUISelectBoxMultiple.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
+#include <tdme/gui/elements/GUISelectBoxMultipleParentOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
+#include <tdme/gui/elements/GUISelectBoxParentOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
 #include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
@@ -36,6 +41,7 @@
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
+#include <tdme/gui/nodes/GUILayerNode.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -76,6 +82,9 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIInput;
 using tdme::gui::elements::GUIKnob;
+using tdme::gui::elements::GUIMenuHeader;
+using tdme::gui::elements::GUIMenuHeaderItem;
+using tdme::gui::elements::GUIMenuItem;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
@@ -84,7 +93,9 @@ using tdme::gui::elements::GUIScrollAreaVertical;
 using tdme::gui::elements::GUISelectBox;
 using tdme::gui::elements::GUISelectBoxMultiple;
 using tdme::gui::elements::GUISelectBoxMultipleOption;
+using tdme::gui::elements::GUISelectBoxMultipleParentOption;
 using tdme::gui::elements::GUISelectBoxOption;
+using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
@@ -98,6 +109,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIInputInternalNode;
+using tdme::gui::nodes::GUILayerNode;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
@@ -125,7 +137,7 @@ using tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
-map<string, GUIElement*> GUIParser::elements;
+map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
@@ -154,7 +166,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		throw GUIParserException("XML root node must be <screen>");
 	}
 
-	auto applicationRootPath = Tools::getGameRootPath(pathName);
+	auto applicationRootPath = Tools::getApplicationRootPath(pathName);
 	guiScreenNode = new GUIScreenNode(
 		applicationRootPath.empty() == true?".":FileSystem::getInstance()->getCanonicalPath(applicationRootPath, ""),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
@@ -335,7 +347,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiPanelNode = new GUIPanelNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -393,11 +405,72 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				}
 				parseGUINode(guiPanelNode, node, nullptr);
 			} else
+			if (nodeTagName == "layer") {
+				auto guiLayerNode = new GUILayerNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
+					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
+					GUIElementNode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+				);
+				guiParentNode->addSubNode(guiLayerNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiLayerNode);
+					if (guiElementController != nullptr) {
+						guiLayerNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+				parseGUINode(guiLayerNode, node, nullptr);
+			} else
 			if (nodeTagName == "layout") {
 				auto guiLayoutNode = new GUILayoutNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -459,7 +532,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiSpaceNode = new GUISpaceNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -517,7 +590,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiElementNode = new GUIElementNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
@@ -590,7 +663,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiImageNode = new GUIImageNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -667,7 +740,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiTextNode = new GUITextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -728,7 +801,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiTextNode = new GUIMultilineTextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -789,7 +862,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiInputInternalNode = new GUIInputInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -852,7 +925,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiVerticalScrollbarInternalNode = new GUIVerticalScrollbarInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -913,7 +986,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				auto guiHorizontalScrollbarInternalNode = new GUIHorizontalScrollbarInternalNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
-					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUINode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
@@ -986,8 +1059,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				);
 			} else {
 				auto nodeTagNameString = nodeTagName;
-				const auto guiElementIt = elements.find(nodeTagNameString);
-				if (guiElementIt == elements.end()) {
+				const auto guiElementIt = elements->find(nodeTagNameString);
+				if (guiElementIt == elements->end()) {
 					throw GUIParserException(
 						"Unknown element '" +
 						(nodeTagNameString) +
@@ -1082,14 +1155,14 @@ const string GUIParser::escapeQuotes(const string& str)
 
 void GUIParser::addElement(GUIElement* guiElement)
 {
-	if (elements.find(guiElement->getName()) != elements.end()) {
+	if (elements->find(guiElement->getName()) != elements->end()) {
 		throw GUIParserException(
 			"Element with given name '" +
 			(guiElement->getName()) +
 			"' already exists"
 		);
 	}
-	elements.emplace(guiElement->getName(), guiElement);
+	elements->emplace(guiElement->getName(), guiElement);
 }
 
 void GUIParser::initialize()
@@ -1255,11 +1328,47 @@ void GUIParser::initialize()
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	try {
+		GUIElement* guiElement = new GUIMenuHeader();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuHeaderItem();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIMenuItem();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISelectBoxParentOption();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISelectBoxMultipleParentOption();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
 }
 
 void GUIParser::dispose() {
-	for (auto& elementIt: elements) {
+	for (auto& elementIt: *elements) {
 		delete elementIt.second;
 	}
-	elements.clear();
+	elements->clear();
+	delete elements;
 }

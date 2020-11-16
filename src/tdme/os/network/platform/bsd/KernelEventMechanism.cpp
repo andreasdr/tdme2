@@ -116,9 +116,9 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	// kqueue change list, maxCCU * (read + write change) 
+	// kqueue change list, maxCCU * (read + write change)
 	// can still be too less as you could change the filter a lot in a single request
-	psd->kqChangeListMax = maxCCU * 2; 
+	psd->kqChangeListMax = maxCCU * 2;
 	psd->kqChangeListCurrent = 0;
 	psd->kqChangeList = (struct kevent**)malloc(sizeof(void*) * 2);
 	psd->kqChangeList[0] = (struct kevent*)malloc(sizeof(struct kevent) * psd->kqChangeListMax);

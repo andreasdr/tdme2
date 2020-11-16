@@ -18,7 +18,7 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Engine with physics test 3
  * @author andreas.drewke
  * @version $Id$
@@ -58,7 +58,7 @@ public:
 	 */
 	~PhysicsTest4();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

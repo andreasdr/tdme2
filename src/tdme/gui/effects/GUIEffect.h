@@ -8,7 +8,7 @@
 using tdme::gui::events::Action;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI effect base class
  * @author Andreas Drewke
  * @version $Id$
@@ -24,22 +24,31 @@ protected:
 	Action* action { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIEffect();
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	virtual ~GUIEffect();
+
+	/**
 	 * @return active
 	 */
 	inline virtual bool isActive() const {
 		return active;
 	}
 
-	/** 
+	/**
 	 * @return time total
 	 */
 	inline virtual float getTimeTotal() const {
 		return timeTotal;
 	}
 
-	/** 
+	/**
 	 * Set time total
 	 * @param timeTotal time total
 	 */
@@ -47,14 +56,14 @@ public:
 		this->timeTotal = timeTotal;
 	}
 
-	/** 
+	/**
 	 * @return action to be performed on effect end
 	 */
 	inline virtual Action* getAction() const {
 		return action;
 	}
 
-	/** 
+	/**
 	 * Set action to be performed on effect end
 	 * @param action action
 	 */
@@ -72,27 +81,17 @@ public:
 	 */
 	virtual void stop();
 
-	/** 
+	/**
 	 * Updates the effect to GUI renderer and updates time
 	 * @param guiRenderer gui renderer
 	 * @return if action should be called
 	 */
 	virtual bool update(GUIRenderer* guiRenderer);
 
-	/** 
+	/**
 	 * Apply effect
 	 * @param guiRenderer GUI renderer
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;
-
-	/**
-	 * Public constructor
-	 */
-	GUIEffect();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~GUIEffect();
 
 };

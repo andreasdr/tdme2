@@ -18,7 +18,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
-/** 
+/**
  * Transformations which contain scale, rotations and translation
  * @author Andreas Drewke
  * @version $Id$
@@ -33,15 +33,24 @@ private:
 	Matrix4x4 transformationsMatrix;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	Transformations();
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	virtual ~Transformations();
+
+	/**
 	 * @return object translation
 	 */
 	inline const Vector3& getTranslation() const {
 		return translation;
 	}
 
-	/** 
+	/**
 	 * Set translation
 	 * @param translation translation
 	 */
@@ -56,7 +65,7 @@ public:
 		return scale;
 	}
 
-	/** 
+	/**
 	 * Set scale
 	 * @param scale scale
 	 */
@@ -101,7 +110,7 @@ public:
 	 * @param angle angle
 	 */
 	inline void addRotation(const Vector3& axis, const float angle) {
-		rotations.push_back(Rotation(angle, axis));
+		rotations.push_back(Rotation(axis, angle));
 	}
 
 	/**
@@ -112,7 +121,7 @@ public:
 		rotations.erase(rotations.begin() + idx);
 	}
 
-	/** 
+	/**
 	 * @param idx rotation index
 	 * @return rotation axis for rotation with given index
 	 */
@@ -120,7 +129,7 @@ public:
 		return rotations[idx].getAxis();
 	}
 
-	/** 
+	/**
 	 * Set rotation axis
 	 * @param idx rotation index
 	 * @param axis rotation axis
@@ -160,13 +169,13 @@ public:
 		return transformationsMatrix;
 	}
 
-	/** 
+	/**
 	 * Set up this transformations from given transformations
 	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations);
 
-	/** 
+	/**
 	 * Set up this transformations from given matrix and rotation order
 	 * @param matrix matrix
 	 * @param rotationOrder rotation order
@@ -190,13 +199,4 @@ public:
 	 */
 	virtual void invert();
 
-	/**
-	 * Public constructor
-	 */
-	Transformations();
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Transformations();
 };

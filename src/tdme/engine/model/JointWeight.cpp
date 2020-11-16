@@ -8,7 +8,7 @@ JointWeight::JointWeight()
 	this->weightIndex = -1;
 }
 
-JointWeight::JointWeight(int32_t jointIndex, int32_t weightIndex) 
+JointWeight::JointWeight(int32_t jointIndex, int32_t weightIndex)
 {
 	this->jointIndex = jointIndex;
 	this->weightIndex = weightIndex;

@@ -17,8 +17,8 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -39,15 +39,15 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
-/** 
+/**
  * Object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -123,9 +123,9 @@ private:
 	 * @param context context
 	 */
 	inline void preRender(void* context) {
-		for (auto object3DGroup: object3dGroups) {
-			if (object3DGroup->renderer->needsPreRender() == true) {
-				object3DGroup->renderer->preRender(context);
+		for (auto object3DNode: object3dNodes) {
+			if (object3DNode->renderer->needsPreRender() == true) {
+				object3DNode->renderer->preRender(context);
 			}
 		}
 	}
@@ -151,15 +151,6 @@ private:
 	}
 
 public:
-
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -175,8 +166,21 @@ public:
 	 */
 	Object3D(const string& id, Model* model);
 
-	// overriden methods
+	// overridden methds
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return Object3DInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return Object3DInternal::getBoundingBox();
@@ -206,8 +210,6 @@ public:
 		return Object3DInternal::getId();
 	}
 
-	void initialize() override;
-
 	inline bool isContributesShadows() override {
 		return Object3DInternal::isContributesShadows();
 	}
@@ -222,10 +224,6 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		Object3DInternal::setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return Object3DInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

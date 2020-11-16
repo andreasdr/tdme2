@@ -18,7 +18,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -29,10 +29,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -92,7 +90,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
@@ -103,10 +101,8 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::math::Quaternion;
@@ -158,8 +154,8 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	snappingX = 1.0f;
 	snappingZ = 1.0f;
 	snappingEnabled = false;
-	camLookRotationX = new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f));
-	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
+	camLookRotationX = new Rotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
+	camLookRotationY = new Rotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	camScaleMax = 15.0f;
 	camScaleMin = 0.05f;
 	mouseDownLastX = LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
@@ -363,8 +359,8 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		#if defined(GLFW3) || defined(VUKAN)
 			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) keyShift = isKeyDown;
 			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
@@ -401,8 +397,8 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 
-		if ((event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
-			event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) &&
+		if ((event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED ||
+			event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) &&
 			event.getXUnscaled() >= 0 &&
 			event.getYUnscaled() >= 0) {
 			placeEntityMouseX = event.getXUnscaled();
@@ -411,7 +407,7 @@ void LevelEditorView::handleInputEvents()
 
 		if (event.isProcessed() == true) continue;
 
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (mouseDragging == false) {
 				mouseDragging = true;
 				mouseDownLastX = event.getXUnscaled();
@@ -427,7 +423,7 @@ void LevelEditorView::handleInputEvents()
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				if (pasteMode == true && pasteModeValid == true) {
 					pasteObjects(false);
 					if (keyShift == false) unsetPasteMode();
@@ -439,9 +435,9 @@ void LevelEditorView::handleInputEvents()
 					setGizmoMode(GIZMOMODE_NONE);
 				}
 			} else {
-				Group* selectedEntityGroup = nullptr;
+				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityGroup);
+				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityNode);
 				if (mouseDragging == true) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
@@ -498,7 +494,7 @@ void LevelEditorView::handleInputEvents()
 						updateGUITransformationsElements();
 					}
 				} else
-				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 					// no op
 					if (selectedEntityIds.size() == 1) {
 						for (auto selectedEntityId: selectedEntityIds) {
@@ -1061,7 +1057,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
-	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
+	auto groundNode = new Node(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
@@ -1075,19 +1071,19 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
 	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
 	vector<Face> groundFacesGround;
-	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.grid.facesentity");
-	groupFacesEntityGround.setMaterial(groundPlateMaterial);
-	groupFacesEntityGround.setFaces(groundFacesGround);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntityGround);
-	groundGroup->setVertices(groundVertices);
-	groundGroup->setNormals(groundNormals);
-	groundGroup->setTextureCoordinates(groundTextureCoordinates);
-	groundGroup->setFacesEntities(groupFacesEntities);
-	groundPlate->getGroups()[groundGroup->getId()] = groundGroup;
-	groundPlate->getSubGroups()[groundGroup->getId()] = groundGroup;
+	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityGround(groundNode, "tdme.leveleditor.grid.facesentity");
+	nodeFacesEntityGround.setMaterial(groundPlateMaterial);
+	nodeFacesEntityGround.setFaces(groundFacesGround);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntityGround);
+	groundNode->setVertices(groundVertices);
+	groundNode->setNormals(groundNormals);
+	groundNode->setTextureCoordinates(groundTextureCoordinates);
+	groundNode->setFacesEntities(nodeFacesEntities);
+	groundPlate->getNodes()[groundNode->getId()] = groundNode;
+	groundPlate->getSubNodes()[groundNode->getId()] = groundNode;
 	ModelTools::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }

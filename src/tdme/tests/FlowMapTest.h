@@ -28,7 +28,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utilities::FlowMap;
 using tdme::utilities::PathFinding;
 
-/** 
+/**
  * Engine with physics test 2
  * @author andreas.drewke
  * @version $Id$
@@ -67,7 +67,7 @@ public:
 	 */
 	~FlowMapTest();
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

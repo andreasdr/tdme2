@@ -7,7 +7,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleE
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-LevelEditorEntityParticleSystem_PointParticleEmitter::LevelEditorEntityParticleSystem_PointParticleEmitter() 
+LevelEditorEntityParticleSystem_PointParticleEmitter::LevelEditorEntityParticleSystem_PointParticleEmitter()
 {
 	count = 2000;
 	lifeTime = 1500;

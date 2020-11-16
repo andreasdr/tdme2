@@ -90,7 +90,7 @@ bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, f
 			return height > -10000.0f;
 		}
 	}
-	auto walkable = isWalkable(x, y, z, height, stepSize, flowMapRequest, collisionTypeIds, ignoreStepUpMax);
+	auto walkable = isWalkable(x, y, z, height, stepSize, scaleActorBoundingVolumes, flowMapRequest, collisionTypeIds, ignoreStepUpMax);
 	if (flowMapRequest == true) walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	if (walkable == false) return false;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
@@ -170,7 +170,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, height + 0.1f, z));
+	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.25f:height + actorStepUpMax, z));
 	actorTransformations.update();
 
 	// update rigid body
@@ -224,10 +224,6 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 				successorNode.y,
 				successorNode.z
 			);
-			// this should never happen, but still I like to check for it
-			//if (successorNode.id == nodeId) {
-			//	continue;
-			//}
 			successorNodes.push(successorNode);
 		}
 	}
@@ -315,6 +311,11 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(endPosition);
 		return true;
+	} else
+	// equal start and end position?
+	if (startPosition.clone().sub(endPosition).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f) {
+		path.push_back(endPosition);
+		return true;
 	}
 
 	//
@@ -363,7 +364,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		Vector3 forwardVector;
 		Vector3 sideVector;
 		forwardVector.set(endPosition).sub(startPositionComputed).setY(0.0f).normalize();
-		Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
+		Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f), sideVector).setY(0.0f).normalize();
 		if (Float::isNaN(sideVector.getX()) ||
 			Float::isNaN(sideVector.getY()) ||
 			Float::isNaN(sideVector.getZ())) {
@@ -371,7 +372,6 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		} else {
 			auto sideDistance = stepSize;
 			auto forwardDistance = 0.0f;
-			auto endYHeight = 0.0;
 			auto i = 0;
 			while (true == true) {
 				endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
@@ -386,18 +386,20 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	}
 
 	auto tries = 0;
+	auto endPositionIdx = 0;
 	bool success = false;
 	for (auto& endPositionCandidate: endPositionCandidates) {
 		Vector3 endPositionComputed = endPositionCandidate;
 		float endYHeight = endPositionComputed.getY();
-		if (isWalkableInternal(
+		if (alternativeEndSteps > 0 &&
+			isWalkableInternal(
 				endPositionComputed.getX(),
 				endPositionComputed.getY(),
 				endPositionComputed.getZ(),
 				endYHeight,
 				stepSize,
-				0,
-				true
+				scaleActorBoundingVolumes,
+				false
 			) == false) {
 			if (VERBOSE == true) {
 				Console::println(
@@ -478,7 +480,9 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 
 			// Choose node from open nodes thats least expensive to check its successors
 			PathFindingNode* nodePtr = nullptr;
+			PathFindingNode* endNodePtr = nullptr;
 			for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
+				if (equalsLastNode(nodeIt->second, end) == true && (endNodePtr == nullptr || nodeIt->second.costsAll < endNodePtr->costsAll)) endNodePtr = &nodeIt->second;
 				if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
 			}
 
@@ -487,10 +491,10 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				done = true;
 				break;
 			}
-			const auto& node = *nodePtr;
 
 			//
-			if (equalsLastNode(node, end)) {
+			if (endNodePtr != nullptr) {
+				const auto& node = *endNodePtr;
 				end.previousNodeId = node.previousNodeId;
 				// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 				int nodesCount = 0;
@@ -519,6 +523,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 				success = true;
 				break;
 			} else {
+				const auto& node = *nodePtr;
 				// do a step
 				step(node, stepSize, scaleActorBoundingVolumes, nullptr, false);
 			}
@@ -537,7 +542,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 
 	//
 	if (tries == 0) {
-		if (VERBOSE == true) Console::println("PathFinding::findPath(): end position were not walkable!");
+		Console::println("PathFinding::findPath(): end position were not walkable!");
 	}
 
 	//

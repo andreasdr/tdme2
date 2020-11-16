@@ -11,7 +11,7 @@ namespace model {
 	class Color4Base;
 	class Face;
 	class FacesEntity;
-	class Group;
+	class Node;
 	class Joint;
 	class JointWeight;
 	class Material;

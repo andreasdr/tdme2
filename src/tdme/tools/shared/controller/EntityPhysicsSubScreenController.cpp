@@ -12,7 +12,6 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -55,7 +54,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
@@ -179,7 +178,7 @@ void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorE
 		view->selectBoundingVolumeType(idx, 0);
 		return;
 	}
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	if (entityBoundingVolume == nullptr) {
 		view->selectBoundingVolumeType(idx, 0);
 	} else {
@@ -473,7 +472,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
+		entity->getBoundingVolume(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolume(idx)->getModelMeshFile() : entity->getFileName(),
 		true,
 		new OnBoundingVolumeConvexMeshFileAction(this, idxFinal, entityFinal)
 	);
@@ -730,82 +729,79 @@ void EntityPhysicsSubScreenController::onValueChanged(GUIElementNode* node, Leve
 	}
 }
 
-void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
 {
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_apply_")) {
-				onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_sphere_apply_")) {
-				onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_capsule_apply_")) {
-				onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_obb_apply_")) {
-				onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_aabb_apply_")) {
-				onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_convexmesh_apply_")) {
-				onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (StringTools::startsWith(node->getId(), "button_boundingvolume_convexmesh_file_")) {
-				onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
-			} else
-			if (node->getId() == "button_terrain_mesh_apply") {
-				onSetTerrainMesh(entity);
-			} else
-			if (node->getId() == "button_boundingvolume_convexmeshes_file") {
-				onBoundingVolumeConvexMeshesFile(entity);
-			} else
-			if (node->getId() == "button_boundingvolume_convexmeshes_remove") {
-				onBoundingVolumeConvexMeshesRemove(entity);
-			} else
-			if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
-				onBoundingVolumeConvexMeshesGenerate(entity);
-			} else
-			if (node->getId() == "physics_bodytype_dropdown_apply") {
-				onPhysicsBodyTypeApply(entity);
-			} else
-			if (node->getId() == "physics_body_apply") {
-				onPhysicsBodyApply(entity);
-			} else
-			if (StringTools::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
-				if (entity != nullptr) {
-					boundingVolumeIdxActivated = Integer::parseInt(StringTools::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
-					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-					view->startEditingBoundingVolume(entity);
-				}
-			} else
-			if (node->getId() == "tab_properties_boundingvolume") {
-				if (entity != nullptr) {
-					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-					if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
-				}
-			} else
-			if (StringTools::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
-				if (entity != nullptr) {
-					boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-					view->endEditingBoundingVolume(entity);
-				}
-			} else
-			if (StringTools::startsWith(node->getId(), "tab_properties_terrain") == true) {
-				if (entity != nullptr) {
-					boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-					view->endEditingBoundingVolume(entity);
-				}
-			} else
-			if (StringTools::startsWith(node->getId(), "tab_") == true) {
-				if (entity != nullptr) {
-					view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
-					view->endEditingBoundingVolume(entity);
-				}
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_apply_")) {
+			onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_sphere_apply_")) {
+			onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_capsule_apply_")) {
+			onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_obb_apply_")) {
+			onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_aabb_apply_")) {
+			onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_convexmesh_apply_")) {
+			onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (StringTools::startsWith(node->getId(), "button_boundingvolume_convexmesh_file_")) {
+			onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringTools::lastIndexOf(node->getId(), '_') + 1)));
+		} else
+		if (node->getId() == "button_terrain_mesh_apply") {
+			onSetTerrainMesh(entity);
+		} else
+		if (node->getId() == "button_boundingvolume_convexmeshes_file") {
+			onBoundingVolumeConvexMeshesFile(entity);
+		} else
+		if (node->getId() == "button_boundingvolume_convexmeshes_remove") {
+			onBoundingVolumeConvexMeshesRemove(entity);
+		} else
+		if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
+			onBoundingVolumeConvexMeshesGenerate(entity);
+		} else
+		if (node->getId() == "physics_bodytype_dropdown_apply") {
+			onPhysicsBodyTypeApply(entity);
+		} else
+		if (node->getId() == "physics_body_apply") {
+			onPhysicsBodyApply(entity);
+		} else
+		if (StringTools::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
+			if (entity != nullptr) {
+				boundingVolumeIdxActivated = Integer::parseInt(StringTools::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->startEditingBoundingVolume(entity);
+			}
+		} else
+		if (node->getId() == "tab_properties_boundingvolume") {
+			if (entity != nullptr) {
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
+			}
+		} else
+		if (StringTools::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
+			if (entity != nullptr) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
+			}
+		} else
+		if (StringTools::startsWith(node->getId(), "tab_properties_terrain") == true) {
+			if (entity != nullptr) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
+			}
+		} else
+		if (StringTools::startsWith(node->getId(), "tab_") == true) {
+			if (entity != nullptr) {
+				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+				view->endEditingBoundingVolume(entity);
 			}
 		}
 	}

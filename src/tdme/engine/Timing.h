@@ -4,7 +4,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 
-/** 
+/**
  * Timing class
  * @author Andreas Drewke
  * @version $Id$
@@ -23,7 +23,7 @@ private:
 	int64_t currentFrameAtTime;
 	float currentFPS;
 
-	/** 
+	/**
 	 * Updates timing
 	 */
 	void updateTiming();
@@ -34,15 +34,14 @@ private:
 	Timing();
 
 public:
-
-	/** 
+	/**
 	 * @return frames that have been rendered
 	 */
 	inline int64_t getFrame() {
 		return frame;
 	}
 
-	/** 
+	/**
 	 * @return start time
 	 */
 	inline int64_t getStartTime() {
@@ -56,21 +55,21 @@ public:
 		return currentFrameAtTime - startTime;
 	}
 
-	/** 
+	/**
 	 * @return time last frame has been rendered in ms
 	 */
 	inline int64_t getLastFrameAtTime() {
 		return lastFrameAtTime;
 	}
 
-	/** 
+	/**
 	 * @return time current frame has been rendered in ms
 	 */
 	inline int64_t getCurrentFrameAtTime() {
 		return currentFrameAtTime;
 	}
 
-	/** 
+	/**
 	 * Gets the time passed between last and current frame
 	 * @return delta time
 	 */
@@ -81,7 +80,7 @@ public:
 		return currentFrameAtTime - lastFrameAtTime;
 	}
 
-	/** 
+	/**
 	 * @return current fps
 	 */
 	inline float getCurrentFPS() {

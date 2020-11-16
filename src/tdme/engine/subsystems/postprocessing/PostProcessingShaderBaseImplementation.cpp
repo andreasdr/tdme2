@@ -4,8 +4,6 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
-using std::string;
-
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -65,21 +63,35 @@ void PostProcessingShaderBaseImplementation::unUseProgram()
 }
 
 void PostProcessingShaderBaseImplementation::setBufferPixelWidth(void* context, float pixelWidth) {
-	if (uniformBufferTexturePixelWidth != -1) renderer->setProgramUniformFloat(context, uniformBufferTexturePixelWidth, pixelWidth);
+	if (uniformBufferTexturePixelWidth != -1) {
+		renderer->setProgramUniformFloat(context, uniformBufferTexturePixelWidth, pixelWidth);
+	}
 }
 
 void PostProcessingShaderBaseImplementation::setBufferPixelHeight(void* context, float pixelHeight) {
-	if (uniformBufferTexturePixelHeight != -1) renderer->setProgramUniformFloat(context, uniformBufferTexturePixelHeight, pixelHeight);
+	if (uniformBufferTexturePixelHeight != -1) {
+		renderer->setProgramUniformFloat(context, uniformBufferTexturePixelHeight, pixelHeight);
+	}
 }
 
 void PostProcessingShaderBaseImplementation::setTextureLightPositionX(void* context, float textureLightPositionX) {
-	if (uniformTextureLightPositionX != -1) renderer->setProgramUniformFloat(context, uniformTextureLightPositionX, textureLightPositionX);
+	if (uniformTextureLightPositionX != -1) {
+		renderer->setProgramUniformFloat(context, uniformTextureLightPositionX, textureLightPositionX);
+	}
 }
 
 void PostProcessingShaderBaseImplementation::setTextureLightPositionY(void* context, float textureLightPositionY) {
-	if (uniformTextureLightPositionY != -1) renderer->setProgramUniformFloat(context, uniformTextureLightPositionY, textureLightPositionY);
+	if (uniformTextureLightPositionY != -1) {
+		#if defined(VULKAN)
+			renderer->setProgramUniformFloat(context, uniformTextureLightPositionY, 1.0f - textureLightPositionY);
+		#else
+			renderer->setProgramUniformFloat(context, uniformTextureLightPositionY, textureLightPositionY);
+		#endif
+	}
 }
 
 void PostProcessingShaderBaseImplementation::setIntensity(void* context, float intensity) {
-	if (uniformIntensity != -1) renderer->setProgramUniformFloat(context, uniformIntensity, intensity);
+	if (uniformIntensity != -1) {
+		renderer->setProgramUniformFloat(context, uniformIntensity, intensity);
+	}
 }

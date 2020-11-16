@@ -6,7 +6,7 @@
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -28,7 +28,7 @@ using std::string;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -43,7 +43,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-FileDialogScreenController::FileDialogScreenController() 
+FileDialogScreenController::FileDialogScreenController()
 {
 	this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;
@@ -263,9 +263,9 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	}
 }
 
-void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	if (type == GUIActionListener_Type::PERFORMED) {
+	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "filedialog_apply") {
 			if (applyAction != nullptr) applyAction->performAction();
 		} else

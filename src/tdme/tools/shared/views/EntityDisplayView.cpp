@@ -18,7 +18,7 @@ using tdme::engine::Entity;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController) 
+EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController)
 {
 	this->engine = Engine::getInstance();
 	this->entityDisplaySubScreenController = entityDisplaySubScreenController;

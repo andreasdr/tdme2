@@ -8,7 +8,7 @@
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Sphere physics primitive
  * @author Andreas Drewke
  * @version $Id$
@@ -20,15 +20,6 @@ private:
 	float radius;
 
 public:
-	/** 
-	 * @return float radius
-	 */
-	float getRadius() const;
-
-	// overrides
-	void setScale(const Vector3& scale) override;
-	BoundingVolume* clone() const override;
-
 	/**
 	 * Public constructor
 	 */
@@ -41,5 +32,14 @@ public:
 	 * @param scale scale
 	 */
 	Sphere(const Vector3& center, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * @return float radius
+	 */
+	float getRadius() const;
+
+	// overrides
+	void setScale(const Vector3& scale) override;
+	BoundingVolume* clone() const override;
 
 };

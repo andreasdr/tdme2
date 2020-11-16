@@ -45,7 +45,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
-GLES2Renderer::GLES2Renderer() 
+GLES2Renderer::GLES2Renderer()
 {
 	// setup GLES2 consts
 	ID_NONE = 0;
@@ -124,6 +124,11 @@ bool GLES2Renderer::isUsingProgramAttributeLocation()
 {
 	return true;
 }
+
+bool GLES2Renderer::isSupportingIntegerProgramAttributes() {
+	return false;
+}
+
 
 bool GLES2Renderer::isSpecularMappingAvailable()
 {
@@ -393,6 +398,7 @@ void GLES2Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GLES2Renderer::clear(int32_t mask)
 {
 	glClear(mask);
+	statistics.clearCalls++;
 }
 
 int32_t GLES2Renderer::createTexture()
@@ -440,17 +446,36 @@ int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 
 void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 {
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
-	if (texture->isRepeat() == true) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	} else {
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
+		texture->getTextureData()->getBuffer()
+	);
+	if (texture->getAtlasSize() > 1) {
+		if (texture->isUseMipMap() == true) {
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isRepeat() == true) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		} else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	statistics.textureUploads++;
 }
 
 void GLES2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
@@ -519,6 +544,7 @@ void GLES2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Te
 	// glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	statistics.textureUploads+= 6;
 }
 
 void GLES2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -604,6 +630,7 @@ void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, in
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -611,6 +638,7 @@ void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, in
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -618,6 +646,7 @@ void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, in
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -625,6 +654,7 @@ void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjec
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -649,13 +679,6 @@ void GLES2Renderer::bindVerticesBufferObject(void* context, int32_t bufferObject
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
@@ -686,18 +709,40 @@ void GLES2Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferO
 	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
-void GLES2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
-	Console::println(string("GLES2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+void GLES2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
-	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+void GLES2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GLES2Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0LL);
+}
+
+void GLES2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
+}
+
+void GLES2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
@@ -709,6 +754,8 @@ void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
@@ -718,11 +765,15 @@ void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32
 void GLES2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GLES2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.points+= points;
 }
 
 void GLES2Renderer::setLineWidth(float lineWidth)
@@ -733,6 +784,8 @@ void GLES2Renderer::setLineWidth(float lineWidth)
 void GLES2Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.linePoints+= points;
 }
 
 void GLES2Renderer::unbindBufferObjects(void* context)

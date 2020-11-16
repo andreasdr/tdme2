@@ -2,24 +2,24 @@
 
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase) 
+Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Object3DBase* object3DBase)
 {
 	this->object3DBase = object3DBase;
 	reset();
@@ -28,23 +28,23 @@ Object3DBase_TransformedFacesIterator::Object3DBase_TransformedFacesIterator(Obj
 void Object3DBase_TransformedFacesIterator::reset()
 {
 	faceCount = 0;
-	for (auto object3DGroup : object3DBase->object3dGroups) {
-		for (auto& facesEntity : object3DGroup->group->getFacesEntities()) {
+	for (auto object3DNode : object3DBase->object3dNodes) {
+		for (auto& facesEntity : object3DNode->node->getFacesEntities()) {
 			faceCount += facesEntity.getFaces().size();
 		}
 	}
 	faceIdx = 0;
 	faceIdxTotal = 0;
-	object3DGroupIdx = 0;
+	object3DNodeIdx = 0;
 	facesEntityIdx = 0;
-	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-	if (object3DGroup->mesh->skinning == true) {
+	auto object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
+	if (object3DNode->mesh->skinning == true) {
 		matrix.identity();
 	} else {
-		matrix.set(*object3DGroup->groupTransformationsMatrix);
+		matrix.set(*object3DNode->nodeTransformationsMatrix);
 	}
 	matrix.multiply(object3DBase->getTransformationsMatrix());
-	group = object3DGroup->group;
+	node = object3DNode->node;
 }
 
 Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::iterator() {
@@ -54,19 +54,19 @@ Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::it
 
 const array<Vector3, 3>& Object3DBase_TransformedFacesIterator::next()
 {
-	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-	auto& facesEntities = object3DGroup->group->getFacesEntities();
+	auto object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
+	auto& facesEntities = object3DNode->node->getFacesEntities();
 	auto& facesEntity = facesEntities[facesEntityIdx];
 	auto& faces = facesEntity.getFaces();
 	auto& face = faces[faceIdx];
 	// compute vertices
 	auto& faceVertexIndices = face.getVertexIndices();
-	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
-	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
-	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
-	// set up current group
-	group = object3DGroup->group;
+	auto nodeVerticesTransformed = object3DNode->mesh->vertices;
+	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
+	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
+	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
+	// set up current node
+	node = object3DNode->node;
 	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;
@@ -77,12 +77,12 @@ const array<Vector3, 3>& Object3DBase_TransformedFacesIterator::next()
 			facesEntityIdx++;
 			if (facesEntityIdx == facesEntities.size()) {
 				facesEntityIdx = 0;
-				object3DGroupIdx++;
-				object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-				if (object3DGroup->mesh->skinning == true) {
+				object3DNodeIdx++;
+				object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
+				if (object3DNode->mesh->skinning == true) {
 					matrix.identity();
 				} else {
-					matrix.set(*object3DGroup->groupTransformationsMatrix);
+					matrix.set(*object3DNode->nodeTransformationsMatrix);
 				}
 				matrix.multiply(object3DBase->getTransformationsMatrix());
 			}

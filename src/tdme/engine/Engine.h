@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Light.h>
@@ -18,6 +19,7 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
@@ -60,7 +62,7 @@ using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
@@ -69,6 +71,7 @@ using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
@@ -112,17 +115,17 @@ class tdme::engine::Engine final
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
-	friend class SkinnedObject3DRenderGroup;
+	friend class tdme::application::Application;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchRendererTriangles;
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
-	friend class tdme::engine::subsystems::rendering::Object3DGroup;
-	friend class tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+	friend class tdme::engine::subsystems::rendering::Object3DNode;
+	friend class tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 	friend class tdme::engine::subsystems::rendering::EntityRenderer;
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
-	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
+	friend class tdme::engine::subsystems::rendering::Object3DNodeMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
 	friend class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
@@ -365,6 +368,11 @@ private:
 	}
 
 	/**
+	 * Private constructor
+	 */
+	Engine();
+
+	/**
 	 * Determine entity types
 	 * @param entities given entities to investigate
 	 * @param objects object
@@ -420,11 +428,18 @@ private:
 	 */
 	void initRendering();
 
-	/**
-	 * Private constructor
-	 */
-	Engine();
 public:
+	/**
+	 * Destructor
+	 */
+	~Engine();
+
+	/**
+	 * Returns engine instance
+	 * @return
+	 */
+	static Engine* getInstance();
+
 	/**
 	 * @return texture manager
 	 */
@@ -597,12 +612,6 @@ public:
 	 * @return shader parameter defaults
 	 */
 	static const map<string, string> getShaderParameterDefaults(const string& shaderId);
-
-	/**
-	 * Returns engine instance
-	 * @return
-	 */
-	static Engine* getInstance();
 
 	/**
 	 * Creates an offscreen rendering instance
@@ -808,7 +817,7 @@ public:
 	 * @param lightScatteringItensityValue light scattering intensity base value
 	 */
 	inline void setLightScatteringItensityValue(float lightScatteringItensityValue) {
-		lightScatteringItensityValue = lightScatteringItensityValue;
+		this->lightScatteringItensityValue = lightScatteringItensityValue;
 	}
 
 	/**
@@ -906,11 +915,11 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param object3DNode pointer to store node of Object3D to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
 				false,
@@ -926,7 +935,7 @@ public:
 				visibleLinesObjects,
 				visibleObjectEntityHierarchies,
 				filter,
-				object3DGroup,
+				object3DNode,
 				particleSystemEntity
 			);
 	}
@@ -937,11 +946,11 @@ public:
 	 * @param mouseY mouse y
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
-	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param object3DNode pointer to store node of Object3D to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -999,7 +1008,7 @@ public:
 	/**
 	 * Creates a PNG file from current screen(
 	 * 	This does not seem to work with GLES2 and offscreen engines
-	 * @param pathName path name 
+	 * @param pathName path name
 	 * @param fileName file name
 	 * @return success
 	 */
@@ -1017,9 +1026,11 @@ public:
 	void addPostProcessingProgram(const string& programId);
 
 	/**
-	 * Destructor
+	 * @return renderer statistics
 	 */
-	~Engine();
+	inline Renderer::Renderer_Statistics getRendererStatistics() {
+		return renderer->getStatistics();
+	}
 
 private:
 	/**
@@ -1037,7 +1048,7 @@ private:
 	 * @param linesObjects lines objects
 	 * @param entityHierarchies entity hierarchies
 	 * @param filter filter
-	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param object3DNode pointer to store node of Object3D to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
@@ -1055,7 +1066,7 @@ private:
 		const vector<LinesObject3D*>& linesObjects,
 		const vector<EntityHierarchy*>& entityHierarchies,
 		EntityPickingFilter* filter = nullptr,
-		Group** object3DGroup = nullptr,
+		Node** object3DNode = nullptr,
 		ParticleSystemEntity** particleSystemEntity = nullptr
 	);
 

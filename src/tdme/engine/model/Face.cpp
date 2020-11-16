@@ -1,17 +1,17 @@
 #include <tdme/engine/model/Face.h>
 
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 
 using tdme::engine::model::Face;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 
 Face::Face()
 {
 }
 
-Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2) 
+Face::Face(Node* node, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2)
 {
-	this->group = group;
+	this->node = node;
 	vertexIndices[0] = vi0;
 	vertexIndices[1] = vi1;
 	vertexIndices[2] = vi2;
@@ -20,9 +20,9 @@ Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int
 	normalIndices[2] = ni2;
 }
 
-Face::Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2) 
+Face::Face(Node* node, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2)
 {
-	this->group = group;
+	this->node = node;
 	vertexIndices[0] = vi0;
 	vertexIndices[1] = vi1;
 	vertexIndices[2] = vi2;

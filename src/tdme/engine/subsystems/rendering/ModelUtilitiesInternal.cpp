@@ -7,15 +7,15 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -27,7 +27,7 @@ using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::engine::Timing;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::FacesEntity;
@@ -35,16 +35,16 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::ModelStatistics;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overridenGroupTransformationsMatrices)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformationsMatrices)
 {
 	Object3DModelInternal object3dModel(model);
-	object3dModel.instanceAnimations[0]->overridenTransformationsMatrices = overridenGroupTransformationsMatrices;
+	object3dModel.instanceAnimations[0]->overriddenTransformationsMatrices = overriddenNodeTransformationsMatrices;
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
 	if (boundingBox == nullptr) boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
 	return boundingBox;
@@ -68,11 +68,11 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		// calculate transformations matrices without world transformations
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->groupLists[0], parentTransformationsMatrix, &animationState);
-		Object3DGroup::computeTransformations(nullptr, object3DModelInternal->object3dGroups);
-		// parse through object groups to determine min, max
-		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
-			for (auto& vertex : *object3DGroup->mesh->vertices) {
+		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
+		Object3DNode::computeTransformations(nullptr, object3DModelInternal->object3dNodes);
+		// parse through object nodes to determine min, max
+		for (auto object3DNode : object3DModelInternal->object3dNodes) {
+			for (auto& vertex : *object3DNode->mesh->vertices) {
 				auto& vertexXYZ = vertex.getArray();
 				if (firstVertex == true) {
 					minX = vertexXYZ[0];
@@ -120,10 +120,10 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		// calculate transformations matrices without world transformations
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->groupLists[0], parentTransformationsMatrix, &animationState);
-		for (auto groupIt: model->getGroups()) {
-			auto& transformedGroupMatrix = object3DModelInternal->getGroupTransformationsMatrix(groupIt.second->getId());
-			transformedGroupMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
+		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
+		for (auto nodeIt: model->getNodes()) {
+			auto& transformedNodeMatrix = object3DModelInternal->getNodeTransformationsMatrix(nodeIt.second->getId());
+			transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
 			if (firstVertex == true) {
 				minX = vertex[0];
 				minY = vertex[1];
@@ -144,7 +144,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		animationState.currentAtTime = static_cast< int64_t >((t * 1000.0f));
 		animationState.lastAtTime = static_cast< int64_t >((t * 1000.0f));
 	}
-	// skip on models without groups
+	// skip on models without nodes
 	if (firstVertex == true) return nullptr;
 	// otherwise go with bounding box
 	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
@@ -152,21 +152,21 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 
 void ModelUtilitiesInternal::invertNormals(Model* model)
 {
-	invertNormals(model->getSubGroups());
+	invertNormals(model->getSubNodes());
 }
 
-void ModelUtilitiesInternal::invertNormals(const map<string, Group*>& groups)
+void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
 {
-	for (auto it: groups) {
-		Group* group = it.second;
-		auto normals = group->getNormals();
+	for (auto it: nodes) {
+		Node* node = it.second;
+		auto normals = node->getNormals();
 		for (auto& normal : normals) {
 			// invert
 			normal.scale(-1.0f);
 		}
-		group->setNormals(normals);
-		// process sub groups
-		invertNormals(group->getSubGroups());
+		node->setNormals(normals);
+		// process sub nodes
+		invertNormals(node->getSubNodes());
 	}
 }
 
@@ -181,9 +181,9 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 	map<string, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
 	auto transparentFaceCount = 0;
-	for (auto object3DGroup : object3DModelInternal->object3dGroups) {
+	for (auto object3DNode : object3DModelInternal->object3dNodes) {
 		// check each faces entity
-		auto& facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DNode->node->getFacesEntities();
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto& facesEntity = facesEntities[faceEntityIdx];
@@ -229,34 +229,34 @@ bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 
 bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)
 {
-	// check number of object 3d groups
-	if (object3DModel1Internal->object3dGroups.size() != object3DModel2Internal->object3dGroups.size())
+	// check number of object 3d nodes
+	if (object3DModel1Internal->object3dNodes.size() != object3DModel2Internal->object3dNodes.size())
 		return false;
 
-	for (auto i = 0; i < object3DModel1Internal->object3dGroups.size(); i++) {
-		auto object3DGroupModel1 = object3DModel1Internal->object3dGroups[i];
-		auto object3DGroupModel2 = object3DModel2Internal->object3dGroups[i];
-		auto group1 = object3DModel1Internal->object3dGroups[i]->group;
-		auto group2 = object3DModel2Internal->object3dGroups[i]->group;
-		auto& facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
-		auto& facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
+	for (auto i = 0; i < object3DModel1Internal->object3dNodes.size(); i++) {
+		auto object3DNodeModel1 = object3DModel1Internal->object3dNodes[i];
+		auto object3DNodeModel2 = object3DModel2Internal->object3dNodes[i];
+		auto node1 = object3DModel1Internal->object3dNodes[i]->node;
+		auto node2 = object3DModel2Internal->object3dNodes[i]->node;
+		auto& facesEntitiesModel1 = object3DNodeModel1->node->getFacesEntities();
+		auto& facesEntitiesModel2 = object3DNodeModel2->node->getFacesEntities();
 		// check transformation matrix
-		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
+		if (object3DNodeModel1->node->getTransformationsMatrix().equals(object3DNodeModel2->node->getTransformationsMatrix()) == false)
 			return false;
 		// check vertices count
-		if (group1->getVertices().size() != group2->getVertices().size())
+		if (node1->getVertices().size() != node2->getVertices().size())
 			return false;
 		// check vertices
-		for (auto j = 0; j < group1->getVertices().size(); j++) {
-			if (group1->getVertices()[j].equals(group2->getVertices()[j]) == false)
+		for (auto j = 0; j < node1->getVertices().size(); j++) {
+			if (node1->getVertices()[j].equals(node2->getVertices()[j]) == false)
 				return false;
 		}
 		// check normals count
-		if (group1->getNormals().size() != group2->getNormals().size())
+		if (node1->getNormals().size() != node2->getNormals().size())
 			return false;
 		// check normals
-		for (auto j = 0; j < group1->getNormals().size(); j++) {
-			if (group1->getNormals()[j].equals(group2->getNormals()[j]) == false)
+		for (auto j = 0; j < node1->getNormals().size(); j++) {
+			if (node1->getNormals()[j].equals(node2->getNormals()[j]) == false)
 				return false;
 		}
 		// check number of faces entities

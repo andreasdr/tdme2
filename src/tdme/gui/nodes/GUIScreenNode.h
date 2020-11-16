@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -21,8 +22,8 @@ using std::vector;
 
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
@@ -56,6 +57,7 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class tdme::gui::GUIParser;
 	friend class GUIElementNode;
 	friend class GUINode;
+	friend class GUINodeConditions;
 	friend class GUIParentNode;
 
 private:
@@ -74,6 +76,8 @@ private:
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
+	set<string> invalidateLayoutNodeIds;
+	map<string, set<string>> elementNodeToNodeMapping;
 
 	bool visible;
 	bool popUp;
@@ -148,13 +152,6 @@ public:
 	const vector<GUINode*>& getFloatingNodes();
 
 protected:
-	bool isContentNode() override;
-
-	/**
-	 * @return node type
-	 */
-	const string getNodeType() override;
-
 	/**
 	 * Constructor
 	 * @param applicationRootPath application root path
@@ -205,6 +202,10 @@ protected:
 	 */
 	~GUIScreenNode();
 
+	// overridden methods
+	bool isContentNode() override;
+	const string getNodeType() override;
+
 private:
 	/**
 	 * Add node
@@ -243,11 +244,38 @@ public:
 	void layout() override;
 
 	/**
+	 * Mark a node to be invalidated regarding layout
+	 * @param node node
+	 * @return first node that requires a layout in tree
+	 */
+	inline void invalidateLayout(GUINode* node) {
+		invalidateLayoutNodeIds.insert(node->getId());
+	}
+
+	/**
+	 * Actually do the invalidate layout
+	 * @param node node
+	 */
+	GUINode* forceInvalidateLayout(GUINode* node);
+
+	/**
+	 * Actually do the nodes marked for layout invalidation
+	 */
+	void invalidateLayouts();
+
+	/**
 	 * Layout node content (e.g. child nodes or content)
 	 * this does also does call layouted nodes post layout method
 	 * @param node node
 	 */
 	void layout(GUINode* node);
+
+	/**
+	 * Force layout node content (e.g. child nodes or content) without determining parent nodes to be layouted
+	 * this does also does call layouted nodes post layout method
+	 * @param node node
+	 */
+	void forceLayout(GUINode* node);
 
 	/**
 	 * Set screen size
@@ -288,7 +316,7 @@ public:
 	 */
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
-	// overriden methods
+	// overridden methods
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
@@ -310,7 +338,7 @@ public:
 	GUIInputEventHandler* getInputEventHandler();
 
 	/**
-	 * Set input event handler 
+	 * Set input event handler
 	 * @param inputEventHandler input event handler
 	 */
 	void setInputEventHandler(GUIInputEventHandler* inputEventHandler);
@@ -320,7 +348,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 */
-	void delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
+	void delegateActionPerformed(GUIActionListenerType type, GUIElementNode* node);
 
 	/**
 	 * Add change listener
@@ -420,4 +448,11 @@ public:
 	 * @param expression expression
 	 */
 	void addTimedExpression(int64_t time, const string& expression);
+
+	/**
+	 * Add node to element node dependency
+	 * @param elementNodeId element node id
+	 * @param nodeId node id that depends on element node condition changes
+	 */
+	void addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId);
 };

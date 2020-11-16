@@ -71,25 +71,25 @@ Matrix4x4& Camera::computeProjectionMatrix()
 	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);
 }
 
-Matrix4x4& Camera::computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far)
+Matrix4x4& Camera::computeFrustumMatrix(float leftPlane, float rightPlane, float bottomPlane, float topPlane, float nearPlane, float farPlane)
 {
 	// see: http://www.songho.ca/opengl/gl_transform.html
 	return projectionMatrix.set(
-		2.0f * near / (right - left),
+		2.0f * nearPlane / (rightPlane - leftPlane),
 		0.0f,
 		0.0f,
 		0.0f,
 		0.0f,
-		2.0f * near / (top - bottom),
+		2.0f * nearPlane / (topPlane - bottomPlane),
 		0.0f,
 		0.0f,
-		(right + left) / (right - left),
-		(top + bottom) / (top - bottom),
-		-(far + near) / (far - near),
+		(rightPlane + leftPlane) / (rightPlane - leftPlane),
+		(topPlane + bottomPlane) / (topPlane - bottomPlane),
+		-(farPlane + nearPlane) / (farPlane - nearPlane),
 		-1.0f,
 		0.0f,
 		0.0f,
-		-(2.0f * far * near) / (far - near),
+		-(2.0f * farPlane * nearPlane) / (farPlane - nearPlane),
 		1.0f
 	);
 }

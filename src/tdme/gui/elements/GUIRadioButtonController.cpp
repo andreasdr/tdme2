@@ -1,9 +1,7 @@
 #include <tdme/gui/elements/GUIRadioButtonController.h>
 
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -14,9 +12,7 @@
 
 using tdme::gui::elements::GUIRadioButtonController;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -32,7 +28,7 @@ string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
 
 map<string, vector<GUIElementNode*>>* GUIRadioButtonController::radioButtonGroupNodesByName = new map<string, vector<GUIElementNode*>>();
 
-GUIRadioButtonController::GUIRadioButtonController(GUINode* node) 
+GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();
@@ -112,7 +108,7 @@ void GUIRadioButtonController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
@@ -127,7 +123,7 @@ void GUIRadioButtonController::handleKeyboardEvent(GUINode* node, GUIKeyboardEve
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					select();
 					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
 				}

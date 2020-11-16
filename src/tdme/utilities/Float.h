@@ -22,8 +22,7 @@ class tdme::utilities::Float final
 public:
 	static constexpr float MAX_VALUE { numeric_limits<float>::max() };
 	static constexpr float MIN_VALUE { -numeric_limits<float>::max() };
-	static constexpr float NaN { numeric_limits<float>::quiet_NaN() };
-	static constexpr int32_t SIZE { 32 };
+	static constexpr float NAN_VALUE { numeric_limits<float>::quiet_NaN() };
 
 	/**
 	 * Parse float

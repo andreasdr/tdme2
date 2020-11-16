@@ -29,7 +29,18 @@ public:
 	static GUINode_Flow* INTEGRATED;
 	static GUINode_Flow* FLOATING;
 
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	GUINode_Flow(const string& name, int ordinal);
-	static GUINode_Flow* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static GUINode_Flow* valueOf(const string& name);
 
 };

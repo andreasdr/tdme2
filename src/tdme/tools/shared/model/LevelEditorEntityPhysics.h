@@ -12,7 +12,7 @@ using std::string;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level editor entity physics body settings
  * @author Andreas Drewke
  * @version $Id$

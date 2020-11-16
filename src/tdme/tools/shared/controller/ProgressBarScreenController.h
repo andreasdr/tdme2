@@ -17,12 +17,12 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Progress bar screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::ProgressBarScreenController
+class tdme::tools::shared::controller::ProgressBarScreenController final
 	: public ScreenController
 {
 
@@ -31,26 +31,6 @@ private:
 	GUIElementNode* progressBarNode {  };
 
 public:
-	GUIScreenNode* getScreenNode() override;
-	void initialize() override;
-	void dispose() override;
-
-	/** 
-	 * Shows the pop up
-	 */
-	virtual void show();
-
-	/**
-	 * Show progress
-	 * @param value value
-	 */
-	virtual void progress(float value);
-
-	/** 
-	 * Closes the pop up
-	 */
-	virtual void close();
-
 	/**
 	 * Public constructor
 	 */
@@ -60,4 +40,25 @@ public:
 	 * Destructor
 	 */
 	virtual ~ProgressBarScreenController();
+
+	GUIScreenNode* getScreenNode() override;
+	void initialize() override;
+	void dispose() override;
+
+	/**
+	 * Shows the pop up
+	 */
+	void show();
+
+	/**
+	 * Show progress
+	 * @param value value
+	 */
+	void progress(float value);
+
+	/**
+	 * Closes the pop up
+	 */
+	void close();
+
 };

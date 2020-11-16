@@ -32,7 +32,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Object particle system entity to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -60,32 +60,6 @@ private:
 	}
 
 public:
-
-	// overriden methods
-	void initialize() override;
-
-	inline BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
-	}
-
-	/** 
-	 * @return enabled objects
-	 */
-	inline const vector<Object3D*>& getEnabledObjects() {
-		return enabledObjects;
-	}
-
-	// overriden methods
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -99,12 +73,35 @@ public:
 	 */
 	ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
 
-public:
+	/**
+	 * @return enabled objects
+	 */
+	inline const vector<Object3D*>& getEnabledObjects() {
+		return enabledObjects;
+	}
 
-	// overriden methods
-	void dispose() override;
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
+	void dispose() override;
+
+	inline bool isEnabled() override {
+		return ObjectParticleSystemInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
+
+	inline BoundingBox* getBoundingBox() override {
+		return &boundingBox;
+	}
+
+	inline BoundingBox* getBoundingBoxTransformed() override {
+		return &boundingBoxTransformed;
+	}
 
 	inline ParticleEmitter* getEmitter() override {
 		return ObjectParticleSystemInternal::getEmitter();
@@ -144,10 +141,6 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		ObjectParticleSystemInternal::setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return ObjectParticleSystemInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

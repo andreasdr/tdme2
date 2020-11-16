@@ -21,7 +21,7 @@ using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Interface to audio module
  * @author Andreas Drewke
  * @version $Id$
@@ -37,8 +37,8 @@ private:
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
 	static Audio* instance;
 
-	ALCdevice* device;
-	ALCcontext* context;
+	ALCdevice* device { nullptr };
+	ALCcontext* context { nullptr };
 
 	map<string, AudioEntity*> audioEntities;
 
@@ -54,19 +54,19 @@ private:
 	Audio();
 
 public:
-	/** 
+	/**
 	 * @return audio singleton instance
 	 */
 	static Audio* getInstance();
 
-	/** 
+	/**
 	 * @return listener position
 	 */
 	inline const Vector3& getListenerPosition() const {
 		return listenerPosition;
 	}
 
-	/** 
+	/**
 	 * Set listener position
 	 * @param listenerPosition listener position
 	 */
@@ -89,14 +89,14 @@ public:
 		this->listenerVelocity = listenerVelocity;
 	}
 
-	/** 
+	/**
 	 * @return listener orientation at
 	 */
 	inline const Vector3& getListenerOrientationAt() const {
 		return listenerOrientationAt;
 	}
 
-	/** 
+	/**
 	 * Set listener orientation at
 	 * @param listenerOrientationAt listener orientation at
 	 */
@@ -119,36 +119,36 @@ public:
 		this->listenerOrientationUp = listenerOrientationUp;
 	}
 
-	/** 
+	/**
 	 * Returns an audio entity identified by given id
 	 * @param id id
 	 * @return audio entity
 	 */
 	AudioEntity* getEntity(const string& id);
 
-	/** 
+	/**
 	 * Adds a audio entity
 	 * @param entity audio entity
 	 */
 	void addEntity(AudioEntity* entity);
 
-	/** 
+	/**
 	 * Removes an audio entity
 	 * @param id id
 	 */
 	void removeEntity(const string& id);
 
-	/** 
+	/**
 	 * Clears all audio entities
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * Shuts the audio down
 	 */
 	void shutdown();
 
-	/** 
+	/**
 	 * Update and transfer audio entity states to open AL
 	 */
 	void update();

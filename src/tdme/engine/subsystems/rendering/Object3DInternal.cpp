@@ -7,12 +7,12 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
@@ -23,11 +23,11 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::math::Vector3;
 
@@ -48,73 +48,73 @@ Object3DInternal::Object3DInternal(const string& id, Model* model, int instances
 Object3DInternal::~Object3DInternal() {
 }
 
-void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId, const string& facesEntityId)
+void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& nodeId, const string& facesEntityId)
 {
-	bindDiffuseTexture(frameBuffer->getColorBufferTextureId(), groupId, facesEntityId);
+	bindDiffuseTexture(frameBuffer->getColorBufferTextureId(), nodeId, facesEntityId);
 }
 
-void Object3DInternal::unbindDiffuseTexture(const string& groupId, const string& facesEntityId)
+void Object3DInternal::unbindDiffuseTexture(const string& nodeId, const string& facesEntityId)
 {
-	bindDiffuseTexture(Object3DGroup::TEXTUREID_NONE, groupId, facesEntityId);
+	bindDiffuseTexture(Object3DNode::TEXTUREID_NONE, nodeId, facesEntityId);
 }
 
-void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& groupId, const string& facesEntityId)
+void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& nodeId, const string& facesEntityId)
 {
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		auto object3DGroup = object3dGroups[i];
-		// skip if a group is desired but not matching
-		if (groupId != "" && groupId != object3DGroup->group->getId())
+	for (auto i = 0; i < object3dNodes.size(); i++) {
+		auto object3DNode = object3dNodes[i];
+		// skip if a node is desired but not matching
+		if (nodeId != "" && nodeId != object3DNode->node->getId())
 			continue;
 
-		auto& facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 			// set dynamic texture id
-			object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
+			object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
 		}
 	}
 }
 
-void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId, const string& facesEntityId) {
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		auto object3DGroup = object3dGroups[i];
-		// skip if a group is desired but not matching
-		if (groupId != "" && groupId != object3DGroup->group->getId())
+void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
+	for (auto i = 0; i < object3dNodes.size(); i++) {
+		auto object3DNode = object3dNodes[i];
+		// skip if a node is desired but not matching
+		if (nodeId != "" && nodeId != object3DNode->node->getId())
 			continue;
 
-		auto& facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 			// set dynamic texture id
-			object3DGroup->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
+			object3DNode->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
 		}
 	}
 }
 
-void Object3DInternal::setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
-	Object3DBase::setGroupTransformationsMatrix(id, matrix);
-	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
-		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+void Object3DInternal::setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+	Object3DBase::setNodeTransformationsMatrix(id, matrix);
+	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
+	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
+		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }
 
-void Object3DInternal::unsetGroupTransformationsMatrix(const string& id) {
-	Object3DBase::unsetGroupTransformationsMatrix(id);
-	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
-		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+void Object3DInternal::unsetNodeTransformationsMatrix(const string& id) {
+	Object3DBase::unsetNodeTransformationsMatrix(id);
+	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
+	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
+		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }

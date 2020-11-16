@@ -10,7 +10,7 @@
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Sphere particle emitter
  * @author Andreas Drewke
  * @version $Id$
@@ -31,15 +31,19 @@ private:
 	float radius;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_SphereParticleEmitter();
 
-	/** 
+	/**
 	 * @return count
 	 */
 	inline int32_t getCount() {
 		return count;
 	}
 
-	/** 
+	/**
 	 * Set count
 	 * @param count count
 	 */
@@ -47,14 +51,14 @@ public:
 		this->count = count;
 	}
 
-	/** 
+	/**
 	 * @return life time
 	 */
 	inline int64_t getLifeTime() {
 		return lifeTime;
 	}
 
-	/** 
+	/**
 	 * Set life time
 	 * @param lifeTime life time
 	 */
@@ -62,14 +66,14 @@ public:
 		this->lifeTime = lifeTime;
 	}
 
-	/** 
+	/**
 	 * @return life time rnd
 	 */
 	inline int64_t getLifeTimeRnd() {
 		return lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
@@ -77,14 +81,14 @@ public:
 		this->lifeTimeRnd = lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * @return mass
 	 */
 	inline float getMass() {
 		return this->mass;
 	}
 
-	/** 
+	/**
 	 * Set mass
 	 * @param mass mass
 	 */
@@ -92,14 +96,14 @@ public:
 		this->mass = mass;
 	}
 
-	/** 
+	/**
 	 * @return mass rnd
 	 */
 	inline float getMassRnd() {
 		return massRnd;
 	}
 
-	/** 
+	/**
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
@@ -107,7 +111,7 @@ public:
 		this->massRnd = massRnd;
 	}
 
-	/** 
+	/**
 	 * @return velocity
 	 */
 	inline const Vector3& getVelocity() {
@@ -122,7 +126,7 @@ public:
 		this->velocity = velocity;
 	}
 
-	/** 
+	/**
 	 * @return velocity rnd
 	 */
 	inline const Vector3& getVelocityRnd() {
@@ -144,7 +148,7 @@ public:
 		return colorStart;
 	}
 
-	/** 
+	/**
 	 * Set start color
 	 * @param colorStart start color
 	 */
@@ -167,14 +171,14 @@ public:
 		this->colorEnd = colorEnd;
 	}
 
-	/** 
+	/**
 	 * @return center
 	 */
 	inline const Vector3& getCenter() {
 		return center;
 	}
 
-	/** 
+	/**
 	 * Set center
 	 * @param center center
 	 */
@@ -189,7 +193,7 @@ public:
 		return radius;
 	}
 
-	/** 
+	/**
 	 * Set radius
 	 * @param radius radius
 	 */
@@ -197,8 +201,4 @@ public:
 		this->radius = radius;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_SphereParticleEmitter();
 };

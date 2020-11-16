@@ -15,7 +15,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * LOD test
  * @author andreas.drewke
  * @version $Id$
@@ -40,7 +40,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
@@ -52,7 +52,7 @@ public:
 	 */
 	LODTest();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

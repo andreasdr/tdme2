@@ -28,7 +28,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 
-/** 
+/**
  * GUI renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -74,110 +74,124 @@ private:
 	float guiEffectOffsetX;
 	float guiEffectOffsetY;
 
-public:
+	/**
+	 * Initialize
+	 */
+	void init();
 
-	/** 
+public:
+	/**
+	 * Public constructor
+	 */
+	GUIRenderer(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~GUIRenderer();
+
+	/**
 	 * Set GUI
 	 * @param gui gui
 	 */
 	void setGUI(GUI* gui);
 
-	/** 
+	/**
 	 * @return GUI
 	 */
 	GUI* getGUI();
 
-	/** 
+	/**
 	 * Init
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Init rendering
 	 */
 	void initRendering();
 
-	/** 
+	/**
 	 * Done rendering
 	 */
 	void doneRendering();
 
-	/** 
+	/**
 	 * Init screen
 	 * @param screenNode screen node
 	 */
 	void initScreen(GUIScreenNode* screenNode);
 
-	/** 
+	/**
 	 * Done screen
 	 */
 	void doneScreen();
 
-	/** 
+	/**
 	 * Set effect color mul
 	 * @param color color
 	 */
 	void setFontColor(const GUIColor& color);
 
-	/** 
+	/**
 	 * Set effect color mul
 	 * @param color color
 	 */
 	void setEffectColorMul(const GUIColor& color);
 
-	/** 
+	/**
 	 * Set effect color add
 	 * @param color color
 	 */
 	void setEffectColorAdd(const GUIColor& color);
 
-	/** 
+	/**
 	 * Set GUI effect color mul
 	 * @param color color
 	 */
 	void setGUIEffectColorMul(const GUIColor& color);
 
-	/** 
+	/**
 	 * Set GUI effect color add
 	 * @param color color
 	 */
 	void setGUIEffectColorAdd(const GUIColor& color);
 
-	/** 
+	/**
 	 * @return GUI effect offset X
 	 */
 	float getGuiEffectOffsetX();
 
-	/** 
+	/**
 	 * Set GUI effect offset X
 	 * @param guiEffectOffsetX gui effect offset X
 	 */
 	void setGUIEffectOffsetX(float guiEffectOffsetX);
 
-	/** 
+	/**
 	 * @return GUI effect offset Y
 	 */
 	float getGuiEffectOffsetY();
 
-	/** 
+	/**
 	 * Set GUI effect offset Y
 	 * @param guiEffectOffsetY GUI effect offset Y
 	 */
 	void setGUIEffectOffsetY(float guiEffectOffsetY);
 
-	/** 
+	/**
 	 * @return render area left
 	 */
 	inline float getRenderAreaLeft() {
 		return renderAreaLeft;
 	}
 
-	/** 
+	/**
 	 * Set up render area left
 	 * @param renderAreaLeft render area left
 	 */
@@ -185,7 +199,7 @@ public:
 		this->renderAreaLeft = renderAreaLeft;
 	}
 
-	/** 
+	/**
 	 * Set sub render area left
 	 * @param renderAreaLeft render area left
 	 */
@@ -193,14 +207,14 @@ public:
 		this->renderAreaLeft = renderAreaLeft > this->renderAreaLeft ? renderAreaLeft : this->renderAreaLeft;
 	}
 
-	/** 
+	/**
 	 * @return render area top
 	 */
 	inline float getRenderAreaTop() {
 		return renderAreaTop;
 	}
 
-	/** 
+	/**
 	 * Set up render area top
 	 * @param renderAreaTop render area top
 	 */
@@ -208,7 +222,7 @@ public:
 		this->renderAreaTop = renderAreaTop;
 	}
 
-	/** 
+	/**
 	 * Set sub render area top
 	 * @param renderAreaTop render area top
 	 */
@@ -216,14 +230,14 @@ public:
 		this->renderAreaTop = renderAreaTop < this->renderAreaTop ? renderAreaTop : this->renderAreaTop;
 	}
 
-	/** 
+	/**
 	 * @return render area right
 	 */
 	inline float getRenderAreaRight() {
 		return renderAreaRight;
 	}
 
-	/** 
+	/**
 	 * Set up render area right
 	 * @param renderAreaRight render area right
 	 */
@@ -231,7 +245,7 @@ public:
 		this->renderAreaRight = renderAreaRight;
 	}
 
-	/** 
+	/**
 	 * Set sub render area right
 	 * @param renderAreaRight render area right
 	 */
@@ -239,14 +253,14 @@ public:
 		this->renderAreaRight = renderAreaRight < this->renderAreaRight ? renderAreaRight : this->renderAreaRight;
 	}
 
-	/** 
+	/**
 	 * @return render area bottom
 	 */
 	inline float getRenderAreaBottom() {
 		return renderAreaBottom;
 	}
 
-	/** 
+	/**
 	 * Set up render area bottom
 	 * @param renderAreaBottom render area bottom
 	 */
@@ -254,7 +268,7 @@ public:
 		this->renderAreaBottom = renderAreaBottom;
 	}
 
-	/** 
+	/**
 	 * Set sub render area bottom
 	 * @param renderAreaBottom render area bottom
 	 */
@@ -262,14 +276,14 @@ public:
 		this->renderAreaBottom = renderAreaBottom > this->renderAreaBottom ? renderAreaBottom : this->renderAreaBottom;
 	}
 
-	/** 
+	/**
 	 * @return render offset x
 	 */
 	inline float getRenderOffsetX() {
 		return renderOffsetX;
 	}
 
-	/** 
+	/**
 	 * Set render offset x
 	 * @param renderOffsetX render offset x
 	 */
@@ -277,14 +291,14 @@ public:
 		this->renderOffsetX = renderOffsetX;
 	}
 
-	/** 
+	/**
 	 * @return render offset y
 	 */
 	inline float getRenderOffsetY() {
 		return renderOffsetY;
 	}
 
-	/** 
+	/**
 	 * Set render offset y
 	 * @param renderOffsetY render offset y
 	 */
@@ -326,7 +340,7 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Add quad
 	 * Note: quad vertices order
 	 * 1    2
@@ -376,7 +390,7 @@ public:
 	 */
 	void setTexureMatrix(const Matrix2D3x3& textureMatrix);
 
-	/** 
+	/**
 	 * Bind texture
 	 * @param textureId texture
 	 */
@@ -394,20 +408,9 @@ public:
 	 */
 	void setMaskMaxValue(float maskMaxValue);
 
-	/** 
-	 * Render 
+	/**
+	 * Render
 	 */
 	void render();
 
-	/**
-	 * Public constructor
-	 */
-	GUIRenderer(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~GUIRenderer();
-private:
-	void init();
 };

@@ -18,11 +18,11 @@ GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::HIDDEN = new G
 GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::DOWNSIZE_CHILDREN = new GUIParentNode_Overflow("DOWNSIZE_CHILDREN", 1);
 GUIParentNode_Overflow* tdme::gui::nodes::GUIParentNode_Overflow::SCROLL = new GUIParentNode_Overflow("SCROLL", 2);
 
-GUIParentNode_Overflow* GUIParentNode_Overflow::valueOf(const string& a0)
+GUIParentNode_Overflow* GUIParentNode_Overflow::valueOf(const string& name)
 {
-	if (DOWNSIZE_CHILDREN->getName() == a0) return DOWNSIZE_CHILDREN;
-	if (HIDDEN->getName() == a0) return HIDDEN;
-	if (SCROLL->getName() == a0) return SCROLL;
+	if (DOWNSIZE_CHILDREN->getName() == name) return DOWNSIZE_CHILDREN;
+	if (HIDDEN->getName() == name) return HIDDEN;
+	if (SCROLL->getName() == name) return SCROLL;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

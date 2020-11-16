@@ -27,7 +27,7 @@ using tdme::audio::AudioEntity;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-Audio::Audio() 
+Audio::Audio()
 {
 	// TODO: error handling
 	device = alcOpenDevice(NULL);

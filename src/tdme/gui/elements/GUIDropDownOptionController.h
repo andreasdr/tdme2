@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI drop down option controller
  * @author Andreas Drewke
  * @version $Id$
@@ -33,25 +33,11 @@ class tdme::gui::elements::GUIDropDownOptionController final
 private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
+	static string CONDITION_HIDDEN;
 	GUIParentNode* dropDownNode { nullptr };
 	bool initialPostLayout;
 	bool selected;
 	MutableString value;
-
-	/** 
-	 * @return is selected
-	 */
-	bool isSelected();
-
-	/** 
-	 * Select
-	 */
-	void select();
-
-	/** 
-	 * Unselect
-	 */
-	void unselect();
 
 	/**
 	 * Private constructor
@@ -59,11 +45,32 @@ private:
 	 */
 	GUIDropDownOptionController(GUINode* node);
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
+	/**
+	 * @return is selected
+	 */
+	bool isSelected();
+
+	/**
+	 * Select
+	 */
+	void select();
+
+	/**
+	 * Unselect
+	 */
+	void unselect();
+
+	/**
+	 * Search by string
+	 * @param value value
+	 * @return search did match
+	 */
+	bool search(const string& value);
 
 public:
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void postLayout() override;
 	void dispose() override;

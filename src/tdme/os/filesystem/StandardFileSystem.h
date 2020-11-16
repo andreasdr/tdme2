@@ -22,6 +22,17 @@ class tdme::os::filesystem::StandardFileSystem final: public FileSystemInterface
 {
 
 public:
+	/**
+	 * Public constructor
+	 */
+	StandardFileSystem();
+
+	/**
+	 * Public destructor
+	 */
+	virtual ~StandardFileSystem();
+
+	// overridden methods
 	const string getFileName(const string& path, const string& fileName) override;
 	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
 	bool isPath(const string& pathName) override;
@@ -43,6 +54,4 @@ public:
 	void createPath(const string& pathName) override;
 	void removePath(const string& pathName, bool recursive) override;
 	void removeFile(const string& pathName, const string& fileName) override;
-	StandardFileSystem();
-	virtual ~StandardFileSystem();
 };

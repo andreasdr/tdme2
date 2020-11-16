@@ -174,7 +174,7 @@ void World::update(float deltaTime)
 					// construct collision
 					auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
 					auto normal = contactPoint->getNormal();
-					entity->getNormal().set(normal.x, normal.y, normal.z);
+					entity->setNormal(Vector3(normal.x, normal.y, normal.z));
 					auto shape1 = manifold->getShape1();
 					auto shape2 = manifold->getShape2();
 					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
@@ -296,16 +296,16 @@ void World::synch(Engine* engine)
 	}
 }
 
-Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight)
+Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight, float maxHeight)
 {
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
-		CustomCallbackClass(float stepUpMax, const Vector3& point, float minHeight = -10000.0f): stepUpMax(stepUpMax), point(point), height(minHeight), body(nullptr) {
+		CustomCallbackClass(float stepUpMax, const Vector3& point, float height = 10000.0f): stepUpMax(stepUpMax), point(point), height(height), body(nullptr) {
 		}
 		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
 			Vector3 hitPoint(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
 			auto _body = static_cast<Body*>(info.body->getUserData());
-			if (hitPoint.getY() >= height) {
+			if (hitPoint.getY() < height && hitPoint.getY() <= point.getY() + stepUpMax) {
 				height = hitPoint.getY();
 				body = static_cast<Body*>(info.body->getUserData());
 			}
@@ -314,7 +314,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 		Body* getBody() {
 			return body;
 		}
-		const float getHeight() {
+		float getHeight() {
 			return height;
 		}
 	private:
@@ -323,10 +323,10 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 		float height;
 		Body* body;
 	};
-	reactphysics3d::Vector3 startPoint(point.getX(), point.getY() + stepUpMax, point.getZ());
+	reactphysics3d::Vector3 startPoint(point.getX(), maxHeight, point.getZ());
 	reactphysics3d::Vector3 endPoint(point.getX(), minHeight, point.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
-	CustomCallbackClass customCallbackObject(stepUpMax, point, minHeight);
+	CustomCallbackClass customCallbackObject(stepUpMax, point, maxHeight);
 	world.raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		dest.set(point);
@@ -425,7 +425,7 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 						// construct collision
 						auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
 						auto normal = contactPoint->getNormal();
-						entity->getNormal().set(normal.x, normal.y, normal.z);
+						entity->setNormal(Vector3(normal.x, normal.y, normal.z));
 						auto shape1 = manifold->getContactManifold()->getShape1();
 						auto shape2 = manifold->getContactManifold()->getShape2();
 						auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();

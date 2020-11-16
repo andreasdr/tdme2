@@ -20,7 +20,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Lighting shader implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -66,8 +66,13 @@ protected:
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderPBRBaseImplementation(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
@@ -79,9 +84,4 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderPBRBaseImplementation(Renderer* renderer);
 };

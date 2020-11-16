@@ -18,8 +18,8 @@ using std::vector;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 
-/** 
- * Skinning definition for groups
+/**
+ * Skinning definition for nodes
  * @author andreas.drewke
  * @version $Id$
  */
@@ -31,43 +31,46 @@ private:
 	vector<vector<JointWeight>> verticesJointsWeights;
 	map<string, Joint*> jointsByName;
 public:
+	/**
+	 * Public constructor
+	 */
+	Skinning();
 
-	/** 
+	/**
 	 * @return weights
 	 */
 	inline const vector<float>& getWeights() {
 		return weights;
 	}
 
-
-	/** 
+	/**
 	 * Set up weights
 	 * @param weights weights
 	 */
 	void setWeights(const vector<float>& weights);
 
-	/** 
+	/**
 	 * @return all joints
 	 */
 	inline const vector<Joint>& getJoints() {
 		return joints;
 	}
 
-	/** 
+	/**
 	 * Set up joints
 	 * @param joints joints
 	 */
 	void setJoints(const vector<Joint>& joints);
 
-	/** 
+	/**
 	 * @return all vertex joints
 	 */
 	inline const vector<vector<JointWeight>>& getVerticesJointsWeights() {
 		return verticesJointsWeights;
 	}
 
-	/** 
-	 * Sets up vertices joints weights 
+	/**
+	 * Sets up vertices joints weights
 	 * @param verticesJointsWeights verticesJointsWeights
 	 */
 	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);
@@ -79,10 +82,6 @@ public:
 	 */
 	Joint* getJointByName(const string& name);
 
-	/**
-	 * Public constructor
-	 */
-	Skinning();
 private:
 
 	/**

@@ -17,7 +17,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tab content controller
  * @author Andreas Drewke
  * @version $Id$
@@ -34,28 +34,27 @@ private:
 	bool selected;
 	MutableString value;
 
-	/** 
-	 * @return is checked
-	 */
-	bool isSelected();
-
-	/** 
-	 * Set checked
-	 * @param selected selected
-	 */
-	void setSelected(bool selected);
-
 	/**
 	 * Private constructor
 	 * @param node node
 	 */
 	GUITabContentController(GUINode* node);
 
+	/**
+	 * @return is checked
+	 */
+	bool isSelected();
+
+	/**
+	 * Set checked
+	 * @param selected selected
+	 */
+	void setSelected(bool selected);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
-
-	// overridden methods
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

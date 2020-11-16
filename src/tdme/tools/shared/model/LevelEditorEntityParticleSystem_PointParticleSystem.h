@@ -19,7 +19,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
-/** 
+/**
  * Point particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -38,15 +38,24 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_PointParticleSystem();
 
-	/** 
+	/**
+	 * Public destructor
+	 */
+	~LevelEditorEntityParticleSystem_PointParticleSystem();
+
+	/**
 	 * @return max points
 	 */
 	inline int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
-	/** 
+	/**
 	 * Set max points
 	 * @param maxPoints max points
 	 */
@@ -54,7 +63,7 @@ public:
 		this->maxPoints = maxPoints;
 	}
 
-	/** 
+	/**
 	 * @return point size
 	 */
 	inline float getPointSize() {
@@ -149,22 +158,12 @@ public:
 		return autoEmit;
 	}
 
-	/** 
+	/**
 	 * Set auto emit
 	 * @param autoEmit auto emit
 	 */
 	inline void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_PointParticleSystem();
-
-	/**
-	 * Public destructor
-	 */
-	~LevelEditorEntityParticleSystem_PointParticleSystem();
 
 };

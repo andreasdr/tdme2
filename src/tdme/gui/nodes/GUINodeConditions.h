@@ -11,7 +11,7 @@ using std::string;
 
 using tdme::gui::nodes::GUIElementNode;
 
-/** 
+/**
  * GUI element node conditions
  * @author Andreas Drewke
  * @version $Id$
@@ -38,8 +38,13 @@ private:
 	void updateElementNode(const vector<string>& conditions) const;
 
 public:
+	/**
+	 * Public constructor
+	 * @param node node
+	 */
+	GUINodeConditions(GUIElementNode* node = nullptr);
 
-	/** 
+	/**
 	 * @return conditions
 	 */
 	const vector<string>& getConditions() const;
@@ -63,29 +68,24 @@ public:
 	 */
 	void set(const vector<string>& conditions);
 
-	/** 
+	/**
 	 * Add a condition
 	 * @param condition condition
 	 * @return condition changed
 	 */
 	bool add(const string& condition);
 
-	/** 
+	/**
 	 * Remove a condition
 	 * @param condition condition
 	 * @return condition changed
 	 */
 	bool remove(const string& condition);
 
-	/** 
+	/**
 	 * Remove all
 	 * @return condition changed
 	 */
 	bool removeAll();
 
-	/**
-	 * Public constructor
-	 * @param node node
-	 */
-	GUINodeConditions(GUIElementNode* node = nullptr);
 };

@@ -10,7 +10,7 @@ using std::array;
 
 using tdme::math::Math;
 
-/** 
+/**
  * Class representing texture UV coordinates data
  * @author andreas.drewke
  * @version $Id$
@@ -20,14 +20,38 @@ class tdme::engine::model::TextureCoordinate final
 private:
 	array<float, 2> data {  };
 public:
-	/** 
+	/**
+	 * Public constructor
+	 */
+	TextureCoordinate();
+
+	/**
+	 * Public constructor
+	 * @param textureCoordinate texture coordinate
+	 */
+	TextureCoordinate(const TextureCoordinate& textureCoordinate);
+
+	/**
+	 * Public constructor
+	 * @param uv texture coordinate
+	 */
+	TextureCoordinate(const array<float, 2>& uv);
+
+	/**
+	 * Public constructor
+	 * @param u u
+	 * @param v v
+	 */
+	TextureCoordinate(float u, float v);
+
+	/**
 	 * @return U
 	 */
 	inline float getU() const {
 		return data[0];
 	}
 
-	/** 
+	/**
 	 * @return V
 	 */
 	inline float getV() const {
@@ -53,20 +77,20 @@ public:
 	 */
 	TextureCoordinate& set(float u, float v);
 
-	/** 
+	/**
 	 * @return texture data as array
 	 */
 	inline array<float, 2>& getArray() const {
 		return (array<float, 2>&)data;
 	}
 
-	/** 
+	/**
 	 * Clones the texture coordinate
 	 * @return new texture coordinate
 	 */
 	TextureCoordinate clone();
 
-	/** 
+	/**
 	 * Compares this texture coordinate with given texture coordinate
 	 * @return equality
 	 */
@@ -79,27 +103,4 @@ public:
 			);
 	}
 
-	/**
-	 * Public constructor
-	 */
-	TextureCoordinate();
-
-	/**
-	 * Public constructor
-	 * @param textureCoordinate texture coordinate
-	 */
-	TextureCoordinate(const TextureCoordinate& textureCoordinate);
-
-	/**
-	 * Public constructor
-	 * @param uv texture coordinate
-	 */
-	TextureCoordinate(const array<float, 2>& uv);
-
-	/**
-	 * Public constructor
-	 * @param u u
-	 * @param v v
-	 */
-	TextureCoordinate(float u, float v);
 };

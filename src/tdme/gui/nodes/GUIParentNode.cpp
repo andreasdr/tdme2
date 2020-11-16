@@ -7,7 +7,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/GUIParserException.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
@@ -25,7 +24,6 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::set;
@@ -37,7 +35,6 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -55,7 +52,6 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
 GUIParentNode::GUIParentNode(
@@ -95,7 +91,7 @@ void GUIParentNode::clearSubNodes()
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
-	layouted = false;
+	screenNode->forceInvalidateLayout(this);
 
 	//
 	setConditionsMet();
@@ -105,16 +101,12 @@ void GUIParentNode::clearSubNodes()
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 {
-	if (resetScrollOffsets == true) {
-		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
-		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
-	}
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto subNode = subNodes[i];
 		screenNode->removeNode(subNode);
 	}
 	subNodes.clear();
-	layouted = false;
+	screenNode->forceInvalidateLayout(this);
 	GUIParser::parse(this, xml);
 
 	floatingNodesCache.clear();
@@ -129,22 +121,27 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 	setConditionsMet();
 	screenNode->layout(this);
 
-	if (overflowX == GUIParentNode_Overflow::SCROLL) {
-		float elementWidth = computedConstraints.width;
-		float contentWidth = getContentWidth();
-		auto scrollableWidth = contentWidth - elementWidth;
-		if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
-		if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
-		if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
-	}
+	if (layouted == false || resetScrollOffsets == true) {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
+	} else {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) {
+			float elementWidth = computedConstraints.width;
+			float contentWidth = getContentWidth();
+			auto scrollableWidth = contentWidth - elementWidth;
+			if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
+			if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
+			if (scrollableWidth > 0 && childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+		}
 
-	if (overflowY == GUIParentNode_Overflow::SCROLL) {
-		float elementHeight = computedConstraints.height;
-		float contentHeight = getContentHeight();
-		auto scrollableHeight = contentHeight - elementHeight;
-		if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
-		if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
-		if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) {
+			float elementHeight = computedConstraints.height;
+			float contentHeight = getContentHeight();
+			auto scrollableHeight = contentHeight - elementHeight;
+			if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
+			if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
+			if (scrollableHeight > 0 && childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+		}
 	}
 }
 
@@ -236,12 +233,11 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 void GUIParentNode::layout()
 {
 	if (conditionsMet == false) {
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	GUINode::layout();
 	layoutSubNodes();
-	invalidateRenderCaches();
 }
 
 void GUIParentNode::layoutSubNodes()
@@ -253,7 +249,6 @@ void GUIParentNode::layoutSubNodes()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}
-	invalidateRenderCaches();
 }
 
 void GUIParentNode::computeHorizontalChildrenAlignment()
@@ -263,18 +258,21 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		if (v == GUINode_AlignmentHorizontal::LEFT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right - padding.right);
 			}
 		}
@@ -288,18 +286,21 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		if (v == GUINode_AlignmentVertical::TOP) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom - padding.bottom);
 			}
 		}
@@ -343,17 +344,10 @@ void GUIParentNode::setConditionsMet()
 	}
 }
 
-void GUIParentNode::layoutOnDemand() {
-	if (conditionsMet == false) return;
-	GUINode::layoutOnDemand();
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		guiSubNode->layoutOnDemand();
-	}
-}
-
 void GUIParentNode::render(GUIRenderer* guiRenderer)
 {
+	layoutOnDemand();
+
 	if (shouldRender() == false) return;
 
 	auto renderAreaLeftCurrent = guiRenderer->getRenderAreaLeft();
@@ -463,7 +457,7 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 		return;
 
 	if (isEventBelongingToNode(event) == true || flow == GUINode_Flow::FLOATING) {
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
 			if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
 				childrenRenderOffsetX -= event->getWheelX() * 10.0f;
 				float elementWidth = this->computedConstraints.width;

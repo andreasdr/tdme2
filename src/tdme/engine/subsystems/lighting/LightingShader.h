@@ -17,7 +17,7 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Interface to lighting shader program
  * @author Andreas Drewke
  * @version $Id$
@@ -35,53 +35,64 @@ private:
 	vector<LightingShaderContext> contexts;
 
 public:
-	/** 
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShader(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~LightingShader();
+
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use lighting program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
-	/** 
+	/**
 	 * Unuse lighting program
 	 */
 	void unUseProgram();
 
-	/** 
+	/**
 	 * Update effect to program
 	 * @param context context
 	 */
 	void updateEffect(void* context);
 
-	/** 
+	/**
 	 * Update material to program
 	 * @param context context
 	 */
 	void updateMaterial(void* context);
 
-	/** 
+	/**
 	 * Update light to program
 	 * @param context context
 	 * @param lightId light id
 	 */
 	void updateLight(void* context, int32_t lightId);
 
-	/** 
+	/**
 	 * Update matrices to program
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
 
-	/** 
+	/**
 	 * Update texture matrix to program
 	 * @param context context
 	 */
@@ -101,14 +112,4 @@ public:
 	 */
 	void bindTexture(void* context, int32_t textureId);
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShader(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~LightingShader();
 };

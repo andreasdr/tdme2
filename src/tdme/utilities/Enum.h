@@ -12,10 +12,17 @@ using std::string;
  */
 class tdme::utilities::Enum {
 private:
-	string name {  };
-	int32_t ordinal {  };
+	string name;
+	int32_t ordinal;
 
 public:
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal or index
+	 */
+	Enum(const string& name, int32_t ordinal);
+
 	/**
 	 * @return name
 	 */
@@ -31,12 +38,5 @@ public:
 	 * @return equality
 	 */
 	bool equals(Enum* enumObject) const;
-
-	/**
-	 * Public constructor
-	 * @param name name
-	 * @param ordinal ordinal or index
-	 */
-	Enum(const string& name, int32_t ordinal);
 
 };

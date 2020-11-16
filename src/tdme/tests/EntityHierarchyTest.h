@@ -41,7 +41,7 @@ public:
 	 */
 	static void main(int argc, char** argv);
 
-	// overriden methods
+	// overridden methods
 	void display();
 	void dispose();
 	void initialize();

@@ -15,7 +15,7 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ProgressBarScreenController;
 
-PopUps::PopUps() 
+PopUps::PopUps()
 {
 	fileDialogScreenController = new FileDialogScreenController();
 	infoDialogScreenController = new InfoDialogScreenController();

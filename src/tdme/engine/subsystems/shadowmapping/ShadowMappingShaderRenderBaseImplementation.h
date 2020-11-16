@@ -15,7 +15,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplemen
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Shadow mapping base shader to render shadow maps
  * @author Andreas Drewke
  * @version $Id$
@@ -58,8 +58,18 @@ protected:
 	int lightId { -1 };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	ShadowMappingShaderRenderBaseImplementation(Renderer* renderer);
 
-	// overriden methods
+	/**
+	 * Destructor
+	 */
+	virtual ~ShadowMappingShaderRenderBaseImplementation();
+
+	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
@@ -72,14 +82,4 @@ public:
 	virtual void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	ShadowMappingShaderRenderBaseImplementation(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ShadowMappingShaderRenderBaseImplementation();
 };

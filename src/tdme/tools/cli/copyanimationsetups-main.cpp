@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 		for (auto& animationSetupIt: srcModel->getAnimationSetups()) {
 			auto srcAnimationSetup = animationSetupIt.second;
 			Console::println("Adding target animation setup: " + srcAnimationSetup->getId());
-			if (srcAnimationSetup->getOverlayFromGroupId().length() == 0) {
+			if (srcAnimationSetup->getOverlayFromNodeId().length() == 0) {
 				targetModel->addAnimationSetup(
 					srcAnimationSetup->getId(),
 					srcAnimationSetup->getStartFrame(),
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 			} else {
 				targetModel->addOverlayAnimationSetup(
 					srcAnimationSetup->getId(),
-					srcAnimationSetup->getOverlayFromGroupId(),
+					srcAnimationSetup->getOverlayFromNodeId(),
 					srcAnimationSetup->getStartFrame(),
 					srcAnimationSetup->getEndFrame(),
 					srcAnimationSetup->isLoop(),

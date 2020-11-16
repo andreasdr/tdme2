@@ -21,14 +21,14 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
 using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Properties;
 
-/** 
+/**
  * Installer
  * @author Andreas Drewke
  * @version $Id$
@@ -80,23 +80,25 @@ private:
 	 */
 	static void createPathRecursively(const string& pathName);
 public:
+	/**
+	 * Public constructor
+	 */
+	Installer();
+
+	// overridden methods
 	void initialize() override;
 	void dispose() override;
 	void reshape(int32_t width, int32_t height) override;
 	void display() override;
 	void onClose() override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
 
-	/**
-	 * Public constructor
-	 */
-	Installer();
 };

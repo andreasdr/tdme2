@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 		);
 		Console::println("Fixing level models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
-		z2yUpMatrix.identity().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
+		z2yUpMatrix.identity().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f);
 		// entity library
 		auto entityLibrary = level.getEntityLibrary();
 		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {

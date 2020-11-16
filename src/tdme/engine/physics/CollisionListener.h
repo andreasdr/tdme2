@@ -5,22 +5,21 @@
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::Body;
 
-/** 
+/**
  * Collision listener
  * @author Andreas Drewke
  * @version $Id$
  */
 struct tdme::engine::physics::CollisionListener
 {
-
 	/**
 	 * Destructor
 	 */
 	virtual ~CollisionListener() {}
 
-	/** 
+	/**
 	 * On collision
-	 * Note: 
+	 * Note:
 	 * 	The collision response will only live while calling this method.
 	 * 	If you need it somewhere else you need to clone it
 	 * @param body1 body 1
@@ -29,9 +28,9 @@ struct tdme::engine::physics::CollisionListener
 	 */
 	virtual void onCollision(Body* body1, Body* body2, CollisionResponse& collisionResponse) = 0;
 
-	/** 
+	/**
 	 * On collision begin
-	 * Note: 
+	 * Note:
 	 * 	The collision response will only live while calling this method.
 	 * 	If you need it somewhere else you need to clone it
 	 * @param body1 body 1
@@ -40,10 +39,11 @@ struct tdme::engine::physics::CollisionListener
 	 */
 	virtual void onCollisionBegin(Body* body1, Body* body2, CollisionResponse& collisionResponse) = 0;
 
-	/** 
+	/**
 	 * On collision end
 	 * @param body1 body 1
 	 * @param body2 body 2
 	 */
 	virtual void onCollisionEnd(Body* body1, Body* body2) = 0;
+
 };

@@ -9,8 +9,8 @@
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utilities/Console.h>
@@ -38,7 +38,7 @@ using tdme::utilities::StringTools;
 
 constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
 
-LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level) 
+LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level)
 {
 	this->level = level;
 	this->entityIdx = 0;
@@ -109,7 +109,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 		Vector3()
 	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
-	levelEditorEntity->getBoundingVolumeAt(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
 	addEntity(levelEditorEntity);
 	return levelEditorEntity;
 }

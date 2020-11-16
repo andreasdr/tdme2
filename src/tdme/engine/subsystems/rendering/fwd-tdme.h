@@ -1,7 +1,6 @@
 // Forward declarations for tdme.engine.subsystems.object
 #pragma once
 
-
 namespace tdme {
 namespace engine {
 namespace subsystems {
@@ -17,9 +16,9 @@ namespace rendering {
 	class Object3DAnimation;
 	class Object3DBase;
 	class Object3DBase_TransformedFacesIterator;
-	class Object3DGroup;
-	class Object3DGroupMesh;
-	class Object3DGroupRenderer;
+	class Object3DNode;
+	class Object3DNodeMesh;
+	class Object3DNodeRenderer;
 	class Object3DInternal;
 	class Object3DModelInternal;
 	class RenderTransparentRenderPointsPool;

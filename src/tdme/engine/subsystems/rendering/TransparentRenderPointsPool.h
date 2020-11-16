@@ -18,7 +18,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Transparent render points pool
  * @author andreas.drewke
  * @version $Id$
@@ -32,8 +32,18 @@ private:
 	int32_t poolIdx;
 
 public:
+	/**
+	 * Public constructor
+	 * @param pointsMax points max
+	 */
+	TransparentRenderPointsPool(int32_t pointsMax);
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~TransparentRenderPointsPool();
+
+	/**
 	 * Creates an transparent render point entity in pool
 	 * @param point point
 	 * @param spriteIndex sprite index
@@ -49,7 +59,6 @@ public:
 		}
 		// create point in pool
 		auto transparentRenderPoint = transparentRenderPoints[poolIdx++];
-		transparentRenderPoint->acquired = true;
 		transparentRenderPoint->point = point;
 		transparentRenderPoint->spriteIndex = spriteIndex;
 		transparentRenderPoint->color = color;
@@ -57,31 +66,28 @@ public:
 		transparentRenderPoint->particleSystem = particleSystem;
 	}
 
-	/** 
+	/**
 	 * Reset
 	 */
 	void reset();
 
-	/** 
+	/**
+	 * @return transparent render points count
+	 */
+	inline int getTransparentRenderPointsCount() {
+		return poolIdx;
+	}
+
+	/**
 	 * @return transparent render points vector
 	 */
 	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {
 		return transparentRenderPoints;
 	}
 
-	/** 
+	/**
 	 * Sort transparent render points
 	 */
 	void sort();
 
-	/**
-	 * Public constructor
-	 * @param pointsMax points max
-	 */
-	TransparentRenderPointsPool(int32_t pointsMax);
-
-	/**
-	 * Destructor
-	 */
-	~TransparentRenderPointsPool();
 };

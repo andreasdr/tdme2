@@ -26,7 +26,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 
-/** 
+/**
  * OpenGL 3 renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -72,6 +72,12 @@ private:
 	#endif
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GL3Renderer();
+
+	// overridden methods
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
@@ -82,6 +88,7 @@ public:
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
+	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
@@ -144,14 +151,16 @@ public:
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindOrigins(void* context, int32_t bufferObjectId) override;
+	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
+	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
+	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
@@ -184,16 +193,8 @@ public:
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 private:
 
-	/** 
-	 * Checks if GL error did occour 
+	/**
+	 * Checks if GL error did occour
 	 */
 	void checkGLError(int line);
-
-	// Generated
-
-public:
-	/**
-	 * Public constructor
-	 */
-	GL3Renderer();
 };

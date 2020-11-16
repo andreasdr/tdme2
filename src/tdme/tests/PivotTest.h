@@ -15,7 +15,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Engine with pivot test
  * @author andreas.drewke
  * @version $Id$
@@ -30,7 +30,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
@@ -42,7 +42,7 @@ public:
 	 */
 	PivotTest();
 
-	// overriden methods
+	// overridden methods
 	void display();
 	void dispose();
 	void initialize();

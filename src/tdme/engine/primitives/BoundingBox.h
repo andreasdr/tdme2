@@ -17,7 +17,7 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Axis aligned bounding box used for frustum, this is not directly connectable with physics engine
  * @author Andreas Drewke
  * @version $Id$
@@ -46,6 +46,23 @@ private:
 	Vector3 dimensions;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	BoundingBox();
+
+	/**
+	 * Public constructor
+	 * @param boundingBox bounding box
+	 */
+	BoundingBox(BoundingBox* boundingBox);
+
+	/**
+	 * Public constructor
+	 * @param min min
+	 * @param max max
+	 */
+	BoundingBox(const Vector3& min, const Vector3& max);
 
 	/**
 	 * Compute closest point in bounding box of given point
@@ -63,21 +80,21 @@ public:
 		);
 	}
 
-	/** 
+	/**
 	 * @return min x,y,z vertex
 	 */
 	inline Vector3& getMin() {
 		return min;
 	}
 
-	/** 
+	/**
 	 * @return max x,y,z vertex
 	 */
 	inline Vector3& getMax() {
 		return max;
 	}
 
-	/** 
+	/**
 	 * Returns bounding box vertices
 	 * @return vertices
 	 */
@@ -135,23 +152,5 @@ public:
 	 * Updates this bounding box
 	 */
 	void update();
-
-	/**
-	 * Public constructor
-	 */
-	BoundingBox();
-
-	/**
-	 * Public constructor
-	 * @param boundingBox bounding box
-	 */
-	BoundingBox(BoundingBox* boundingBox);
-
-	/**
-	 * Public constructor
-	 * @param min min
-	 * @param max max
-	 */
-	BoundingBox(const Vector3& min, const Vector3& max);
 
 };

@@ -34,7 +34,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Dynamic rigid/static rigid/collision body class
  * @author Andreas Drewke
  * @version $Id$
@@ -63,18 +63,39 @@ private:
 	reactphysics3d::RigidBody* rigidBody { nullptr };
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	bool cloned { false };
-	string id {  };
-	string rootId {  };
-	int32_t type {  };
-	float mass {  };
-	uint16_t collideTypeIds {  };
-	uint16_t collisionTypeId {  };
-	Vector3 inertiaTensor {  };
-	Transformations transformations {  };
-	Vector3 transformationsScale {  };
-	vector<BoundingVolume*> boundingVolumes {  };
-	vector<reactphysics3d::ProxyShape*> proxyShapes {  };
-	vector<CollisionListener*> collisionListener {  };
+	string id;
+	string rootId;
+	int32_t type;
+	float mass;
+	uint16_t collideTypeIds;
+	uint16_t collisionTypeId;
+	Vector3 inertiaTensor;
+	Transformations transformations;
+	Vector3 transformationsScale;
+	vector<BoundingVolume*> boundingVolumes;
+	vector<reactphysics3d::ProxyShape*> proxyShapes;
+	vector<CollisionListener*> collisionListener;
+
+	/**
+	 * Protected constructor
+	 * @param world world
+	 * @param id id
+	 * @param type type
+	 * @param enabled enabled
+	 * @param collisionTypeId collision type id
+	 * @param transformations transformations
+	 * @param restitution restitution
+	 * @param friction friction
+	 * @param mass mass in kg
+	 * @param inertiaTensor inertia tensor vector
+	 * @param boundingVolumes bounding volumes
+	 */
+	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
+
+	/**
+	 * Destructor
+	 */
+	~Body();
 
 	/**
 	 * Reset proxy shapes
@@ -112,27 +133,6 @@ private:
 	 */
 	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
-	/**
-	 * Protected constructor
-	 * @param world world
-	 * @param id id
-	 * @param type type
-	 * @param enabled enabled
-	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
-	 * @param restitution restitution
-	 * @param friction friction
-	 * @param mass mass in kg
-	 * @param inertiaTensor inertia tensor vector
-	 * @param boundingVolumes bounding volumes
-	 */
-	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
-
-	/**
-	 * Destructor
-	 */
-	~Body();
-
 public:
 	/**
 	 * @return if rigid body has been cloned from another rigid body
@@ -145,12 +145,12 @@ public:
 	 */
 	void setCloned(bool cloned);
 
-	/** 
+	/**
 	 * @return id
 	 */
 	const string& getId();
 
-	/** 
+	/**
 	 * @return root id
 	 */
 	const string& getRootId();
@@ -178,34 +178,34 @@ public:
 	 */
 	void setCollisionTypeId(uint16_t typeId);
 
-	/** 
+	/**
 	 * @return collision type ids bitmask
 	 */
 	uint16_t getCollisionTypeIds();
 
-	/** 
+	/**
 	 * Set up collision type ids
 	 * @param collisionTypeIds collisionTypeIds
 	 */
 	void setCollisionTypeIds(uint16_t collisionTypeIds);
 
-	/** 
+	/**
 	 * @return if enabled
 	 */
 	bool isEnabled();
 
-	/** 
+	/**
 	 * Set up if rigid body is enabled
 	 * @param enabled enabled
 	 */
 	void setEnabled(bool enabled);
 
-	/** 
+	/**
 	 * @return object is static
 	 */
 	bool isStatic();
 
-	/** 
+	/**
 	 * @return if sleeping
 	 */
 	bool isSleeping();
@@ -232,40 +232,40 @@ public:
 	 */
 	BoundingBox computeBoundingBoxTransformed();
 
-	/** 
+	/**
 	 * @return friction
 	 */
 	float getFriction();
 
-	/** 
+	/**
 	 * Set up friction
 	 * @param friction friction
 	 */
 	void setFriction(float friction);
 
-	/** 
+	/**
 	 * @return restitution / bouncyness
 	 */
 	float getRestitution();
 
-	/** 
+	/**
 	 * Set up restitution
 	 * @param restitution restitution
 	 */
 	void setRestitution(float restitution);
 
-	/** 
+	/**
 	 * @return mass
 	 */
 	float getMass();
 
-	/** 
+	/**
 	 * Set up mass
 	 * @param mass mass
 	 */
 	void setMass(float mass);
 
-	/** 
+	/**
 	 * @return linear velocity
 	 */
 	const Vector3 getLinearVelocity();
@@ -276,7 +276,7 @@ public:
 	 */
 	void setLinearVelocity(const Vector3& linearVelocity);
 
-	/** 
+	/**
 	 * @return angular velocity
 	 */
 	const Vector3 getAngularVelocity();
@@ -314,13 +314,13 @@ public:
 	 */
 	const Transformations& getTransformations();
 
-	/** 
+	/**
 	 * Synchronizes this rigid body with transformations
 	 * @param transformations transformations
 	 */
 	void fromTransformations(const Transformations& transformations);
 
-	/** 
+	/**
 	 * Add force
 	 * @param forceOrigin position of world force
 	 * @param force force
@@ -339,13 +339,13 @@ public:
 	 */
 	void addTorque(const Vector3& torque);
 
-	/** 
+	/**
 	 * Add a collision listener to this rigid body
 	 * @param listener listener
 	 */
 	void addCollisionListener(CollisionListener* listener);
 
-	/** 
+	/**
 	 * Remove a collision listener to this rigid body
 	 * @param listener listener
 	 */

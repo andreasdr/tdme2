@@ -14,7 +14,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI scroll area controller
  * @author Andreas Drewke
  * @version $Id$
@@ -23,7 +23,18 @@ class tdme::gui::elements::GUIScrollAreaController final: public GUINodeControll
 {
 	friend class GUIScrollArea;
 
+private:
+	MutableString value;
+	GUIActionListener* actionListener { nullptr };
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIScrollAreaController(GUINode* node);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -38,13 +49,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	MutableString value;
-	GUIActionListener* actionListener { nullptr };
-
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIScrollAreaController(GUINode* node);
 };

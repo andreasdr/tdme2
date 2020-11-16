@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI radio button controller
  * @author Andreas Drewke
  * @version $Id$
@@ -42,23 +42,29 @@ private:
 	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
 	MutableString value;
 
-	/** 
-	 * @return is checked
-	 */
-	bool isSelected();
-
-	/** 
-	 * Select
-	 */
-	void select();
-
 	/**
 	 * Private constructor
 	 * @param node node
 	 */
 	GUIRadioButtonController(GUINode* node);
 
+	/**
+	 * Initialize
+	 */
+	void init();
+
+	/**
+	 * @return is checked
+	 */
+	bool isSelected();
+
+	/**
+	 * Select
+	 */
+	void select();
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -73,6 +79,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	void init();
 };

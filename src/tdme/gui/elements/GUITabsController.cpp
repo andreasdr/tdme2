@@ -15,7 +15,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-GUITabsController::GUITabsController(GUINode* node) 
+GUITabsController::GUITabsController(GUINode* node)
 	: GUINodeController(node)
 {
 	init();

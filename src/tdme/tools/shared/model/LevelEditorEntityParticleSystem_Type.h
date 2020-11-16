@@ -17,7 +17,19 @@ public:
 	static LevelEditorEntityParticleSystem_Type* OBJECT_PARTICLE_SYSTEM;
 	static LevelEditorEntityParticleSystem_Type* POINT_PARTICLE_SYSTEM;
 	static LevelEditorEntityParticleSystem_Type* FOG_PARTICLE_SYSTEM;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	LevelEditorEntityParticleSystem_Type(const string& name, int ordinal);
-	static LevelEditorEntityParticleSystem_Type* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static LevelEditorEntityParticleSystem_Type* valueOf(const string& name);
 
 };

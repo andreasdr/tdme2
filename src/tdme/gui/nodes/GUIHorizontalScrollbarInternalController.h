@@ -15,7 +15,7 @@ using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI scroll bar controller
  * @author Andreas Drewke
  * @version $Id$
@@ -34,40 +34,41 @@ private:
 	int32_t mouseXOffset;
 	MutableString value;
 
-protected:
-	GUIHorizontalScrollbarInternalController(GUINode* node);
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
-	/** 
-	 * @return state
-	 */
-	virtual State getState();
-
-private:
-
-	/** 
+	/**
 	 * @return bar width
 	 */
 	virtual float getBarWidth();
 
-	/** 
+	/**
 	 * @return bar left
 	 */
 	virtual float getBarLeft();
 
-	/** 
+	/**
 	 * Set dragged x
 	 * @param draggedX dragged x
 	 */
 	virtual void setDraggedX(float draggedX);
 
+protected:
+	/**
+	 * Constructor
+	 * @param node node
+	 */
+	GUIHorizontalScrollbarInternalController(GUINode* node);
+
 public:
+	/**
+	 * @return state
+	 */
+	virtual State getState();
+
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;

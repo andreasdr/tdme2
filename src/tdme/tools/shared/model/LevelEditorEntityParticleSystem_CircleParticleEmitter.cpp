@@ -7,7 +7,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticle
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-LevelEditorEntityParticleSystem_CircleParticleEmitter::LevelEditorEntityParticleSystem_CircleParticleEmitter() 
+LevelEditorEntityParticleSystem_CircleParticleEmitter::LevelEditorEntityParticleSystem_CircleParticleEmitter()
 {
 	count = 2000;
 	lifeTime = 1500;

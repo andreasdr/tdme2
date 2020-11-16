@@ -62,6 +62,7 @@ class tdme::gui::nodes::GUINode
 	friend class tdme::gui::GUI;
 	friend class GUIElementNode;
 	friend class GUIImageNode;
+	friend class GUILayerNode;
 	friend class GUILayoutNode;
 	friend class GUIParentNode;
 	friend class GUIScreenNode;
@@ -77,6 +78,12 @@ class tdme::gui::nodes::GUINode
 
 private:
 	GUINode_Flow* flow;
+
+	/**
+	 * Determine element node dependencies
+	 * @param elementNodeDependencies element node dependencies
+	 */
+	void cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies);
 
 	/**
 	 * Parse condition function term
@@ -96,6 +103,14 @@ private:
 	bool cfCall(GUIElementNode* elementNode, const string& function, const vector<string>& arguments);
 
 	/**
+	 * Determine element node dependencies - Call condition function with arguments
+	 * @param function function to be called
+	 * @param arguments function arguments
+	 * @param elementNodeDependencies element node dependencies
+	 */
+	void cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies);
+
+	/**
 	 * Condition function: empty
 	 * @param arguments arguments
 	 * 	Argument should look like 'test', "test", '', "", 123, 0, 123.4, 0.0 for now
@@ -113,6 +128,14 @@ private:
 	 * @return if 1 condition has been met
 	 */
 	bool cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments);
+
+	/**
+	 * Determine element node dependencies - Condition function: has condition
+	 * @param arguments arguments
+	 *	Format of arguments: [elementid.]condition
+	 *	Arguments or OR connected
+	 */
+	void cfHasConditionDetermineElementNodeDependencies(const vector<string>& arguments, vector<string>& elementNodeDependencies);
 
 protected:
 	GUIScreenNode* screenNode { nullptr };
@@ -139,6 +162,46 @@ protected:
 	bool layouted;
 	bool haveOutEffect;
 
+	/**
+	 * Public constructor
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param backgroundImageEffectColorMul background image effect color mul
+	 * @param backgroundImageEffectColorAdd background image effect color add
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 */
+	GUINode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUIColor& backgroundImageEffectColorMul,
+		const GUIColor& backgroundImageEffectColorAdd,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn
+	);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~GUINode();
 	/**
 	 * @return node type
 	 */
@@ -222,47 +285,6 @@ protected:
 	virtual float computeParentChildrenRenderOffsetYTotal();
 
 	/**
-	 * Public constructor
-	 * @param screenNode screen node
-	 * @param parentNode parent node
-	 * @param id id
-	 * @param flow flow
-	 * @param alignments alignments
-	 * @param requestedConstraints requested constraints
-	 * @param backgroundColor background color
-	 * @param backgroundImage background image
-	 * @param backgroundImageScale9Grid background image scale 9 grid
-	 * @param backgroundImageEffectColorMul background image effect color mul
-	 * @param backgroundImageEffectColorAdd background image effect color add
-	 * @param border border
-	 * @param padding padding
-	 * @param showOn show on
-	 * @param hideOn hide on
-	 */
-	GUINode(
-		GUIScreenNode* screenNode,
-		GUIParentNode* parentNode,
-		const string& id,
-		GUINode_Flow* flow,
-		const GUINode_Alignments& alignments,
-		const GUINode_RequestedConstraints& requestedConstraints,
-		const GUIColor& backgroundColor,
-		const string& backgroundImage,
-		const GUINode_Scale9Grid& backgroundImageScale9Grid,
-		const GUIColor& backgroundImageEffectColorMul,
-		const GUIColor& backgroundImageEffectColorAdd,
-		const GUINode_Border& border,
-		const GUINode_Padding& padding,
-		const GUINodeConditions& showOn,
-		const GUINodeConditions& hideOn
-	);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~GUINode();
-
-	/**
 	 * On set condition
 	 * @param conditions conditions
 	 */
@@ -275,6 +297,7 @@ protected:
 
 	/**
 	 * Determine if to render
+	 * @return if node will be rendered
 	 */
 	inline virtual bool shouldRender() {
 		return conditionsMet == true || haveActiveOutEffect() == true;
@@ -420,6 +443,14 @@ public:
 	virtual void dispose();
 
 	/**
+	 * Determine if conditions are set
+	 * @return if conditions are set
+	 */
+	inline bool isConditionsMet() {
+		return conditionsMet;
+	}
+
+	/**
 	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
@@ -439,7 +470,7 @@ public:
 	/**
 	 * Is event belonging to node
 	 * @param event event
-	 * @param position x,y position in node coordinate system 
+	 * @param position x,y position in node coordinate system
 	 * @return boolean
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
@@ -455,7 +486,7 @@ public:
 	 * Get event off node relative position
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
-	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
+	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)
 	 * @return void
 	 */
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);

@@ -372,7 +372,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
-			auto entityBoundingVolume = levelEditorEntity->getBoundingVolumeAt(i);
+			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
@@ -449,8 +449,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		}
 	}
 
-	// do render groups
-	auto renderGroupIdx = 0;
+	// do render nodes
+	auto renderNodeIdx = 0;
 	progressStepCurrent = 0;
 	auto progressStepMax = 0;
 	if (progressCallback != nullptr) {
@@ -465,8 +465,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 		Console::println("Level::addLevel(): adding render group: " + itShader.first);
 		for (auto& itPartition: itShader.second) {
-			auto object3DRenderGroup = new Object3DRenderGroup(
-				"tdme.rendergroup." + itPartition.first + "." + to_string(renderGroupIdx++),
+			auto object3DRenderNode = new Object3DRenderGroup(
+				"tdme.rendernode." + itPartition.first + "." + to_string(renderNodeIdx++),
 				renderGroupsLODLevels,
 				renderGroupsLOD2MinDistance,
 				renderGroupsLOD3MinDistance,
@@ -479,18 +479,18 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 				}
 				progressStepCurrent++;
 				auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
-				object3DRenderGroup->setShader(levelEditorEntity->getShader());
-				object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
-				object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+				object3DRenderNode->setShader(levelEditorEntity->getShader());
+				object3DRenderNode->setDistanceShader(levelEditorEntity->getDistanceShader());
+				object3DRenderNode->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
 				auto objectIdx = -1;
 				for (auto transformation: itModel.second) {
 					objectIdx++;
 					if (objectIdx % renderGroupsReduceBy != 0) continue;
-					object3DRenderGroup->addObject(levelEditorEntity->getModel(), *transformation);
+					object3DRenderNode->addObject(levelEditorEntity->getModel(), *transformation);
 				}
 			}
-			object3DRenderGroup->updateRenderGroup();
-			engine->addEntity(object3DRenderGroup);
+			object3DRenderNode->updateRenderGroup();
+			engine->addEntity(object3DRenderNode);
 		}
 	}
 
@@ -501,13 +501,14 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index) {
+Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
 
+	auto physicsType = overrideType != nullptr?overrideType:levelEditorEntity->getPhysics()->getType();
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
+			auto entityBv = levelEditorEntity->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
@@ -523,7 +524,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 		levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
 		Object3DModel terrainModel(levelEditorEntity->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -532,7 +533,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -542,7 +543,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				{terrainMesh}
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -558,11 +559,11 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	} else {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
-			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
+			auto entityBv = levelEditorEntity->getBoundingVolume(j);
 			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
@@ -571,7 +572,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
 			return world->addStaticRigidBody(
 				id,
 				true,
@@ -581,7 +582,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 				boundingVolumes
 			);
 		} else
-		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		if (physicsType == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
 			return world->addRigidBody(
 				id,
 				true,
@@ -598,14 +599,14 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	return nullptr;
 }
 
-Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index) {
+Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index, LevelEditorEntityPhysics_BodyType* overrideType) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index);
+	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
 void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)

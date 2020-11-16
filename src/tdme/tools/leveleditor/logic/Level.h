@@ -23,11 +23,12 @@ using tdme::math::Vector3;
 using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * Level Editor Level Logic
  * @author Andreas Drewke
  * @version $Id$
@@ -63,10 +64,10 @@ public:
 
 	/**
 	 * Set render groups partition size / width
-	 * @param renderGroupsPartitionDepth render groups partition size / width
+	 * @param renderNodesPartitionDepth render groups partition size / width
 	 */
-	inline static void setRenderGroupsPartitionWidth(float renderGroupsPartitionWidth) {
-		Level::renderGroupsPartitionWidth = renderGroupsPartitionWidth;
+	inline static void setRenderGroupsPartitionWidth(float renderNodesPartitionWidth) {
+		Level::renderGroupsPartitionWidth = renderNodesPartitionWidth;
 	}
 
 	/**
@@ -78,10 +79,10 @@ public:
 
 	/**
 	 * Set render groups partition size / height
-	 * @param renderGroupsPartitionDepth render groups partition size / height
+	 * @param renderNodesPartitionDepth render groups partition size / height
 	 */
-	inline static void setRenderGroupsPartitionHeight(float renderGroupsPartitionHeight) {
-		Level::renderGroupsPartitionHeight = renderGroupsPartitionHeight;
+	inline static void setRenderGroupsPartitionHeight(float renderNodesPartitionHeight) {
+		Level::renderGroupsPartitionHeight = renderNodesPartitionHeight;
 	}
 
 	/**
@@ -93,10 +94,10 @@ public:
 
 	/**
 	 * Set render groups partition size / depth
-	 * @param renderGroupsPartitionDepth render groups partition size / depth
+	 * @param renderNodesPartitionDepth render groups partition size / depth
 	 */
-	inline static void setRenderGroupsPartitionDepth(float renderGroupsPartitionDepth) {
-		Level::renderGroupsPartitionDepth = renderGroupsPartitionDepth;
+	inline static void setRenderGroupsPartitionDepth(float renderNodesPartitionDepth) {
+		Level::renderGroupsPartitionDepth = renderNodesPartitionDepth;
 	}
 
 	/**
@@ -123,7 +124,7 @@ public:
 
 	/**
 	 * Set render groups LOD levels
-	 * @param renderGroupsLodLevels render groups LOD levels
+	 * @param lodLevels render groups LOD levels
 	 */
 	inline static void setRenderGroupsLodLevels(int lodLevels) {
 		renderGroupsLODLevels = lodLevels;
@@ -138,7 +139,7 @@ public:
 
 	/**
 	 * Set render groups LOD2 minumum distance
-	 * @param renderGroupsLod2MinDistance render groups LOD2 minumum distance
+	 * @param minDistance render groups LOD2 minumum distance
 	 */
 	inline static void setRenderGroupsLod2MinDistance(float minDistance) {
 		renderGroupsLOD2MinDistance = minDistance;
@@ -153,7 +154,7 @@ public:
 
 	/**
 	 * Set render groups LOD3 minumum distance
-	 * @param renderGroupsLod3MinDistance render groups LOD3 minumum distance
+	 * @param minDistance render groups LOD3 minumum distance
 	 */
 	inline static void setRenderGroupsLod3MinDistance(float minDistance) {
 		renderGroupsLOD3MinDistance = minDistance;
@@ -168,7 +169,7 @@ public:
 
 	/**
 	 * Set render groups LOD2 reduce by factor
-	 * @param renderGroupsLod2ReduceBy render groups LOD2 reduce by factor
+	 * @param reduceBy render groups LOD2 reduce by factor
 	 */
 	inline static void setRenderGroupsLod2ReduceBy(int reduceBy) {
 		renderGroupsLOD2ReduceBy = reduceBy;
@@ -183,7 +184,7 @@ public:
 
 	/**
 	 * Set render groups LOD3 reduce by factor
-	 * @param renderGroupsLod3ReduceBy render groups LOD3 reduce by factor
+	 * @param reduceBy render groups LOD3 reduce by factor
 	 */
 	inline static void setRenderGroupsLod3ReduceBy(int reduceBy) {
 		renderGroupsLOD3ReduceBy = reduceBy;
@@ -204,7 +205,7 @@ public:
 		Level::enableEarlyZRejection = enableEarlyZRejection;
 	}
 
-	/** 
+	/**
 	 * Set lights from level
 	 * @param engine engine
 	 * @param level level
@@ -212,7 +213,7 @@ public:
 	 */
 	static void setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
-	/** 
+	/**
 	 * Create particle system
 	 * @param particleSystem level editor entity particle system
 	 * @param id id
@@ -268,9 +269,10 @@ public:
 	 * @param transformations transformations
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
+	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1);
+	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1, LevelEditorEntityPhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body
@@ -279,9 +281,10 @@ public:
 	 * @param translation translation
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
+	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1);
+	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1, LevelEditorEntityPhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Add level to physics world
@@ -293,21 +296,21 @@ public:
 	 */
 	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
-	/** 
+	/**
 	 * Disable level in engine
 	 * @param engine engine
 	 * @param level level
 	 */
 	static void disableLevel(Engine* engine, LevelEditorLevel* level);
 
-	/** 
+	/**
 	 * Disable level in physics world
 	 * @param world world
 	 * @param level level
 	 */
 	static void disableLevel(World* world, LevelEditorLevel* level);
 
-	/** 
+	/**
 	 * Enable disabled level in engine
 	 * @param engine engine
 	 * @param level level
@@ -315,7 +318,7 @@ public:
 	 */
 	static void enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
-	/** 
+	/**
 	 * Enable disabled level in physics world
 	 * @param world world
 	 * @param level level

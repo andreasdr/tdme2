@@ -35,7 +35,7 @@ using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix2D3x3;
 using tdme::utilities::Console;
 
-GUIRenderer::GUIRenderer(Renderer* renderer) 
+GUIRenderer::GUIRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
 	init();

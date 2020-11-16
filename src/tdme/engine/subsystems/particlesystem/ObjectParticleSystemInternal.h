@@ -41,7 +41,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Particle system which displays objects as particles
  * @author Andreas Drewke
  * @version $Id$
@@ -90,6 +90,25 @@ protected:
 	}
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param model model
+	 * @param scale scale
+	 * @param autoEmit auto emit
+	 * @param contributesShadows enable contributes shadows
+	 * @param receivesShadows enable receives shadows
+	 * @param maxCount maxCount
+	 * @param emitter emitter
+	 */
+	ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ObjectParticleSystemInternal();
+
+	// overridden methods
 	inline ParticleEmitter* getEmitter() override {
 		return emitter;
 	}
@@ -163,7 +182,7 @@ public:
 		for (auto i = 0; i < objects.size(); i++) objects[i]->setReceivesShadows(receivesShadows);
 	}
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	void update() override;
@@ -180,21 +199,4 @@ public:
 		updateInternal();
 	}
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param model model
-	 * @param scale scale
-	 * @param autoEmit auto emit
-	 * @param contributesShadows enable contributes shadows
-	 * @param receivesShadows enable receives shadows
-	 * @param maxCount maxCount
-	 * @param emitter emitter
-	 */
-	ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ObjectParticleSystemInternal();
 };

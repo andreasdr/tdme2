@@ -21,7 +21,7 @@ using tdme::engine::model::Model;
 using tdme::utilities::ObjectDeleter;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Ray Tracing Test
  * @author andreas.drewke
  * @version $Id$
@@ -51,7 +51,7 @@ private:
 	ObjectDeleter<BoundingVolume> bvDeleter;
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
@@ -68,7 +68,7 @@ public:
 	 */
 	~RayTracingTest();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

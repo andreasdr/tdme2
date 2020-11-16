@@ -16,7 +16,7 @@ using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Collision response entity
  * @author Andreas Drewke
  * @version $Id$
@@ -31,15 +31,20 @@ private:
 	vector<Vector3> hitPoints;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline CollisionResponse_Entity(): distance(0.0f) {
+	}
 
-	/** 
+	/**
 	 * @return distance
 	 */
 	inline float getDistance() {
 		return distance;
 	}
 
-	/** 
+	/**
 	 * Set distance
 	 * @param distance distance
 	 */
@@ -47,21 +52,29 @@ public:
 		this->distance = distance;
 	}
 
-	/** 
+	/**
 	 * @return penetration
 	 */
 	inline float getPenetration() {
 		return -distance;
 	}
 
-	/** 
+	/**
 	 * @return normal
 	 */
-	inline Vector3& getNormal() {
+	inline const Vector3& getNormal() {
 		return normal;
 	}
 
-	/** 
+	/**
+	 * Set normal
+	 * @param normal normal
+	 */
+	inline void setNormal(const Vector3& normal) {
+		this->normal = normal;
+	}
+
+	/**
 	 * Adds a hit point
 	 * @param hitPoint hit point
 	 */
@@ -73,25 +86,20 @@ public:
 		hitPoints.push_back(hitPoint);
 	}
 
-	/** 
-	 * @return hit points count
+	/**
+	 * @return hit point count
 	 */
-	inline int32_t getHitPointsCount() {
+	inline int32_t getHitPointCount() {
 		return hitPoints.size();
 	}
 
-	/** 
-	 * Get hit point of given index 
-	 * @param i i
+	/**
+	 * Get hit point of given index
+	 * @param idx index
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3& getHitPointAt(int32_t i) {
-		return hitPoints[i];
+	inline Vector3& getHitPoint(int32_t idx) {
+		return hitPoints[idx];
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline CollisionResponse_Entity() {
-	}
 };

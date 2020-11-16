@@ -12,7 +12,7 @@ using std::vector;
 
 using tdme::math::Vector3;
 
-/** 
+/**
  * Wavefront object model writer
  * @author andreas.drewke
  * @version $Id$
@@ -41,7 +41,7 @@ public:
 	 */
 	void addFace(vector<int> faceVertexIndices);
 
-	/** 
+	/**
 	 * Writes this wave front object file
 	 * @param pathName path name
 	 * @param fileName file name

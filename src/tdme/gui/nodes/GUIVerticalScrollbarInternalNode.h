@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI vertical scroll bar internal node
  * @author Andreas Drewke
  * @version $Id$
@@ -43,11 +43,6 @@ protected:
 	bool isContentNode() override;
 
 public:
-	// overriden methods
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
-	void render(GUIRenderer* guiRenderer) override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -89,5 +84,10 @@ public:
 		const GUIColor& barColorMouseOver,
 		const GUIColor& barColorDragging
 	);
+
+	// overridden methods
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
+	void render(GUIRenderer* guiRenderer) override;
 
 };

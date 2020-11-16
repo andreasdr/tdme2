@@ -12,7 +12,7 @@ using std::string;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::ReferenceCounter;
 
-/** 
+/**
  * Texture entity
  * @version $Id$
  * @author Andreas Drewke
@@ -51,49 +51,49 @@ public:
 		//
 	}
 
-	/** 
+	/**
 	 * @return id
 	 */
 	inline const string& getId() const  {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return depth in bits per pixel
 	 */
 	inline int32_t getDepth() const {
 		return depth;
 	}
 
-	/** 
+	/**
 	 * @return image width
 	 */
 	inline int32_t getWidth() const {
 		return width;
 	}
 
-	/** 
+	/**
 	 * @return image height
 	 */
 	inline int32_t getHeight() const {
 		return height;
 	}
 
-	/** 
+	/**
 	 * @return texture height
 	 */
 	inline int32_t getTextureHeight() const {
 		return textureHeight;
 	}
 
-	/** 
+	/**
 	 * @return texture width
 	 */
 	inline int32_t getTextureWidth() const {
 		return textureWidth;
 	}
 
-	/** 
+	/**
 	 * @return texture data wrapped in a byte buffer
 	 */
 	inline ByteBuffer* getTextureData() {
@@ -145,7 +145,7 @@ public:
 		this->atlasSize = atlasSize;
 	}
 
-	// overriden methods
+	// overridden methods
 	inline virtual void onDelete() override;
 
 private:

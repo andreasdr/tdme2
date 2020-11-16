@@ -19,12 +19,12 @@ GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::TOP = ne
 GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::CENTER = new GUINode_AlignmentVertical("CENTER", 1);
 GUINode_AlignmentVertical* tdme::gui::nodes::GUINode_AlignmentVertical::BOTTOM = new GUINode_AlignmentVertical("BOTTOM", 2);
 
-GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(const string& a0)
+GUINode_AlignmentVertical* GUINode_AlignmentVertical::valueOf(const string& name)
 {
-	if (NONE->getName() == a0) return NONE;
-	if (TOP->getName() == a0) return TOP;
-	if (CENTER->getName() == a0) return CENTER;
-	if (BOTTOM->getName() == a0) return BOTTOM;
+	if (NONE->getName() == name) return NONE;
+	if (TOP->getName() == name) return TOP;
+	if (CENTER->getName() == name) return CENTER;
+	if (BOTTOM->getName() == name) return BOTTOM;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

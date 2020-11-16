@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 
-/** 
+/**
  * Post processing
  * @author Andreas Drewke
  * @version $Id$

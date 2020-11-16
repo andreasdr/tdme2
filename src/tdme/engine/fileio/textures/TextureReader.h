@@ -22,7 +22,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::threading::Mutex;
 using tdme::utilities::ByteBuffer;
 
-/** 
+/**
  * Texture reader class
  * @author Andreas Drewke
  * @version $Id$
@@ -37,7 +37,7 @@ public:
 	 */
 	static const vector<string>& getTextureExtensions();
 
-	/** 
+	/**
 	 * Reads a texture
 	 * @param pathName path name
 	 * @param fileName file name

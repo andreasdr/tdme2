@@ -6,7 +6,7 @@
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Frame buffer render shader
  * @author Andreas Drewke
  * @version $Id$
@@ -27,23 +27,33 @@ private:
 	bool isRunning;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	FrameBufferRenderShader(Renderer* renderer);
 
-	/** 
+	/**
+	 * Public destructor
+	 */
+	~FrameBufferRenderShader();
+
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use render program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Un use render program
 	 */
 	void unUseProgram();
@@ -62,14 +72,4 @@ public:
 		return vboTextureCoordinates;
 	}
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	FrameBufferRenderShader(Renderer* renderer);
-
-	/**
-	 * Public destructor
-	 */
-	~FrameBufferRenderShader();
 };

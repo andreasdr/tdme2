@@ -20,7 +20,7 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box controller
  * @author Andreas Drewke
  * @version $Id$
@@ -30,6 +30,7 @@ class tdme::gui::elements::GUISelectBoxController final
 {
 	friend class GUISelectBox;
 	friend class GUISelectBoxOptionController;
+	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_DISABLED;
@@ -39,55 +40,6 @@ private:
 	bool disabled;
 	MutableString value;
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
-
-private:
-	/** 
-	 * Unselect all nodes
-	 */
-	void unselect();
-
-	/** 
-	 * Determine select box option controllers
-	 */
-	void determineSelectBoxOptionControllers();
-
-	/** 
-	 * Get selected option idx
-	 */
-	int32_t getSelectedOptionIdx();
-
-	/** 
-	 * Select current option
-	 */
-	void selectCurrent();
-
-	/** 
-	 * Select next node
-	 */
-	void selectNext();
-
-	/** 
-	 * Select previous
-	 */
-	void selectPrevious();
-
-public:
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
-	void tick() override;
-	void onFocusGained() override;
-	void onFocusLost() override;
-	bool hasValue() override;
-	const MutableString& getValue() override;
-	void setValue(const MutableString& value) override;
-
-private:
 	/**
 	 * Private constructor
 	 * @param node node
@@ -98,4 +50,55 @@ private:
 	 * Init
 	 */
 	void init();
+
+	/**
+	 * Unselect all nodes
+	 */
+	void unselect();
+
+	/**
+	 * Determine select box option controllers
+	 */
+	void determineSelectBoxOptionControllers();
+
+	/**
+	 * Get selected option idx
+	 */
+	int32_t getSelectedOptionIdx();
+
+	/**
+	 * Select current option
+	 */
+	void selectCurrent();
+
+	/**
+	 * Select next node
+	 */
+	void selectNext();
+
+	/**
+	 * Select previous
+	 */
+	void selectPrevious();
+
+	/**
+	 * Toggle open state of current parent option
+	 */
+	void toggleOpenState();
+
+public:
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
+	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void onFocusGained() override;
+	void onFocusLost() override;
+	bool hasValue() override;
+	const MutableString& getValue() override;
+	void setValue(const MutableString& value) override;
+
 };

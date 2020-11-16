@@ -6,7 +6,7 @@
 
 using std::string;
 
-/** 
+/**
  * String tools class
  * @author Andreas Drewke
  * @version $Id$
@@ -36,18 +36,36 @@ public:
 	 * @param src source string to be processed
 	 * @param what what to replace
 	 * @param by to replace by
+	 * @param beginIndex index to begin with
 	 * @return new string
 	 */
-	static const string replace(const string& src, const char what, const char by);
+	static const string replace(const string& src, const char what, const char by, int beginIndex = 0);
 
 	/**
 	 * Replace string with another string
 	 * @param src source string to be processed
 	 * @param what what to replace
 	 * @param by to replace by
+	 * @param beginIndex index to begin with
 	 * @return new string
 	 */
-	static const string replace(const string& src, const string& what, const string& by);
+	static const string replace(const string& src, const string& what, const string& by, int beginIndex = 0);
+
+	/**
+	 * Finds first index of given character
+	 * @param src source string
+	 * @param what what
+	 * @return index or -1 if not found
+	 */
+	static int32_t firstIndexOf(const string& src, char what);
+
+	/**
+	 * Finds first index of characters provided within given string
+	 * @param src source string
+	 * @param what what
+	 * @return index or -1 if not found
+	 */
+	static int32_t firstIndexOf(const string& src, const string& what);
 
 	/**
 	 * Finds last index of given character
@@ -56,6 +74,14 @@ public:
 	 * @return index or -1 if not found
 	 */
 	static int32_t lastIndexOf(const string& src, char what);
+
+	/**
+	 * Finds last index of characters provided within given string
+	 * @param src source string
+	 * @param what what
+	 * @return index or -1 if not found
+	 */
+	static int32_t lastIndexOf(const string& src, const string& what);
 
 	/**
 	 * Returns substring of given string from begin index

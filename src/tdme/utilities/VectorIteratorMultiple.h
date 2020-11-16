@@ -26,6 +26,21 @@ private:
 	vector<vector<T>*> vectorList {  };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	VectorIteratorMultiple() {
+		reset();
+	}
+
+	/**
+	 * Public constructor
+	 * @param vectorList vector list
+	 */
+	VectorIteratorMultiple(vector<vector<T>*>& vectorList) {
+		this->vectorList = vectorList;
+		reset();
+	}
 
 	/**
 	 * Clears list of array lists to iterate
@@ -90,22 +105,6 @@ public:
 	 */
 	VectorIteratorMultiple<T>* clone() {
 		return new VectorIteratorMultiple<T>(vectorList);
-	}
-
-	/**
-	 * Public constructor
-	 */
-	VectorIteratorMultiple() {
-		reset();
-	}
-
-	/**
-	 * Public constructor
-	 * @param vectorList vector list
-	 */
-	VectorIteratorMultiple(vector<vector<T>*>& vectorList) {
-		this->vectorList = vectorList;
-		reset();
 	}
 
 };

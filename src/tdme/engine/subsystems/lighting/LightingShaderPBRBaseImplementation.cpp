@@ -8,8 +8,6 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -25,8 +23,6 @@ using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
@@ -159,6 +155,21 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* conte
 
 void LightingShaderPBRBaseImplementation::unUseProgram(void* context)
 {
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	#if !defined (__APPLE__)
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+		renderer->bindTexture(context, renderer->ID_NONE);
+	#endif
+	renderer->setTextureUnit(context, 0);
 }
 
 void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, void* context)

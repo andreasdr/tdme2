@@ -19,7 +19,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Model;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::os::filesystem::FileSystemException;
 
 /**
@@ -31,7 +31,7 @@ class tdme::engine::fileio::models::GLTFReader final
 {
 public:
 
-	/** 
+	/**
 	 * Reads GLTF file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -64,19 +64,19 @@ private:
 	 * @param pathName path name
 	 * @param gltfModel GLTF mode
 	 * @param gltfNodeIdx GLTF node index
-	 * @param model TDME model 
-	 * @param parentGroup TDME parent group
+	 * @param model TDME model
+	 * @param parentNode TDME parent node
 	 */
-	static Group* parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup);
+	static Node* parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode);
 
 	/**
-	 * Parse GLTF node children into TDME group
+	 * Parse GLTF node children into TDME node
 	 * @param pathName path name
 	 * @param gltfModel GLTF model
 	 * @param gltfNodeChildrenIdx GLTF node children indices
-	 * @param parentGroup TDME parent group
+	 * @param parentNode TDME parent node
 	 */
-	static void parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup);
+	static void parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode);
 
 	/**
 	 * Write PNG from memory
@@ -88,4 +88,11 @@ private:
 	 * @param pixels pixels
 	 */
 	static bool writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels);
+
+	/**
+	 * Determine texture file name
+	 * @param fileName
+	 * @return file name
+	 */
+	static string determineTextureFileName(const string& imageName);
 };

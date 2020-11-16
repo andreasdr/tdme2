@@ -15,9 +15,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -48,9 +46,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::GUIParserException;
 using tdme::gui::events::GUIInputEventHandler;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -483,10 +479,10 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string
 	event->setY((float)event->getYUnscaled() * (float)node->getScreenNode()->getScreenHeight() / (float)height + node->getScreenNode()->getGUIEffectOffsetY());
 
 	// if dragging only send events to dragging origin nodes
-	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 		mouseEventNodeIds = mouseDraggingEventNodeIds[node->getScreenNode()->getId()];
 	} else
-	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED &&
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
 		mouseIsDragging[node->getScreenNode()->getId()] == true) {
 		mouseEventNodeIds = mouseDraggingEventNodeIds[node->getScreenNode()->getId()];
 	} else {
@@ -527,7 +523,7 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string
 	}
 
 	// compile list of gui node ids that received mouse PRESSED events
-	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 		for (auto eventNodeId: mouseEventNodeIds) {
 			mousePressedEventNodeIds.insert(eventNodeId);
 		}
@@ -545,7 +541,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 	switch (event->getKeyCode()) {
 		case (GUIKeyboardEvent::KEYCODE_TAB):
 			{
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					focusNextNode();
 				}
 				event->setProcessed(true);
@@ -553,7 +549,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 			}
 		case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
 			{
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					focusPreviousNode();
 				}
 				event->setProcessed(true);
@@ -587,18 +583,18 @@ void GUI::handleEvents()
 	for (auto& event: mouseEvents) {
 
 		// fetch and clear last mouse out candidates as we now will actually send them
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			_mouseOutCandidateEventNodeIds = mouseOutCandidateEventNodeIds;
 			mouseOutCandidateEventNodeIds.clear();
 		} else
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED || event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED || event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			_mouseOutClickCandidateEventNodeIds = mouseOutClickCandidateEventNodeIds;
 			mouseOutClickCandidateEventNodeIds.clear();
 		}
 
 
 		// handle mouse dragged event
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				if (mouseIsDragging[screen->getId()] == false) {
@@ -643,7 +639,7 @@ void GUI::handleEvents()
 		}
 
 		// handle mouse released event
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				mouseIsDragging[screen->getId()] = false;
@@ -673,6 +669,12 @@ void GUI::handleEvents()
 	mouseEvents.clear();
 	keyboardEvents.clear();
 	unlockEvents();
+
+	// invalidate layouts
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = renderScreens[i];
+		screen->invalidateLayouts();
+	}
 }
 
 void GUI::onChar(unsigned int key, int x, int y) {
@@ -680,7 +682,7 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED);
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
@@ -697,7 +699,7 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
@@ -714,7 +716,7 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
@@ -731,7 +733,7 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
@@ -748,7 +750,7 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
@@ -766,7 +768,7 @@ void GUI::onMouseDragged(int x, int y) {
 	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(GUIMouseEvent_Type::MOUSEEVENT_DRAGGED);
+	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_DRAGGED);
 	guiMouseEvent.setXUnscaled(x);
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
@@ -795,7 +797,7 @@ void GUI::onMouseMoved(int x, int y) {
 	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
+	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
 	guiMouseEvent.setXUnscaled(x);
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
@@ -825,7 +827,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	mouseButtonLast = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent_Type::MOUSEEVENT_PRESSED:GUIMouseEvent_Type::MOUSEEVENT_RELEASED);
+	guiMouseEvent.setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent::MOUSEEVENT_PRESSED:GUIMouseEvent::MOUSEEVENT_RELEASED);
 	guiMouseEvent.setXUnscaled(x);
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
@@ -855,7 +857,7 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	mouseButtonLast = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED);
+	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED);
 	guiMouseEvent.setXUnscaled(x);
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
@@ -883,7 +885,7 @@ void GUI::fakeMouseMovedEvent()
 	lockEvents();
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
-	guiMouseEvent.setType(GUIMouseEvent_Type::MOUSEEVENT_MOVED);
+	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_MOVED);
 	guiMouseEvent.setXUnscaled(-10000);
 	guiMouseEvent.setYUnscaled(-10000);
 	guiMouseEvent.setX(-10000);
@@ -928,7 +930,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED);
+	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
 	guiKeyboardEvent.setKeyCode(-1);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);

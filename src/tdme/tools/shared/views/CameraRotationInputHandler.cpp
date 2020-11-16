@@ -6,7 +6,6 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Matrix4x4.h>
@@ -21,7 +20,6 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
@@ -128,8 +126,8 @@ void CameraRotationInputHandler::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
 			keyLeft = isKeyDown;
 

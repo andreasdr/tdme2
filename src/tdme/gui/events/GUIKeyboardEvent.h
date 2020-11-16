@@ -4,9 +4,7 @@
 #include <tdme/application/InputDefinitions.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
-using tdme::gui::events::GUIKeyboardEvent_Type;
-
-/** 
+/**
  * GUI keyboard event
  * @author Andreas Drewke
  * @version $Id$
@@ -41,9 +39,16 @@ public:
 	static constexpr int32_t KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
 	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
+	enum GUIKeyboardEventType {
+		KEYBOARDEVENT_NONE,
+		KEYBOARDEVENT_KEY_PRESSED,
+		KEYBOARDEVENT_KEY_RELEASED,
+		KEYBOARDEVENT_KEY_TYPED
+	};
+
 private:
 	int64_t time;
-	GUIKeyboardEvent_Type* type;
+	GUIKeyboardEventType type { KEYBOARDEVENT_NONE };
 	int32_t keyCode;
 	char keyChar;
 	bool metaDown;
@@ -65,14 +70,14 @@ public:
 	 */
 	static int32_t getKeyCodeFromChar(char key);
 
-	/** 
+	/**
 	 * @return time in milliseconds
 	 */
 	inline int64_t getTime() {
 		return time;
 	}
 
-	/** 
+	/**
 	 * Time in milliseconds
 	 * @param time time
 	 */
@@ -80,29 +85,29 @@ public:
 		this->time = time;
 	}
 
-	/** 
+	/**
 	 * @return type
 	 */
-	inline GUIKeyboardEvent_Type* getType() {
+	inline GUIKeyboardEventType getType() {
 		return type;
 	}
 
-	/** 
+	/**
 	 * Set type
 	 * @param type type
 	 */
-	inline void setType(GUIKeyboardEvent_Type* type) {
+	inline void setType(GUIKeyboardEventType type) {
 		this->type = type;
 	}
 
-	/** 
+	/**
 	 * @return key code
 	 */
 	inline int32_t getKeyCode() {
 		return keyCode;
 	}
 
-	/** 
+	/**
 	 * Set key code
 	 * @param code code
 	 */
@@ -110,14 +115,14 @@ public:
 		this->keyCode = code;
 	}
 
-	/** 
+	/**
 	 * @return key char
 	 */
 	inline char getKeyChar() {
 		return keyChar;
 	}
 
-	/** 
+	/**
 	 * Set key char
 	 * @param keyChar key char
 	 */
@@ -125,29 +130,29 @@ public:
 		this->keyChar = keyChar;
 	}
 
-	/** 
+	/**
 	 * @return is meta down
 	 */
 	inline bool isMetaDown() {
 		return metaDown;
 	}
 
-	/** 
-	 * Set meta down 
+	/**
+	 * Set meta down
 	 * @param metaDown meta down
 	 */
 	inline void setMetaDown(bool metaDown) {
 		this->metaDown = metaDown;
 	}
 
-	/** 
+	/**
 	 * @return control down
 	 */
 	inline bool isControlDown() {
 		return controlDown;
 	}
 
-	/** 
+	/**
 	 * Set control down
 	 * @param controlDown control down
 	 */
@@ -155,14 +160,14 @@ public:
 		this->controlDown = controlDown;
 	}
 
-	/** 
+	/**
 	 * @return is alt down
 	 */
 	inline bool isAltDown() {
 		return altDown;
 	}
 
-	/** 
+	/**
 	 * Set alt down
 	 * @param altDown alt down
 	 */
@@ -170,14 +175,14 @@ public:
 		this->altDown = altDown;
 	}
 
-	/** 
+	/**
 	 * @return is shift down
 	 */
 	inline bool isShiftDown() {
 		return shiftDown;
 	}
 
-	/** 
+	/**
 	 * Set shift down
 	 * @param shiftDown shiftDown
 	 */
@@ -185,14 +190,14 @@ public:
 		this->shiftDown = shiftDown;
 	}
 
-	/** 
+	/**
 	 * @return event has been processed already
 	 */
 	inline bool isProcessed() {
 		return processed;
 	}
 
-	/** 
+	/**
 	 * Set event processed
 	 * @param processed processed
 	 */

@@ -60,7 +60,7 @@ OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb, const Vector3& scale)
 	setScale(scale);
 }
 
-OrientedBoundingBox::OrientedBoundingBox() 
+OrientedBoundingBox::OrientedBoundingBox()
 {
 	this->center.set(0.0f, 0.0f, 0.0f);
 	this->axes[0].set(AABB_AXIS_X);

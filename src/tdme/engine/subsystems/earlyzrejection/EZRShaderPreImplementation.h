@@ -14,7 +14,7 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Early z rejection shader implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -31,30 +31,30 @@ struct tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation
 	 */
 	virtual const string getId() = 0;
 
-	/** 
+	/**
 	 * @return if initialized and ready to use
 	 */
 	virtual bool isInitialized() = 0;
 
-	/** 
+	/**
 	 * Init shadow mapping
 	 */
 	virtual void initialize() = 0;
 
-	/** 
+	/**
 	 * Use pre render shadow mapping program
 	 * @param engine engine
 	 * @param context context
 	 */
 	virtual void useProgram(Engine* engine, void* context) = 0;
 
-	/** 
+	/**
 	 * Un use pre render shadow mapping program
 	 * @param context context
 	 */
 	virtual void unUseProgram(void* context) = 0;
 
-	/** 
+	/**
 	 * Set up pre program mvp matrix
 	 * @param renderer renderer
 	 * @param context context

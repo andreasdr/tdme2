@@ -37,7 +37,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
 
-/** 
+/**
  * Oct tree partition implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -57,7 +57,7 @@ private:
 	unordered_set<string> visibleEntitiesById;
 	PartitionOctTree_PartitionTreeNode treeRoot;
 
-	// overriden methods
+	// overridden methods
 	void reset() override;
 	void addEntity(Entity* entity) override;
 	inline void updateEntity(Entity* entity) override {
@@ -65,7 +65,7 @@ private:
 	}
 	void removeEntity(Entity* entity) override;
 
-	/** 
+	/**
 	 * Update partition tree
 	 * @param parent parent
 	 * @param x x
@@ -141,7 +141,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Is partition empty
 	 * @param node node
 	 * @return partition empty
@@ -160,7 +160,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Remove partition node, should be empty
 	 * @param node node
 	 */
@@ -179,7 +179,7 @@ private:
 		}
 	}
 
-	/** 
+	/**
 	 * Do partition tree lookup
 	 * @param frustum frustum
 	 * @param node node
@@ -229,7 +229,12 @@ private:
 	void dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent);
 
 public:
-	// overriden methods
+	/**
+	 * Public constructor
+	 */
+	PartitionOctTree();
+
+	// overridden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 
 	/**
@@ -237,8 +242,4 @@ public:
 	 */
 	void dump();
 
-	/**
-	 * Public constructor
-	 */
-	PartitionOctTree();
 };

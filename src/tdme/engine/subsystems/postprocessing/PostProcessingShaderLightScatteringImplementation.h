@@ -8,7 +8,7 @@
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -23,13 +23,13 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overridden methods
-	virtual void initialize() override;
-
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
 	PostProcessingShaderLightScatteringImplementation(Renderer* renderer);
+
+	// overridden methods
+	virtual void initialize() override;
 
 };

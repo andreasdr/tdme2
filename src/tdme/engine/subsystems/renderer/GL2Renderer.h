@@ -24,7 +24,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * OpenGL 2 renderer
  * @author Andreas Drewke
  * @version $Id$
@@ -38,7 +38,7 @@ private:
 
 private:
 
-	/** 
+	/**
 	 * Checks if VBO is available
 	 * @return vbo availability
 	 */
@@ -50,6 +50,7 @@ public:
 	 */
 	GL2Renderer();
 
+	// overridden methods
 	bool isDepthTextureAvailable() override;
 	void initialize() override;
 	void initializeFrame() override;
@@ -60,6 +61,7 @@ public:
 	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
+	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
@@ -122,14 +124,16 @@ public:
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
-	void bindOrigins(void* context, int32_t bufferObjectId) override;
+	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
+	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) override;
+	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
@@ -146,7 +150,7 @@ public:
 	void initGuiMode() override;
 	void doneGuiMode() override;
 
-	// overriden methods for skinning on GPU via compute shader
+	// overridden methods for skinning on GPU via compute shader
 	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
 	void memoryBarrier() override;
 	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
@@ -164,5 +168,4 @@ public:
 	int32_t createVertexArrayObject() override;
 	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
-
 };

@@ -8,7 +8,7 @@
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Simple class to determine if a transform is negative
  * @author Andreas Drewke
  * @version $Id$
@@ -22,8 +22,13 @@ private:
 	Vector3 tmpAxis;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline Matrix4x4Negative() {
+	}
 
-	/** 
+	/**
 	 * Check if matrix is negative
 	 * @param matrix matrix
 	 * @return negative
@@ -39,9 +44,4 @@ public:
 		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline Matrix4x4Negative() {
-	}
 };

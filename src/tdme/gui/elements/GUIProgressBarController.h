@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI progress bar controller
  * @author Andreas Drewke
  * @version $Id$
@@ -22,7 +22,27 @@ class tdme::gui::elements::GUIProgressBarController final: public GUIElementCont
 {
 	friend class GUIProgressBar;
 
+private:
+	GUIImageNode* backgroundNode { nullptr };
+	GUIImageNode* barNode { nullptr };
+	GUITextNode* textNode { nullptr };
+	bool disabled { false };
+	float valueFloat { 0.0f };
+	MutableString value { };
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIProgressBarController(GUINode* node);
+
+	/**
+	 * Update bar
+	 */
+	void updateBar();
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -37,18 +57,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	GUIProgressBarController(GUINode* node);
-
-	/**
-	 * Update bar
-	 */
-	void updateBar();
-
-	GUIImageNode* backgroundNode { nullptr };
-	GUIImageNode* barNode { nullptr };
-	GUITextNode* textNode { nullptr };
-	bool disabled { false };
-	float valueFloat { 0.0f };
-	MutableString value { };
 };

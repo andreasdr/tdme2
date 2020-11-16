@@ -15,7 +15,13 @@ using tdme::engine::Engine;
 class tdme::engine::EngineGL3Renderer: public GL3Renderer
 {
 public:
-	// overriden methods
+	/**
+	 * Public constructor
+	 * @param engine engine
+	 */
+	EngineGL3Renderer(Engine* engine);
+
+	// overridden methods
 	void onUpdateProjectionMatrix(void* context) override;
 	void onUpdateCameraMatrix(void* context) override;
 	void onUpdateModelViewMatrix(void* context) override;
@@ -27,11 +33,6 @@ public:
 	void onUpdateShader(void* context) override;
 	void onUpdateShaderParameters(void* context) override;
 
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 */
-	EngineGL3Renderer(Engine* engine);
 private:
 	Engine* engine { nullptr };
 };

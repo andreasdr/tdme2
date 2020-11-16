@@ -1,7 +1,6 @@
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
 
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -10,14 +9,13 @@
 
 using tdme::gui::nodes::GUIElementIgnoreEventsController;
 using tdme::gui::GUI;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node) 
+GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
@@ -55,7 +53,7 @@ void GUIElementIgnoreEventsController::postLayout()
 void GUIElementIgnoreEventsController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
 				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 			}

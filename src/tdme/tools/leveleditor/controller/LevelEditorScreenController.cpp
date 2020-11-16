@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -49,7 +49,7 @@ using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::gui::GUIParser;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -83,7 +83,7 @@ MutableString LevelEditorScreenController::CHECKBOX_CHECKED = MutableString("1")
 MutableString LevelEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
 MutableString LevelEditorScreenController::TEXT_EMPTY = MutableString("");
 
-LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view) 
+LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
 	this->mapPath = new FileDialogPath(".");
@@ -995,9 +995,9 @@ void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
 	}
 }
 
-void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	if (type == GUIActionListener_Type::PERFORMED) {
+	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_objects_select") == 0) {
 			onObjectsSelect();
 		} else

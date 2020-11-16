@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 
-/** 
+/**
  * GUI node computed constraints
  * @author Andreas Drewke
  * @version $Id$

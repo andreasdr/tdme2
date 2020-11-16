@@ -1,6 +1,6 @@
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -12,7 +12,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -82,14 +82,11 @@ bool EntityDisplaySubScreenController::getDisplayBoundingVolume()
 	return displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED);
 }
 
-void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void EntityDisplaySubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (node->getId().compare("button_display_apply") == 0) {
-				onDisplayApply();
-			}
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("button_display_apply") == 0) {
+			onDisplayApply();
 		}
 	}
 }

@@ -34,7 +34,7 @@ using std::string;
 
 using tdme::application::InputEventHandler;
 
-/** 
+/**
  * Application base class, please make sure to allocate application on heap to have correct application shutdown working
  * @author Andreas Drewke
  * @version $Id$
@@ -218,19 +218,19 @@ public:
 	 */
 	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
-	/** 
+	/**
 	 * Init
 	 */
 	virtual void initialize() = 0;
 
-	/** 
+	/**
 	 * Resize
 	 * @param width width
 	 * @param height height
 	 */
 	virtual void reshape(int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Display
 	 */
 	virtual void display() = 0;

@@ -16,7 +16,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -66,7 +66,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::utilities::ModelTools;
@@ -258,7 +258,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
-	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
+	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(-width, y, -depth));
 	groundVertices.push_back(Vector3(-width, y, +depth));
@@ -272,19 +272,19 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	groundTextureCoordinates.push_back(TextureCoordinate(width, 0.0f));
 	groundTextureCoordinates.push_back(TextureCoordinate(width, depth));
 	vector<Face> groundFacesGround;
-	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, "ground group faces entity ground");
-	groupFacesEntityGround.setMaterial(groundMaterial);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntityGround.setFaces(groundFacesGround);
-	groupFacesEntities.push_back(groupFacesEntityGround);
-	groundGroup->setVertices(groundVertices);
-	groundGroup->setNormals(groundNormals);
-	groundGroup->setTextureCoordinates(groundTextureCoordinates);
-	groundGroup->setFacesEntities(groupFacesEntities);
-	ground->getGroups()["ground"] = groundGroup;
-	ground->getSubGroups()["ground"] = groundGroup;
+	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityGround(groundNode, "ground node faces entity ground");
+	nodeFacesEntityGround.setMaterial(groundMaterial);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntityGround.setFaces(groundFacesGround);
+	nodeFacesEntities.push_back(nodeFacesEntityGround);
+	groundNode->setVertices(groundVertices);
+	groundNode->setNormals(groundNormals);
+	groundNode->setTextureCoordinates(groundTextureCoordinates);
+	groundNode->setFacesEntities(nodeFacesEntities);
+	ground->getNodes()["ground"] = groundNode;
+	ground->getSubNodes()["ground"] = groundNode;
 	ModelTools::prepareForIndexedRendering(ground);
 	return ground;
 }
@@ -304,7 +304,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// bounding volumes
 	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
+		auto entityBoundingVolume = entity->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);
@@ -436,7 +436,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	delete entityBoundingBoxFallback;
 }
 
-const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
+const string Tools::getRelativeResourcesFileName(const string& applicationRoot, const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto cutFileNameIdx = -1;
@@ -455,7 +455,7 @@ const string Tools::getRelativeResourcesFileName(const string& gameRoot, const s
 	return newFileName;
 }
 
-const string Tools::getGameRootPath(const string& fileName)
+const string Tools::getApplicationRootPath(const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
 	auto filesRootIdx = -1;

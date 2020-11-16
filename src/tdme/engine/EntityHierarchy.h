@@ -120,14 +120,6 @@ private:
 	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth);
 
 public:
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -170,8 +162,21 @@ public:
 		return entities;
 	}
 
-	// overriden methods
+	// overridden methods
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return enabled;
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
@@ -203,8 +208,6 @@ public:
 		return id;
 	}
 
-	void initialize() override;
-
 	inline bool isContributesShadows() override {
 		return contributesShadows;
 	}
@@ -221,10 +224,6 @@ public:
 	inline void setReceivesShadows(bool receivesShadows) override {
 		this->receivesShadows = receivesShadows;
 		for (auto entity: entities) entity->setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return enabled;
 	}
 
 	inline bool isPickable() override {

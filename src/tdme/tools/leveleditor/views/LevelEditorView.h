@@ -47,7 +47,7 @@ using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
-/** 
+/**
  * TDME Level Editor View
  * @author andreas.drewke
  * @version $Id: 04313d20d0978eefc881024d6e0af748196c1425 $
@@ -122,54 +122,64 @@ private:
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param popUps pop ups
+	 */
+	LevelEditorView(PopUps* popUps);
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~LevelEditorView();
+
+	/**
 	 * @return pop ups
 	 */
 	PopUps* getPopUps();
 
-	/** 
+	/**
 	 * @return level file name
 	 */
 	const string getFileName();
 
-	/** 
+	/**
 	 * @return level
 	 */
 	LevelEditorLevel* getLevel();
 
-	/** 
+	/**
 	 * @return selected entity
 	 */
 	LevelEditorEntity* getSelectedEntity();
 
-	/** 
+	/**
 	 * @return selected level editor object
 	 */
 	LevelEditorObject* getSelectedObject();
 
-	/** 
+	/**
 	 * @return grid enabled
 	 */
 	bool isGridEnabled();
 
-	/** 
+	/**
 	 * @param gridEnabled grid enabled
 	 */
 	void setGridEnabled(bool gridEnabled);
 
-	/** 
+	/**
 	 * @return grid y
 	 */
 	float getGridY();
 
 	/**
-	 * Set grid y position 
+	 * Set grid y position
 	 * @param gridY grid y
 	 */
 	void setGridY(float gridY);
 
-	/** 
+	/**
 	 * Get snapping
 	 * @param snappingEnabled snapping enabled
 	 * @param snappingX snapping along X axis
@@ -192,127 +202,51 @@ public:
 	void loadEntityFromLibrary(int32_t id);
 	void handleInputEvents() override;
 
-	/** 
-	 * Renders the scene 
+	/**
+	 * Renders the scene
 	 */
 	void display() override;
 
-	/** 
+	/**
 	 * Select objects
 	 * @param entityIds object ids
 	 */
 	void selectObjects(const vector<string>& entityIds);
 
-	/** 
+	/**
 	 * Select objects by id
 	 */
 	void unselectObjects();
 
-private:
-
-	/** 
-	 * Update GUI elements
-	 * screen caption
-	 * level size
-	 * selected object
-	 * object properties
-	 * object 3d transformations
-	 * object data  
-	 * ..
-	 */
-	void updateGUIElements();
-
 	/**
-	 * Update GUI transformations elements
-	 * level size
-	 * object 3d transformations
-	 * ..
-	 */
-	void updateGUITransformationsElements();
-
-public:
-
-	/** 
 	 * Updates objects list box
 	 */
 	void setObjectsListBox();
 
-	/** 
+	/**
 	 * Unselect light presets
 	 */
 	void unselectLightPresets();
 
-private:
-
-	/** 
-	 * Load settings
-	 */
-	void loadSettings();
-
-public:
+	// overridden methods
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;
-
-private:
-
-	/** 
-	 * Store settings
-	 */
-	void storeSettings();
-
-public:
 	void dispose() override;
 
-private:
-
-	/** 
-	 * Set highlight object color effect
-	 * @param object object
-	 */
-	void setHighlightObjectColorEffect(Entity* object);
-
-	/** 
-	 * Set standard object color effect
-	 * @param object object
-	 */
-	void setStandardObjectColorEffect(Entity* object);
-
-public:
-
-	/** 
+	/**
 	 * Loads a level from internal level representation to tdme
 	 */
 	void loadLevel();
 
-private:
-
-	/** 
-	 * Update dynamic grid
-	 */
-	void updateGrid();
-
-	/** 
-	 * Remove grid
-	 */
-	void removeGrid();
-
-	/** 
-	 * Creates a level editor ground plate
-	 * @return ground
-	 */
-	Model* createLevelEditorGroundPlateModel();
-
-public:
-
-	/** 
+	/**
 	 * On object data apply
 	 * @param name name
 	 * @param description description
 	 */
 	bool objectDataApply(const string& name, const string& description);
 
-	/** 
+	/**
 	 * Initialize place entity mode
 	 */
 	void setPlaceObjectMode();
@@ -327,22 +261,22 @@ public:
 	 */
 	void placeObject();
 
-	/** 
+	/**
 	 * Removes selected object
 	 */
 	void removeObjects();
 
-	/** 
+	/**
 	 * Centers selected objects
 	 */
 	void colorObject();
 
-	/** 
+	/**
 	 * Centers selected objects
 	 */
 	void centerObject();
 
-	/** 
+	/**
 	 * Apply object translation
 	 * @param x x
 	 * @param y y
@@ -350,7 +284,7 @@ public:
 	 */
 	void objectTranslationApply(float x, float y, float z);
 
-	/** 
+	/**
 	 * Apply object scale
 	 * @param x x
 	 * @param y y
@@ -358,7 +292,7 @@ public:
 	 */
 	void objectScaleApply(float x, float y, float z);
 
-	/** 
+	/**
 	 * Apply object rotations
 	 * @param x x
 	 * @param y y
@@ -366,7 +300,7 @@ public:
 	 */
 	void objectRotationsApply(float x, float y, float z);
 
-	/** 
+	/**
 	 * Save a map property
 	 * @param oldName old name
 	 * @param name name
@@ -375,33 +309,33 @@ public:
 	 */
 	bool mapPropertySave(const string& oldName, const string& name, const string& value);
 
-	/** 
+	/**
 	 * Add a map property
 	 * @return success
 	 */
 	bool mapPropertyAdd();
 
-	/** 
+	/**
 	 * Remove a map property from model properties
 	 * @param name name
 	 * @return success
 	 */
 	bool mapPropertyRemove(const string& name);
 
-	/** 
+	/**
 	 * Remove a object property from object properties
 	 * @param name name
 	 * @return success
 	 */
 	bool objectPropertyRemove(const string& name);
 
-	/** 
+	/**
 	 * Apply object property preset
 	 * @param presetId preset id
 	 */
 	void objectPropertiesPreset(const string& presetId);
 
-	/** 
+	/**
 	 * Save a model property
 	 * @param oldName old name
 	 * @param name name
@@ -410,53 +344,24 @@ public:
 	 */
 	bool objectPropertySave(const string& oldName, const string& name, const string& value);
 
-	/** 
+	/**
 	 * Add a model property
 	 * @return success
 	 */
 	bool objectPropertyAdd();
 
-	/** 
+	/**
 	 * Triggers loading a map
 	 */
 	void loadMap(const string& path, const string& file);
 
-	/** 
+	/**
 	 * Triggers saving a map
 	 */
 	void saveMap(const string& pathName, const string& fileName);
 
-private:
-
-	/** 
-	 * Copy current selected objects
-	 */
-	void copyObjects();
 
 	/**
-	 * Set paste mode
-	 */
-	void setPasteMode();
-
-	/**
-	 * cancel paste
-	 */
-	void unsetPasteMode();
-
-	/** 
-	 * Paste objects
-	 * @param displayOnly display only
-	 */
-	void pasteObjects(bool displayOnly);
-
-	/**
-	 * Update gizmo
-	 */
-	void updateGizmo();
-
-public:
-
-	/** 
 	 * Compute spot direction
 	 * @param i light index
 	 * @param position position
@@ -464,7 +369,7 @@ public:
 	 */
 	void computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo);
 
-	/** 
+	/**
 	 * Apply light with index i
 	 * @param i light index
 	 * @param ambient ambient
@@ -482,15 +387,89 @@ public:
 	 */
 	void applyLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
+private:
 	/**
-	 * Public constructor
-	 * @param popUps pop ups
+	 * Update GUI elements
+	 * screen caption
+	 * level size
+	 * selected object
+	 * object properties
+	 * object 3d transformations
+	 * object data
+	 * ..
 	 */
-	LevelEditorView(PopUps* popUps);
+	void updateGUIElements();
 
 	/**
-	 * Destructor
+	 * Update GUI transformations elements
+	 * level size
+	 * object 3d transformations
+	 * ..
 	 */
-	~LevelEditorView();
+	void updateGUITransformationsElements();
+
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
+
+	/**
+	 * Store settings
+	 */
+	void storeSettings();
+
+	/**
+	 * Set highlight object color effect
+	 * @param object object
+	 */
+	void setHighlightObjectColorEffect(Entity* object);
+
+	/**
+	 * Set standard object color effect
+	 * @param object object
+	 */
+	void setStandardObjectColorEffect(Entity* object);
+
+	/**
+	 * Update dynamic grid
+	 */
+	void updateGrid();
+
+	/**
+	 * Remove grid
+	 */
+	void removeGrid();
+
+	/**
+	 * Creates a level editor ground plate
+	 * @return ground
+	 */
+	Model* createLevelEditorGroundPlateModel();
+
+	/**
+	 * Copy current selected objects
+	 */
+	void copyObjects();
+
+	/**
+	 * Set paste mode
+	 */
+	void setPasteMode();
+
+	/**
+	 * cancel paste
+	 */
+	void unsetPasteMode();
+
+	/**
+	 * Paste objects
+	 * @param displayOnly display only
+	 */
+	void pasteObjects(bool displayOnly);
+
+	/**
+	 * Update gizmo
+	 */
+	void updateGizmo();
 
 };

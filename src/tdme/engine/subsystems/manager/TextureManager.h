@@ -17,7 +17,7 @@ using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::Mutex;
 
-/** 
+/**
  * Texture manager
  * @author Andreas Drewke
  * @version $Id$

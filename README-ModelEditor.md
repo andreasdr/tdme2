@@ -22,7 +22,7 @@
         - oriented bounding box
         - convex mesh
           - multiple convex meshes can be automatically generated from any mesh using V-HACD
-          - or be imported from a given model with each top level group representing a convex mesh
+          - or be imported from a given model with each top level node representing a convex mesh
         - concave terrain mesh
         - bounding volumes can be transformed by using a gizmo 
     - LOD level editor

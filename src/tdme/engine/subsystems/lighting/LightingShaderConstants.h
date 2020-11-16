@@ -2,7 +2,7 @@
 
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 
-/** 
+/**
  * Lighting shader constants
  * @author Andreas Drewke
  * @version $Id$

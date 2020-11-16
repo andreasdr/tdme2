@@ -3,8 +3,10 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <limits>
 #include <string>
 
+using std::numeric_limits;
 using std::string;
 
 /**
@@ -15,6 +17,8 @@ using std::string;
 class tdme::utilities::Integer final
 {
 public:
+	static constexpr int MAX_VALUE { numeric_limits<int>::max() };
+	static constexpr int MIN_VALUE { -numeric_limits<int>::max() };
 
 	/**
 	 * Parse integer

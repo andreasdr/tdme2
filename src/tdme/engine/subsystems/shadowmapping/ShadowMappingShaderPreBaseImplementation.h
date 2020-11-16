@@ -13,7 +13,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Shadow mapping shader base class to create shadow map
  * @author Andreas Drewke
  * @version $Id$
@@ -41,17 +41,6 @@ protected:
 	bool initialized { false };
 
 public:
-
-	// overriden methods
-	virtual bool isInitialized() override;
-	virtual void initialize() override;
-	virtual void useProgram(Engine* engine, void* context) override;
-	virtual void unUseProgram(void* context) override;
-	virtual void updateMatrices(void* context) override;
-	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
-	virtual void updateMaterial(Renderer* renderer, void* context) override;
-	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
-
 	/**
 	 * Constructor
 	 * @param renderer renderer
@@ -62,4 +51,15 @@ public:
 	 * Destructor
 	 */
 	~ShadowMappingShaderPreBaseImplementation();
+
+	// overridden methods
+	virtual bool isInitialized() override;
+	virtual void initialize() override;
+	virtual void useProgram(Engine* engine, void* context) override;
+	virtual void unUseProgram(void* context) override;
+	virtual void updateMatrices(void* context) override;
+	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
+	virtual void updateMaterial(Renderer* renderer, void* context) override;
+	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
+
 };

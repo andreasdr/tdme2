@@ -36,9 +36,9 @@ void main(void) {
 			if (lengthAtFragment >= 0.5) {
 				break;
 			}
-			vec4 sample = texture(colorBufferTextureUnit, textureCoordinate);
-			sample*= illuminationDecay * WEIGHT;
-			outColor+= sample * (1.0 - (clamp(lengthAtFragment, 0.0, 0.5) / 0.5));
+			vec4 textureSample = texture(colorBufferTextureUnit, textureCoordinate);
+			textureSample *= illuminationDecay * WEIGHT;
+			outColor+= textureSample * (1.0 - (clamp(lengthAtFragment, 0.0, 0.5) / 0.5));
 			illuminationDecay *= DECAY;
 			textureCoordinate -= deltaTextureCoordinate;
 		}

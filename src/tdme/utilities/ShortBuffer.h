@@ -13,6 +13,19 @@ class tdme::utilities::ShortBuffer: public Buffer
 {
 public:
 	/**
+	 * Default constructor
+	 */
+	ShortBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
+	/**
+	 * Public constructor
+	 * @param buffer buffer
+	 */
+	ShortBuffer(Buffer* buffer) : Buffer(buffer) {
+	}
+
+	/**
 	 * @returns buffer capacity
 	 */
 	inline virtual int32_t getCapacity() {
@@ -46,16 +59,4 @@ public:
 		return this;
 	}
 
-	/**
-	 * Default constructor
-	 */
-	ShortBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
-	}
-
-	/**
-	 * Public constructor
-	 * @param buffer buffer
-	 */
-	ShortBuffer(Buffer* buffer) : Buffer(buffer) {
-	}
 };

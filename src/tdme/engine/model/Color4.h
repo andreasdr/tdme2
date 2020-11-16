@@ -10,7 +10,7 @@ using std::array;
 
 using tdme::engine::model::Color4Base;
 
-/** 
+/**
  * Color 4 definition
  * @author Andreas Drewke
  * @version $Id$

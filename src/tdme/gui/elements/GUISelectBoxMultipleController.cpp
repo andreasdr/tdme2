@@ -2,9 +2,8 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
+#include <tdme/gui/elements/GUISelectBoxMultipleParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -17,9 +16,8 @@
 using tdme::gui::elements::GUISelectBoxMultipleController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
-using tdme::gui::events::GUIKeyboardEvent_Type;
+using tdme::gui::elements::GUISelectBoxMultipleParentOptionController;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -34,7 +32,7 @@ constexpr char GUISelectBoxMultipleController::VALUE_DELIMITER;
 string GUISelectBoxMultipleController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
+GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node)
 	: GUIElementController(node)
 {
 	init();
@@ -83,9 +81,8 @@ void GUISelectBoxMultipleController::unselect()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController))->unselect();
-		}
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unselect();
 	}
 }
 
@@ -95,9 +92,8 @@ void GUISelectBoxMultipleController::unfocus()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController))->unfocus();
-		}
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr) selectBoxMultipleOptionController->unfocus();
 	}
 }
 
@@ -108,8 +104,9 @@ void GUISelectBoxMultipleController::determineSelectBoxMultipleOptionControllers
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUISelectBoxMultipleOptionController* >(childController) != nullptr) {
-			selectBoxMultipleOptionControllers.push_back(dynamic_cast< GUISelectBoxMultipleOptionController* >(childController));
+		auto selectBoxMultipleOptionController = dynamic_cast<GUISelectBoxMultipleOptionController*>(childController);
+		if (selectBoxMultipleOptionController != nullptr && selectBoxMultipleOptionController->isCollapsed() == false) {
+			selectBoxMultipleOptionControllers.push_back(selectBoxMultipleOptionController);
 		}
 	}
 }
@@ -175,13 +172,24 @@ void GUISelectBoxMultipleController::toggle()
 	selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]->getNode()->scrollToNodeY(dynamic_cast< GUIParentNode* >(node));
 }
 
+void GUISelectBoxMultipleController::toggleOpenState() {
+	determineSelectBoxMultipleOptionControllers();
+	auto selectBoxMultipleOptionControllerIdx = getFocussedOptionIdx();
+	if (selectBoxMultipleOptionControllers.size() == 0)
+		return;
+
+	if (selectBoxMultipleOptionControllerIdx == -1) return;
+
+	auto selectBoxMultipleParentOptionController = dynamic_cast<GUISelectBoxMultipleParentOptionController*>(selectBoxMultipleOptionControllers[selectBoxMultipleOptionControllerIdx]);
+	if (selectBoxMultipleParentOptionController != nullptr) selectBoxMultipleParentOptionController->toggleOpenState();
+}
 void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(this->node->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		}
 	}
@@ -194,27 +202,32 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					focusPrevious();
 				}
 			}
 			break;
 		case GUIKeyboardEvent::KEYCODE_DOWN: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					focusNext();
 				}
 			}
 			break;
+		case GUIKeyboardEvent::KEYCODE_RIGHT:
+		case GUIKeyboardEvent::KEYCODE_LEFT: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) toggleOpenState();
+			}
+			break;
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					toggle();
 				}
 			}
 			break;
 		}
-
 	}
 }
 

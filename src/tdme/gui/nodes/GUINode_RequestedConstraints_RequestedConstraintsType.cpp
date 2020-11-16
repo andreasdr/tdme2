@@ -21,13 +21,13 @@ GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode
 GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType("STAR", 2);
 GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType("AUTO", 3);
 
-GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(const string& a0)
+GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(const string& name)
 {
-	if (NONE->getName() == a0) return NONE;
-	if (AUTO->getName() == a0) return AUTO;
-	if (PERCENT->getName() == a0) return PERCENT;
-	if (PIXEL->getName() == a0) return PIXEL;
-	if (STAR->getName() == a0) return STAR;
+	if (NONE->getName() == name) return NONE;
+	if (AUTO->getName() == name) return AUTO;
+	if (PERCENT->getName() == name) return PERCENT;
+	if (PIXEL->getName() == name) return PIXEL;
+	if (STAR->getName() == name) return STAR;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

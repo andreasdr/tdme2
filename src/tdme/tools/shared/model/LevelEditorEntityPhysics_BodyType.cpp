@@ -18,12 +18,12 @@ LevelEditorEntityPhysics_BodyType* tdme::tools::shared::model::LevelEditorEntity
 LevelEditorEntityPhysics_BodyType* tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY = new LevelEditorEntityPhysics_BodyType("DYNAMIC_RIGIDBODY", 2);
 LevelEditorEntityPhysics_BodyType* tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY = new LevelEditorEntityPhysics_BodyType("STATIC_RIGIDBODY", 3);
 
-LevelEditorEntityPhysics_BodyType* LevelEditorEntityPhysics_BodyType::valueOf(const string& a0)
+LevelEditorEntityPhysics_BodyType* LevelEditorEntityPhysics_BodyType::valueOf(const string& name)
 {
-	if (NONE->getName() == a0) return NONE;
-	if (COLLISION_BODY->getName() == a0) return COLLISION_BODY;
-	if (DYNAMIC_RIGIDBODY->getName() == a0) return DYNAMIC_RIGIDBODY;
-	if (STATIC_RIGIDBODY->getName() == a0) return STATIC_RIGIDBODY;
+	if (NONE->getName() == name) return NONE;
+	if (COLLISION_BODY->getName() == name) return COLLISION_BODY;
+	if (DYNAMIC_RIGIDBODY->getName() == name) return DYNAMIC_RIGIDBODY;
+	if (STATIC_RIGIDBODY->getName() == name) return STATIC_RIGIDBODY;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

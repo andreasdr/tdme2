@@ -10,7 +10,7 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -33,7 +33,7 @@ using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::utilities::ModelTools;
@@ -78,116 +78,116 @@ Object3DRenderGroup::~Object3DRenderGroup() {
 	}
 }
 
-void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
-	// create group in combined model
-	auto combinedModelGroup = combinedModel->getGroupById(sourceGroup->getId());
-	if (combinedModelGroup == nullptr) {
-		combinedModelGroup = new Group(
+void Object3DRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
+	// create node in combined model
+	auto combinedModelNode = combinedModel->getNodeById(sourceNode->getId());
+	if (combinedModelNode == nullptr) {
+		combinedModelNode = new Node(
 			combinedModel,
-			sourceGroup->getParentGroup() == nullptr?nullptr:combinedModel->getGroupById(sourceGroup->getParentGroup()->getId()),
-			sourceGroup->getId(),
-			sourceGroup->getName()
+			sourceNode->getParentNode() == nullptr?nullptr:combinedModel->getNodeById(sourceNode->getParentNode()->getId()),
+			sourceNode->getId(),
+			sourceNode->getName()
 		);
-		if (sourceGroup->getParentGroup() == nullptr) {
-			combinedModel->getSubGroups()[combinedModelGroup->getId()] = combinedModelGroup;
+		if (sourceNode->getParentNode() == nullptr) {
+			combinedModel->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
 		} else {
-			combinedModelGroup->getParentGroup()->getSubGroups()[combinedModelGroup->getId()] = combinedModelGroup;
+			combinedModelNode->getParentNode()->getSubNodes()[combinedModelNode->getId()] = combinedModelNode;
 		}
-		combinedModel->getGroups()[combinedModelGroup->getId()] = combinedModelGroup;
+		combinedModel->getNodes()[combinedModelNode->getId()] = combinedModelNode;
 	}
 
 	{
-		auto sourceGroupVerticesSize = sourceGroup->getVertices().size();
-		auto sourceGroupNormalsSize = sourceGroup->getNormals().size();
-		auto sourceGroupTextureCoordinatesSize = sourceGroup->getTextureCoordinates().size();
-		auto sourceGroupTangentsSize = sourceGroup->getTangents().size();
-		auto sourceGroupBitangentsSize = sourceGroup->getBitangents().size();
+		auto sourceNodeVerticesSize = sourceNode->getVertices().size();
+		auto sourceNodeNormalsSize = sourceNode->getNormals().size();
+		auto sourceNodeTextureCoordinatesSize = sourceNode->getTextureCoordinates().size();
+		auto sourceNodeTangentsSize = sourceNode->getTangents().size();
+		auto sourceNodeBitangentsSize = sourceNode->getBitangents().size();
 
 		// vertices and such from new model
-		auto combinedModelGroupVertices = combinedModelGroup->getVertices();
-		auto combinedModelGroupNormals = combinedModelGroup->getNormals();
-		auto combinedModelGroupTextureCoordinates = combinedModelGroup->getTextureCoordinates();
-		auto combinedModelGroupTangents = combinedModelGroup->getTangents();
-		auto combinedModelGroupBitangents = combinedModelGroup->getBitangents();
-		auto combinedModelGroupFacesEntities = combinedModelGroup->getFacesEntities();
-		auto combinedModelGroupOrigins = combinedModelGroup->getOrigins();
+		auto combinedModelNodeVertices = combinedModelNode->getVertices();
+		auto combinedModelNodeNormals = combinedModelNode->getNormals();
+		auto combinedModelNodeTextureCoordinates = combinedModelNode->getTextureCoordinates();
+		auto combinedModelNodeTangents = combinedModelNode->getTangents();
+		auto combinedModelNodeBitangents = combinedModelNode->getBitangents();
+		auto combinedModelNodeFacesEntities = combinedModelNode->getFacesEntities();
+		auto combinedModelNodeOrigins = combinedModelNode->getOrigins();
 
 		// current indices
-		auto combinedModelGroupVerticesIdxStart = combinedModelGroupVertices.size();
-		auto combinedModelGroupNormalsIdxStart = combinedModelGroupNormals.size();
-		auto combinedModelGroupTextureCoordinatesIdxStart = combinedModelGroupTextureCoordinates.size();
-		auto combinedModelGroupTangentsIdxStart = combinedModelGroupTangents.size();
-		auto combinedModelGroupBitangentsIdxStart = combinedModelGroupBitangents.size();
+		auto combinedModelNodeVerticesIdxStart = combinedModelNodeVertices.size();
+		auto combinedModelNodeNormalsIdxStart = combinedModelNodeNormals.size();
+		auto combinedModelNodeTextureCoordinatesIdxStart = combinedModelNodeTextureCoordinates.size();
+		auto combinedModelNodeTangentsIdxStart = combinedModelNodeTangents.size();
+		auto combinedModelNodeBitangentsIdxStart = combinedModelNodeBitangents.size();
 
-		// add vertices and such from source group to new group
+		// add vertices and such from source node to new node
 		{
 			auto i = 0;
 			for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
 				Matrix4x4 transformationsMatrix;
-				transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
+				transformationsMatrix.set(sourceNode->getTransformationsMatrix());
 				transformationsMatrix.multiply(objectParentTransformationsMatrix);
 
 				//
 				Vector3 tmpVector3;
-				for (auto& vertex: sourceGroup->getVertices()) {
-					combinedModelGroupOrigins.push_back(origins[i]);
-					combinedModelGroupVertices.push_back(transformationsMatrix.multiply(vertex, tmpVector3));
+				for (auto& vertex: sourceNode->getVertices()) {
+					combinedModelNodeOrigins.push_back(origins[i]);
+					combinedModelNodeVertices.push_back(transformationsMatrix.multiply(vertex, tmpVector3));
 				}
-				for (auto& normal: sourceGroup->getNormals()) {
-					combinedModelGroupNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
+				for (auto& normal: sourceNode->getNormals()) {
+					combinedModelNodeNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
 				}
-				for (auto& textureCoordinate: sourceGroup->getTextureCoordinates()) {
-					combinedModelGroupTextureCoordinates.push_back(textureCoordinate);
+				for (auto& textureCoordinate: sourceNode->getTextureCoordinates()) {
+					combinedModelNodeTextureCoordinates.push_back(textureCoordinate);
 				}
-				for (auto& tangent: sourceGroup->getTangents()) {
-					combinedModelGroupTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
+				for (auto& tangent: sourceNode->getTangents()) {
+					combinedModelNodeTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
 				}
-				for (auto& bitangent: sourceGroup->getBitangents()) {
-					combinedModelGroupBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
+				for (auto& bitangent: sourceNode->getBitangents()) {
+					combinedModelNodeBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
 				}
 				//
 				i++;
 			}
 		}
 
-		// add source group faces to new new faces entity
-		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
+		// add source node faces to new new faces entity
+		for (auto& facesEntity: sourceNode->getFacesEntities()) {
 			bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 			bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 
 			// get faces entity
-			FacesEntity* combinedModelGroupFacesEntity = nullptr;
-			for (auto& combinedModelGroupFacesEntityExisting: combinedModelGroupFacesEntities) {
-				if (combinedModelGroupFacesEntityExisting.getId() == facesEntity.getId()) {
-					combinedModelGroupFacesEntity = &combinedModelGroupFacesEntityExisting;
+			FacesEntity* combinedModelNodeFacesEntity = nullptr;
+			for (auto& combinedModelNodeFacesEntityExisting: combinedModelNodeFacesEntities) {
+				if (combinedModelNodeFacesEntityExisting.getId() == facesEntity.getId()) {
+					combinedModelNodeFacesEntity = &combinedModelNodeFacesEntityExisting;
 					break;
 				}
 			}
 			// create
-			if (combinedModelGroupFacesEntity == nullptr) {
+			if (combinedModelNodeFacesEntity == nullptr) {
 				auto newFacesEntity = FacesEntity(
-					combinedModelGroup,
+					combinedModelNode,
 					facesEntity.getId()
 				);
-				combinedModelGroupFacesEntities.push_back(newFacesEntity);
-				combinedModelGroupFacesEntity = &combinedModelGroupFacesEntities[combinedModelGroupFacesEntities.size() - 1];
-				auto combinedModelGroupFacesEntityMaterial = combinedModel->getMaterials()[facesEntity.getMaterial()->getId()];
-				if (combinedModelGroupFacesEntityMaterial == nullptr) {
-					combinedModelGroupFacesEntityMaterial = ModelTools::cloneMaterial(facesEntity.getMaterial());
-					combinedModel->getMaterials()[combinedModelGroupFacesEntityMaterial->getId()] = combinedModelGroupFacesEntityMaterial;
+				combinedModelNodeFacesEntities.push_back(newFacesEntity);
+				combinedModelNodeFacesEntity = &combinedModelNodeFacesEntities[combinedModelNodeFacesEntities.size() - 1];
+				auto combinedModelNodeFacesEntityMaterial = combinedModel->getMaterials()[facesEntity.getMaterial()->getId()];
+				if (combinedModelNodeFacesEntityMaterial == nullptr) {
+					combinedModelNodeFacesEntityMaterial = ModelTools::cloneMaterial(facesEntity.getMaterial());
+					combinedModel->getMaterials()[combinedModelNodeFacesEntityMaterial->getId()] = combinedModelNodeFacesEntityMaterial;
 				}
-				combinedModelGroupFacesEntity->setMaterial(combinedModelGroupFacesEntityMaterial);
+				combinedModelNodeFacesEntity->setMaterial(combinedModelNodeFacesEntityMaterial);
 			}
 
 			//
-			auto combinedModelGroupFaces = combinedModelGroupFacesEntity->getFaces();
+			auto combinedModelNodeFaces = combinedModelNodeFacesEntity->getFaces();
 
 			//
-			auto combinedModelGroupVerticesIdx = combinedModelGroupVerticesIdxStart;
-			auto combinedModelGroupNormalsIdx = combinedModelGroupNormalsIdxStart;
-			auto combinedModelGroupTextureCoordinatesIdx = combinedModelGroupTextureCoordinatesIdxStart;
-			auto combinedModelGroupTangentsIdx = combinedModelGroupTangentsIdxStart;
-			auto combinedModelGroupBitangentsIdx = combinedModelGroupBitangentsIdxStart;
+			auto combinedModelNodeVerticesIdx = combinedModelNodeVerticesIdxStart;
+			auto combinedModelNodeNormalsIdx = combinedModelNodeNormalsIdxStart;
+			auto combinedModelNodeTextureCoordinatesIdx = combinedModelNodeTextureCoordinatesIdxStart;
+			auto combinedModelNodeTangentsIdx = combinedModelNodeTangentsIdxStart;
+			auto combinedModelNodeBitangentsIdx = combinedModelNodeBitangentsIdxStart;
 			for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
 				// add faces
 				for (auto& face: facesEntity.getFaces()) {
@@ -199,61 +199,61 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>
 					auto& faceBitangentIndices = face.getBitangentIndices();
 
 					//
-					auto combinedModelGroupFace =
+					auto combinedModelNodeFace =
 						Face(
-							combinedModelGroup,
-							combinedModelGroupVerticesIdx + faceVertexIndices[0],
-							combinedModelGroupVerticesIdx + faceVertexIndices[1],
-							combinedModelGroupVerticesIdx + faceVertexIndices[2],
-							combinedModelGroupNormalsIdx + faceNormalIndices[0],
-							combinedModelGroupNormalsIdx + faceNormalIndices[1],
-							combinedModelGroupNormalsIdx + faceNormalIndices[2]
+							combinedModelNode,
+							combinedModelNodeVerticesIdx + faceVertexIndices[0],
+							combinedModelNodeVerticesIdx + faceVertexIndices[1],
+							combinedModelNodeVerticesIdx + faceVertexIndices[2],
+							combinedModelNodeNormalsIdx + faceNormalIndices[0],
+							combinedModelNodeNormalsIdx + faceNormalIndices[1],
+							combinedModelNodeNormalsIdx + faceNormalIndices[2]
 						);
 					if (haveTextureCoordinates == true) {
-						combinedModelGroupFace.setTextureCoordinateIndices(
-							combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[0],
-							combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[1],
-							combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[2]
+						combinedModelNodeFace.setTextureCoordinateIndices(
+							combinedModelNodeTextureCoordinatesIdx + faceTextureCoordinatesIndices[0],
+							combinedModelNodeTextureCoordinatesIdx + faceTextureCoordinatesIndices[1],
+							combinedModelNodeTextureCoordinatesIdx + faceTextureCoordinatesIndices[2]
 						);
 					}
 					if (haveTangentsBitangents == true) {
-						combinedModelGroupFace.setTangentIndices(
-							combinedModelGroupTangentsIdx + faceTangentIndices[0],
-							combinedModelGroupTangentsIdx + faceTangentIndices[1],
-							combinedModelGroupTangentsIdx + faceTangentIndices[2]
+						combinedModelNodeFace.setTangentIndices(
+							combinedModelNodeTangentsIdx + faceTangentIndices[0],
+							combinedModelNodeTangentsIdx + faceTangentIndices[1],
+							combinedModelNodeTangentsIdx + faceTangentIndices[2]
 						);
-						combinedModelGroupFace.setBitangentIndices(
-							combinedModelGroupBitangentsIdx + faceBitangentIndices[0],
-							combinedModelGroupBitangentsIdx + faceBitangentIndices[1],
-							combinedModelGroupBitangentsIdx + faceBitangentIndices[2]
+						combinedModelNodeFace.setBitangentIndices(
+							combinedModelNodeBitangentsIdx + faceBitangentIndices[0],
+							combinedModelNodeBitangentsIdx + faceBitangentIndices[1],
+							combinedModelNodeBitangentsIdx + faceBitangentIndices[2]
 						);
 					}
-					combinedModelGroupFaces.push_back(combinedModelGroupFace);
+					combinedModelNodeFaces.push_back(combinedModelNodeFace);
 				}
 
 				//
-				combinedModelGroupVerticesIdx+= sourceGroupVerticesSize;
-				combinedModelGroupNormalsIdx+= sourceGroupNormalsSize;
-				combinedModelGroupTextureCoordinatesIdx+= sourceGroupTextureCoordinatesSize;
-				combinedModelGroupTangentsIdx+= sourceGroupTangentsSize;
-				combinedModelGroupBitangentsIdx+= sourceGroupBitangentsSize;
+				combinedModelNodeVerticesIdx+= sourceNodeVerticesSize;
+				combinedModelNodeNormalsIdx+= sourceNodeNormalsSize;
+				combinedModelNodeTextureCoordinatesIdx+= sourceNodeTextureCoordinatesSize;
+				combinedModelNodeTangentsIdx+= sourceNodeTangentsSize;
+				combinedModelNodeBitangentsIdx+= sourceNodeBitangentsSize;
 			}
-			combinedModelGroupFacesEntity->setFaces(combinedModelGroupFaces);
+			combinedModelNodeFacesEntity->setFaces(combinedModelNodeFaces);
 		}
 
 		// store back to model
-		combinedModelGroup->setVertices(combinedModelGroupVertices);
-		combinedModelGroup->setNormals(combinedModelGroupNormals);
-		combinedModelGroup->setTextureCoordinates(combinedModelGroupTextureCoordinates);
-		combinedModelGroup->setTangents(combinedModelGroupTangents);
-		combinedModelGroup->setBitangents(combinedModelGroupBitangents);
-		combinedModelGroup->setFacesEntities(combinedModelGroupFacesEntities);
-		combinedModelGroup->setOrigins(combinedModelGroupOrigins);
+		combinedModelNode->setVertices(combinedModelNodeVertices);
+		combinedModelNode->setNormals(combinedModelNodeNormals);
+		combinedModelNode->setTextureCoordinates(combinedModelNodeTextureCoordinates);
+		combinedModelNode->setTangents(combinedModelNodeTangents);
+		combinedModelNode->setBitangents(combinedModelNodeBitangents);
+		combinedModelNode->setFacesEntities(combinedModelNodeFacesEntities);
+		combinedModelNode->setOrigins(combinedModelNodeOrigins);
 	}
 
-	// do child groups
-	for (auto groupIt: sourceGroup->getSubGroups()) {
-		combineGroup(groupIt.second, origins, objectParentTransformationsMatrices, combinedModel);
+	// do child nodes
+	for (auto nodeIt: sourceNode->getSubNodes()) {
+		combineNode(nodeIt.second, origins, objectParentTransformationsMatrices, combinedModel);
 	}
 }
 
@@ -267,8 +267,8 @@ void Object3DRenderGroup::combineObjects(Model* model, const vector<Transformati
 		objectTransformationMatrices.push_back(transformationsMatrix);
 		origins.push_back(objectTransformations.getTranslation());
 	}
-	for (auto groupIt: model->getSubGroups()) {
-		combineGroup(groupIt.second, origins, objectTransformationMatrices, combinedModel);
+	for (auto nodeIt: model->getSubNodes()) {
+		combineNode(nodeIt.second, origins, objectTransformationMatrices, combinedModel);
 	}
 }
 

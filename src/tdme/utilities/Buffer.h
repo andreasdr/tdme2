@@ -23,6 +23,44 @@ private:
 	vector<uint8_t>* buffer { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param capacity capacity
+	 */
+	inline Buffer(int32_t capacity) {
+		this->createdBuffer = true;
+		this->position = 0;
+		this->buffer = new vector<uint8_t>(capacity);
+	}
+
+	/**
+	 * Public constructor
+	 * @param buffer buffer
+	 */
+	inline Buffer(Buffer* buffer) {
+		this->createdBuffer = false;
+		this->position = 0;
+		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
+	}
+
+	/**
+	 * Public constructor
+	 * @param data data
+	 */
+	inline Buffer(vector<uint8_t>* data) {
+		this->createdBuffer = false;
+		this->position = 0;
+		this->buffer = data;
+	}
+
+	/**
+	 * Destructor
+	 */
+	inline virtual ~Buffer() {
+		if (createdBuffer == true) {
+			delete this->buffer;
+		}
+	}
 
 	/**
 	 * Clear
@@ -93,42 +131,4 @@ public:
 		return buffer->data();
 	}
 
-	/**
-	 * Public constructor
-	 * @param capacity capacity
-	 */
-	inline Buffer(int32_t capacity) {
-		this->createdBuffer = true;
-		this->position = 0;
-		this->buffer = new vector<uint8_t>(capacity);
-	}
-
-	/**
-	 * Public constructor
-	 * @param buffer buffer
-	 */
-	inline Buffer(Buffer* buffer) {
-		this->createdBuffer = false;
-		this->position = 0;
-		this->buffer = buffer == nullptr?nullptr:buffer->buffer;
-	}
-
-	/**
-	 * Public constructor
-	 * @param data data
-	 */
-	inline Buffer(vector<uint8_t>* data) {
-		this->createdBuffer = false;
-		this->position = 0;
-		this->buffer = data;
-	}
-
-	/**
-	 * Destructor
-	 */
-	inline virtual ~Buffer() {
-		if (createdBuffer == true) {
-			delete this->buffer;
-		}
-	}
 };

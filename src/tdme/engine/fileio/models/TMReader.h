@@ -22,7 +22,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -220,7 +220,7 @@ public:
 };
 };
 
-/** 
+/**
  * TDME model reader
  * @author Andreas Drewke
  * @version $Id$
@@ -229,7 +229,7 @@ class tdme::engine::fileio::models::TMReader
 {
 public:
 
-	/** 
+	/**
 	 * TDME model format reader
 	 * @param pathName path name
 	 * @param fileName file name
@@ -248,7 +248,7 @@ private:
 	 */
 	static const string getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName);
 
-	/** 
+	/**
 	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
@@ -267,7 +267,7 @@ private:
 	 */
 	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version);
 
-	/** 
+	/**
 	 * Read vertices from input stream
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -275,7 +275,7 @@ private:
 	 */
 	static const vector<Vector3> readVertices(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read texture coordinates from input stream
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -283,7 +283,7 @@ private:
 	 */
 	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read indices from input stream
 	 * @param is input stream
 	 * @param indices indices
@@ -292,24 +292,24 @@ private:
 	 */
 	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices);
 
-	/** 
-	 * Read animation from input stream into group
+	/**
+	 * Read animation from input stream into node
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Animation
 	 */
-	static Animation* readAnimation(TMReaderInputStream* is, Group* g);
+	static Animation* readAnimation(TMReaderInputStream* is, Node* g);
 
-	/** 
+	/**
 	 * Read faces entities from input stream
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readFacesEntities(TMReaderInputStream* is, Group* g);
+	static void readFacesEntities(TMReaderInputStream* is, Node* g);
 
-	/** 
+	/**
 	 * Read skinning joint
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -317,7 +317,7 @@ private:
 	 */
 	static Joint readSkinningJoint(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read skinning joint weight
 	 * @param is input stream
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
@@ -325,33 +325,33 @@ private:
 	 */
 	static JointWeight readSkinningJointWeight(TMReaderInputStream* is);
 
-	/** 
+	/**
 	 * Read skinning from input stream
 	 * @param is input stream
-	 * @param g group
+	 * @param g node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readSkinning(TMReaderInputStream* is, Group* g);
+	static void readSkinning(TMReaderInputStream* is, Node* g);
 
-	/** 
-	 * Read sub groups
+	/**
+	 * Read sub nodes
 	 * @param is input stream
 	 * @param model model
-	 * @param parentGroup parent group
-	 * @param subGroups sub groups
+	 * @param parentNode parent node
+	 * @param subNodes sub nodes
 	 * @throws IOException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return group
+	 * @return node
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups);
+	static void readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes);
 
-	/** 
-	 * Write group to output stream
+	/**
+	 * Write node to output stream
 	 * @param is input stream
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return group
+	 * @return node
 	 */
-	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup);
+	static Node* readNode(TMReaderInputStream* is, Model* model, Node* parentNode);
 };

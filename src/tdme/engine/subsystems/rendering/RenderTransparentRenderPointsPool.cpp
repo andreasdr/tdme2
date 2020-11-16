@@ -35,13 +35,13 @@ RenderTransparentRenderPointsPool::~RenderTransparentRenderPointsPool() {
 
 void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2, const Matrix4x4& cameraMatrix)
 {
-	for (auto point: pool2->transparentRenderPoints) {
-		// skip if point is not in use
-		if (point->acquired == false) break;
+	auto pool2Points = pool2->getTransparentRenderPoints();
+	for (auto i = 0; i < pool2->getTransparentRenderPointsCount(); i++) {
+		auto point = pool2Points[i];
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("RenderTransparentRenderPointsPool::merge(): Too many transparent render points"));
-			break;
+			return;
 		}
 		//
 		cameraMatrix.multiply(point->point, point->point);

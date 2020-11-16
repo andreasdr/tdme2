@@ -9,7 +9,7 @@
 using tdme::engine::FrameBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader base implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -32,12 +32,16 @@ protected:
 	int32_t uniformTextureLightPositionY { -1 };
 	int32_t uniformIntensity { -1 };
 
-
 	bool isRunning { false };
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	PostProcessingShaderBaseImplementation(Renderer* renderer);
 
 	// overridden methods
 	virtual bool isInitialized() override;
@@ -49,11 +53,5 @@ public:
 	virtual void setTextureLightPositionX(void* context, float textureLightPositionX) override;
 	virtual void setTextureLightPositionY(void* context, float textureLightPositionY) override;
 	virtual void setIntensity(void* context, float intensity) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	PostProcessingShaderBaseImplementation(Renderer* renderer);
 
 };

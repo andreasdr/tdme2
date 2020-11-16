@@ -19,12 +19,12 @@ GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::LEFT
 GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::CENTER = new GUINode_AlignmentHorizontal("CENTER", 2);
 GUINode_AlignmentHorizontal* tdme::gui::nodes::GUINode_AlignmentHorizontal::RIGHT = new GUINode_AlignmentHorizontal("RIGHT", 3);
 
-GUINode_AlignmentHorizontal* GUINode_AlignmentHorizontal::valueOf(const string& a0)
+GUINode_AlignmentHorizontal* GUINode_AlignmentHorizontal::valueOf(const string& name)
 {
-	if (NONE->getName() == a0) return NONE;
-	if (LEFT->getName() == a0) return LEFT;
-	if (CENTER->getName() == a0) return CENTER;
-	if (RIGHT->getName() == a0) return RIGHT;
+	if (NONE->getName() == name) return NONE;
+	if (LEFT->getName() == name) return LEFT;
+	if (CENTER->getName() == name) return CENTER;
+	if (RIGHT->getName() == name) return RIGHT;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

@@ -15,7 +15,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 
-EntityBaseView::EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController) 
+EntityBaseView::EntityBaseView(EntityBaseSubScreenController* entityBaseSubScreenController)
 {
 	this->entityBaseSubScreenController = entityBaseSubScreenController;
 }

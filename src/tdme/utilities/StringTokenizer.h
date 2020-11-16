@@ -23,6 +23,11 @@ private:
 
 public:
 	/**
+	 * Public constructor
+	 */
+	StringTokenizer();
+
+	/**
 	 * Tokenize
 	 * @param str string to tokenize
 	 * @param delimiters delimiters
@@ -44,8 +49,4 @@ public:
 	 */
 	const string& nextToken();
 
-	/**
-	 * Public constructor
-	 */
-	StringTokenizer();
 };

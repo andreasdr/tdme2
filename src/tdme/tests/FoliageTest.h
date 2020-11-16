@@ -15,7 +15,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Foliage test
  * @author andreas.drewke
  * @version $Id$
@@ -52,7 +52,7 @@ public:
 	 */
 	FoliageTest();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

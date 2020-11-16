@@ -50,11 +50,22 @@ private:
 
 public:
 	/**
+	 * Public constructor
+	 * @param fileName archive file name
+	 */
+	ArchiveFileSystem(const string& fileName = "archive.ta");
+
+	/**
+	 * Public destructor
+	 */
+	virtual ~ArchiveFileSystem();
+
+	/**
 	 * @return Returns underlying TDME2 archive file name
 	 */
 	const string& getArchiveFileName();
 
-	// overriden methods
+	// overridden methods
 	const string getFileName(const string& path, const string& fileName) override;
 	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
 	bool isPath(const string& pathName) override;
@@ -77,6 +88,4 @@ public:
 	void removePath(const string& pathName, bool recursive) override;
 	void removeFile(const string& pathName, const string& fileName) override;
 	const string computeSHA256Hash();
-	ArchiveFileSystem(const string& fileName = "archive.ta");
-	virtual ~ArchiveFileSystem();
 };

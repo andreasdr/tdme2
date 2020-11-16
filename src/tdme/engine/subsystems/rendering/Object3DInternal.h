@@ -23,7 +23,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::math::Matrix2D3x3;
 
-/** 
+/**
  * Object 3D
  * @author Andreas Drewke
  * @version $Id$
@@ -50,21 +50,34 @@ protected:
 	void updateBoundingBox();
 
 public:
-	/** 
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param model model
+	 * @param instances instances to compute and render by duplication
+	 */
+	Object3DInternal(const string& id, Model* model, int instances);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Object3DInternal();
+
+	/**
 	 * @return object id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return true if enabled to be rendered
 	 */
 	inline bool isEnabled() {
 		return enabled;
 	}
 
-	/** 
+	/**
 	 * Enable/disable rendering
 	 * @param enabled enabled
 	 */
@@ -72,14 +85,14 @@ public:
 		this->enabled = enabled;
 	}
 
-	/** 
+	/**
 	 * @return if object is pickable
 	 */
 	inline bool isPickable() {
 		return pickable;
 	}
 
-	/** 
+	/**
 	 * Set this object pickable
 	 * @param pickable pickable
 	 */
@@ -117,7 +130,7 @@ public:
 		this->receivesShadows = receivesShadows;
 	}
 
-	/** 
+	/**
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
@@ -125,7 +138,7 @@ public:
 		return effectColorMul;
 	}
 
-	/** 
+	/**
 	 * The effect color that will be multiplied with fragment color
 	 * @param effectColorMul effect color
 	 */
@@ -149,14 +162,14 @@ public:
 		this->effectColorAdd = effectColorAdd;
 	}
 
-	/** 
+	/**
 	 * @return bounding box
 	 */
 	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
-	/** 
+	/**
 	 * Retrieves bounding sphere with transformations applied
 	 * @return bounding sphere
 	 */
@@ -165,37 +178,37 @@ public:
 	}
 
 	/**
-	 * Bind a texture to a group and faces entity
+	 * Bind a texture to a node and faces entity
 	 * @param textureId texture id
-	 * @param groupId group id or empty if texture should be bound to all groups
+	 * @param nodeId node id or empty if texture should be bound to all nodes
 	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
 	 */
-	void bindDiffuseTexture(int32_t textureId, const string& groupId = string(), const string& facesEntityId = string());
+	void bindDiffuseTexture(int32_t textureId, const string& nodeId = string(), const string& facesEntityId = string());
 
-	/** 
-	 * Bind frame buffer color texture to a group and faces entity of this object
+	/**
+	 * Bind frame buffer color texture to a node and faces entity of this object
 	 * @param frameBuffer frame buffer
-	 * @param groupId group id or empty string for all
+	 * @param nodeId node id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
+	void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& nodeId = string(), const string& facesEntityId = string());
 
-	/** 
-	 * Unbind dynamic texture to a group and faces entity of this object
-	 * @param groupId group id or empty string for all
+	/**
+	 * Unbind dynamic texture to a node and faces entity of this object
+	 * @param nodeId node id or empty string for all
 	 * @param facesEntityId faces entity id orempty string for all
 	 */
-	void unbindDiffuseTexture(const string& groupId = string(), const string& facesEntityId = string());
+	void unbindDiffuseTexture(const string& nodeId = string(), const string& facesEntityId = string());
 
 	/**
 	 * Set texture matrix
 	 * @param textureMatrix texture matrix
-	 * @param groupId group id or empty string for all
+	 * @param nodeId node id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
+	void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId = string(), const string& facesEntityId = string());
 
-	// overriden methods
+	// overridden methods
 	inline void initialize() override {
 		Object3DBase::initialize();
 	}
@@ -205,19 +218,7 @@ public:
 	void fromTransformations(const Transformations& transformations);
 	void update();
 
-	void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix);
-	void unsetGroupTransformationsMatrix(const string& id);
+	void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+	void unsetNodeTransformationsMatrix(const string& id);
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param model model
-	 * @param instances instances to compute and render by duplication
-	 */
-	Object3DInternal(const string& id, Model* model, int instances);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~Object3DInternal();
 };

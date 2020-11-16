@@ -15,7 +15,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
@@ -62,7 +62,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -165,10 +165,10 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 			model->setFPS(fps);
 			// visual scene root nodes
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
-				auto group = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps);
-				if (group != nullptr) {
-					model->getSubGroups()[group->getId()] = group;
-					model->getGroups()[group->getId()] = group;
+				auto node = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps);
+				if (node != nullptr) {
+					model->getSubNodes()[node->getId()] = node;
+					model->getNodes()[node->getId()] = node;
 				}
 			}
 		}
@@ -229,10 +229,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f)));
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
 			}
@@ -254,24 +254,24 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 	}
 }
 
-Group* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Node* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	auto xmlInstanceControllers = getChildrenByTagName(xmlNode, "instance_controller");
 	if (xmlInstanceControllers.empty() == false) {
-		return readVisualSceneInstanceController(pathName, model, parentGroup, xmlRoot, xmlNode);
+		return readVisualSceneInstanceController(pathName, model, parentNode, xmlRoot, xmlNode);
 	} else {
-		return readNode(pathName, model, parentGroup, xmlRoot, xmlNode, fps);
+		return readNode(pathName, model, parentNode, xmlRoot, xmlNode, fps);
 	}
 }
 
-Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
+Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
 	if (xmlNodeId.length() == 0) xmlNodeId = xmlNodeName;
 
-	// create group
-	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
+	// create node
+	auto node = new Node(model, parentNode, xmlNodeId, xmlNodeName);
 
 	// set up local transformations matrix
 	auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
@@ -285,7 +285,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			transformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 		}
 		transformationsMatrix.set(transformationsMatrixArray).transpose();
-		group->setTransformationsMatrix(transformationsMatrix);
+		node->setTransformationsMatrix(transformationsMatrix);
 	}
 
 	// parse animations
@@ -399,7 +399,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 									keyFrameIdx++;
 								}
 								animation->setTransformationsMatrices(transformationsMatrices);
-								group->setAnimation(animation);
+								node->setAnimation(animation);
 							}
 						}
 					}
@@ -408,12 +408,12 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 		}
 	}
 
-	// parse sub groups
+	// parse sub nodes
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
-		auto _group = readVisualSceneNode(pathName, model, group, xmlRoot, _xmlNode, fps);
-		if (_group != nullptr) {
-			group->getSubGroups()[_group->getId()] = _group;
-			model->getGroups()[_group->getId()] = _group;
+		auto _node = readVisualSceneNode(pathName, model, node, xmlRoot, _xmlNode, fps);
+		if (_node != nullptr) {
+			node->getSubNodes()[_node->getId()] = _node;
+			model->getNodes()[_node->getId()] = _node;
 		}
 	}
 
@@ -433,8 +433,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, materialSymbols);
-		return group;
+		readGeometry(pathName, model, node, xmlRoot, xmlInstanceGeometryId, materialSymbols);
+		return node;
 	}
 
 	// otherwise check for "instance_node"
@@ -447,12 +447,12 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 		for (auto xmlLibraryNodes: getChildrenByTagName(xmlRoot, "library_nodes"))
 		for (auto xmlLibraryNode: getChildrenByTagName(xmlLibraryNodes, "node"))
 		if (string(AVOID_NULLPTR_STRING(xmlLibraryNode->Attribute("id"))) == xmlInstanceNodeId) {
-			// parse sub groups
+			// parse sub nodes
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
-				auto _group = readVisualSceneNode(pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
-				if (_group != nullptr) {
-					group->getSubGroups()[_group->getId()] = _group;
-					model->getGroups()[_group->getId()] = _group;
+				auto _node = readVisualSceneNode(pathName, model, parentNode, xmlRoot, _xmlNode, fps);
+				if (_node != nullptr) {
+					node->getSubNodes()[_node->getId()] = _node;
+					model->getNodes()[_node->getId()] = _node;
 				}
 			}
 			// parse geometry
@@ -467,14 +467,14 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
+				readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols);
 			}
 		}
 	}
-	return group;
+	return node;
 }
 
-Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode)
+Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Node* parentNode, TiXmlElement* xmlRoot, TiXmlElement* xmlNode)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -530,14 +530,14 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	Matrix4x4 bindShapeMatrix;
 	bindShapeMatrix.set(bindShapeMatrixArray).transpose();
 
-	// create group
-	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
+	// create node
+	auto node = new Node(model, parentNode, xmlNodeId, xmlNodeName);
 
 	// create skinning
 	auto skinning = new Skinning();
 
 	// parse geometry
-	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
+	readGeometry(pathName, model, node, xmlRoot, xmlGeometryId, materialSymbols);
 
 	// parse joints
 	string xmlJointsSource;
@@ -687,21 +687,21 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
 	skinning->setVerticesJointsWeights(verticesJointsWeights);
-	group->setSkinning(skinning);
+	node->setSkinning(skinning);
 
 	//
-	return group;
+	return node;
 }
 
-void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
+void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
 {
-	vector<FacesEntity> facesEntities = group->getFacesEntities();
-	auto verticesOffset = group->getVertices().size();
-	vector<Vector3> vertices = group->getVertices();
-	auto normalsOffset = group->getNormals().size();
-	vector<Vector3> normals = group->getNormals();;
-	auto textureCoordinatesOffset = group->getTextureCoordinates().size();
-	auto textureCoordinates = group->getTextureCoordinates();
+	vector<FacesEntity> facesEntities = node->getFacesEntities();
+	auto verticesOffset = node->getVertices().size();
+	vector<Vector3> vertices = node->getVertices();
+	auto normalsOffset = node->getNormals().size();
+	vector<Vector3> normals = node->getNormals();;
+	auto textureCoordinatesOffset = node->getTextureCoordinates().size();
+	auto textureCoordinates = node->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
 		if (string(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id"))) == xmlNodeId) {
@@ -722,7 +722,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 			// parse from xml polygons elements
 			for (auto xmlPolygons: xmlPolygonsList) {
 				vector<Face> faces;
-				FacesEntity facesEntity(group, xmlNodeId);
+				FacesEntity facesEntity(node, xmlNodeId);
 				if (StringTools::toLowerCase((xmlPolygons->Value())) == "polylist") {
 					StringTokenizer t;
 					t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText())), " \t\n\r\f");
@@ -913,7 +913,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 							if (valid == true) {
 								// add face
 								Face f(
-									group,
+									node,
 									vi[0] + verticesOffset,
 									vi[1] + verticesOffset,
 									vi[2] + verticesOffset,
@@ -947,11 +947,11 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 		}
 	}
 
-	// set up group
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setTextureCoordinates(textureCoordinates);
-	group->setFacesEntities(facesEntities);
+	// set up node
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setTextureCoordinates(textureCoordinates);
+	node->setFacesEntities(facesEntities);
 }
 
 Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId)

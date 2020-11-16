@@ -8,31 +8,31 @@
 using std::string;
 
 
-/** 
+/**
  * File dialog path
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::FileDialogPath
+class tdme::tools::shared::controller::FileDialogPath final
 {
 private:
-	string path {  };
+	string path;
 
 public:
-
-	/** 
-	 * @return path
-	 */
-	virtual const string& getPath();
-
-	/** 
-	 * Set path
-	 * @param path path
-	 */
-	virtual void setPath(const string& path);
-
 	/**
 	 * Public constructor
 	 */
 	FileDialogPath(const string& path);
+
+	/**
+	 * @return path
+	 */
+	const string& getPath();
+
+	/**
+	 * Set path
+	 * @param path path
+	 */
+	void setPath(const string& path);
+
 };

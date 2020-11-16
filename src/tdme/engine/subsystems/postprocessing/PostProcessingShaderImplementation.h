@@ -8,7 +8,7 @@
 using tdme::engine::FrameBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader program implementation interface
  * @author Andreas Drewke
  * @version $Id$
@@ -21,23 +21,23 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	 */
 	virtual ~PostProcessingShaderImplementation() {}
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	virtual bool isInitialized() = 0;
 
-	/** 
+	/**
 	 * Initialize post processing shader
 	 */
 	virtual void initialize() = 0;
 
-	/** 
+	/**
 	 * Use program
 	 * @param context context
 	 */
 	virtual void useProgram(void* context) = 0;
 
-	/** 
+	/**
 	 * Unuse program
 	 */
 	virtual void unUseProgram() = 0;

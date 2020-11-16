@@ -28,7 +28,7 @@ void Base64EncDec::decode(const string& encodedString, string& decodedString) {
 	// see: https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
 	string dictionary = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	std::vector<int> T(256, -1);
-	for (int i = 0; i < 64; i++) T[dictionary[i]] = i; 
+	for (int i = 0; i < 64; i++) T[dictionary[i]] = i;
 		int val = 0, valb = -8;
 		for (uint8_t c: encodedString) {
 			if (T[c] == -1) break;

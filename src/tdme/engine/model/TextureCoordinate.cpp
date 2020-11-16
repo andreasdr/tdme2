@@ -21,7 +21,7 @@ TextureCoordinate::TextureCoordinate(const array<float, 2>& uv)
 	data = uv;
 }
 
-TextureCoordinate::TextureCoordinate(float u, float v) 
+TextureCoordinate::TextureCoordinate(float u, float v)
 {
 	data[0] = u;
 	data[1] = 1.0f - v;

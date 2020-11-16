@@ -114,9 +114,9 @@ void BatchRendererTriangles::render()
 		renderer->uploadBufferObject(context, (*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
 		renderer->bindModelMatricesBufferObject(context, (*vboIds)[3]);
 		renderer->uploadBufferObject(context, (*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-		renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[4]);
+		renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[4], 1);
 		renderer->uploadBufferObject(context, (*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-		renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[5]);
+		renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[5], 1);
 
 		// draw
 		renderer->drawInstancedTrianglesFromBufferObjects(context, triangles, 0, 1);

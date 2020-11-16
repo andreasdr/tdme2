@@ -17,11 +17,11 @@ using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;
 
-/** 
+/**
  * Interface to compute shader skinning shader program
  * @author Andreas Drewke
  * @version $Id$
@@ -52,23 +52,28 @@ private:
 	Mutex mutex;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	SkinningShader(Renderer* renderer);
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use skinning program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Unuse skinning program
 	 */
 	void unUseProgram();
@@ -77,18 +82,13 @@ public:
 	 * Compute skinning
 	 * @param context context
 	 * @param object3DBase object 3D base
-	 * @param object3DGroupMesh object 3d group mesh
+	 * @param object3DNodeMesh object 3d node mesh
 	 */
-	void computeSkinning(void* context, Object3DBase* object3DBase, Object3DGroupMesh* object3DGroupMesh);
+	void computeSkinning(void* context, Object3DBase* object3DBase, Object3DNodeMesh* object3DNodeMesh);
 
 	/**
 	 * Reset
 	 */
 	void reset();
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	SkinningShader(Renderer* renderer);
 };

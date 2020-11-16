@@ -5,7 +5,7 @@
 using tdme::gui::renderer::GUIShader;
 using tdme::engine::subsystems::renderer::Renderer;
 
-GUIShader::GUIShader(Renderer* renderer) 
+GUIShader::GUIShader(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;

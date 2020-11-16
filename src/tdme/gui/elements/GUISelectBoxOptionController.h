@@ -19,16 +19,16 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box option controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxOptionController final
-	: public GUIElementController
+class tdme::gui::elements::GUISelectBoxOptionController: public GUIElementController
 {
 	friend class GUISelectBoxOption;
 	friend class GUISelectBoxController;
+	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -39,6 +39,12 @@ private:
 	bool initialPostLayout;
 	bool selected;
 	MutableString value;
+
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUISelectBoxOptionController(GUINode* node);
 
 	/**
 	 * @return is selected
@@ -56,16 +62,13 @@ private:
 	void unselect();
 
 	/**
-	 * Private constructor
-	 * @param node node
+	 * @return if is collapsed in tree view
 	 */
-	GUISelectBoxOptionController(GUINode* node);
-
+	bool isCollapsed();
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
-
-public:
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;

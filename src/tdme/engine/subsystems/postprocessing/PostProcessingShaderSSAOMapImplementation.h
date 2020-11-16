@@ -12,7 +12,7 @@ using std::array;
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Post processing shader SSAO map generation implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -27,16 +27,14 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overridden methods
-	virtual void initialize() override;
-
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
 	PostProcessingShaderSSAOMapImplementation(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
+	virtual void initialize() override;
 	virtual void useProgram(void* context) override;
 
 private:

@@ -6,7 +6,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -20,29 +20,29 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Key;
 using tdme::utilities::Console;
 
-TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
+TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 {
 	this->object3DRenderer = nullptr;
 	this->model = nullptr;
-	this->object3DGroup = nullptr;
+	this->object3DNode = nullptr;
 	this->facesEntityIdx = -1;
 	this->material = nullptr;
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	this->object3DRenderer = object3DRenderer;
 	this->batchRenderers.clear();
 	this->model = model;
-	this->object3DGroup = object3DGroup;
+	this->object3DNode = object3DNode;
 	this->facesEntityIdx = facesEntityIdx;
 	this->effectColorAdd.set(effectColorAdd);
 	this->effectColorMul.set(effectColorMul);
@@ -51,14 +51,14 @@ void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* m
 	this->shader = shader;
 }
 
-const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+const string TransparentRenderFacesGroup::createKey(Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	auto& efcmData = effectColorMul.getArray();
 	auto& efcaData = effectColorAdd.getArray();
 	string key =
 		model->getId() +
 		"," +
-		object3DGroup->id +
+		object3DNode->id +
 		"," +
 		(textureCoordinates == true ? "TCT" : "TCF");
 		"," +
@@ -66,7 +66,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 		",";
 		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
 		",";
-	key.append((const char*)&object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
+	key.append((const char*)&object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
 	key.append(",");
 	key.append((const char*)&facesEntityIdx, sizeof(facesEntityIdx));
 	key.append(",");
@@ -112,7 +112,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	renderer->onUpdateEffect(context);
 	// material
 	string materialKey;
-	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
+	object3DRenderer->setupMaterial(context, object3DNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix(context);

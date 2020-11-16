@@ -7,12 +7,12 @@ using tdme::math::Matrix4x4;
 
 Joint::Joint()
 {
-	this->groupId.clear();
+	this->nodeId.clear();
 	this->bindMatrix.identity();
 }
 
-Joint::Joint(const string& groupId)
+Joint::Joint(const string& nodeId)
 {
-	this->groupId = groupId;
+	this->nodeId = nodeId;
 	this->bindMatrix.identity();
 }

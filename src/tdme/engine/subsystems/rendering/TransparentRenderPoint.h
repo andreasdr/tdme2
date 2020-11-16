@@ -10,14 +10,13 @@
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Transparent point to be rendered
  * @author Andreas Drewke
  * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 {
-	bool acquired;
 	uint16_t spriteIndex;
 	Vector3 point;
 	Color4 color;
@@ -30,17 +29,7 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 	 * @param point2 point 2
 	 */
 	inline static bool compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2) {
-		if (point1->acquired == false && point2->acquired == false) {
-			return false;
-		} else
-		if (point1->acquired == false) {
-			return false;
-		} else
-		if (point2->acquired == false) {
-			return true;
-		} else {
-			return -point1->point.getZ() > -point2->point.getZ();
-		}
+		return -point1->point.getZ() > -point2->point.getZ();
 	}
 
 };

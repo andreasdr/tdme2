@@ -30,6 +30,18 @@ public:
 	static GUINode_AlignmentHorizontal* LEFT;
 	static GUINode_AlignmentHorizontal* CENTER;
 	static GUINode_AlignmentHorizontal* RIGHT;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	GUINode_AlignmentHorizontal(const string& name, int ordinal);
-	static GUINode_AlignmentHorizontal* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static GUINode_AlignmentHorizontal* valueOf(const string& name);
 };

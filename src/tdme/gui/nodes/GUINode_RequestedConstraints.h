@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode;
 
-/** 
+/**
  * GUI node requested constraints entity
  * @author Andreas Drewke
  * @version $Id$

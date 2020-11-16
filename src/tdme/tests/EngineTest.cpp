@@ -21,7 +21,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -65,7 +65,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::utilities::ModelTools;
@@ -120,8 +120,8 @@ Model* EngineTest::createWallModel()
 	wallMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wallMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wall->getMaterials()["wall"] = wallMaterial;
-	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
-	vector<FacesEntity> groupFacesEntities;
+	auto wallNode = new Node(wall, nullptr, "wall", "wall");
+	vector<FacesEntity> nodeFacesEntities;
 	vector<Vector3> vertices;
 	vertices.push_back(Vector3(-4.0f, 0.0f, +4.0f));
 	vertices.push_back(Vector3(-4.0f, +4.0f, +4.0f));
@@ -135,18 +135,18 @@ Model* EngineTest::createWallModel()
 	textureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
 	textureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
 	vector<Face> facesFarPlane;
-	facesFarPlane.push_back(Face(wallGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
-	facesFarPlane.push_back(Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityFarPlane(wallGroup, "wall");
-	groupFacesEntityFarPlane.setMaterial(wallMaterial);
-	groupFacesEntityFarPlane.setFaces(facesFarPlane);
-	groupFacesEntities.push_back(groupFacesEntityFarPlane);
-	wallGroup->setVertices(vertices);
-	wallGroup->setNormals(normals);
-	wallGroup->setTextureCoordinates(textureCoordinates);
-	wallGroup->setFacesEntities(groupFacesEntities);
-	wall->getGroups()["wall"] = wallGroup;
-	wall->getSubGroups()["wall"] = wallGroup;
+	facesFarPlane.push_back(Face(wallNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
+	facesFarPlane.push_back(Face(wallNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
+	FacesEntity nodeFacesEntityFarPlane(wallNode, "wall");
+	nodeFacesEntityFarPlane.setMaterial(wallMaterial);
+	nodeFacesEntityFarPlane.setFaces(facesFarPlane);
+	nodeFacesEntities.push_back(nodeFacesEntityFarPlane);
+	wallNode->setVertices(vertices);
+	wallNode->setNormals(normals);
+	wallNode->setTextureCoordinates(textureCoordinates);
+	wallNode->setFacesEntities(nodeFacesEntities);
+	wall->getNodes()["wall"] = wallNode;
+	wall->getSubNodes()["wall"] = wallNode;
 	ModelTools::prepareForIndexedRendering(wall);
 	return wall;
 }

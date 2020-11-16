@@ -7,7 +7,6 @@
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -47,7 +46,7 @@ using tdme::engine::fileio::models::TMWriter;
 using tdme::utilities::ModelTools;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -77,7 +76,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 using tdme::utilities::MutableString;
 
-LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps) 
+LevelEditorEntityLibraryScreenController::LevelEditorEntityLibraryScreenController(PopUps* popUps)
 {
 	this->popUps = popUps;
 	this->modelPath = ".";
@@ -467,9 +466,9 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 	}
 }
 
-void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	if (type == GUIActionListener_Type::PERFORMED) {
+	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_entity_place") == 0) {
 			onPlaceEntity();
 		} else if (node->getId().compare("button_level_edit") == 0) {

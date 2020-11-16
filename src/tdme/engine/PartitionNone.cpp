@@ -11,7 +11,7 @@ using tdme::engine::PartitionNone;
 using tdme::engine::Entity;
 using tdme::utilities::VectorIteratorMultiple;
 
-PartitionNone::PartitionNone() 
+PartitionNone::PartitionNone()
 {
 	arrayListIteratorMultiple.addVector(&entities);
 }

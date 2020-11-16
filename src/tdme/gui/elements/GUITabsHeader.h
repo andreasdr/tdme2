@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * GUI tabs header element
  * @author Andreas Drewke
  * @version $Id$
@@ -31,13 +31,15 @@ private:
 	static string NAME;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUITabsHeader();
+
+	// overridden methods
 	const string& getName() override;
 	const string getTemplate(const string& pathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	/**
-	 * Public constructor
-	 */
-	GUITabsHeader();
 };

@@ -7,7 +7,7 @@
 
 using tdme::math::Vector3;
 
-/** 
+/**
  * Plane entity, this is not directly connectable with physics engine
  * @author Andreas Drewke
  * @version $Id$
@@ -19,14 +19,24 @@ private:
 	float distance;
 
 public:
-	/** 
+	/**
+	 * Public constructor
+	 * @param normal normal
+	 * @param distance distance
+	 */
+	inline Plane(const Vector3& normal, float distance) {
+		this->normal.set(normal);
+		this->distance = distance;
+	}
+
+	/**
 	 * @return float distance from origin
 	 */
 	inline float getDistance() {
 		return distance;
 	}
 
-	/** 
+	/**
 	 * Set up distance from origin
 	 * @param distance distance
 	 */
@@ -34,7 +44,7 @@ public:
 		this->distance = distance;
 	}
 
-	/** 
+	/**
 	 * @return normal
 	 */
 	inline Vector3& getNormal() {
@@ -49,13 +59,4 @@ public:
 		distance = 0.0f;
 	}
 
-	/**
-	 * Public constructor
-	 * @param normal normal
-	 * @param distance distance
-	 */
-	inline Plane(const Vector3& normal, float distance) {
-		this->normal.set(normal);
-		this->distance = distance;
-	}
 };

@@ -11,7 +11,7 @@ using std::string;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 
-ModelProperties::ModelProperties() 
+ModelProperties::ModelProperties()
 {
 }
 

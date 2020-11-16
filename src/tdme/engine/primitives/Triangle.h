@@ -9,7 +9,7 @@ using std::vector;
 
 using tdme::math::Vector3;
 
-/** 
+/**
  * Triangle entity, this is not directly connectable with physics engine
  * @author Andreas Drewke
  * @version $Id$
@@ -17,13 +17,6 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::Triangle final
 {
 public:
-	/** 
-	 * @return triangle vertices
-	 */
-	inline vector<Vector3>& getVertices() {
-		return vertices;
-	}
-
 	/**
 	 * Public constructor
 	 */
@@ -36,6 +29,13 @@ public:
 	 * @param vertex2 vertex 2
 	 */
 	Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3& vertex2);
+
+	/**
+	 * @return triangle vertices
+	 */
+	inline vector<Vector3>& getVertices() {
+		return vertices;
+	}
 
 	/**
 	 * Compute closest point on bounding volume

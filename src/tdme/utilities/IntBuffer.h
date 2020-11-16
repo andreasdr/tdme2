@@ -13,6 +13,18 @@ class tdme::utilities::IntBuffer: public Buffer
 {
 public:
 	/**
+	 * Default constructor
+	 */
+	IntBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
+	/**
+	 * Public constructor
+	 */
+	inline IntBuffer(Buffer* buffer) : Buffer(buffer) {
+	}
+
+	/**
 	 * @return capacity
 	 */
 	inline virtual int32_t getCapacity() {
@@ -46,18 +58,6 @@ public:
 	inline IntBuffer* put(int32_t value) {
 		Buffer::put((const uint8_t*)&value, sizeof(int32_t));
 		return this;
-	}
-
-	/**
-	 * Default constructor
-	 */
-	IntBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline IntBuffer(Buffer* buffer) : Buffer(buffer) {
 	}
 
 };

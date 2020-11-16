@@ -8,7 +8,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -45,7 +45,7 @@ using tdme::engine::ModelUtilities;
 using tdme::engine::Transformations;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::utilities::ModelTools;
 using tdme::engine::model::RotationOrder;
@@ -89,7 +89,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
-	level->setGameRoot(Tools::getGameRootPath(pathName));
+	level->setApplicationRoot(Tools::getApplicationRootPath(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
 	level->clearProperties();
@@ -246,11 +246,11 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	}
 }
 
-void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups) {
+void LevelFileImport::determineMeshNodes(LevelEditorLevel* level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes) {
 	auto entityLibrary = level->getEntityLibrary();
-	auto groupId = group->getId();
-	if (parentName.length() > 0) groupId = parentName + "." + groupId;
-	auto modelName = groupId;
+	auto nodeId = node->getId();
+	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
+	auto modelName = nodeId;
 	modelName = StringTools::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
 	modelName = StringTools::regexReplace(modelName, "[0-9]+$", "");
 	auto haveName = entityLibrary->getEntityCount() == 0;
@@ -284,32 +284,32 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	}
 	Matrix4x4 transformationsMatrix;
 	// compute animation matrix if animation setups exist
-	auto animation = group->getAnimation();
+	auto animation = node->getAnimation();
 	if (animation != nullptr) {
 		auto& animationMatrices = animation->getTransformationsMatrices();
 		transformationsMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
-		// no animation matrix, set up local transformation matrix up as group matrix
-		transformationsMatrix.set(group->getTransformationsMatrix());
+		// no animation matrix, set up local transformation matrix up as node matrix
+		transformationsMatrix.set(node->getTransformationsMatrix());
 	}
 
 	// apply parent transformation matrix
 	transformationsMatrix.multiply(parentTransformationsMatrix);
 
 	// check if no mesh?
-	if (group->getVertices().size() == 0 && group->getSubGroups().size() > 0) {
+	if (node->getVertices().size() == 0 && node->getSubNodes().size() > 0) {
 		// ok, check sub meshes
-		for (auto subGroupIt: group->getSubGroups()) {
-			determineMeshGroups(level, subGroupIt.second, groupId, transformationsMatrix.clone(), meshGroups);
+		for (auto subNodeIt: node->getSubNodes()) {
+			determineMeshNodes(level, subNodeIt.second, nodeId, transformationsMatrix.clone(), meshNodes);
 		}
 	} else {
-		// add to group meshes, even if empty as its a empty :D
-		LevelEditorEntityMeshGroup levelEditorEntityMeshGroup;
-		levelEditorEntityMeshGroup.id = groupId;
-		levelEditorEntityMeshGroup.name = modelName;
-		levelEditorEntityMeshGroup.group = group;
-		levelEditorEntityMeshGroup.transformationsMatrix.set(transformationsMatrix);
-		meshGroups.push_back(levelEditorEntityMeshGroup);
+		// add to node meshes, even if empty as its a empty :D
+		LevelEditorEntityMeshNode levelEditorEntityMeshNode;
+		levelEditorEntityMeshNode.id = nodeId;
+		levelEditorEntityMeshNode.name = modelName;
+		levelEditorEntityMeshNode.node = node;
+		levelEditorEntityMeshNode.transformationsMatrix.set(transformationsMatrix);
+		meshNodes.push_back(levelEditorEntityMeshNode);
 	}
 }
 
@@ -336,23 +336,23 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	level->setRotationOrder(rotationOrder);
 
 	auto entityLibrary = level->getEntityLibrary();
-	auto groupIdx = 0;
+	auto nodeIdx = 0;
 	LevelEditorEntity* emptyEntity = nullptr;
 	Matrix4x4 modelImportRotationMatrix;
 	Vector3 levelModelScale;
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
-	auto progressTotal = levelModel->getSubGroups().size();
+	auto progressTotal = levelModel->getSubNodes().size();
 	auto progressIdx = 0;
-	for (auto groupIt: levelModel->getSubGroups()) {
+	for (auto nodeIt: levelModel->getSubNodes()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
-		vector<LevelEditorEntityMeshGroup> meshGroups;
-		determineMeshGroups(level, groupIt.second, "", (Matrix4x4()).identity(), meshGroups);
-		for (auto& meshGroup: meshGroups) {
+		vector<LevelEditorEntityMeshNode> meshNodes;
+		determineMeshNodes(level, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
+		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
 				modelPathName,
-				fileName + "-" + meshGroup.name,
+				fileName + "-" + meshNode.name,
 				upVector,
 				rotationOrder,
 				nullptr
@@ -361,31 +361,31 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			float importFixScale = 1.0f;
 			Vector3 translation, scale, rotation;
 			Vector3 xAxis, yAxis, zAxis, tmpAxis;
-			Matrix4x4 groupTransformationsMatrix;
-			groupTransformationsMatrix.set(meshGroup.transformationsMatrix);
-			groupTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
-			groupTransformationsMatrix.getTranslation(translation);
-			groupTransformationsMatrix.getScale(scale);
+			Matrix4x4 nodeTransformationsMatrix;
+			nodeTransformationsMatrix.set(meshNode.transformationsMatrix);
+			nodeTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
+			nodeTransformationsMatrix.getTranslation(translation);
+			nodeTransformationsMatrix.getScale(scale);
 			xAxis.normalize();
 			yAxis.normalize();
 			zAxis.normalize();
-			groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+			nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
 			if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
 				(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
 				xAxis.scale(-1.0f);
 				yAxis.scale(-1.0f);
 				zAxis.scale(-1.0f);
-				groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
 				scale.scale(-1.0f);
 			}
-			groupTransformationsMatrix.computeEulerAngles(rotation);
+			nodeTransformationsMatrix.computeEulerAngles(rotation);
 			modelImportRotationMatrix.multiply(scale, scale);
 			modelImportRotationMatrix.multiply(rotation, rotation);
 			model->getImportTransformationsMatrix().multiply(translation, translation);
 
-			ModelTools::cloneGroup(meshGroup.group, model);
-			if (model->getSubGroups().begin() != model->getSubGroups().end()) {
-				model->getSubGroups().begin()->second->setTransformationsMatrix(Matrix4x4().identity());
+			ModelTools::cloneNode(meshNode.node, model);
+			if (model->getSubNodes().begin() != model->getSubNodes().end()) {
+				model->getSubNodes().begin()->second->setTransformationsMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 			ModelTools::prepareForIndexedRendering(model);
@@ -413,7 +413,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				scale.scale(1.0f / importFixScale);
 			}
 			auto entityType = LevelEditorEntity_EntityType::MODEL;
-			if (meshGroup.group->getVertices().size() == 0) {
+			if (meshNode.node->getVertices().size() == 0) {
 				entityType = LevelEditorEntity_EntityType::EMPTY;
 				delete model;
 				model = nullptr;
@@ -433,7 +433,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 					}
 				}
 				if (levelEditorEntity == nullptr && model != nullptr) {
-					auto modelFileName = meshGroup.name + ".tm";
+					auto modelFileName = meshNode.name + ".tm";
 					TMWriter::write(
 						model,
 						modelPathName,
@@ -441,9 +441,9 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 					  );
 					delete model;
 					levelEditorEntity = entityLibrary->addModel(
-						groupIdx++,
-						meshGroup.name,
-						meshGroup.name,
+						nodeIdx++,
+						meshNode.name,
+						meshNode.name,
 						modelPathName,
 						modelFileName,
 						Vector3()
@@ -452,7 +452,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			} else
 			if (entityType == LevelEditorEntity_EntityType::EMPTY) {
 				if (emptyEntity == nullptr) {
-					emptyEntity = entityLibrary->addEmpty(groupIdx++, "Default Empty", "");
+					emptyEntity = entityLibrary->addEmpty(nodeIdx++, "Default Empty", "");
 				}
 				levelEditorEntity = emptyEntity;
 			} else {
@@ -469,8 +469,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			levelEditorObjectTransformations.setScale(scale);
 			levelEditorObjectTransformations.update();
 			auto object = new LevelEditorObject(
-				meshGroup.id,
-				meshGroup.id,
+				meshNode.id,
+				meshNode.id,
 				levelEditorObjectTransformations,
 				levelEditorEntity
 			);

@@ -14,7 +14,7 @@ using tdme::tools::shared::tools::Tools;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
 
-LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSystem_PointParticleSystem() 
+LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSystem_PointParticleSystem()
 {
 }
 

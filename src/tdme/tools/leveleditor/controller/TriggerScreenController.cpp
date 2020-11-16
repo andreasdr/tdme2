@@ -4,7 +4,7 @@
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -30,7 +30,7 @@ using std::string;
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -52,7 +52,7 @@ using tdme::utilities::Exception;
 
 MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
 
-TriggerScreenController::TriggerScreenController(TriggerView* view) 
+TriggerScreenController::TriggerScreenController(TriggerView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{
@@ -155,7 +155,7 @@ void TriggerScreenController::onValueChanged(GUIElementNode* node)
 	entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
 }
 
-void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void TriggerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());

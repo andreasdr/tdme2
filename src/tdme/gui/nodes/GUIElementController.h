@@ -16,7 +16,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI element controller
  * @author Andreas Drewke
  * @version $Id$
@@ -29,15 +29,24 @@ class tdme::gui::nodes::GUIElementController
 private:
 	static constexpr int64_t TIME_DOUBLECLICK { 200LL };
 
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
 	bool disabled;
 	bool isActionPerforming;
 	bool initialized;
 	MutableString value;
 	int64_t timeLastClicked { -1LL };
 
+protected:
+	static string CONDITION_DISABLED;
+	static string CONDITION_ENABLED;
+
+	/**
+	 * Constructor
+	 * @param node node
+	 */
+	GUIElementController(GUINode* node);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -51,7 +60,4 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-protected:
-	GUIElementController(GUINode* node);
 };

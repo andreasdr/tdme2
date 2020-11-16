@@ -24,11 +24,37 @@ class tdme::tools::shared::controller::EntityPhysicsSubScreenController_Generate
 	friend class EntityPhysicsSubScreenController_BoundingVolumeType;
 
 public:
-	static void removeConvexMeshes(EntityPhysicsSubScreenController* EntityPhysicsSubScreenController, LevelEditorEntity* entityFinal);
-	static void generateConvexMeshes(EntityPhysicsSubScreenController* EntityPhysicsSubScreenController, LevelEditorEntity* entityFinal);
+	/**
+	 * Remove convex meshes
+	 * @param entityPhysicsSubScreenController entity physics sub screen controller
+	 * @param entityFinal entity final
+	 */
+	static void removeConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal);
+
+	/**
+	 * Generateconvex meshes
+	 * @param entityPhysicsSubScreenController entity physics sub screen controller
+	 * @param entityFinal entity final
+	 */
+	static void generateConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal);
 
 private:
+
+	/**
+	 * Create model
+	 * @param id id
+	 * @param points points
+	 * @param triangles triangles
+	 * @param pointCount point count
+	 * @param triangleCount triangle count
+	 */
 	static Model* createModel(const string& id, double* points, uint32_t* triangles, uint32_t pointCount, uint32_t triangleCount);
+
+	/**
+	 * Create model
+	 * @param id id
+	 * @param triangles triangles
+	 */
 	static Model* createModel(const string& id, vector<Triangle>& triangles);
 
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController;

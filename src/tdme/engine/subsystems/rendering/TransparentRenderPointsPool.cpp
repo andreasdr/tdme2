@@ -20,13 +20,12 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax) 
+TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
 {
 	poolIdx = 0;
 	transparentRenderPoints.resize(pointsMax);
 	for (auto i = 0; i < transparentRenderPoints.size(); i++) {
 		transparentRenderPoints[i] = new TransparentRenderPoint();
-		transparentRenderPoints[i]->acquired = false;
 	}
 }
 
@@ -37,7 +36,6 @@ TransparentRenderPointsPool::~TransparentRenderPointsPool() {
 void TransparentRenderPointsPool::reset()
 {
 	poolIdx = 0;
-	for (auto point: transparentRenderPoints) point->acquired = false;
 }
 
 void TransparentRenderPointsPool::sort()

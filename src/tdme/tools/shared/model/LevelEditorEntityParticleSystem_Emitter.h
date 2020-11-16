@@ -19,6 +19,18 @@ public:
 	static LevelEditorEntityParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER;
 	static LevelEditorEntityParticleSystem_Emitter *CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
 	static LevelEditorEntityParticleSystem_Emitter *SPHERE_PARTICLE_EMITTER;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	LevelEditorEntityParticleSystem_Emitter(const string& name, int ordinal);
-	static LevelEditorEntityParticleSystem_Emitter* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static LevelEditorEntityParticleSystem_Emitter* valueOf(const string& name);
 };

@@ -96,7 +96,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @param stepSize step size  
+	 * @param stepSize step size
 	 * @return string representation
 	 */
 	inline string toId(float x, float y, float z) {
@@ -337,7 +337,7 @@ private:
 	 * @return if node a == node b
 	 */
 	inline bool equalsLastNode(const PathFindingNode& a, const PathFindingNode& b) {
-		return a.position.clone().sub(b.position).computeLengthSquared() < Math::square(stepSizeLast);
+		return a.position.clone().sub(b.position).setY(0.0f).computeLengthSquared() < stepSizeLast * stepSizeLast + stepSizeLast * stepSizeLast + 0.1f;
 	}
 
 	/**

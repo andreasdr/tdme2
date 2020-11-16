@@ -12,40 +12,14 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
  * Pop ups view
  * @author andreas
  */
-class tdme::tools::shared::views::PopUps
+class tdme::tools::shared::views::PopUps final
 {
 private:
-	InfoDialogScreenController* infoDialogScreenController {  };
-	FileDialogScreenController* fileDialogScreenController {  };
-	ProgressBarScreenController* progressBarScreenController {  };
+	InfoDialogScreenController* infoDialogScreenController { nullptr };
+	FileDialogScreenController* fileDialogScreenController { nullptr };
+	ProgressBarScreenController* progressBarScreenController { nullptr };
 
 public:
-
-	/** 
-	 * @return file dialog screen controller
-	 */
-	virtual FileDialogScreenController* getFileDialogScreenController();
-
-	/** 
-	 * @return info dialog screen controller
-	 */
-	virtual InfoDialogScreenController* getInfoDialogScreenController();
-
-	/** 
-	 * @return progress bar screen controller
-	 */
-	virtual ProgressBarScreenController* getProgressBarScreenController();
-
-	/**
-	 * Init
-	 */
-	virtual void initialize();
-
-	/** 
-	 * Dispose
-	 */
-	virtual void dispose();
-
 	/**
 	 * Public constructor
 	 */
@@ -54,5 +28,31 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~PopUps();
+	 ~PopUps();
+
+	/**
+	 * @return file dialog screen controller
+	 */
+	 FileDialogScreenController* getFileDialogScreenController();
+
+	/**
+	 * @return info dialog screen controller
+	 */
+	 InfoDialogScreenController* getInfoDialogScreenController();
+
+	/**
+	 * @return progress bar screen controller
+	 */
+	 ProgressBarScreenController* getProgressBarScreenController();
+
+	/**
+	 * Init
+	 */
+	 void initialize();
+
+	/**
+	 * Dispose
+	 */
+	 void dispose();
+
 };

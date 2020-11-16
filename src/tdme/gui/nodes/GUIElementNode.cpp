@@ -3,7 +3,6 @@
 #include <set>
 #include <string>
 
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
@@ -31,7 +30,6 @@
 using std::set;
 using std::to_string;
 
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementIgnoreEventsController;
@@ -87,10 +85,9 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseOutExpression,
 	const string& onChangeExpression
 	) :
-	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
+	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
 {
-	init();
 	this->name = name;
 	this->value = value;
 	this->selected = selected;
@@ -105,10 +102,6 @@ GUIElementNode::GUIElementNode(
 	this->onChangeExpression = onChangeExpression;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
-}
-
-void GUIElementNode::init()
-{
 }
 
 string GUIElementNode::CONDITION_ALWAYS = "always";
@@ -126,127 +119,9 @@ bool GUIElementNode::isContentNode()
 	return false;
 }
 
-int32_t GUIElementNode::getContentWidth()
-{
-	auto width = 0;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->conditionsMet == false) continue;
-		auto contentWidth = guiSubNode->getAutoWidth();
-		if (contentWidth > width) {
-			width = contentWidth;
-		}
-	}
-	width += border.left + border.right;
-	width += padding.left + padding.right;
-	return width;
-}
-
-int32_t GUIElementNode::getContentHeight()
-{
-	auto height = 0;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->conditionsMet == false) continue;
-		auto contentHeight = guiSubNode->getAutoHeight();
-		if (contentHeight > height) {
-			height = contentHeight;
-		}
-	}
-	height += border.top + border.bottom;
-	height += padding.top + padding.bottom;
-	return height;
-}
-
 bool GUIElementNode::isFocusable()
 {
 	return focusable;
-}
-
-void GUIElementNode::setTop(int32_t top)
-{
-	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
-	GUIParentNode::setTop(top);
-	top += computedConstraints.alignmentTop;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->conditionsMet == false) continue;
-		guiSubNode->setTop(top);
-	}
-}
-
-void GUIElementNode::setLeft(int32_t left)
-{
-	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
-	GUIParentNode::setLeft(left);
-	left += computedConstraints.alignmentLeft;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->conditionsMet == false) continue;
-		guiSubNode->setLeft(left);
-	}
-}
-
-void GUIElementNode::layoutSubNodes()
-{
-	if (conditionsMet == false) {
-		layouted = false;
-		return;
-	}
-	GUIParentNode::layoutSubNodes();
-	auto height = computedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
-	auto width = computedConstraints.width - border.left - border.right - padding.left - padding.right;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto guiSubNode = subNodes[i];
-		if (guiSubNode->conditionsMet == false) continue;
-		auto doLayoutSubNodes = false;
-		if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-			guiSubNode->computedConstraints.height = height;
-			doLayoutSubNodes = true;
-		} else
-		if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-			guiSubNode->computedConstraints.width = width;
-			doLayoutSubNodes = true;
-		}
-		if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr && doLayoutSubNodes == true) {
-			(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
-		}
-	}
-	setTop(computedConstraints.top);
-	setLeft(computedConstraints.left);
-}
-
-void GUIElementNode::layout()
-{
-	if (conditionsMet == false) {
-		layouted = false;
-		return;
-	}
-	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
-		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = subNodes[i];
-			if (guiSubNode->conditionsMet == false) continue;
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && guiSubNode->requestedConstraints.height > subNodesHeight) {
-				guiSubNode->requestedConstraints.height = subNodesHeight;
-			}
-		}
-	}
-	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
-		auto subNodesWidth = requestedConstraints.width - border.left - border.right- padding.left - padding.right;
-		for (auto i = 0; i < subNodes.size(); i++) {
-			auto guiSubNode = subNodes[i];
-			if (guiSubNode->conditionsMet == false) continue;
-			if (overflowY == GUIParentNode_Overflow::DOWNSIZE_CHILDREN && guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL && guiSubNode->requestedConstraints.width > subNodesWidth) {
-				guiSubNode->requestedConstraints.width = subNodesWidth;
-			}
-		}
-	}
-	GUIParentNode::layout();
-	setTop(computedConstraints.top);
-	setLeft(computedConstraints.left);
-	computeHorizontalChildrenAlignment();
-	computeVerticalChildrenAlignment();
 }
 
 const string& GUIElementNode::getName()
@@ -446,12 +321,4 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 		subNode->handleKeyboardEvent(event);
 	}
 	GUIParentNode::handleKeyboardEvent(event);
-}
-
-GUINode_Alignments GUIElementNode::createAlignments(const string& horizontal, const string& vertical)
-{
-	GUINode_Alignments alignments;
-	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringTools::toUpperCase(horizontal) : "LEFT");
-	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringTools::toUpperCase(vertical) : "TOP");
-	return alignments;
 }

@@ -53,7 +53,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-TriggerView::TriggerView(PopUps* popUps) 
+TriggerView::TriggerView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	triggerScreenController = nullptr;

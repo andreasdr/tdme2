@@ -1,15 +1,13 @@
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
 #include <tdme/math/Math.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/Time.h>
 
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Math;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
+using tdme::utilities::Time;
 
 SingleThreadedRenderer::SingleThreadedRenderer()
 {
@@ -34,7 +32,7 @@ Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
 	return textureMatrix;
 }
 
-Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
+Renderer::Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
 	return lights[lightId];
 }
 
@@ -46,11 +44,11 @@ array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(void* context) {
 	return effectColorAdd;
 }
 
-Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* context) {
+Renderer::Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* context) {
 	return specularMaterial;
 }
 
-Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
+Renderer::Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
 	return pbrMaterial;
 }
 
@@ -80,4 +78,23 @@ float SingleThreadedRenderer::getMaskMaxValue(void* context) {
 
 void SingleThreadedRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
 	this->maskMaxValue = maskMaxValue;
+}
+
+const Renderer::Renderer_Statistics SingleThreadedRenderer::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.memoryUsageGPU = -1LL;
+	statistics.memoryUsageShared = -1LL;
+	statistics.clearCalls = 0;
+	statistics.renderCalls = 0;
+	statistics.computeCalls = 0;
+	statistics.triangles = 0;
+	statistics.points = 0;
+	statistics.linePoints = 0;
+	statistics.bufferUploads = 0;
+	statistics.textureUploads = 0;
+	statistics.renderPasses = 0;
+	statistics.drawCommands = 0;
+	statistics.submits = 0;
+	return stats;
 }

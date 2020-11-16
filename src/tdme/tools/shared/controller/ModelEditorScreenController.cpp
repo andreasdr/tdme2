@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
@@ -14,7 +14,6 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -53,14 +52,14 @@ using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -90,7 +89,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 
-ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view) 
+ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{
@@ -241,13 +240,19 @@ void ModelEditorScreenController::initialize()
 		animationsDropDownDelete = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_dropdown_delete"));
 		animationsAnimationStartFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_startframe"));
 		animationsAnimationEndFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_endframe"));
-		animationsAnimationOverlayFromGroupIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromgroupidanimations_dropdown"));
+		animationsAnimationOverlayFromNodeIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromnodeidanimations_dropdown"));
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
 		animationsAnimationSpeed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_speed"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
+		previewAnimationsBaseDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_base_dropdown"));
+		previewAnimationsOverlay1DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay1_dropdown"));
+		previewAnimationsOverlay2DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay2_dropdown"));
+		previewAnimationsOverlay3DropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("preview_animations_overlay3_dropdown"));
+		buttonPreviewApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_preview_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
+		buttonToolsOptimizeModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_optimizemodel"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
 		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
@@ -1284,41 +1289,41 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 	}
 
 	{
-		auto animationsAnimationOverlayFromGroupIdDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->getNodeById(animationsAnimationOverlayFromGroupIdDropDown->getId() + "_inner")));
+		auto animationsAnimationOverlayFromNodeIdDropDownInnerNode = dynamic_cast< GUIParentNode* >((animationsAnimationOverlayFromNodeIdDropDown->getScreenNode()->getNodeById(animationsAnimationOverlayFromNodeIdDropDown->getId() + "_inner")));
 		auto idx = 0;
-		string animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = "";
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = "";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 			"<scrollarea-vertical id=\"" +
-			animationsAnimationOverlayFromGroupIdDropDown->getId() +
+			animationsAnimationOverlayFromNodeIdDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"70\">\n";
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 			"<dropdown-option text=\"\" value=\"\"" +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (auto it: model->getGroups()) {
-			auto groupId = it.second->getId();
-			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
-				animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
+		for (auto it: model->getNodes()) {
+			auto nodeId = it.second->getId();
+			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
+				animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
 				"<dropdown-option text=\"" +
-				GUIParser::escapeQuotes(groupId) +
+				GUIParser::escapeQuotes(nodeId) +
 				"\" value=\"" +
-				GUIParser::escapeQuotes(groupId) +
+				GUIParser::escapeQuotes(nodeId) +
 				"\" " +
 				(idx == 0 ? "selected=\"true\" " : "") +
 				" />\n";
 			idx++;
 		}
-		animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
 		try {
-			animationsAnimationOverlayFromGroupIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML, true);
+			animationsAnimationOverlayFromNodeIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
 			Console::print(string("ModelEditorScreenController::setAnimations(): An error occurred: "));
 			Console::println(string(exception.what()));
 		}
 		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
-		// animationsAnimationOverlayFromGroupIdDropDown->getScreenNode()->layout(animationsAnimationOverlayFromGroupIdDropDown);
+		// animationsAnimationOverlayFromNodeIdDropDown->getScreenNode()->layout(animationsAnimationOverlayFromNodeIdDropDown);
 	}
 
 	// select default animation
@@ -1362,8 +1367,8 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 	animationsAnimationStartFrame->getController()->setDisabled(defaultAnimation);
 	animationsAnimationEndFrame->getController()->setValue(MutableString(animationSetup->getEndFrame()));
 	animationsAnimationEndFrame->getController()->setDisabled(defaultAnimation);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(animationSetup->getOverlayFromGroupId()));
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setValue(MutableString(animationSetup->getOverlayFromNodeId()));
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setDisabled(defaultAnimation);
 	animationsAnimationLoop->getController()->setValue(MutableString(animationSetup->isLoop() == true?"1":""));
 	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
 	animationsAnimationSpeed->getController()->setValue(MutableString(animationSetup->getSpeed(), 4));
@@ -1421,12 +1426,13 @@ void ModelEditorScreenController::onAnimationApply() {
 		}
 		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue().getString()));
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
-		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
+		animationSetup->setOverlayFromNodeId(animationsAnimationOverlayFromNodeIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		animationSetup->setSpeed(Float::parseFloat(animationsAnimationSpeed->getController()->getValue().getString()));
 		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
+		setPreview();
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1444,8 +1450,8 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationStartFrame->getController()->setDisabled(true);
 	animationsAnimationEndFrame->getController()->setValue(MutableString(""));
 	animationsAnimationEndFrame->getController()->setDisabled(true);
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setValue(MutableString(""));
-	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setValue(MutableString(""));
+	animationsAnimationOverlayFromNodeIdDropDown->getController()->setDisabled(true);
 	animationsAnimationLoop->getController()->setValue(MutableString(""));
 	animationsAnimationLoop->getController()->setDisabled(true);
 	animationsAnimationSpeed->getController()->setValue(MutableString(""));
@@ -1454,6 +1460,132 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
 }
+
+void ModelEditorScreenController::setPreview() {
+	previewAnimationsBaseDropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay1DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay2DropDown->getController()->setDisabled(false);
+	previewAnimationsOverlay3DropDown->getController()->setDisabled(false);
+	buttonPreviewApply->getController()->setDisabled(false);
+
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) {
+		unsetPreview();
+		return;
+	}
+
+	{
+		auto animationsDropDownInnerNode = dynamic_cast< GUIParentNode* >((previewAnimationsBaseDropDown->getScreenNode()->getNodeById(previewAnimationsBaseDropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML =
+			animationsDropDownInnerNodeSubNodesXML +
+			"<scrollarea-vertical id=\"" +
+			previewAnimationsBaseDropDown->getId() +
+			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == true) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		try {
+			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		auto animationsDropDownInnerNode1 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay1DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay1DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode2 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay2DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay2DropDown->getId() + "_inner")));
+		auto animationsDropDownInnerNode3 = dynamic_cast< GUIParentNode* >((previewAnimationsOverlay3DropDown->getScreenNode()->getNodeById(previewAnimationsOverlay3DropDown->getId() + "_inner")));
+		string animationsDropDownInnerNodeSubNodesXML = "";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		for (auto it: model->getAnimationSetups()) {
+			auto animationSetup = it.second;
+			if (animationSetup->isOverlayAnimationSetup() == false) continue;
+			animationsDropDownInnerNodeSubNodesXML =
+				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(animationSetup->getId()) +
+				"\" " +
+				" />\n";
+		}
+		try {
+			animationsDropDownInnerNode1->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay1DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode2->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay2DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		try {
+			animationsDropDownInnerNode3->replaceSubNodes(
+				"<scrollarea-vertical id=\"" +
+				previewAnimationsOverlay3DropDown->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
+				animationsDropDownInnerNodeSubNodesXML +
+				"</scrollarea-vertical>",
+				true
+			);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorScreenController::setPreview(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+}
+
+void ModelEditorScreenController::onPreviewApply() {
+	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	if (model == nullptr) return;
+
+	auto baseAnimationName = previewAnimationsBaseDropDown->getController()->getValue().getString();
+	auto overlay1AnimationName = previewAnimationsOverlay1DropDown->getController()->getValue().getString();
+	auto overlay2AnimationName = previewAnimationsOverlay2DropDown->getController()->getValue().getString();
+	auto overlay3AnimationName = previewAnimationsOverlay3DropDown->getController()->getValue().getString();
+	try {
+		view->playAnimation(baseAnimationName, overlay1AnimationName, overlay2AnimationName, overlay3AnimationName);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void ModelEditorScreenController::unsetPreview() {
+	previewAnimationsBaseDropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay1DropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay2DropDown->getController()->setDisabled(true);
+	previewAnimationsOverlay3DropDown->getController()->setDisabled(true);
+	buttonPreviewApply->getController()->setDisabled(true);
+}
+
 
 void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
 {
@@ -1471,14 +1603,20 @@ void ModelEditorScreenController::unsetStatistics()
 
 void ModelEditorScreenController::setTools() {
 	buttonToolsComputeNormals->getController()->setDisabled(false);
+	buttonToolsOptimizeModel->getController()->setDisabled(false);
 }
 
 void ModelEditorScreenController::unsetTools() {
 	buttonToolsComputeNormals->getController()->setDisabled(true);
+	buttonToolsOptimizeModel->getController()->setDisabled(true);
 }
 
 void ModelEditorScreenController::onToolsComputeNormal() {
 	view->computeNormals();
+}
+
+void ModelEditorScreenController::onToolsOptimizeModel() {
+	view->optimizeModel();
 }
 
 void ModelEditorScreenController::onQuit()
@@ -1645,7 +1783,7 @@ void ModelEditorScreenController::onRenderingApply()
 	try {
 		view->getEntity()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
 		view->getEntity()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
+		view->getEntity()->setRenderNodes(renderingRenderGroups->getController()->getValue().equals("1"));
 		view->getEntity()->setShader(renderingShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
 		view->getEntity()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));
@@ -1715,108 +1853,110 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 	}
 }
 
-void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entitySoundsSubScreenController->onActionPerformed(type, node, view->getEntity());
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (node->getId().compare("button_model_load") == 0) {
-				onModelLoad();
-			} else
-			if (node->getId().compare("button_model_reload") == 0) {
-				onModelReload();
-			} else
-			if (node->getId().compare("button_model_reimport") == 0) {
-				onModelReimport();
-			} else
-			if (node->getId().compare("button_model_save") == 0) {
-				onModelSave();
-			} else
-			if (node->getId().compare("button_pivot_apply") == 0) {
-				onPivotApply();
-			} else
-			if (node->getId().compare("button_rendering_apply") == 0) {
-				onRenderingApply();
-			} else
-			if (node->getId().compare("lod_level_apply") == 0) {
-				onLODLevelApply();
-			} else
-			if (node->getId().compare("lod_model_file_load") == 0) {
-				onLODLevelLoadModel();
-			} else
-			if (node->getId().compare("lod_model_file_clear") == 0) {
-				onLODLevelClearModel();
-			} else
-			if (node->getId().compare("button_lod_apply") == 0) {
-				onLODLevelApplySettings();
-			} else
-			if (node->getId().compare("button_materials_dropdown_apply") == 0) {
-				onMaterialDropDownApply();
-			} else
-			if (node->getId().compare("button_materials_material_apply") == 0) {
-				onMaterialApply();
-			} else
-			if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
-				onMaterialLoadDiffuseTexture();
-			} else
-			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
-				onMaterialLoadDiffuseTransparencyTexture();
-			} else
-			if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
-				onMaterialLoadNormalTexture();
-			} else
-			if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
-				onMaterialLoadSpecularTexture();
-			} else
-			if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialDiffuseTexture);
-			} else
-			if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
-			} else
-			if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialNormalTexture);
-			} else
-			if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialSpecularTexture);
-			} else
-			if (node->getId().compare("button_materials_material_pbr_base_color_texture_load") == 0) {
-				onMaterialLoadPBRBaseColorTexture();
-			} else
-			if (node->getId().compare("button_materials_material_pbr_base_color_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialPBRBaseColorTexture);
-			} else
-			if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_load") == 0) {
-				onMaterialLoadPBRMetallicRoughnessTexture();
-			} else
-			if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialPBRMetallicRoughnessTexture);
-			} else
-			if (node->getId().compare("button_materials_material_pbr_normal_texture_load") == 0) {
-				onMaterialLoadPBRNormalTexture();
-			} else
-			if (node->getId().compare("button_materials_material_pbr_normal_texture_clear") == 0) {
-				onMaterialClearTexture(materialsMaterialPBRNormalTexture);
-			} else
-			if (node->getId().compare("animations_dropdown_apply") == 0) {
-				onAnimationDropDownApply();
-			} else
-			if (node->getId().compare("animations_dropdown_delete") == 0) {
-				onAnimationDropDownDelete();
-			} else
-			if (node->getId().compare("button_animations_animation_apply") == 0) {
-				onAnimationApply();
-			} else
-			if (node->getId().compare("button_tools_computenormals") == 0) {
-				onToolsComputeNormal();
-			}
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("button_model_load") == 0) {
+			onModelLoad();
+		} else
+		if (node->getId().compare("button_model_reload") == 0) {
+			onModelReload();
+		} else
+		if (node->getId().compare("button_model_reimport") == 0) {
+			onModelReimport();
+		} else
+		if (node->getId().compare("button_model_save") == 0) {
+			onModelSave();
+		} else
+		if (node->getId().compare("button_pivot_apply") == 0) {
+			onPivotApply();
+		} else
+		if (node->getId().compare("button_rendering_apply") == 0) {
+			onRenderingApply();
+		} else
+		if (node->getId().compare("lod_level_apply") == 0) {
+			onLODLevelApply();
+		} else
+		if (node->getId().compare("lod_model_file_load") == 0) {
+			onLODLevelLoadModel();
+		} else
+		if (node->getId().compare("lod_model_file_clear") == 0) {
+			onLODLevelClearModel();
+		} else
+		if (node->getId().compare("button_lod_apply") == 0) {
+			onLODLevelApplySettings();
+		} else
+		if (node->getId().compare("button_materials_dropdown_apply") == 0) {
+			onMaterialDropDownApply();
+		} else
+		if (node->getId().compare("button_materials_material_apply") == 0) {
+			onMaterialApply();
+		} else
+		if (node->getId().compare("button_materials_material_diffuse_texture_load") == 0) {
+			onMaterialLoadDiffuseTexture();
+		} else
+		if (node->getId().compare("button_materials_material_diffuse_transparency_texture_load") == 0) {
+			onMaterialLoadDiffuseTransparencyTexture();
+		} else
+		if (node->getId().compare("button_materials_material_normal_texture_load") == 0) {
+			onMaterialLoadNormalTexture();
+		} else
+		if (node->getId().compare("button_materials_material_specular_texture_load") == 0) {
+			onMaterialLoadSpecularTexture();
+		} else
+		if (node->getId().compare("button_materials_material_diffuse_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialDiffuseTexture);
+		} else
+		if (node->getId().compare("button_materials_material_diffuse_transparency_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialDiffuseTransparencyTexture);
+		} else
+		if (node->getId().compare("button_materials_material_normal_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialNormalTexture);
+		} else
+		if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialSpecularTexture);
+		} else
+		if (node->getId().compare("button_materials_material_pbr_base_color_texture_load") == 0) {
+			onMaterialLoadPBRBaseColorTexture();
+		} else
+		if (node->getId().compare("button_materials_material_pbr_base_color_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialPBRBaseColorTexture);
+		} else
+		if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_load") == 0) {
+			onMaterialLoadPBRMetallicRoughnessTexture();
+		} else
+		if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialPBRMetallicRoughnessTexture);
+		} else
+		if (node->getId().compare("button_materials_material_pbr_normal_texture_load") == 0) {
+			onMaterialLoadPBRNormalTexture();
+		} else
+		if (node->getId().compare("button_materials_material_pbr_normal_texture_clear") == 0) {
+			onMaterialClearTexture(materialsMaterialPBRNormalTexture);
+		} else
+		if (node->getId().compare("animations_dropdown_apply") == 0) {
+			onAnimationDropDownApply();
+		} else
+		if (node->getId().compare("animations_dropdown_delete") == 0) {
+			onAnimationDropDownDelete();
+		} else
+		if (node->getId().compare("button_animations_animation_apply") == 0) {
+			onAnimationApply();
+		} else
+		if (node->getId().compare("button_preview_apply") == 0) {
+			onPreviewApply();
+		} else
+		if (node->getId().compare("button_tools_computenormals") == 0) {
+			onToolsComputeNormal();
+		} else
+		if (node->getId().compare("button_tools_optimizemodel") == 0) {
+			onToolsOptimizeModel();
 		}
 	}
-
 }
 
 void ModelEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {

@@ -25,7 +25,7 @@ ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN 
+		EXTRAFLAGS := -DVULKAN -DHAVE_UNISTD_H
 		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -37,7 +37,7 @@ ifeq ($(OS), Darwin)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
 	else
-		EXTRAFLAGS := -DGLFW3
+		EXTRAFLAGS := -DGLFW3 -DHAVE_UNISTD_H
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -94,6 +94,7 @@ else ifeq ($(OS), NetBSD)
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
+	EXTRAFLAGS := -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -102,7 +103,7 @@ else ifeq ($(OS), OpenBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R6/lib -L/usr/local/lib -lstdc++ -lGLEW -lGL -lglut -lopenal -pthread
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lGLEW -lGL -lopenal -pthread
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
@@ -168,7 +169,7 @@ else
 		EXT_GLSLANG_PLATFORM_SRCS = \
 				ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext\vulkan\runtime\mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
 		EXTRAFLAGS = -DGLFW3
 		# Windows, GL
@@ -291,7 +292,7 @@ SRCS = \
 	src/tdme/engine/model/AnimationSetup.cpp \
 	src/tdme/engine/model/Face.cpp \
 	src/tdme/engine/model/FacesEntity.cpp \
-	src/tdme/engine/model/Group.cpp \
+	src/tdme/engine/model/Node.cpp \
 	src/tdme/engine/model/Joint.cpp \
 	src/tdme/engine/model/JointWeight.cpp \
 	src/tdme/engine/model/Material.cpp \
@@ -346,9 +347,9 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroup.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNode.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNodeMesh.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DNodeRenderer.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \
@@ -412,6 +413,12 @@ SRCS = \
 	src/tdme/gui/elements/GUIInputController.cpp \
 	src/tdme/gui/elements/GUIKnob.cpp \
 	src/tdme/gui/elements/GUIKnobController.cpp \
+	src/tdme/gui/elements/GUIMenuHeader.cpp \
+	src/tdme/gui/elements/GUIMenuHeaderController.cpp \
+	src/tdme/gui/elements/GUIMenuHeaderItem.cpp \
+	src/tdme/gui/elements/GUIMenuHeaderItemController.cpp \
+	src/tdme/gui/elements/GUIMenuItem.cpp \
+	src/tdme/gui/elements/GUIMenuItemController.cpp \
 	src/tdme/gui/elements/GUIProgressBar.cpp \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \
@@ -428,8 +435,12 @@ SRCS = \
 	src/tdme/gui/elements/GUISelectBoxMultipleController.cpp \
 	src/tdme/gui/elements/GUISelectBoxMultipleOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxMultipleOptionController.cpp \
+	src/tdme/gui/elements/GUISelectBoxMultipleParentOption.cpp \
+	src/tdme/gui/elements/GUISelectBoxMultipleParentOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
+	src/tdme/gui/elements/GUISelectBoxParentOption.cpp \
+	src/tdme/gui/elements/GUISelectBoxParentOptionController.cpp \
 	src/tdme/gui/elements/GUISliderH.cpp \
 	src/tdme/gui/elements/GUISliderHController.cpp \
 	src/tdme/gui/elements/GUISliderV.cpp \
@@ -443,11 +454,8 @@ SRCS = \
 	src/tdme/gui/elements/GUITabsController.cpp \
 	src/tdme/gui/elements/GUITabsHeader.cpp \
 	src/tdme/gui/elements/GUITabsHeaderController.cpp \
-	src/tdme/gui/events/GUIActionListener_Type.cpp \
 	src/tdme/gui/events/GUIKeyboardEvent.cpp \
-	src/tdme/gui/events/GUIKeyboardEvent_Type.cpp \
 	src/tdme/gui/events/GUIMouseEvent.cpp \
-	src/tdme/gui/events/GUIMouseEvent_Type.cpp \
 	src/tdme/gui/nodes/GUIColor.cpp \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
@@ -457,6 +465,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIImageNode.cpp \
 	src/tdme/gui/nodes/GUIInputInternalController.cpp \
 	src/tdme/gui/nodes/GUIInputInternalNode.cpp \
+	src/tdme/gui/nodes/GUILayerNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
 	src/tdme/gui/nodes/GUIMultilineTextNode.cpp \
@@ -512,6 +521,7 @@ SRCS = \
 	src/tdme/os/threading/Mutex.cpp \
 	src/tdme/os/threading/ReadWriteLock.cpp \
 	src/tdme/os/threading/Semaphore.cpp \
+	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
@@ -868,6 +878,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/create-installer-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
+	src/tdme/tools/cli/importtmm-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp

@@ -10,7 +10,7 @@ using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI color effect
  * @author Andreas Drewke
  * @version $Id$
@@ -27,15 +27,19 @@ private:
 	GUIColor colorMul { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIColorEffect();
 
-	/** 
+	/**
 	 * @return color add start
 	 */
 	inline virtual const GUIColor& getColorAddStart() const {
 		return colorAddStart;
 	}
 
-	/** 
+	/**
 	 * Set color add start
 	 * @param colorAddStart color add start
 	 */
@@ -58,14 +62,14 @@ public:
 		this->colorAddEnd = colorAddEnd;
 	}
 
-	/** 
+	/**
 	 * @return color mul start
 	 */
 	inline virtual const GUIColor& getColorMulStart() const {
 		return colorMulStart;
 	}
 
-	/** 
+	/**
 	 * Set color mul start
 	 * @param colorMulStart color mul start
 	 */
@@ -88,12 +92,7 @@ public:
 		this->colorMulEnd = colorMulEnd;
 	}
 
-	// overriden methods
+	// overridden methods
 	void apply(GUIRenderer* guiRenderer) override;
-
-	/**
-	 * Public constructor
-	 */
-	GUIColorEffect();
 
 };

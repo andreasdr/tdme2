@@ -40,7 +40,7 @@ constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MAX;
 
-PartitionOctTree::PartitionOctTree() 
+PartitionOctTree::PartitionOctTree()
 {
 	reset();
 }
@@ -76,7 +76,7 @@ void PartitionOctTree::addEntity(Entity* entity)
 	auto maxXPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getX() / PARTITION_SIZE_MAX));
 	auto maxYPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getY() / PARTITION_SIZE_MAX));
 	auto maxZPartition = static_cast< int32_t >(Math::floor(boundingBox->getMax().getZ() / PARTITION_SIZE_MAX));
-	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++) 
+	for (auto yPartition = minYPartition; yPartition <= maxYPartition; yPartition++)
 	for (auto xPartition = minXPartition; xPartition <= maxXPartition; xPartition++)
 	for (auto zPartition = minZPartition; zPartition <= maxZPartition; zPartition++) {
 		updatePartitionTree(&treeRoot, xPartition, yPartition, zPartition, PARTITION_SIZE_MAX, entity);

@@ -2,7 +2,6 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -14,7 +13,6 @@
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleController;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -30,7 +28,7 @@ string GUISelectBoxMultipleOptionController::CONDITION_UNFOCUSSED = "unfocussed"
 string GUISelectBoxMultipleOptionController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleOptionController::CONDITION_ENABLED = "enabled";
 
-GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
+GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->initialPostLayout = true;
@@ -106,6 +104,15 @@ void GUISelectBoxMultipleOptionController::unfocus()
 	nodeConditions.add(this->focussed == true ? CONDITION_FOCUSSED : CONDITION_UNFOCUSSED);
 }
 
+bool GUISelectBoxMultipleOptionController::isCollapsed() {
+	auto _node = node->getParentNode();
+	while(_node != nullptr && _node != selectBoxMultipleNode) {
+		if (_node->isConditionsMet() == false) return true;
+		_node = _node->getParentNode();
+	}
+	return false;
+}
+
 void GUISelectBoxMultipleOptionController::initialize()
 {
 	selectBoxMultipleNode = node->getParentControllerNode();
@@ -146,7 +153,7 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			(dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->unfocus();
 			toggle();
 			focus();
@@ -161,11 +168,6 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 void GUISelectBoxMultipleOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
 	GUIElementController::handleKeyboardEvent(node, event);
-}
-
-void GUISelectBoxMultipleOptionController::tick()
-{
-	GUIElementController::tick();
 }
 
 void GUISelectBoxMultipleOptionController::onFocusGained()

@@ -10,12 +10,13 @@
 struct tdme::tools::shared::files::ProgressCallback
 {
 	/**
+	 * Destructor
+	 */
+	virtual ~ProgressCallback() {}
+
+	/**
 	 * Perform action
 	 */
 	virtual void progress(float value) = 0;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~ProgressCallback() {}
 };

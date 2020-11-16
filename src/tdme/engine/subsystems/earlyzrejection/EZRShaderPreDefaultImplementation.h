@@ -11,7 +11,7 @@ using std::string;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
 
-/** 
+/**
  * Early z rejection default shader class
  * @author Andreas Drewke
  * @version $Id$
@@ -25,10 +25,6 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
-	virtual const string getId() override;
-	virtual void initialize() override;
-
 	/**
 	 * Constructor
 	 * @param renderer renderer
@@ -39,4 +35,9 @@ public:
 	 * Destructor
 	 */
 	~EZRShaderPreDefaultImplementation();
+
+	// overridden methods
+	virtual const string getId() override;
+	virtual void initialize() override;
+
 };

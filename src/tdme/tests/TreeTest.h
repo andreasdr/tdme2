@@ -15,7 +15,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Tree test
  * @author andreas.drewke
  * @version $Id$
@@ -41,7 +41,7 @@ private:
 	ObjectDeleter<BoundingVolume> bvDeleter;
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

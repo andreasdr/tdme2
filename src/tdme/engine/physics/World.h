@@ -29,7 +29,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Dynamic physics world class
  * @author Andreas Drewke
  * @version $Id$
@@ -46,11 +46,11 @@ private:
 
 	reactphysics3d::DynamicsWorld world;
 
-	vector<Body*> bodies {  };
-	vector<Body*> rigidBodiesDynamic {  };
-	map<string, Body*> bodiesById {  };
+	vector<Body*> bodies;
+	vector<Body*> rigidBodiesDynamic;
+	map<string, Body*> bodiesById;
 	map<string, BodyCollisionStruct> bodyCollisionsLastFrame;
-	vector<WorldListener*> worldListeners { };
+	vector<WorldListener*> worldListeners;
 
 	/**
 	 * Synch into cloned body from body
@@ -60,13 +60,22 @@ private:
 	void synch(Body* clonedBody, Body* body);
 
 public:
+	/**
+	 * Public constructor
+	 */
+	World();
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~World();
+
+	/**
 	 * Resets the physic world
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * Add a rigid body
 	 * @param id id
 	 * @param enabled enabled
@@ -81,7 +90,7 @@ public:
 	 */
 	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
-	/** 
+	/**
 	 * Add a collision body
 	 * @param id id
 	 * @param enabled enabled
@@ -104,14 +113,14 @@ public:
 	 */
 	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
 
-	/** 
+	/**
 	 * Returns body identified by id
 	 * @param id id
 	 * @return ridig body
 	 */
 	Body* getBody(const string& id);
 
-	/** 
+	/**
 	 * Removes body identified by id
 	 * @param id id
 	 */
@@ -123,22 +132,23 @@ public:
 	 */
 	void update(float deltaTime);
 
-	/** 
+	/**
 	 * Synch physics world with engine
 	 * @param engine engine
 	 */
 	void synch(Engine* engine);
 
-	/** 
+	/**
 	 * Determine height on x,y,u while respecting step up max
 	 * @param collisionTypeId collision type ids
 	 * @param stepUpMax step up max
 	 * @param point point on which height should be calculated
 	 * @param dest point where height has been determined
 	 * @param minHeight min height to determine height from
+	 * @param maxHeight max height to start raytracing from
 	 * @return body from which height was determined or null
 	 */
-	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight = -10000.0f);
+	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight = -10000.0f, float maxHeight = 10000.0f);
 
 	/**
 	 * Do a ray cast from given start to given end point, if there is any body with given collision type in between
@@ -189,13 +199,13 @@ public:
 	 */
 	bool getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision);
 
-	/** 
+	/**
 	 * Clone this world
 	 * @param collisionTypeIds collision type ids to clone
 	 */
 	World* clone(uint16_t collisionTypeIds = ~0);
 
-	/** 
+	/**
 	 * Updates given world with this world
 	 * Given world should be a clone of this world
 	 * @param world world
@@ -213,15 +223,5 @@ public:
 	 * @param listener listener
 	 */
 	void removeWorldListener(WorldListener* listener);
-
-	/**
-	 * Public constructor
-	 */
-	World();
-
-	/**
-	 * Destructor
-	 */
-	~World();
 
 };

@@ -12,7 +12,7 @@ using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Matrix2D3x3;
 
-/** 
+/**
  * Represents a material
  * @author andreas.drewke
  * @version $Id$
@@ -25,7 +25,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return default material
 	 */
 	inline static Material* getDefaultMaterial() {
@@ -50,7 +50,7 @@ public:
 	 */
 	~Material();
 
-	/** 
+	/**
 	 * @return material id
 	 */
 	inline const string& getId() const {

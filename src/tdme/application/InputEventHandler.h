@@ -4,7 +4,7 @@
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/application/InputDefinitions.h>
 
-/** 
+/**
  * Application input event handler interface
  * @author Andreas Drewke
  * @version $Id$

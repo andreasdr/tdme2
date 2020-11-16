@@ -24,7 +24,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -199,7 +199,7 @@ public:
 };
 };
 
-/** 
+/**
  * TDME model writer
  * @author Andreas Drewke
  * @version $Id$
@@ -208,7 +208,7 @@ class tdme::engine::fileio::models::TMWriter
 {
 public:
 
-	/** 
+	/**
 	 * TDME model format writer
 	 * @param model model
 	 * @param pathName path name
@@ -228,7 +228,7 @@ private:
 	 */
 	static void writeMaterial(TMWriterOutputStream* os, Material* m);
 
-	/** 
+	/**
 	 * Write animation setup
 	 * @param os output stream
 	 * @param animationSetup animation setup
@@ -236,7 +236,7 @@ private:
 	 */
 	static void writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup);
 
-	/** 
+	/**
 	 * Write vertices to output stream
 	 * @param os output stream
 	 * @param v vertices
@@ -244,7 +244,7 @@ private:
 	 */
 	static void writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v);
 
-	/** 
+	/**
 	 * Write texture coordinates to output stream
 	 * @param os output stream
 	 * @param tc texture coordinates
@@ -252,7 +252,7 @@ private:
 	 */
 	static void writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc);
 
-	/** 
+	/**
 	 * Write indices to output stream
 	 * @param os output stream
 	 * @param indices indices
@@ -260,7 +260,7 @@ private:
 	 */
 	static void writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>& indices);
 
-	/** 
+	/**
 	 * Write animation to output stream
 	 * @param os output stream
 	 * @param a animation
@@ -268,7 +268,7 @@ private:
 	 */
 	static void writeAnimation(TMWriterOutputStream* os, Animation* a);
 
-	/** 
+	/**
 	 * Write faces entities to output stream
 	 * @param os output stream
 	 * @param facesEntities faces entities
@@ -276,7 +276,7 @@ private:
 	 */
 	static void writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEntity>& facesEntities);
 
-	/** 
+	/**
 	 * Write skinning joint
 	 * @param os output stream
 	 * @param joint joint
@@ -284,7 +284,7 @@ private:
 	 */
 	static void writeSkinningJoint(TMWriterOutputStream* os, const Joint& joint);
 
-	/** 
+	/**
 	 * Write skinning joint weight
 	 * @param os output stream
 	 * @param jointWeight joint
@@ -292,7 +292,7 @@ private:
 	 */
 	static void writeSkinningJointWeight(TMWriterOutputStream* os, const JointWeight& jointWeight);
 
-	/** 
+	/**
 	 * Write skinning to output stream
 	 * @param os output stream
 	 * @param skinning skinning
@@ -300,19 +300,19 @@ private:
 	 */
 	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning);
 
-	/** 
-	 * Write sub groups
+	/**
+	 * Write sub nodes
 	 * @param os output stream
-	 * @param subGroups sub groups
+	 * @param subNodes sub nodes
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, const map<string, Group*>& subGroups);
+	static void writeSubNodes(TMWriterOutputStream* os, const map<string, Node*>& subNodes);
 
-	/** 
-	 * Write group to output stream
+	/**
+	 * Write node to output stream
 	 * @param os output stream
-	 * @param g group
+	 * @param g node
 	 * @throws model file IO exception
 	 */
-	static void writeGroup(TMWriterOutputStream* os, Group* g);
+	static void writeNode(TMWriterOutputStream* os, Node* g);
 };

@@ -30,7 +30,7 @@ using tdme::utilities::MutableString;
 string GUIInputController::CONDITION_DISABLED = "disabled";
 string GUIInputController::CONDITION_ENABLED = "enabled";
 
-GUIInputController::GUIInputController(GUINode* node) 
+GUIInputController::GUIInputController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();

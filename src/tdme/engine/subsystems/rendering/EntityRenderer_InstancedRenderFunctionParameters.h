@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::engine::Object3D;
 
-/** 
+/**
  * Entity renderer parameters
  * @author Andreas Drewke
  * @version $Id$

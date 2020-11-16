@@ -110,9 +110,9 @@ void processFile(const string& fileName) {
 								while (t.hasMoreTokens() == true) methodName = t.nextToken();
 								methodName = StringTools::trim(methodName);
 								paramBegin = true;
-							} else { 
+							} else {
 								methodName+= method[i];
-							}	
+							}
 						} else
 						if (method[i] == '<') {
 							smallerCount++;

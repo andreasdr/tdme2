@@ -7,7 +7,7 @@
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 
-/** 
+/**
  * GUI button controller
  * @author Andreas Drewke
  * @version $Id$
@@ -19,5 +19,8 @@ class tdme::gui::elements::GUIButtonController final
 	friend class GUIImageButton;
 
 private:
+	/**
+	 * Constructor
+	 */
 	GUIButtonController(GUINode* node);
 };

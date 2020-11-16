@@ -101,7 +101,7 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 	float textureWidth = dimension.getX();
 	float textureHeight = dimension.getY();
 
-	// 
+	//
 	auto x0 = ((textureLeft) / (screenWidth / 2.0f)) - 1.0f;
 	auto y0 = ((screenHeight - textureTop) / (screenHeight / 2.0f)) - 1.0f;
 	auto x1 = ((textureLeft + textureWidth) / (screenWidth / 2.0f)) - 1.0f;

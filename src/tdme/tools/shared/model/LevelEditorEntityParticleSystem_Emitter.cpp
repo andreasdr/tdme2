@@ -21,14 +21,14 @@ LevelEditorEntityParticleSystem_Emitter* tdme::tools::shared::model::LevelEditor
 LevelEditorEntityParticleSystem_Emitter* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY = new LevelEditorEntityParticleSystem_Emitter("CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY", 4);
 LevelEditorEntityParticleSystem_Emitter* tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER = new LevelEditorEntityParticleSystem_Emitter("SPHERE_PARTICLE_EMITTER", 5);
 
-LevelEditorEntityParticleSystem_Emitter* LevelEditorEntityParticleSystem_Emitter::valueOf(const string& a0)
+LevelEditorEntityParticleSystem_Emitter* LevelEditorEntityParticleSystem_Emitter::valueOf(const string& name)
 {
-	if (BOUNDINGBOX_PARTICLE_EMITTER->getName() == a0) return BOUNDINGBOX_PARTICLE_EMITTER;
-	if (CIRCLE_PARTICLE_EMITTER->getName() == a0) return CIRCLE_PARTICLE_EMITTER;
-	if (CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY->getName() == a0) return CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
-	if (NONE->getName() == a0) return NONE;
-	if (POINT_PARTICLE_EMITTER->getName() == a0) return POINT_PARTICLE_EMITTER;
-	if (SPHERE_PARTICLE_EMITTER->getName() == a0) return SPHERE_PARTICLE_EMITTER;
+	if (BOUNDINGBOX_PARTICLE_EMITTER->getName() == name) return BOUNDINGBOX_PARTICLE_EMITTER;
+	if (CIRCLE_PARTICLE_EMITTER->getName() == name) return CIRCLE_PARTICLE_EMITTER;
+	if (CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY->getName() == name) return CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
+	if (NONE->getName() == name) return NONE;
+	if (POINT_PARTICLE_EMITTER->getName() == name) return POINT_PARTICLE_EMITTER;
+	if (SPHERE_PARTICLE_EMITTER->getName() == name) return SPHERE_PARTICLE_EMITTER;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

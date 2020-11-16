@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 
-/** 
+/**
  * Joint/bone weight
  * @author andreas.drewke
  * @version $Id$
@@ -14,21 +14,6 @@ private:
 	int32_t jointIndex;
 	int32_t weightIndex;
 public:
-
-	/** 
-	 * @returns joint index
-	 */
-	inline int32_t getJointIndex() const {
-		return jointIndex;
-	}
-
-	/** 
-	 * @returns weight index
-	 */
-	inline int32_t getWeightIndex() const {
-		return weightIndex;
-	}
-
 	/**
 	 * Public constructor
 	 */
@@ -40,4 +25,19 @@ public:
 	 * @param weightIndex weight index
 	 */
 	JointWeight(int32_t jointIndex, int32_t weightIndex);
+
+	/**
+	 * @returns joint index
+	 */
+	inline int32_t getJointIndex() const {
+		return jointIndex;
+	}
+
+	/**
+	 * @returns weight index
+	 */
+	inline int32_t getWeightIndex() const {
+		return weightIndex;
+	}
+
 };

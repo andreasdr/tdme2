@@ -30,7 +30,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Fog particle system entity to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -58,21 +58,6 @@ private:
 	}
 
 public:
-
-	// overriden methods
-	void initialize() override;
-	inline BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
-	}
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -85,11 +70,29 @@ public:
 	 * @param fps frames per seconds
 	 */
 	FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
-public:
+
 	// overridden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return FogParticleSystemInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
+
+	inline BoundingBox* getBoundingBox() override {
+		return &boundingBox;
+	}
+	inline BoundingBox* getBoundingBoxTransformed() override {
+		return &boundingBoxTransformed;
+	}
 
 	inline ParticleEmitter* getEmitter() override {
 		return FogParticleSystemInternal::getEmitter();
@@ -129,10 +132,6 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		FogParticleSystemInternal::setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return FogParticleSystemInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

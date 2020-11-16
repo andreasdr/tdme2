@@ -38,7 +38,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Points particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -93,10 +93,30 @@ protected:
 
 public:
 	/**
+	 * Public constructor
+	 * @param id id
+	 * @param emitter emitter
+	 * @param maxPoints max points
+	 * @param pointSize point size
+	 * @param autoEmit auto emit
+	 * @param texture texture
+	 * @param textureHorizonalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
+	 */
+	PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~PointsParticleSystemInternal();
+
+	/**
 	 * Initialize
 	 */
 	void initialize();
 
+	// overridden methods
 	inline ParticleEmitter* getEmitter() override {
 		return emitter;
 	}
@@ -202,7 +222,7 @@ public:
 		return textureVerticalSprites;
 	}
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	void update() override;
@@ -218,27 +238,9 @@ public:
 		updateInternal();
 	}
 
-	/** 
+	/**
 	 * @return render points pool
 	 */
 	TransparentRenderPointsPool* getRenderPointsPool();
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param emitter emitter
-	 * @param maxPoints max points
-	 * @param pointSize point size
-	 * @param autoEmit auto emit
-	 * @param texture texture
-	 * @param textureHorizonalSprites texture horizonal sprites
-	 * @param textureVerticalSprites texture vertical sprites
-	 * @param fps frames per seconds
-	 */
-	PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~PointsParticleSystemInternal();
 };

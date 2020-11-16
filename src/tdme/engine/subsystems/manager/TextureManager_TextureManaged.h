@@ -9,7 +9,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 
 using std::string;
 
-/** 
+/**
  * Managed texture entity
  * @author Andreas Drewke
  */
@@ -31,21 +31,21 @@ private:
 	 */
 	TextureManager_TextureManaged(const string& id, int32_t rendererId);
 
-	/** 
+	/**
 	 * @return texture id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return reference counter
 	 */
 	inline int32_t getReferenceCounter() {
 		return referenceCounter;
 	}
 
-	/** 
+	/**
 	 * decrement reference counter
 	 * @return if reference counter = 0
 	 */
@@ -54,7 +54,7 @@ private:
 		return referenceCounter == 0;
 	}
 
-	/** 
+	/**
 	 * increment reference counter
 	 */
 	inline void incrementReferenceCounter() {

@@ -15,7 +15,7 @@ using std::string;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * File system interface
  * @author Andreas Drewke
  * @version $Id$
@@ -23,7 +23,7 @@ using tdme::os::filesystem::FileSystemException;
 struct tdme::os::filesystem::FileSystemInterface
 {
 	/**
-	 * Destructor
+	 * Public destructor
 	 */
 	virtual ~FileSystemInterface() {}
 
@@ -62,7 +62,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 */
 	virtual void setContentFromString(const string& pathName, const string& fileName, const string& content) = 0;
 
-	/** 
+	/**
 	 * Get file content
 	 * @param pathName path name
 	 * @param fileName file name
@@ -71,7 +71,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 */
 	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) = 0;
 
-	/** 
+	/**
 	 * Set file content
 	 * @param pathName path name
 	 * @param fileName file name
@@ -100,12 +100,12 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) = 0;
 
 	/**
-	 * List files for given path and filter by a file name filter if not null 
+	 * List files for given path and filter by a file name filter if not null
 	 * @param pathName path name
 	 * @param files files
 	 * @param filter filter or null, this filter can be created on stack as ownership will not be taken over
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
-	 * @return file names 
+	 * @return file names
 	 */
 	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) = 0;
 

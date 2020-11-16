@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI check box controller
  * @author Andreas Drewke
  * @version $Id$
@@ -37,24 +37,25 @@ private:
 	bool disabled;
 	MutableString value;
 
-	/** 
-	 * @return is checked
-	 */
-	bool isChecked();
-
-	/** 
-	 * Set checked
-	 * @param checked checked
-	 */
-	void setChecked(bool checked);
-
 	/**
 	 * Private constructor
 	 * @param node node
 	 */
 	GUICheckboxController(GUINode* node);
 
+	/**
+	 * @return is checked
+	 */
+	bool isChecked();
+
+	/**
+	 * Set checked
+	 * @param checked checked
+	 */
+	void setChecked(bool checked);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;

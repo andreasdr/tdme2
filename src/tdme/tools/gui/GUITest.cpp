@@ -12,7 +12,6 @@
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -45,7 +44,7 @@ using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -160,8 +159,9 @@ void GUITest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void GUITest::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) {
-	Console::println(node->getId() + ": onActionPerformed(): " + type->getName());
+void GUITest::onActionPerformed(GUIActionListenerType type, GUIElementNode* node) {
+	if (type == GUIActionListenerType::PERFORMING) return;
+	Console::println(node->getId() + ": onActionPerformed(): " + node->getId() + ", type: " + to_string(type));
 }
 
 void GUITest::onValueChanged(GUIElementNode* node) {

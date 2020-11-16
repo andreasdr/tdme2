@@ -15,7 +15,7 @@ using tdme::audio::decoder::AudioDecoderException;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 
-/** 
+/**
  * Audio decoder base class
  * @author Andreas Drewke
  * @version $Id$
@@ -36,7 +36,7 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * Open a local file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -45,35 +45,35 @@ public:
 	 */
 	virtual void openFile(const string& pathName, const string& fileName) = 0;
 
-	/** 
+	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
 	virtual void reset() = 0;
 
-	/** 
+	/**
 	 * @return number of channels or CHANNELS_NONE
 	 */
 	virtual int32_t getChannels();
 
-	/** 
+	/**
 	 * @return sample rate in hz or SAMPLERATE_NONE
 	 */
 	virtual int32_t getSampleRate();
 
-	/** 
+	/**
 	 * @return bits per sample or BITSPERSAMPLES_NONE
 	 */
 	virtual int32_t getBitsPerSample();
 
-	/** 
+	/**
 	 * @return samples or SAMPLES_NONE
 	 */
 	virtual int32_t getSamples();
 
 	/**
-	 * Read raw PCM data from stream 
+	 * Read raw PCM data from stream
 	 * @param data byte buffer
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::audio::decoder::AudioDecoderException
@@ -81,7 +81,7 @@ public:
 	 */
 	virtual int32_t readFromStream(ByteBuffer* data) = 0;
 
-	/** 
+	/**
 	 * Closes the audio file
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::audio::decoder::AudioDecoderException

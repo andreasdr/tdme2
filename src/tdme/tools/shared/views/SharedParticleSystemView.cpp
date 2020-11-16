@@ -13,9 +13,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -71,9 +69,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -216,7 +212,7 @@ void SharedParticleSystemView::handleInputEvents()
 		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 			auto& event = engine->getGUI()->getKeyboardEvents()[i];
 			if (event.isProcessed() == true) continue;
-			auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+			auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
 			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
 			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
@@ -228,7 +224,7 @@ void SharedParticleSystemView::handleInputEvents()
 			if (event.isProcessed() == true) continue;
 
 			if (event.getButton() == MOUSE_BUTTON_LEFT) {
-				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+				if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 					auto selectedEntity = engine->getEntity("model");
 					auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 					if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
@@ -240,17 +236,17 @@ void SharedParticleSystemView::handleInputEvents()
 					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
 				} else
-				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
-					Group* selectedEntityGroup = nullptr;
+				if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+					Node* selectedEntityNode = nullptr;
 					ParticleSystemEntity* selectedSubParticleSystem = nullptr;
 					Entity* selectedEntity = nullptr;
-					if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup, &selectedSubParticleSystem);
+					if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityNode, &selectedSubParticleSystem);
 					if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
 						removeGizmo();
 						totalDeltaScale.set(0.0, 0.0f, 0.0f);
 						event.setProcessed(true);
 					} else
-					if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+					if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 						mouseDownLastX = event.getXUnscaled();
 						mouseDownLastY = event.getYUnscaled();
 						event.setProcessed(true);
@@ -268,11 +264,11 @@ void SharedParticleSystemView::handleInputEvents()
 							}
 						} else {
 							setParticleSystemIndex(0);
-						} 
+						}
 						event.setProcessed(true);
 					}
 				} else
-				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+				if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 					if (getGizmoMode() != GIZMOMODE_NONE) {
 						Vector3 deltaTranslation;
 						Vector3 deltaRotation;

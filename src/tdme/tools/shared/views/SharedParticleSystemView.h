@@ -32,20 +32,20 @@ using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * TDME particle system view
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::tools::shared::views::SharedParticleSystemView
-	: public virtual View
-	, public virtual PlayableSoundView
-	, public virtual GUIInputEventHandler
+	: public View
+	, public PlayableSoundView
+	, public GUIInputEventHandler
 	, protected Gizmo
 {
 protected:
-	Engine* engine {  };
-	Audio* audio {  };
+	Engine* engine { nullptr };
+	Audio* audio { nullptr };
 
 private:
 	PopUps* popUps { nullptr };
@@ -91,130 +91,9 @@ private:
 	 * @return level editor entity
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */;
+	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
 
 public:
-
-	/**
-	 * Request init particle system
-	 */
-	virtual void initParticleSystemRequest();
-
-	/**
-	 * Request update particle system
-	 */
-	virtual void updateParticleSystemRequest();
-
-	/** 
-	 * @return pop up views
-	 */
-	virtual PopUps* getPopUpsViews();
-
-	/** 
-	 * @return entity
-	 */
-	virtual LevelEditorEntity* getEntity();
-
-	/** 
-	 * Reset view
-	 */
-	virtual void reset();
-
-	/**
-	 * Set entity
-	 */
-	virtual void setEntity(LevelEditorEntity* entity);
-
-	/**
-	 * @return particle system index
-	 */
-	virtual int getParticleSystemIndex();
-
-	/**
-	 * Set particle system index, the particle system to edit
-	 * @param idx index
-	 */
-	virtual void setParticleSystemIndex(int idx);
-
-	/**
-	 * Init particle system
-	 */
-	virtual void initParticleSystem();
-
-	/** 
-	 * @return current particle system file name
-	 */
-	virtual const string getFileName();
-
-	/** 
-	 * Issue particle system loading
-	 */
-	virtual void loadFile(const string& pathName, const string& fileName);
-
-	/** 
-	 * Triggers saving a particle system
-	 */
-	virtual void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-
-	/** 
-	 * Issue file reloading
-	 */
-	virtual void reloadFile();
-	void handleInputEvents() override;
-
-	/** 
-	 * Renders the scene 
-	 */
-	void display() override;
-
-	/** 
-	 * Init GUI elements
-	 */
-	virtual void updateGUIElements();
-
-	/** 
-	 * On init additional screens
-	 */
-	virtual void onInitAdditionalScreens();
-
-	void initialize() override;
-	void activate() override;
-	void dispose() override;
-	void deactivate() override;
-	void playSound(const string& soundId) override;
-
-	/** 
-	 * On load particle system
-	 * @param oldEntity old entity
-	 * @param entity entity
-	 */
-	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
-
-	/** 
-	 * On set entity data hook
-	 */
-	virtual void onSetEntityData();
-
-	/**
-	 * Update GIZMO
-	 * @param entity level editor entity
-	 */
-	virtual void updateGizmo(LevelEditorEntity* entity);
-
-	/**
-	 * Set GIZMO rotation
-	 * @param entity level editor entity
-	 * @param transformations transformations
-	 */
-	virtual void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
-
-	/**
-	 * Apply particle system transformations
-	 * @param particleSystemEntity particle system entity
-	 * @param guiOnly GUI only
-	 */
-	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
-
 	/**
 	 * Public constructor
 	 * @param popUps pop ups view
@@ -225,4 +104,126 @@ public:
 	 * Destructor
 	 */
 	~SharedParticleSystemView();
+
+	/**
+	 * Request init particle system
+	 */
+	void initParticleSystemRequest();
+
+	/**
+	 * Request update particle system
+	 */
+	void updateParticleSystemRequest();
+
+	/**
+	 * @return pop up views
+	 */
+	PopUps* getPopUpsViews();
+
+	/**
+	 * @return entity
+	 */
+	LevelEditorEntity* getEntity();
+
+	/**
+	 * Reset view
+	 */
+	void reset();
+
+	/**
+	 * Set entity
+	 */
+	void setEntity(LevelEditorEntity* entity);
+
+	/**
+	 * @return particle system index
+	 */
+	int getParticleSystemIndex();
+
+	/**
+	 * Set particle system index, the particle system to edit
+	 * @param idx index
+	 */
+	void setParticleSystemIndex(int idx);
+
+	/**
+	 * Init particle system
+	 */
+	void initParticleSystem();
+
+	/**
+	 * @return current particle system file name
+	 */
+	const string getFileName();
+
+	/**
+	 * Issue particle system loading
+	 */
+	void loadFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Triggers saving a particle system
+	 */
+	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+
+	/**
+	 * Issue file reloading
+	 */
+	void reloadFile();
+	void handleInputEvents() override;
+
+	/**
+	 * Renders the scene
+	 */
+	void display() override;
+
+	/**
+	 * Init GUI elements
+	 */
+	void updateGUIElements();
+
+	// overridden methods
+	void initialize() override;
+	void activate() override;
+	void dispose() override;
+	void deactivate() override;
+	void playSound(const string& soundId) override;
+
+	/**
+	 * On init additional screens
+	 */
+	virtual void onInitAdditionalScreens();
+
+	/**
+	 * On load particle system
+	 * @param oldEntity old entity
+	 * @param entity entity
+	 */
+	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
+
+	/**
+	 * On set entity data hook
+	 */
+	virtual void onSetEntityData();
+
+	/**
+	 * Update GIZMO
+	 * @param entity level editor entity
+	 */
+	void updateGizmo(LevelEditorEntity* entity);
+
+	/**
+	 * Set GIZMO rotation
+	 * @param entity level editor entity
+	 * @param transformations transformations
+	 */
+	void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+
+	/**
+	 * Apply particle system transformations
+	 * @param particleSystemEntity particle system entity
+	 * @param guiOnly GUI only
+	 */
+	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
+
 };

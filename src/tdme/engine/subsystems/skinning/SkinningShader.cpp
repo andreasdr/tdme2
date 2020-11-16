@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Model.h>
@@ -13,8 +13,8 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -30,7 +30,7 @@ using std::string;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 using tdme::engine::Engine;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Model;
@@ -39,8 +39,8 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -63,7 +63,7 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(VULKAN)
 		uniformMatrixCount = renderer->UNIFORM_CL_SKINNING_MATRIX_COUNT;
 		uniformInstanceCount = renderer->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
 		uniformVertexCount = renderer->UNIFORM_CL_SKINNING_VERTEX_COUNT;
@@ -103,7 +103,7 @@ void SkinningShader::useProgram()
 	isRunning = true;
 }
 
-void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, Object3DGroupMesh* object3DGroupMesh)
+void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, Object3DNodeMesh* object3DNodeMesh)
 {
 	//
 	auto contextIdx = renderer->getContextIndex(context);
@@ -115,20 +115,20 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 	}
 
 	// vbo base ids
-	auto vboBaseIds = object3DGroupMesh->object3DGroupRenderer->vboBaseIds;
+	auto vboBaseIds = object3DNodeMesh->object3DNodeRenderer->vboBaseIds;
 
 	//
 	ModelSkinningCache* modelSkinningCacheCached = nullptr;
-	auto group = object3DGroupMesh->group;
-	auto& vertices = group->getVertices();
-	auto id = group->getModel()->getId() + "." + group->getId();
+	auto node = object3DNodeMesh->node;
+	auto& vertices = node->getVertices();
+	auto id = node->getModel()->getId() + "." + node->getId();
 	mutex.lock();
 	auto cacheIt = cache.find(id);
 	if (cacheIt == cache.end()) {
 		ModelSkinningCache modelSkinningCache;
 
 		auto created = false;
-		auto skinning = group->getSkinning();
+		auto skinning = node->getSkinning();
 		auto& verticesJointsWeights = skinning->getVerticesJointsWeights();
 		auto& weights = skinning->getWeights();
 
@@ -151,19 +151,19 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 
 		// vertices
 		{
-			object3DGroupMesh->setupVerticesBuffer(renderer, context, (*modelSkinningCache.vboIds)[0]);
+			object3DNodeMesh->setupVerticesBuffer(renderer, context, (*modelSkinningCache.vboIds)[0]);
 		}
 
 		// normals
 		{
-			object3DGroupMesh->setupNormalsBuffer(renderer, context, (*modelSkinningCache.vboIds)[1]);
+			object3DNodeMesh->setupNormalsBuffer(renderer, context, (*modelSkinningCache.vboIds)[1]);
 		}
 
 		{
 			// vertices joints
 			auto ibVerticesJoints = ObjectBuffer::getByteBuffer(context, vertices.size() * 1 * sizeof(int))->asIntBuffer();
-			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				auto vertexJoints = verticesJointsWeights[groupVertexIndex].size();
+			for (auto nodeVertexIndex = 0; nodeVertexIndex < vertices.size(); nodeVertexIndex++) {
+				auto vertexJoints = verticesJointsWeights[nodeVertexIndex].size();
 				// put number of joints
 				ibVerticesJoints.put((int)vertexJoints);
 			}
@@ -173,8 +173,8 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 		{
 			// vertices joints indices
 			auto ibVerticesVertexJointsIdxs = ObjectBuffer::getByteBuffer(context, vertices.size() * 4 * sizeof(float))->asIntBuffer();
-			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
+			for (auto nodeVertexIndex = 0; nodeVertexIndex < vertices.size(); nodeVertexIndex++) {
+				auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
 				// vertex joint idx 1..4
 				for (auto i = 0; i < 4; i++) {
 					auto jointIndex = i < vertexJointsWeight.size()?vertexJointsWeight[i].getJointIndex():-1;
@@ -187,8 +187,8 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 		{
 			// vertices joints weights
 			auto fbVerticesVertexJointsWeights = ObjectBuffer::getByteBuffer(context, vertices.size() * 4 * sizeof(float))->asFloatBuffer();
-			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
+			for (auto nodeVertexIndex = 0; nodeVertexIndex < vertices.size(); nodeVertexIndex++) {
+				auto& vertexJointsWeight = verticesJointsWeights[nodeVertexIndex];
 				// vertex joint weight 1..4
 				for (auto i = 0; i < 4; i++) {
 					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
@@ -220,13 +220,13 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 	{
 		Matrix4x4 skinningMatrix;
 		auto currentInstance = object3DBase->getCurrentInstance();
-		auto skinning = group->getSkinning();
+		auto skinning = node->getSkinning();
 		auto& skinningJoints = skinning->getJoints();
 		auto fbMatrices = ObjectBuffer::getByteBuffer(context, object3DBase->instances * skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
 		for (auto i = 0; i < object3DBase->instances; i++) {
 			if (object3DBase->instanceEnabled[i] == false) continue;
 			object3DBase->setCurrentInstance(i);
-			for (auto jointSkinningMatrix: object3DGroupMesh->jointsSkinningMatrices[i]) {
+			for (auto jointSkinningMatrix: object3DNodeMesh->jointsSkinningMatrices[i]) {
 				fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(object3DBase->getTransformationsMatrix()).getArray()));
 			}
 		}

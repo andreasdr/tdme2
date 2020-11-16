@@ -12,7 +12,7 @@ using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Water shader test
  * @author andreas.drewke
  * @version $Id$
@@ -26,7 +26,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values
@@ -38,7 +38,7 @@ public:
 	 */
 	WaterTest();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

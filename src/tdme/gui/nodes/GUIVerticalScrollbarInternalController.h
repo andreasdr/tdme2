@@ -14,7 +14,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI vertical scroll bar internal controller
  * @author Andreas Drewke
  * @version $Id$
@@ -33,37 +33,19 @@ private:
 	int32_t mouseYOffset;
 	MutableString value;
 
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIVerticalScrollbarInternalController(GUINode* node);
+
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
-
-	/** 
-	 * @return state
-	 */
-	virtual State getState();
-
-private:
-
-	/** 
-	 * @return bar height
-	 */
-	virtual float getBarHeight();
-
-	/** 
-	 * @return bar top
-	 */
-	virtual float getBarTop();
-
-	/** 
-	 * Set dragged y
-	 * @param draggedY dragged y
-	 */
-	virtual void setDraggedY(float draggedY);
-
-public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -73,11 +55,27 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
 	/**
-	 * Private constructor
-	 * @param node node
+	 * @return state
 	 */
-	GUIVerticalScrollbarInternalController(GUINode* node);
+	virtual State getState();
+
+private:
+
+	/**
+	 * @return bar height
+	 */
+	virtual float getBarHeight();
+
+	/**
+	 * @return bar top
+	 */
+	virtual float getBarTop();
+
+	/**
+	 * Set dragged y
+	 * @param draggedY dragged y
+	 */
+	virtual void setDraggedY(float draggedY);
 
 };

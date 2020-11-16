@@ -34,7 +34,7 @@
     - 3d engine
         - model reader
             - DAE
-                - group names/ids must not have whitespace characters
+                - node names/ids must not have whitespace characters
                 - requires baked matrices
                 - requires triangulated meshes for now
             - FBX via FBX SDK
@@ -138,6 +138,7 @@
             - element
             - image
             - input
+            - layer
             - layout
             - panel
             - scrollbars
@@ -151,13 +152,14 @@
                 - image button
                 - input
                 - knob
+                - menu
                 - progress bar
                 - radio button
                 - scrollarea both
                 - scrollarea horizontal
                 - scrollarea vertical
-                - selectbox
-                - selectbox multiple
+                - selectbox including tree view
+                - selectbox with multiple selection including tree view
                 - slider horizontal
                 - slider vertical
                 - tabs
@@ -217,7 +219,7 @@
     - documentation
 
 - What is WIP or planned
-    - Optimizing models with specular lighting regarding render calls by reducing groups and materials to a minumum
+    - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
     - Simple script language
@@ -242,13 +244,13 @@
         - physics or game mechanics can also run in a separate thread(s)
     - uses 3rd party libraries
     	- need to be installed 
-            - GLUT(for most platforms)
+            - GLUT(NetBSD, Haiku)
             - OpenGL
             - OpenAL
             - glew
             - pthreads
             - Vulkan(optional)
-            - GLFW3(default on FreeBSD, Windows/MINGW, Linux, required for Vulkan)
+            - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
         - included in TDME2 repository
             - FBXSDK
             - Hashlink
@@ -263,6 +265,7 @@
             - Vulkan
               - glslang
               - OGLCompilersDLL
+              - simple_vulkan_synchronization
               - spirv
               - VulkanMemoryAllocator
             - zlib
@@ -273,7 +276,7 @@
         - MacOSX(port completed)
         - FreeBSD(port completed)
         - NetBSD(port completed)
-        - OpenBSD(port is WIP)
+        - OpenBSD(port completed)
         - Haiku(port completed)
         - Android(port pending)
         - iOS(port pending)

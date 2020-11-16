@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -53,7 +53,7 @@ using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::utilities::ModelTools;
 using tdme::engine::model::Model;
@@ -94,7 +94,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(E
 		if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
 			break;
 		} else {
-			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolumeAt(i)->getModelMeshFile()) == convexHullFileName) {
+			if (FileSystem::getInstance()->getFileName(entityFinal->getBoundingVolume(i)->getModelMeshFile()) == convexHullFileName) {
 				entityPhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 			}
 			FileSystem::getInstance()->removeFile(
@@ -285,19 +285,19 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			);
 			{
 				Object3DModel meshObject3DModel(meshModel);
-				for (auto i = 0; i < meshObject3DModel.getGroupCount(); i++) {
-					vector<Triangle> groupTriangles;
-					meshObject3DModel.getTriangles(groupTriangles, i);
+				for (auto i = 0; i < meshObject3DModel.getNodeCount(); i++) {
+					vector<Triangle> nodeTriangles;
+					meshObject3DModel.getTriangles(nodeTriangles, i);
 					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
 					Console::println(
 						"EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +
 						to_string(i) +
 						": " + convexHullFileName +
-						", triangles = " + to_string(groupTriangles.size())
+						", triangles = " + to_string(nodeTriangles.size())
 					);
 					auto convexHullModel = createModel(
 						meshPathName + "/" + convexHullFileName,
-						groupTriangles
+						nodeTriangles
 					);
 					TMWriter::write(convexHullModel, meshPathName, convexHullFileName);
 					delete convexHullModel;
@@ -330,7 +330,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	model->getMaterials()[material->getId()] = material;
-	auto group = new Group(model, nullptr, "group", "group");
+	auto node = new Node(model, nullptr, "node", "node");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Face> faces;
@@ -360,7 +360,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 		}
 		faces.push_back(
 			Face(
-				group,
+				node,
 				triangles[i * 3 + 0],
 				triangles[i * 3 + 1],
 				triangles[i * 3 + 2],
@@ -370,16 +370,16 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 			)
 		);
 	}
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	ModelTools::prepareForIndexedRendering(model);
 	return model;
 }
@@ -392,7 +392,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	model->getMaterials()[material->getId()] = material;
-	auto group = new Group(model, nullptr, "group", "group");
+	auto node = new Node(model, nullptr, "node", "node");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<Face> faces;
@@ -415,7 +415,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 		}
 		faces.push_back(
 			Face(
-				group,
+				node,
 				index + 0,
 				index + 1,
 				index + 2,
@@ -426,16 +426,16 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 		);
 		index+= 3;
 	}
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	ModelTools::prepareForIndexedRendering(model);
 	return model;
 }

@@ -27,6 +27,7 @@
   - https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
   - https://gist.github.com/niw/5963798
+  - https://gist.github.com/Youka/4153f12cf2e17a77314c
   - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/#environment-maps
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#inner-and-outer-cone-angles

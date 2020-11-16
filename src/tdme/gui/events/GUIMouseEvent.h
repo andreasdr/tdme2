@@ -4,19 +4,26 @@
 #include <tdme/application/InputDefinitions.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
-using tdme::gui::events::GUIMouseEvent_Type;
-
-/** 
+/**
  * GUI mouse event
  * @author Andreas Drewke
  * @version $Id$
  */
 class tdme::gui::events::GUIMouseEvent final
 {
+public:
+	enum GUIMouseEventType {
+		MOUSEEVENT_NONE,
+		MOUSEEVENT_WHEEL_MOVED,
+		MOUSEEVENT_PRESSED,
+		MOUSEEVENT_RELEASED,
+		MOUSEEVENT_MOVED,
+		MOUSEEVENT_DRAGGED
+	};
 
 private:
 	int64_t time;
-	GUIMouseEvent_Type* type;
+	GUIMouseEventType type { MOUSEEVENT_NONE };
 	int32_t xUnscaled;
 	int32_t yUnscaled;
 	int32_t x;
@@ -37,14 +44,14 @@ public:
 	 */
 	~GUIMouseEvent();
 
-	/** 
+	/**
 	 * @return time in milliseconds
 	 */
 	inline int64_t getTime() {
 		return time;
 	}
 
-	/** 
+	/**
 	 * Set time
 	 * @param time time
 	 */
@@ -52,22 +59,22 @@ public:
 		this->time = time;
 	}
 
-	/** 
+	/**
 	 * @return type
 	 */
-	inline GUIMouseEvent_Type* getType() {
+	inline GUIMouseEventType getType() {
 		return type;
 	}
 
-	/** 
+	/**
 	 * Set type
 	 * @param type type
 	 */
-	inline void setType(GUIMouseEvent_Type* type) {
+	inline void setType(GUIMouseEventType type) {
 		this->type = type;
 	}
 
-	/** 
+	/**
 	 * @return x unscaled
 	 */
 	inline int32_t getXUnscaled() {
@@ -104,7 +111,7 @@ public:
 		return x;
 	}
 
-	/** 
+	/**
 	 * Set x
 	 * @param x x
 	 */
@@ -112,14 +119,14 @@ public:
 		this->x = x;
 	}
 
-	/** 
+	/**
 	 * @return y
 	 */
 	inline int32_t getY() {
 		return y;
 	}
 
-	/** 
+	/**
 	 * Set y
 	 * @param y y
 	 */
@@ -127,14 +134,14 @@ public:
 		this->y = y;
 	}
 
-	/** 
+	/**
 	 * @return button
 	 */
 	inline int32_t getButton() {
 		return button;
 	}
 
-	/** 
+	/**
 	 * Set button
 	 * @param button button
 	 */
@@ -142,14 +149,14 @@ public:
 		this->button = button;
 	}
 
-	/** 
+	/**
 	 * @return wheel x
 	 */
 	inline float getWheelX() {
 		return wheelX;
 	}
 
-	/** 
+	/**
 	 * Set up wheel x
 	 * @param wheelX wheel x
 	 */
@@ -157,14 +164,14 @@ public:
 		this->wheelX = wheelX;
 	}
 
-	/** 
+	/**
 	 * @return wheel y
 	 */
 	inline float getWheelY() {
 		return wheelY;
 	}
 
-	/** 
+	/**
 	 * Set up wheel y
 	 * @param wheelY wheel y
 	 */
@@ -172,14 +179,14 @@ public:
 		this->wheelY = wheelY;
 	}
 
-	/** 
+	/**
 	 * @return wheel z
 	 */
 	inline float getWheelZ() {
 		return wheelZ;
 	}
 
-	/** 
+	/**
 	 * Set up wheel z
 	 * @param wheelZ wheel z
 	 */
@@ -187,7 +194,7 @@ public:
 		this->wheelZ = wheelZ;
 	}
 
-	/** 
+	/**
 	 * @return is meta down
 	 */
 	inline bool isMetaDown() {
@@ -254,8 +261,8 @@ public:
 		return processed;
 	}
 
-	/** 
-	 * Set processed 
+	/**
+	 * Set processed
 	 * @param processed processed
 	 */
 	inline void setProcessed(bool processed) {

@@ -19,7 +19,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-/** 
+/**
  * Collision response
  * @author Andreas Drewke
  * @version $Id$
@@ -37,8 +37,13 @@ private:
 	vector<Vector3> fallbackHitPointsVector;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline CollisionResponse() {
+	}
 
-	/** 
+	/**
 	 * Reset
 	 */
 	inline void reset() {
@@ -46,8 +51,8 @@ public:
 		selectedEntity = nullptr;
 	}
 
-	/** 
-	 * Adds a collision response entity 
+	/**
+	 * Adds a collision response entity
 	 * @param distance distance
 	 * @return Entity or null
 	 */
@@ -62,61 +67,76 @@ public:
 		return &entity;
 	}
 
-	/** 
+	/**
 	 * @return entity count
 	 */
 	inline int32_t getEntityCount() {
 		return entities.size();
 	}
 
-	/** 
+	/**
 	 * @return selected entity
 	 */
 	inline CollisionResponse_Entity* getSelectedEntity() {
 		return selectedEntity;
 	}
 
-	/** 
+	/**
 	 * Selects entity at given index
 	 * @param idx idx
 	 * @return
 	 */
-	inline CollisionResponse_Entity* getEntityAt(int32_t idx) {
+	inline CollisionResponse_Entity* getEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return nullptr;
 		return &entities[idx];
 	}
 
-	/** 
+	/**
 	 * Selects entity at given index
 	 * @param idx idx
 	 * @return
 	 */
-	inline CollisionResponse* selectEntityAt(int32_t idx) {
+	inline CollisionResponse* selectEntity(int32_t idx) {
 		if (idx < 0 || idx >= entities.size()) return this;
 		selectedEntity = &entities[idx];
 		return this;
 	}
 
+	/**
+	 * @return if collision entity is selected
+	 */
 	inline bool hasEntitySelected() {
 		return selectedEntity != nullptr;
 	}
 
+	/**
+	 * @return collision distance or negative penetration
+	 */
 	inline float getDistance() {
 		if (selectedEntity == nullptr) return 0.0f;
 		return selectedEntity->distance;
 	}
 
+	/**
+	 * @return if we have a penetration
+	 */
 	inline bool hasPenetration() {
 		if (selectedEntity == nullptr) return false;
 		return selectedEntity->distance < -Math::EPSILON;
 	}
 
+	/**
+	 * @return penetration
+	 */
 	inline float getPenetration() {
 		if (selectedEntity == nullptr) return 0.0f;
 		return -selectedEntity->distance;
 	}
 
-	inline Vector3* getNormal() {
+	/**
+	 * @return normal
+	 */
+	inline const Vector3* getNormal() {
 		if (selectedEntity == nullptr) return nullptr;
 		return &selectedEntity->normal;
 	}
@@ -129,28 +149,23 @@ public:
 		return selectedEntity->hitPoints;
 	}
 
-	/** 
-	 * @return hit points count
+	/**
+	 * @return hit point count
 	 */
-	inline int32_t getHitPointsCount() {
+	inline int32_t getHitPointCount() {
 		if (selectedEntity == nullptr) return 0;
 		return selectedEntity->hitPoints.size();
 	}
 
-	/** 
-	 * Get hit point of given index 
+	/**
+	 * Get hit point of given index
 	 * @param i i
 	 * @return hit point for given hit points index
 	 */
-	inline Vector3* getHitPointAt(int32_t i) {
+	inline Vector3* getHitPoint(int32_t idx) {
 		if (selectedEntity == nullptr) return nullptr;
-		return &selectedEntity->hitPoints[i];
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline CollisionResponse() {
+		if (idx < 0 || idx >= selectedEntity->hitPoints.size()) return nullptr;
+		return &selectedEntity->hitPoints[idx];
 	}
 
 };

@@ -21,7 +21,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * TDME engine entity
  * @author Andreas Drewke
  * @version $Id$
@@ -52,29 +52,29 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Set up engine
 	 * @param engine engine
 	 */
 	virtual void setEngine(Engine* engine) = 0;
 
-	/** 
+	/**
 	 * Set up renderer
 	 * @param renderer renderer
 	 */
 	virtual void setRenderer(Renderer* renderer) = 0;
 
-	/** 
+	/**
 	 * @return object id
 	 */
 	virtual const string& getId() = 0;
 
-	/** 
+	/**
 	 * @return true if enabled to be rendered
 	 */
 	virtual bool isEnabled() = 0;
 
-	/** 
+	/**
 	 * Enable/disable rendering
 	 * @param enabled enabled
 	 */
@@ -91,29 +91,29 @@ public:
 	 */
 	virtual void setFrustumCulling(bool frustumCulling) = 0;
 
-	/** 
+	/**
 	 * @return if object is pickable
 	 */
 	virtual bool isPickable() = 0;
 
-	/** 
+	/**
 	 * Set this object pickable
 	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable) = 0;
 
-	/** 
+	/**
 	 * @return if entity contributes to shadows
 	 */
 	virtual bool isContributesShadows() = 0;
 
-	/** 
+	/**
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
 	virtual void setContributesShadows(bool contributesShadows) = 0;
 
-	/** 
+	/**
 	 * @return if entity receives shadows
 	 */
 	virtual bool isReceivesShadows() = 0;
@@ -130,7 +130,7 @@ public:
 	 */
 	virtual const Color4& getEffectColorMul() const = 0;
 
-	/** 
+	/**
 	 * Set effect color that will be multiplied with fragment color
 	 * @param effectColorMul effect color
 	 */
@@ -148,22 +148,22 @@ public:
 	 */
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
-	/** 
-	 * Initiates this object 3d 
+	/**
+	 * Initiates this object 3d
 	 */
 	virtual void initialize() = 0;
 
-	/** 
+	/**
 	 * Dispose this object 3d
 	 */
 	virtual void dispose() = 0;
 
-	/** 
+	/**
 	 * @return bounding box / in model coordinate space
 	 */
 	virtual BoundingBox* getBoundingBox() = 0;
 
-	/** 
+	/**
 	 * @return bounding box transformed / in world coordinate space
 	 */
 	virtual BoundingBox* getBoundingBoxTransformed() = 0;
@@ -268,7 +268,7 @@ public:
 	 */
 	virtual void fromTransformations(const Transformations& transformations) = 0;
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	virtual void update() = 0;

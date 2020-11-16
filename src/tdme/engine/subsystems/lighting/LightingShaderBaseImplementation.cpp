@@ -5,8 +5,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
@@ -18,8 +16,6 @@ using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
@@ -154,6 +150,13 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
 {
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, 0);
 }
 
 void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* context)

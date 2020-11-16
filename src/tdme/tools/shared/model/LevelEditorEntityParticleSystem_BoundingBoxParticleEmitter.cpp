@@ -7,7 +7,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter() 
+LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter()
 {
 	count = 2000;
 	lifeTime = 1500;

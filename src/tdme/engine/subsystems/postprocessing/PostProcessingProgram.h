@@ -11,7 +11,7 @@ using std::vector;
 
 using tdme::engine::model::Color4;
 
-/** 
+/**
  * Post processing program
  * @author Andreas Drewke
  * @version $Id$

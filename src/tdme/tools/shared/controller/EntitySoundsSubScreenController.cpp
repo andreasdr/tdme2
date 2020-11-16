@@ -6,7 +6,7 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -36,7 +36,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::AnimationSetup;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
@@ -288,9 +288,9 @@ void EntitySoundsSubScreenController::showErrorPopUp(const string& caption, cons
 void EntitySoundsSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* entity) {
 }
 
-void EntitySoundsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntitySoundsSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
 {
-	if (type != GUIActionListener_Type::PERFORMED) return;
+	if (type != GUIActionListenerType::PERFORMED) return;
 	if (StringTools::startsWith(node->getId(), "sounds_sound_apply_") == true) {
 		auto soundIdx = Integer::parseInt(StringTools::substring(node->getId(), string("sounds_sound_apply_").size()));
 		onSoundApply(soundIdx, entity);

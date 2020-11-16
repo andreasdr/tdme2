@@ -32,13 +32,13 @@ const array<array<int32_t,3>,12> BoundingBox::facesVerticesIndexes =
 	FACE8_INDICES, FACE9_INDICES, FACE10_INDICES, FACE11_INDICES
 }};
 
-BoundingBox::BoundingBox() 
+BoundingBox::BoundingBox()
 {
 	vertices.resize(8);
 	update();
 }
 
-BoundingBox::BoundingBox(BoundingBox* boundingBox) 
+BoundingBox::BoundingBox(BoundingBox* boundingBox)
 {
 	vertices.resize(8);
 	this->min.set(boundingBox->min);

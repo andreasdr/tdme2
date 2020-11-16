@@ -16,7 +16,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level Editor Entity Bouning Volume
  * @author Andreas Drewke
  * @version $Id$
@@ -32,36 +32,47 @@ private:
 	BoundingVolume* boundingVolume { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param levelEditorEntity level editor entity
+	 */
+	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityBoundingVolume();
+
+	/**
 	 * @return id
 	 */
 	inline int32_t getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return level editor entity
 	 */
 	inline LevelEditorEntity* getLevelEditorEntity() {
 		return levelEditorEntity;
 	}
 
-	/** 
+	/**
 	 * @return model mesh file
 	 */
 	inline const string& getModelMeshFile() {
 		return modelMeshFile;
 	}
 
-	/** 
+	/**
 	 * @return model
 	 */
 	inline Model* getModel() {
 		return model;
 	}
 
-	/** 
+	/**
 	 * @return bounding volume
 	 */
 	inline BoundingVolume* getBoundingVolume() {
@@ -73,19 +84,19 @@ public:
 	 */
 	int32_t allocateModelIdx();
 
-	/** 
+	/**
 	 * Setup bounding volume none
 	 */
 	void setupNone();
 
-	/** 
+	/**
 	 * Setup bounding volume sphere
 	 * @param center center
 	 * @param radius radius
 	 */
 	void setupSphere(const Vector3& center, float radius);
 
-	/** 
+	/**
 	 * Setup bounding volume capsule
 	 * @param a a
 	 * @param b b
@@ -93,7 +104,7 @@ public:
 	 */
 	void setupCapsule(const Vector3& a, const Vector3& b, float radius);
 
-	/** 
+	/**
 	 * Setup bounding volume oriented bounding box
 	 * @param center center
 	 * @param axis0 axis 0
@@ -103,14 +114,14 @@ public:
 	 */
 	void setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
-	/** 
+	/**
 	 * Setup bounding volume bounding box
 	 * @param min min
 	 * @param max max
 	 */
 	void setupAabb(const Vector3& min, const Vector3& max);
 
-	/** 
+	/**
 	 * Setup bounding volume sphere
 	 * @param pathName path name
 	 * @param fileName file name
@@ -123,18 +134,5 @@ private:
 	 * Update level editor entity
 	 */
 	void updateLevelEditorEntity();
-
-public:
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param levelEditorEntity level editor entity
-	 */
-	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityBoundingVolume();
 
 };

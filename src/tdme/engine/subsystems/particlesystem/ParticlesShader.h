@@ -11,7 +11,7 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Particles shader program
  * @author Andreas Drewke
  * @version $Id$
@@ -23,12 +23,7 @@ private:
 	int32_t renderFragmentShaderId { -1 };
 	int32_t renderVertexShaderId { -1 };
 	int32_t uniformMVPMatrix { -1 };
-	int32_t uniformPointSize { -1 };
-	int32_t uniformDiffuseTextureUnit { -1 };
-	int32_t uniformEffectColorMul { -1 };
-	int32_t uniformEffectColorAdd { -1 };
-	int32_t uniformSpritesHorizontal { -1 };
-	int32_t uniformSpritesVertical{ -1 };
+	array<int32_t, 16> uniformDiffuseTextureUnits;
 	int32_t uniformViewPortWidth { -1 };
 	int32_t uniformViewPortHeight { -1 };
 	int32_t uniformProjectionMatrixXx { -1 };
@@ -38,38 +33,45 @@ private:
 	bool initialized;
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
+	array<int32_t, 16> boundTextureIds;
 
 public:
+	/**
+	 * Public constructor
+	 * @param engine engine
+	 * @param renderer renderer
+	 */
+	ParticlesShader(Engine* engine, Renderer* renderer);
 
-	/** 
+	/**
 	 * @return initialized and ready to be used
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use lighting program
 	 * @param context context
 	 */
 	void useProgram(void* context);
 
-	/** 
+	/**
 	 * Update effect to program
 	 * @param context context
 	 */
 	void updateEffect(void* context);
 
-	/** 
+	/**
 	 * Unuse particles shader program
 	 * @param context context
 	 */
 	void unUseProgram(void* context);
 
-	/** 
+	/**
 	 * Update matrices to program
 	 * @param context context
 	 */
@@ -78,17 +80,8 @@ public:
 	/**
 	 * Set parameters
 	 * @param context context
-	 * @param textureId texture id
-	 * @param textureSpritesHorizontal horizontal sprites in texture
-	 * @param textureSpritesVertical vertical sprites in texture
-	 * @param pointSize point size
+	 * @param textureIds texture ids
 	 */
-	void setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize);
+	void setParameters(void* context, const array<int32_t, 16>& textureIds);
 
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 * @param renderer renderer
-	 */
-	ParticlesShader(Engine* engine, Renderer* renderer);
 };

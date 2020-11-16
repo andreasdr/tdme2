@@ -11,7 +11,7 @@
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Skinning.h>
@@ -21,9 +21,9 @@
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -41,7 +41,7 @@ using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
@@ -51,9 +51,9 @@ using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::utilities::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -74,54 +74,54 @@ Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProc
 		instanceAnimations[i] = new Object3DAnimation(model, animationProcessingTarget);
 	}
 	transformedFacesIterator = nullptr;
-	// object 3d groups
-	Object3DGroup::createGroups(this, useManagers, animationProcessingTarget, object3dGroups);
+	// object 3d nodes
+	Object3DNode::createNodes(this, useManagers, animationProcessingTarget, object3dNodes);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(nullptr, object3dGroups);
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DNode::computeTransformations(nullptr, object3dNodes);
 }
 
 Object3DBase::~Object3DBase() {
 	for (auto i = 0; i < instances; i++) {
 		delete instanceAnimations[i];
 	}
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		delete object3dGroups[i];
+	for (auto i = 0; i < object3dNodes.size(); i++) {
+		delete object3dNodes[i];
 	}
 	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
-int Object3DBase::getGroupCount() const {
-	return object3dGroups.size();
+int Object3DBase::getNodeCount() const {
+	return object3dNodes.size();
 }
 
-void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
+void Object3DBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 {
-	if (groupIdx == -1) {
-		for (auto object3DGroup : object3dGroups) {
-			auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-			for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+	if (nodeIdx == -1) {
+		for (auto object3DNode : object3dNodes) {
+			auto nodeVerticesTransformed = &object3DNode->mesh->transformedVertices;
+			for (auto& facesEntity : object3DNode->node->getFacesEntities())
 			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
 				triangles.push_back(
 					Triangle(
-						(*groupVerticesTransformed)[faceVertexIndices[0]],
-						(*groupVerticesTransformed)[faceVertexIndices[1]],
-						(*groupVerticesTransformed)[faceVertexIndices[2]]
+						(*nodeVerticesTransformed)[faceVertexIndices[0]],
+						(*nodeVerticesTransformed)[faceVertexIndices[1]],
+						(*nodeVerticesTransformed)[faceVertexIndices[2]]
 					)
 				);
 			}
 		}
 	} else {
-		auto object3DGroup = object3dGroups[groupIdx];
-		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-		for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+		auto object3DNode = object3dNodes[nodeIdx];
+		auto nodeVerticesTransformed = &object3DNode->mesh->transformedVertices;
+		for (auto& facesEntity : object3DNode->node->getFacesEntities())
 		for (auto& face : facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
 			triangles.push_back(
 				Triangle(
-					(*groupVerticesTransformed)[faceVertexIndices[0]],
-					(*groupVerticesTransformed)[faceVertexIndices[1]],
-					(*groupVerticesTransformed)[faceVertexIndices[2]]
+					(*nodeVerticesTransformed)[faceVertexIndices[0]],
+					(*nodeVerticesTransformed)[faceVertexIndices[1]],
+					(*nodeVerticesTransformed)[faceVertexIndices[2]]
 				)
 			);
 		}
@@ -136,12 +136,12 @@ Object3DBase_TransformedFacesIterator* Object3DBase::getTransformedFacesIterator
 	return transformedFacesIterator;
 }
 
-Object3DGroupMesh* Object3DBase::getMesh(const string& groupId)
+Object3DNodeMesh* Object3DBase::getMesh(const string& nodeId)
 {
 	// TODO: maybe rather use a hash map than an array to have a faster access
-	for (auto object3DGroup : object3dGroups) {
-		if (object3DGroup->group->getId() == groupId) {
-			return object3DGroup->mesh;
+	for (auto object3DNode : object3dNodes) {
+		if (object3DNode->node->getId() == nodeId) {
+			return object3DNode->mesh;
 		}
 	}
 	return nullptr;
@@ -152,35 +152,35 @@ void Object3DBase::initialize()
 	auto meshManager = Engine::getInstance()->getMeshManager();
 	//
 	// init mesh
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		auto object3DGroup = object3dGroups[i];
+	for (auto i = 0; i < object3dNodes.size(); i++) {
+		auto object3DNode = object3dNodes[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
-		if (object3DGroup->mesh == nullptr) {
+		if (object3DNode->mesh == nullptr) {
 			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
-			vector<map<string, Matrix4x4*>*> instancesSkinningGroupsMatrices;
-			for (auto animation: object3DGroup->object->instanceAnimations) {
+			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
+			for (auto animation: object3DNode->object->instanceAnimations) {
 				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
-				instancesSkinningGroupsMatrices.push_back(animation->getSkinningGroupsMatrices(object3DGroup->group));
+				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(object3DNode->node));
 			}
 			if (usesManagers == true) {
-				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
-				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(
-						object3DGroup->renderer,
+				object3DNode->mesh = meshManager->getMesh(object3DNode->id);
+				if (object3DNode->mesh == nullptr) {
+					object3DNode->mesh = new Object3DNodeMesh(
+						object3DNode->renderer,
 						animationProcessingTarget,
-						object3DGroup->group,
+						object3DNode->node,
 						instancesTransformationsMatrices,
-						instancesSkinningGroupsMatrices,
+						instancesSkinningNodesMatrices,
 						instances
 					);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(
-					object3DGroup->renderer,
+				object3DNode->mesh = new Object3DNodeMesh(
+					object3DNode->renderer,
 					animationProcessingTarget,
-					object3DGroup->group,
+					object3DNode->node,
 					instancesTransformationsMatrices,
-					instancesSkinningGroupsMatrices,
+					instancesSkinningNodesMatrices,
 					instances
 				);
 			}
@@ -192,19 +192,19 @@ void Object3DBase::dispose()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
 	// dispose mesh
-	for (auto i = 0; i < object3dGroups.size(); i++) {
-		auto object3DGroup = object3dGroups[i];
+	for (auto i = 0; i < object3dNodes.size(); i++) {
+		auto object3DNode = object3dNodes[i];
 		// dispose renderer
-		object3DGroup->renderer->dispose();
-		// dispose object3d group
-		object3DGroup->dispose();
+		object3DNode->renderer->dispose();
+		// dispose object3d node
+		object3DNode->dispose();
 		// dispose mesh
 		if (usesManagers == true) {
-			meshManager->removeMesh(object3DGroup->id);
+			meshManager->removeMesh(object3DNode->id);
 		} else {
-			delete object3DGroup->mesh;
+			delete object3DNode->mesh;
 		}
-		object3DGroup->mesh = nullptr;
+		object3DNode->mesh = nullptr;
 	}
 	//
 }

@@ -78,7 +78,7 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 	}
 	sort(files.begin(), files.end());
 
-	#if defined(_WIN32) && defined(_MSC_VER)
+	#if defined(_WIN32)
 		if (addDrives == true) {
 			for (char drive = 'A'; drive <= 'Z'; drive++) {
 				string fileName;

@@ -12,7 +12,7 @@ using std::string;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 
-/** 
+/**
  * Represents specular material properties
  * @author andreas.drewke
  * @version $Id$
@@ -45,6 +45,15 @@ private:
 	void checkBaseColorTextureTransparency();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	PBRMaterialProperties();
+
+	/**
+	 * Destructor
+	 */
+	~PBRMaterialProperties();
 
 	/**
 	 * @return base color factor
@@ -263,13 +272,4 @@ public:
 		this->exposure = exposure;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	PBRMaterialProperties();
-
-	/**
-	 * Destructor
-	 */
-	~PBRMaterialProperties();
 };

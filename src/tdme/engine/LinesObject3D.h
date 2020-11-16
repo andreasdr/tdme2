@@ -30,7 +30,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
-/** 
+/**
  * Object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -62,19 +62,6 @@ private:
 	}
 
 public:
-	// overriden methods
-	void setEngine(Engine* engine) override;
-	inline void setRenderer(Renderer* renderer) override {
-		LinesObject3DInternal::setRenderer(renderer);
-	}
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	inline bool isFrustumCulling() override {
-		return frustumCulling;
-	}
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -86,10 +73,33 @@ public:
 	 */
 	LinesObject3D(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
-	// overriden methods
+	// overridden methods
+	void setEngine(Engine* engine) override;
+
+	inline void setRenderer(Renderer* renderer) override {
+		LinesObject3DInternal::setRenderer(renderer);
+	}
+
+	inline void initialize() override {
+		LinesObject3DInternal::initialize();
+	}
+
 	inline void dispose() override {
 		LinesObject3DInternal::dispose();
 	}
+
+	inline bool isEnabled() override {
+		return LinesObject3DInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	inline bool isFrustumCulling() override {
+		return frustumCulling;
+	}
+	void setFrustumCulling(bool frustumCulling) override;
+
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return LinesObject3DInternal::getBoundingBox();
@@ -119,10 +129,6 @@ public:
 		return LinesObject3DInternal::getId();
 	}
 
-	inline void initialize() override {
-		LinesObject3DInternal::initialize();
-	}
-
 	inline bool isContributesShadows() override {
 		return LinesObject3DInternal::isContributesShadows();
 	}
@@ -137,10 +143,6 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		LinesObject3DInternal::setReceivesShadows(receivesShadows);
-	}
-
-	inline bool isEnabled() override {
-		return LinesObject3DInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

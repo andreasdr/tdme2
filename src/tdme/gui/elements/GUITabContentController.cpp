@@ -11,7 +11,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 
-GUITabContentController::GUITabContentController(GUINode* node) 
+GUITabContentController::GUITabContentController(GUINode* node)
 	: GUINodeController(node)
 {
 	this->selected = false;

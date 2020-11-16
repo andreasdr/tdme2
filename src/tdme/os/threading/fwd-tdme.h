@@ -10,6 +10,7 @@ namespace threading {
 	class Mutex;
 	class ReadWriteLock;
 	class Semaphore;
+	class SpinLock;
 	class Thread;
 }  // namespace filesystem
 }  // namespace os

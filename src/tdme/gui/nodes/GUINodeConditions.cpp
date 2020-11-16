@@ -64,7 +64,6 @@ bool GUINodeConditions::removeAll()
 
 void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
 	node->conditionsMet = node->checkConditions();
-	node->layouted = false;
 	node->onSetConditions(conditions);
 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
 	if (parentNode != nullptr) {
@@ -77,9 +76,24 @@ void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditio
 
 void GUINodeConditions::updateElementNode(const vector<string>& conditions) const {
 	if (elementNode == nullptr) return;
+
+	// update related element node
 	elementNode->onSetConditions(conditions);
 	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
 		auto guiSubNode = elementNode->subNodes[i];
 		updateNode(guiSubNode, conditions);
+	}
+	auto screenNode = elementNode->getScreenNode();
+	screenNode->invalidateLayout(elementNode);
+
+	// also update nodes that belong to this conditions but are not with in sub tree of related element node
+	auto elementNodeToNodeMappingIt = screenNode->elementNodeToNodeMapping.find(elementNode->getId());
+	if (elementNodeToNodeMappingIt != screenNode->elementNodeToNodeMapping.end()) {
+		for (auto& nodeId: elementNodeToNodeMappingIt->second) {
+			auto node = screenNode->getNodeById(nodeId);
+			if (node == nullptr) continue;
+			updateNode(node, conditions);
+			screenNode->invalidateLayout(node->getParentNode() != nullptr?node->getParentNode():node);
+		}
 	}
 }

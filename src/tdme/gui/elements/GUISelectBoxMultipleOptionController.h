@@ -18,16 +18,16 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI select box multiple option controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxMultipleOptionController final
-	: public GUIElementController
+class tdme::gui::elements::GUISelectBoxMultipleOptionController: public GUIElementController
 {
 	friend class GUISelectBoxMultipleOption;
 	friend class GUISelectBoxMultipleController;
+	friend class GUISelectBoxMultipleParentOptionController;
 
 private:
 	static string CONDITION_SELECTED;
@@ -42,59 +42,60 @@ private:
 	bool focussed;
 	MutableString value;
 
-	/** 
-	 * @return is selected
-	 */
-	bool isSelected();
-
-	/** 
-	 * Select
-	 */
-	void select();
-
-	/** 
-	 * Unselect
-	 */
-	void unselect();
-
-	/** 
-	 * Toggle selection
-	 */
-	void toggle();
-
-
-	/** 
-	 * Focus
-	 */
-	void focus();
-
-	/** 
-	 * Unfocus
-	 */
-	void unfocus();
-
 	/**
 	 * Private constructor
 	 * @param node node
 	 */
 	GUISelectBoxMultipleOptionController(GUINode* node);
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
+	/**
+	 * @return is selected
+	 */
+	bool isSelected();
+
+	/**
+	 * Select
+	 */
+	void select();
+
+	/**
+	 * Unselect
+	 */
+	void unselect();
+
+	/**
+	 * Toggle selection
+	 */
+	void toggle();
 
 	/**
 	 * @return is focussed
 	 */
 	bool isFocussed();
 
-	// overriden methods
+	/**
+	 * Focus
+	 */
+	void focus();
+
+	/**
+	 * Unfocus
+	 */
+	void unfocus();
+
+	/**
+	 * @return if is collapsed in tree view
+	 */
+	bool isCollapsed();
+public:
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
-	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;

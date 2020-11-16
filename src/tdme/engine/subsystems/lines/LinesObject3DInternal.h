@@ -30,7 +30,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Lines object internal
  * @author Andreas Drewke
  * @version $Id$
@@ -74,6 +74,22 @@ protected:
 	}
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param lineWidth line width
+	 * @param points points
+	 * @param color color
+	 * @param colors optional colors
+	 * @param texture optional texture
+	 */
+	LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~LinesObject3DInternal();
+
 	/**
 	 * @return id
 	 */
@@ -215,7 +231,7 @@ public:
 		return textureId;
 	}
 
-	/** 
+	/**
 	 * Update transformations
 	 */
 	void update() override;
@@ -236,19 +252,4 @@ public:
 	 */
 	void dispose();
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param lineWidth line width
-	 * @param points points
-	 * @param color color
-	 * @param colors optional colors
-	 * @param texture optional texture
-	 */
-	LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~LinesObject3DInternal();
 };

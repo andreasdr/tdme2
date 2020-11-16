@@ -13,7 +13,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Camera
  * @author Andreas Drewke
  * @version $Id$
@@ -56,6 +56,16 @@ private:
 	int viewPortHeight;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	Camera(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~Camera();
 
 	/**
 	 * @return camera mode
@@ -72,14 +82,14 @@ public:
 		this->cameraMode = cameraMode;
 	}
 
-	/** 
+	/**
 	 * @return field of view Y
 	 */
 	inline float getFovY() const {
 		return fovY;
 	}
 
-	/** 
+	/**
 	 * Set field of view Y
 	 * @param fovY field of view y
 	 */
@@ -87,7 +97,7 @@ public:
 		this->fovY = fovY;
 	}
 
-	/** 
+	/**
 	 * @return float
 	 */
 	inline float getZNear() const {
@@ -102,14 +112,14 @@ public:
 		this->zNear = zNear;
 	}
 
-	/** 
+	/**
 	 * @return float
 	 */
 	inline float getZFar() const {
 		return zFar;
 	}
 
-	/** 
+	/**
 	 * Set z far
 	 * @param zFar zFar
 	 */
@@ -117,7 +127,7 @@ public:
 		this->zFar = zFar;
 	}
 
-	/** 
+	/**
 	 * @return up vector
 	 */
 	inline const Vector3& getUpVector() const {
@@ -132,7 +142,7 @@ public:
 		this->upVector = upVector;
 	}
 
-	/** 
+	/**
 	 * @return forward vector
 	 */
 	inline const Vector3& getForwardVector() const {
@@ -177,7 +187,7 @@ public:
 		this->lookFrom = lookFrom;
 	}
 
-	/** 
+	/**
 	 * @return look at vector
 	 */
 	inline const Vector3& getLookAt() const {
@@ -220,14 +230,14 @@ public:
 		return mvpInvertedMatrix;
 	}
 
-	/** 
+	/**
 	 * @return frustum
 	 */
 	inline Frustum* getFrustum() {
 		return frustum;
 	}
 
-	/** 
+	/**
 	 * Computes the up vector for given look from and look at vectors
 	 * @param lookFrom look from
 	 * @param lookAt look at
@@ -289,35 +299,14 @@ public:
 		return viewPortHeight;
 	}
 
-private:
-
-	/** 
-	 * Computes the projection matrix
-	 * @return projection matrix
+	/**
+	 * @return if frustum has changed
 	 */
-	Matrix4x4& computeProjectionMatrix();
+	inline bool hasFrustumChanged() {
+		return frustumChanged;
+	}
 
-	/** 
-	 * Computes frustum matrix
-	 * @param left left
-	 * @param right right
-	 * @param bottom top
-	 * @param top bottom
-	 * @param near near
-	 * @param far far
-	 * @return frustum matrix
-	 */
-	Matrix4x4& computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
-
-	/** 
-	 * Computes projection matrix for given look from, look at and up vector
-	 * @return model view matrix
-	 */
-	Matrix4x4& computeModelViewMatrix();
-
-public:
-
-	/** 
+	/**
 	 * Sets up camera while resizing the view port
 	 * @param context context
 	 * @param width width
@@ -325,22 +314,30 @@ public:
 	 */
 	void update(void* context, int32_t width, int32_t height);
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	Camera(Renderer* renderer);
+private:
 
 	/**
-	 * Destructor
+	 * Computes the projection matrix
+	 * @return projection matrix
 	 */
-	~Camera();
+	Matrix4x4& computeProjectionMatrix();
 
 	/**
-	 * @return if frustum has changed
+	 * Computes frustum matrix
+	 * @param leftPlane left plane
+	 * @param rightPlane right plane
+	 * @param bottomPlane top plane
+	 * @param topPlane bottom plane
+	 * @param nearPlane near plane
+	 * @param farPlane far plane
+	 * @return frustum matrix
 	 */
-	inline bool hasFrustumChanged() {
-		return frustumChanged;
-	}
+	Matrix4x4& computeFrustumMatrix(float leftPlane, float rightPlane, float bottomPlane, float topPlane, float nearPlane, float farPlane);
+
+	/**
+	 * Computes projection matrix for given look from, look at and up vector
+	 * @return model view matrix
+	 */
+	Matrix4x4& computeModelViewMatrix();
 
 };

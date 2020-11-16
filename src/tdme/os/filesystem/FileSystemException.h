@@ -7,7 +7,7 @@
 
 using tdme::utilities::ExceptionBase;
 
-/** 
+/**
  * File system exception
  * @author Andreas Drewke
  * @version $Id$

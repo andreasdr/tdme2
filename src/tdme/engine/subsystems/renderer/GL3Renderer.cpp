@@ -196,6 +196,10 @@ bool GL3Renderer::isUsingProgramAttributeLocation()
 	return false;
 }
 
+bool GL3Renderer::isSupportingIntegerProgramAttributes() {
+	return true;
+}
+
 bool GL3Renderer::isSpecularMappingAvailable()
 {
 	return true;
@@ -494,6 +498,7 @@ void GL3Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GL3Renderer::clear(int32_t mask)
 {
 	glClear(mask);
+	statistics.clearCalls++;
 }
 
 int32_t GL3Renderer::createTexture()
@@ -558,36 +563,15 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 			float maxLodBias;
 			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
-			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
-			auto mipmapTexture = texture;
 			auto borderSize = 32;
 			auto maxLevel = 0;
-			while (borderSize >= 4) {
+			while (borderSize > 4) {
 				maxLevel++;
 				borderSize/= 2;
 			}
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
-			borderSize = 32;
-			auto level = 0;
-			while (borderSize >= 4) {
-				level++;
-				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture, level, borderSize);
-				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();
-				generatedMipmapTexture = mipmapTexture;
-				glTexImage2D(
-					GL_TEXTURE_2D,
-					level,
-					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
-					mipmapTexture->getTextureWidth(),
-					mipmapTexture->getTextureHeight(),
-					0,
-					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
-					GL_UNSIGNED_BYTE,
-					mipmapTexture->getTextureData()->getBuffer()
-				);
-				borderSize/= 2;
-			}
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -603,6 +587,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	statistics.textureUploads++;
 }
 
 void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
@@ -671,6 +656,7 @@ void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	statistics.textureUploads+= 6;
 }
 
 void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -756,6 +742,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -763,6 +750,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
@@ -770,6 +758,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -782,6 +771,7 @@ void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
+	statistics.bufferUploads++;
 }
 
 void GL3Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
@@ -808,13 +798,6 @@ void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
-}
-
-void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
 }
 
 void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
@@ -854,50 +837,79 @@ void GL3Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObj
 	glVertexAttribDivisor(9, 1);
 }
 
-void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(10);
 	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
-	glVertexAttribDivisor(10, 1);
+	glVertexAttribDivisor(10, divisor);
 }
 
-void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(11);
 	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
-	glVertexAttribDivisor(11, 1);
+	glVertexAttribDivisor(11, divisor);
 }
 
-void GL3Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(12);
 	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 2, GL_UNSIGNED_SHORT, 0, 0LL);
+}
+
+void GL3Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribDivisor(6, 0);
 }
 
 void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL), instances);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles * instances;
 }
 
 void GL3Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL3Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles * instances;
 }
 
 void GL3Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
+	statistics.renderCalls++;
+	statistics.triangles+= triangles;
 }
 
 void GL3Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.points+= points;
 }
 
 void GL3Renderer::setLineWidth(float lineWidth)
@@ -908,6 +920,8 @@ void GL3Renderer::setLineWidth(float lineWidth)
 void GL3Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
+	statistics.renderCalls++;
+	statistics.linePoints+= points;
 }
 
 void GL3Renderer::unbindBufferObjects(void* context)
@@ -1013,6 +1027,7 @@ void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t num
 	#else
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif
+	statistics.computeCalls++;
 }
 
 void GL3Renderer::memoryBarrier() {
@@ -1029,10 +1044,12 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#endif
 }
 
@@ -1041,10 +1058,12 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+		statistics.bufferUploads++;
 	#endif
 }
 

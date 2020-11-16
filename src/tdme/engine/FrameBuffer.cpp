@@ -17,7 +17,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::utilities::Console;
 
-FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers) 
+FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers)
 {
 	this->width = width;
 	this->height = height;
@@ -30,16 +30,6 @@ FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers)
 constexpr int32_t FrameBuffer::FRAMEBUFFER_DEPTHBUFFER;
 
 constexpr int32_t FrameBuffer::FRAMEBUFFER_COLORBUFFER;
-
-int32_t FrameBuffer::getWidth()
-{
-	return width;
-}
-
-int32_t FrameBuffer::getHeight()
-{
-	return height;
-}
 
 void FrameBuffer::initialize()
 {

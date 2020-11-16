@@ -211,7 +211,7 @@ public:
 	 * @param idx idx
 	 * @return level editor object bounding volume
 	 */
-	inline LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
+	inline LevelEditorEntityBoundingVolume* getBoundingVolume(int32_t idx) {
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
@@ -222,6 +222,12 @@ public:
 	 * @return level editor bounding volume
 	 */
 	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
+
+	/**
+	 * Remove bounding volume
+	 * @param idx idx
+	 */
+	void removeBoundingVolume(int32_t idx);
 
 	/**
 	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
@@ -346,7 +352,7 @@ public:
 	 * Set using render groups
 	 * @param renderGroups use render groups
 	 */
-	inline void setRenderGroups(bool renderGroups) {
+	inline void setRenderNodes(bool renderGroups) {
 		this->renderGroups = renderGroups;
 	}
 

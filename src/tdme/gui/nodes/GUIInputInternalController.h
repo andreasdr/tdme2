@@ -18,7 +18,7 @@ using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI input internal controller
  * @author Andreas Drewke
  * @version $Id$
@@ -43,47 +43,50 @@ private:
 	int64_t draggingTickLast;
 	MutableString value;
 
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUIInputInternalController(GUINode* node);
 
-private:
-
-	/** 
+	/**
 	 * @return index
 	 */
 	int32_t getIndex();
 
-	/** 
+	/**
 	 * @return offset
 	 */
 	int32_t getOffset();
 
-	/** 
+	/**
 	 * Reset cursor mode
 	 */
 	void resetCursorMode();
 
-	/** 
+	/**
 	 * @return cursor mode
 	 */
 	CursorMode getCursorMode();
 
-public:
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-
-private:
-
-	/** 
+	/**
 	 * Check and correct offset
 	 */
 	void checkOffset();
 
 public:
-	// overriden methods
+	/**
+	 * Reset cursor index and offset
+	 */
+	void reset();
+
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
 	void onFocusGained() override;
@@ -91,17 +94,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-	/**
-	 * Reset cursor index and offset
-	 */
-	void reset();
-
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUIInputInternalController(GUINode* node);
 
 };

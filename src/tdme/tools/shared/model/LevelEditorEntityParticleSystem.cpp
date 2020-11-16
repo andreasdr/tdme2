@@ -25,7 +25,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticle
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::utilities::Console;
 
-LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem() 
+LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem()
 {
 	type = LevelEditorEntityParticleSystem_Type::NONE;
 	ops = nullptr;

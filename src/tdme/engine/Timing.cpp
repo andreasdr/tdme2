@@ -5,7 +5,7 @@
 using tdme::engine::Timing;
 using tdme::utilities::Time;
 
-Timing::Timing() 
+Timing::Timing()
 {
 	frame = 0;
 	startTime = Time::getCurrentMillis();

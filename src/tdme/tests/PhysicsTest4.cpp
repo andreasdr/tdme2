@@ -80,7 +80,21 @@ void PhysicsTest4::display()
 	world->synch(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("PhysicsTest4::display::" + to_string(end - start) + "ms"));
+	auto rendererStatistics = engine->getRendererStatistics();
+	Console::println(
+		string("PhysicsTest4::display::") + to_string(end - start) + "ms; " +
+		"clear calls: " + to_string(rendererStatistics.clearCalls) + ", " +
+		"render calls: " + to_string(rendererStatistics.renderCalls) + ", " +
+		"compute calls: " + to_string(rendererStatistics.computeCalls) + ", " +
+		"tris: " + to_string(rendererStatistics.triangles) + ", " +
+		"points: " + to_string(rendererStatistics.points) + ", " +
+		"line points: " + to_string(rendererStatistics.linePoints) + ", " +
+		"buffer up: " + to_string(rendererStatistics.bufferUploads) + ", " +
+		"texture up: " + to_string(rendererStatistics.textureUploads) + ", " +
+		"render passes: " + to_string(rendererStatistics.renderPasses) + ", " +
+		"draw cmds: " + to_string(rendererStatistics.drawCommands) + ", " +
+		"submits: " + to_string(rendererStatistics.submits)
+	);
 }
 
 void PhysicsTest4::dispose()

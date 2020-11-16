@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/gui/GUIParser.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -17,7 +17,7 @@ using std::string;
 
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::gui::GUIParser;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
@@ -27,7 +27,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-InfoDialogScreenController::InfoDialogScreenController() 
+InfoDialogScreenController::InfoDialogScreenController()
 {
 }
 
@@ -68,14 +68,11 @@ void InfoDialogScreenController::close()
 	screenNode->setVisible(false);
 }
 
-void InfoDialogScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void InfoDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (node->getId().compare("infodialog_ok") == 0) {
-				close();
-			}
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("infodialog_ok") == 0) {
+			close();
 		}
 	}
 }

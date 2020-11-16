@@ -10,7 +10,7 @@
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Lighting shader implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -18,6 +18,11 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation: public LightingShaderBaseImplementation
 {
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderTerrainImplementation(Renderer* renderer);
 
 	/**
 	 * @return if supported by renderer
@@ -25,18 +30,12 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void unUseProgram(void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderTerrainImplementation(Renderer* renderer);
 
 private:
 	int32_t uniformModelMatrix { -1 };

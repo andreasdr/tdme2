@@ -20,7 +20,7 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::utilities::ObjectDeleter;
 
-/** 
+/**
  * Engine with physics test 1
  * @author andreas.drewke
  * @version $Id$
@@ -51,7 +51,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Main
 	 * @param argc argument count
 	 * @param argv argument values

@@ -10,7 +10,7 @@ using std::array;
 
 using tdme::math::Math;
 
-/** 
+/**
  * Color 4 base definition class
  * @author Andreas Drewke
  * @version $Id$
@@ -22,106 +22,146 @@ protected:
 
 public:
 	/**
-	 * Set up color
-	 * @param color color float array
+	 * Public constructor
 	 */
-	inline virtual void set(const array<float, 4>& color) {
+	inline Color4Base() {
+		data[0] = 0.0f;
+		data[1] = 0.0f;
+		data[2] = 0.0f;
+		data[3] = 1.0f;
+	}
+
+	/**
+	 * Public constructor
+	 * @param color color
+	 */
+	inline Color4Base(const Color4Base& color) {
+		data = color.data;
+	}
+
+	/**
+	 * Public constructor
+	 * @param color color
+	 */
+	inline Color4Base(const array<float, 4>& color) {
 		this->data = color;
 	}
 
-	/** 
-	 * Set up color
+	/**
+	 * Public constructor
 	 * @param r red
 	 * @param g green
 	 * @param b blue
 	 * @param a alpha
 	 */
-	inline virtual void set(float r, float g, float b, float a) {
+	inline Color4Base(float r, float g, float b, float a) {
 		data[0] = r;
 		data[1] = g;
 		data[2] = b;
 		data[3] = a;
 	}
 
-	/** 
+	/**
+	 * Set up color
+	 * @param color color float array
+	 */
+	inline void set(const array<float, 4>& color) {
+		this->data = color;
+	}
+
+	/**
+	 * Set up color
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
+	 */
+	inline void set(float r, float g, float b, float a) {
+		data[0] = r;
+		data[1] = g;
+		data[2] = b;
+		data[3] = a;
+	}
+
+	/**
 	 * Sets up this color with given color
 	 * @param color color
 	 */
-	inline virtual void set(const Color4Base& color) {
+	inline void set(const Color4Base& color) {
 		data = color.data;
 	}
 
-	/** 
+	/**
 	 * Add to color
 	 * @param r red
 	 * @param g green
 	 * @param b blue
 	 * @param a alpha
 	 */
-	inline virtual void add(float r, float g, float b, float a) {
+	inline void add(float r, float g, float b, float a) {
 		data[0] += r;
 		data[1] += g;
 		data[2] += b;
 		data[3] += a;
 	}
 
-	/** 
+	/**
 	 * @return red component
 	 */
-	inline virtual float getRed() const {
+	inline float getRed() const {
 		return data[0];
 	}
 
-	/** 
+	/**
 	 * @param red red component
 	 */
-	inline virtual void setRed(float red) {
+	inline void setRed(float red) {
 		data[0] = red;
 	}
 
-	/** 
+	/**
 	 * @return green component
 	 */
-	inline virtual float getGreen() const {
+	inline float getGreen() const {
 		return data[1];
 	}
 
-	/** 
+	/**
 	 * @param green green component
 	 */
-	inline virtual void setGreen(float green) {
+	inline void setGreen(float green) {
 		data[1] = green;
 	}
 
-	/** 
+	/**
 	 * @return blue component
 	 */
-	inline virtual float getBlue() const {
+	inline float getBlue() const {
 		return data[2];
 	}
 
-	/** 
+	/**
 	 * @param blue blue component
 	 */
-	inline virtual void setBlue(float blue) {
+	inline void setBlue(float blue) {
 		data[2] = blue;
 	}
 
-	/** 
+	/**
 	 * @return alpha component
 	 */
-	inline virtual float getAlpha() const {
+	inline float getAlpha() const {
 		return data[3];
 	}
 
-	/** 
+	/**
 	 * @param alpha alpha component
 	 */
-	inline virtual void setAlpha(float alpha) {
+	inline void setAlpha(float alpha) {
 		data[3] = alpha;
 	}
 
-	/** 
+	/**
 	 * Scale this color
 	 * @param scale scale
 	 * @return this color
@@ -174,63 +214,23 @@ public:
 	}
 
 	/**
-	 * @return rgba as float array 
+	 * @return rgba as float array
 	 */
-	inline virtual array<float, 4>& getArray() const {
+	inline array<float, 4>& getArray() const {
 		return (array<float, 4>&)data;
 	}
 
-	/** 
+	/**
 	 * Compares this color with given color
 	 * @return equality
 	 */
-	inline virtual bool equals(const Color4Base& c) const {
+	inline bool equals(const Color4Base& c) const {
 		return (this == &c) || (
 			Math::abs(data[0] - c.data[0]) < Math::EPSILON &&
 			Math::abs(data[1] - c.data[1]) < Math::EPSILON &&
 			Math::abs(data[2] - c.data[2]) < Math::EPSILON &&
 			Math::abs(data[3] - c.data[3]) < Math::EPSILON
 		);
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline Color4Base() {
-		data[0] = 0.0f;
-		data[1] = 0.0f;
-		data[2] = 0.0f;
-		data[3] = 1.0f;
-	}
-
-	/**
-	 * Public constructor
-	 * @param color color
-	 */
-	inline Color4Base(const Color4Base& color) {
-		data = color.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param color color
-	 */
-	inline Color4Base(const array<float, 4>& color) {
-		this->data = color;
-	}
-
-	/**
-	 * Public constructor
-	 * @param r red
-	 * @param g green
-	 * @param b blue
-	 * @param a alpha
-	 */
-	inline Color4Base(float r, float g, float b, float a) {
-		data[0] = r;
-		data[1] = g;
-		data[2] = b;
-		data[3] = a;
 	}
 
 };

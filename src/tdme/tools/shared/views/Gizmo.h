@@ -14,7 +14,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::math::Vector3;
 
 /**
@@ -144,9 +144,9 @@ public:
 	/**
 	 * Select GIZMO mode
 	 * @param selectedEntity selected entity
-	 * @param selectedEntityGroup selected entity group
+	 * @param selectedEntityNode selected entity node
 	 */
-	bool determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGroup);
+	bool determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode);
 
 	/**
 	 * Set gizmo rotation

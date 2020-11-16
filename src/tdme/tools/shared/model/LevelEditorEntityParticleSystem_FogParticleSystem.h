@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 
-/** 
+/**
  * Point particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -28,15 +28,24 @@ private:
 	float textureSpritesFPS { 10.0f };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_FogParticleSystem();
 
-	/** 
+	/**
+	 * Public destructor
+	 */
+	~LevelEditorEntityParticleSystem_FogParticleSystem();
+
+	/**
 	 * @return max points
 	 */
 	inline int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
-	/** 
+	/**
 	 * Set max points
 	 * @param maxPoints max points
 	 */
@@ -44,7 +53,7 @@ public:
 		this->maxPoints = maxPoints;
 	}
 
-	/** 
+	/**
 	 * @return point size
 	 */
 	inline float getPointSize() {
@@ -131,15 +140,5 @@ public:
 	inline void setTextureSpritesFPS(float textureSpritesFPS) {
 		this->textureSpritesFPS = textureSpritesFPS;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_FogParticleSystem();
-
-	/**
-	 * Public destructor
-	 */
-	~LevelEditorEntityParticleSystem_FogParticleSystem();
 
 };

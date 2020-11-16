@@ -11,7 +11,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -62,7 +62,7 @@ using tdme::engine::model::Color4Base;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
@@ -1045,219 +1045,216 @@ void ParticleSystemScreenController::onValueChanged(GUIElementNode* node)
 	}
 }
 
-void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entitySoundsSubScreenController->onActionPerformed(type, node, view->getEntity());
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (node->getId().compare("button_entity_load") == 0) {
-				onParticleSystemLoad();
-			} else
-			if (node->getId().compare("button_entity_reload") == 0) {
-				onParticleSystemReload();
-			} else
-			if (node->getId().compare("button_entity_save") == 0) {
-				onEntitySave();
-			} else
-			if (node->getId().compare("button_ps_type_apply") == 0) {
-				view->reset();
-				onParticleSystemTypeApply();
-				view->updateParticleSystemRequest();
-			} else
-			if (node->getId().compare("button_ops_apply") == 0 ||
-				node->getId().compare("button_pps_type_apply") == 0 ||
-				node->getId().compare("button_fps_type_apply") == 0) {
-				view->reset();
-				onParticleSystemTypeDataApply();
-				view->updateParticleSystemRequest();
-			} else
-			if (node->getId().compare("button_emitter_apply") == 0) {
-				view->reset();
-				onParticleSystemEmitterApply();
-				view->updateParticleSystemRequest();
-			} else
-			if (node->getId().compare("button_ppe_emitter_apply") == 0 ||
-				node->getId().compare("button_bbpe_emitter_apply") == 0 ||
-				node->getId().compare("button_cpe_emitter_apply") == 0 ||
-				node->getId().compare("button_cpepv_emitter_apply") == 0 ||
-				node->getId().compare("button_spe_emitter_apply") == 0) {
-				view->reset();
-				onParticleSystemEmitterDataApply();
-				view->updateParticleSystemRequest();
-			} else
-			if (node->getId().compare("button_ops_model_file") == 0) {
-				class OnLoadModelFile: public virtual Action
-				{
-				public:
-					void performAction() override {
-						particleSystemScreenController->opsModel->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-					}
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId().compare("button_entity_load") == 0) {
+			onParticleSystemLoad();
+		} else
+		if (node->getId().compare("button_entity_reload") == 0) {
+			onParticleSystemReload();
+		} else
+		if (node->getId().compare("button_entity_save") == 0) {
+			onEntitySave();
+		} else
+		if (node->getId().compare("button_ps_type_apply") == 0) {
+			view->reset();
+			onParticleSystemTypeApply();
+			view->updateParticleSystemRequest();
+		} else
+		if (node->getId().compare("button_ops_apply") == 0 ||
+			node->getId().compare("button_pps_type_apply") == 0 ||
+			node->getId().compare("button_fps_type_apply") == 0) {
+			view->reset();
+			onParticleSystemTypeDataApply();
+			view->updateParticleSystemRequest();
+		} else
+		if (node->getId().compare("button_emitter_apply") == 0) {
+			view->reset();
+			onParticleSystemEmitterApply();
+			view->updateParticleSystemRequest();
+		} else
+		if (node->getId().compare("button_ppe_emitter_apply") == 0 ||
+			node->getId().compare("button_bbpe_emitter_apply") == 0 ||
+			node->getId().compare("button_cpe_emitter_apply") == 0 ||
+			node->getId().compare("button_cpepv_emitter_apply") == 0 ||
+			node->getId().compare("button_spe_emitter_apply") == 0) {
+			view->reset();
+			onParticleSystemEmitterDataApply();
+			view->updateParticleSystemRequest();
+		} else
+		if (node->getId().compare("button_ops_model_file") == 0) {
+			class OnLoadModelFile: public virtual Action
+			{
+			public:
+				void performAction() override {
+					particleSystemScreenController->opsModel->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				}
 
-					/**
-					 * Public constructor
-					 * @param particleSystemScreenController particle system screen controller
-					 */
-					OnLoadModelFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
-					}
+				/**
+				 * Public constructor
+				 * @param particleSystemScreenController particle system screen controller
+				 */
+				OnLoadModelFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+				}
 
-				private:
-					ParticleSystemScreenController* particleSystemScreenController;
-				};
+			private:
+				ParticleSystemScreenController* particleSystemScreenController;
+			};
 
-				vector<string> extensions = ModelReader::getModelExtensions();
-				view->getPopUpsViews()->getFileDialogScreenController()->show(
-					modelPath->getPath(),
-					"Load from: ",
-					extensions,
-					opsModel->getController()->getValue().getString(),
-					true,
-					new OnLoadModelFile(this)
-				);
-			} else
-			if (node->getId().compare("button_pps_texture_file") == 0) {
-				class OnLoadTextureFile: public virtual Action
-				{
-				public:
-					void performAction() override {
-						particleSystemScreenController->ppsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-					}
+			vector<string> extensions = ModelReader::getModelExtensions();
+			view->getPopUpsViews()->getFileDialogScreenController()->show(
+				modelPath->getPath(),
+				"Load from: ",
+				extensions,
+				opsModel->getController()->getValue().getString(),
+				true,
+				new OnLoadModelFile(this)
+			);
+		} else
+		if (node->getId().compare("button_pps_texture_file") == 0) {
+			class OnLoadTextureFile: public virtual Action
+			{
+			public:
+				void performAction() override {
+					particleSystemScreenController->ppsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				}
 
-					/**
-					 * Public constructor
-					 * @param particleSystemScreenController particle system screen controller
-					 */
-					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
-					}
+				/**
+				 * Public constructor
+				 * @param particleSystemScreenController particle system screen controller
+				 */
+				OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+				}
 
-				private:
-					ParticleSystemScreenController* particleSystemScreenController;
-				};
+			private:
+				ParticleSystemScreenController* particleSystemScreenController;
+			};
 
-				vector<string> extensions = TextureReader::getTextureExtensions();
-				view->getPopUpsViews()->getFileDialogScreenController()->show(
-					modelPath->getPath(),
-					"Load from: ",
-					extensions,
-					ppsTexture->getController()->getValue().getString(),
-					true,
-					new OnLoadTextureFile(this)
-				);
-			} else
-			if (node->getId().compare("button_pps_transparency_texture_file") == 0) {
-				class OnLoadTextureFile: public virtual Action
-				{
-				public:
-					void performAction() override {
-						particleSystemScreenController->ppsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-					}
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUpsViews()->getFileDialogScreenController()->show(
+				modelPath->getPath(),
+				"Load from: ",
+				extensions,
+				ppsTexture->getController()->getValue().getString(),
+				true,
+				new OnLoadTextureFile(this)
+			);
+		} else
+		if (node->getId().compare("button_pps_transparency_texture_file") == 0) {
+			class OnLoadTextureFile: public virtual Action
+			{
+			public:
+				void performAction() override {
+					particleSystemScreenController->ppsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				}
 
-					/**
-					 * Public constructor
-					 * @param particleSystemScreenController particle system screen controller
-					 */
-					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
-					}
+				/**
+				 * Public constructor
+				 * @param particleSystemScreenController particle system screen controller
+				 */
+				OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+				}
 
-				private:
-					ParticleSystemScreenController* particleSystemScreenController;
-				};
+			private:
+				ParticleSystemScreenController* particleSystemScreenController;
+			};
 
-				vector<string> extensions = TextureReader::getTextureExtensions();
-				view->getPopUpsViews()->getFileDialogScreenController()->show(
-					modelPath->getPath(),
-					"Load from: ",
-					extensions,
-					ppsTransparencyTexture->getController()->getValue().getString(),
-					true,
-					new OnLoadTextureFile(this)
-				);
-			} else
-			if (node->getId().compare("button_pps_transparency_texture_clear") == 0) {
-				ppsTransparencyTexture->getController()->setValue(MutableString());
-			} else
-			if (node->getId().compare("button_fps_texture_file") == 0) {
-				class OnLoadTextureFile: public virtual Action
-				{
-				public:
-					void performAction() override {
-						particleSystemScreenController->fpsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-					}
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUpsViews()->getFileDialogScreenController()->show(
+				modelPath->getPath(),
+				"Load from: ",
+				extensions,
+				ppsTransparencyTexture->getController()->getValue().getString(),
+				true,
+				new OnLoadTextureFile(this)
+			);
+		} else
+		if (node->getId().compare("button_pps_transparency_texture_clear") == 0) {
+			ppsTransparencyTexture->getController()->setValue(MutableString());
+		} else
+		if (node->getId().compare("button_fps_texture_file") == 0) {
+			class OnLoadTextureFile: public virtual Action
+			{
+			public:
+				void performAction() override {
+					particleSystemScreenController->fpsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				}
 
-					/**
-					 * Public constructor
-					 * @param particleSystemScreenController particle system screen controller
-					 */
-					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
-					}
+				/**
+				 * Public constructor
+				 * @param particleSystemScreenController particle system screen controller
+				 */
+				OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+				}
 
-				private:
-					ParticleSystemScreenController* particleSystemScreenController;
-				};
+			private:
+				ParticleSystemScreenController* particleSystemScreenController;
+			};
 
-				vector<string> extensions = TextureReader::getTextureExtensions();
-				view->getPopUpsViews()->getFileDialogScreenController()->show(
-					modelPath->getPath(),
-					"Load from: ",
-					extensions,
-					ppsTexture->getController()->getValue().getString(),
-					true,
-					new OnLoadTextureFile(this)
-				);
-			} else
-			if (node->getId().compare("button_fps_transparency_texture_file") == 0) {
-				class OnLoadTextureFile: public virtual Action
-				{
-				public:
-					void performAction() override {
-						particleSystemScreenController->fpsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
-					}
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUpsViews()->getFileDialogScreenController()->show(
+				modelPath->getPath(),
+				"Load from: ",
+				extensions,
+				ppsTexture->getController()->getValue().getString(),
+				true,
+				new OnLoadTextureFile(this)
+			);
+		} else
+		if (node->getId().compare("button_fps_transparency_texture_file") == 0) {
+			class OnLoadTextureFile: public virtual Action
+			{
+			public:
+				void performAction() override {
+					particleSystemScreenController->fpsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				}
 
-					/**
-					 * Public constructor
-					 * @param particleSystemScreenController particle system screen controller
-					 */
-					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
-					}
+				/**
+				 * Public constructor
+				 * @param particleSystemScreenController particle system screen controller
+				 */
+				OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+				}
 
-				private:
-					ParticleSystemScreenController* particleSystemScreenController;
-				};
+			private:
+				ParticleSystemScreenController* particleSystemScreenController;
+			};
 
-				vector<string> extensions = TextureReader::getTextureExtensions();
-				view->getPopUpsViews()->getFileDialogScreenController()->show(
-					modelPath->getPath(),
-					"Load from: ",
-					extensions,
-					ppsTransparencyTexture->getController()->getValue().getString(),
-					true,
-					new OnLoadTextureFile(this)
-				);
-			} else
-			if (node->getId().compare("button_fps_transparency_texture_clear") == 0) {
-				fpsTransparencyTexture->getController()->setValue(MutableString());
-			} else
-			if (node->getId() == "button_particlesystem_add") {
-				view->getEntity()->addParticleSystem();
-				view->setParticleSystemIndex(view->getEntity()->getParticleSystemsCount() - 1);
-			} else
-			if (node->getId() == "button_particlesystem_remove") {
-				view->getEntity()->removeParticleSystemAt(view->getParticleSystemIndex());
-				view->setParticleSystemIndex(view->getParticleSystemIndex() - 1);
-			}
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUpsViews()->getFileDialogScreenController()->show(
+				modelPath->getPath(),
+				"Load from: ",
+				extensions,
+				ppsTransparencyTexture->getController()->getValue().getString(),
+				true,
+				new OnLoadTextureFile(this)
+			);
+		} else
+		if (node->getId().compare("button_fps_transparency_texture_clear") == 0) {
+			fpsTransparencyTexture->getController()->setValue(MutableString());
+		} else
+		if (node->getId() == "button_particlesystem_add") {
+			view->getEntity()->addParticleSystem();
+			view->setParticleSystemIndex(view->getEntity()->getParticleSystemsCount() - 1);
+		} else
+		if (node->getId() == "button_particlesystem_remove") {
+			view->getEntity()->removeParticleSystemAt(view->getParticleSystemIndex());
+			view->setParticleSystemIndex(view->getParticleSystemIndex() - 1);
 		}
 	}
 }

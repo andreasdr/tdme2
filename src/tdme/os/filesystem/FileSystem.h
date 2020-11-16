@@ -4,7 +4,7 @@
 
 using tdme::os::filesystem::FileSystemInterface;
 
-/** 
+/**
  * File system singleton class
  * @author Andreas Drewke
  * @version $Id$
@@ -17,7 +17,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Singleton instance to retrieve file system
 	 * will use standard file system by default if not set up different explicitly
 	 * @return file system

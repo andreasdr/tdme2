@@ -3,13 +3,16 @@
 #include <tdme/tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
-/** 
+/**
  * Camera Rotation View Input Handler Event Handler
  * @author Andreas Drewke
  * @version $Id$
  */
 struct tdme::tools::shared::views::CameraRotationInputHandlerEventHandler
 {
+	/**
+	 * Destructor
+	 */
 	virtual ~CameraRotationInputHandlerEventHandler() {}
 
 	/**

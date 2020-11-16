@@ -24,7 +24,7 @@ private:
 	int32_t endFrame;
 	int32_t frames;
 	bool loop;
-	string overlayFromGroupId;
+	string overlayFromNodeId;
 	float speed;
 
 public:
@@ -36,10 +36,10 @@ public:
 	 * @param startFrame start frame
 	 * @param endFrame end frame
 	 * @param loop loop
-	 * @param overlayFromGroupId overlay from group id
+	 * @param overlayFromNodeId overlay from node id
 	 * @param speed speed whereas 1.0 is default speed
 	 */
-	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId, float speed = 1.0);
+	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromNodeId, float speed = 1.0);
 
 	/**
 	 * @return model this animation belongs to
@@ -53,6 +53,13 @@ public:
 	 */
 	inline const string& getId() {
 		return id;
+	}
+
+	/**
+	 * @return if animation set up is a overlay animation setup
+	 */
+	inline bool isOverlayAnimationSetup() {
+		return overlayFromNodeId.empty() == false;
 	}
 
 	/**
@@ -104,19 +111,19 @@ public:
 	}
 
 	/**
-	 * If this is a overlay animation this returns a group id from which group the animation will start in the hierarchy
-	 * @return group id from which the animation will start in the hierarchy
+	 * If this is a overlay animation this returns a node id from which node the animation will start in the hierarchy
+	 * @return node id from which the animation will start in the hierarchy
 	 */
-	inline const string& getOverlayFromGroupId() {
-		return overlayFromGroupId;
+	inline const string& getOverlayFromNodeId() {
+		return overlayFromNodeId;
 	}
 
 	/**
-	 * Set overlay from group id
-	 * @param overlayFromGroupId overlay from group id
+	 * Set overlay from node id
+	 * @param overlayFromNodeId overlay from node id
 	 */
-	inline void setOverlayFromGroupId(const string& overlayFromGroupId) {
-		this->overlayFromGroupId = overlayFromGroupId;
+	inline void setOverlayFromNodeId(const string& overlayFromNodeId) {
+		this->overlayFromNodeId = overlayFromNodeId;
 	}
 
 	/**

@@ -8,6 +8,9 @@
 	#include <thread>
 	using std::thread;
 #else
+	#if defined(_WIN32)
+		#include <windows.h>
+	#endif
 	#include <pthread.h>
 #endif
 
@@ -56,8 +59,22 @@ public:
 	inline static void nanoSleep(const uint64_t nanoseconds) {
 		#if defined(CPPTHREADS)
 		#else
-			#if defined(_WIN32) && defined(_MSC_VER)
-				// TODO
+			#if defined(_WIN32)
+				// see: https://gist.github.com/Youka/4153f12cf2e17a77314c
+				HANDLE timer;
+				LARGE_INTEGER li;
+				if ((timer = CreateWaitableTimer(NULL, TRUE, NULL)) == NULL) {
+					return;
+				}
+				li.QuadPart = -nanoseconds;
+				if (SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE) == 0) {
+					CloseHandle(timer);
+					return;
+				}
+				if (WaitForSingleObject(timer, INFINITE) != WAIT_OBJECT_0) {
+					// no op
+				}
+				CloseHandle(timer);
 			#else
 				struct timespec sleepTime;
 				struct timespec returnTime;

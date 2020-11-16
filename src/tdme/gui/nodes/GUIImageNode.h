@@ -51,13 +51,12 @@ private:
 	float maskMaxValue;
 	int32_t maskTextureId { 0 };
 
-protected:
-	/** 
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
+	string source;
+	Matrix2D3x3 textureMatrix;
+	GUINode_Scale9Grid scale9Grid;
+	string mask;
 
+protected:
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -109,8 +108,14 @@ protected:
 		float maskMaxValue
 	);
 
+	/**
+	 * @return node type
+	 */
+	const string getNodeType() override;
+	bool isContentNode() override;
+
 public:
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;
@@ -196,9 +201,4 @@ public:
 		this->maskMaxValue = maskMaxValue;
 	}
 
-private:
-	string source;
-	Matrix2D3x3 textureMatrix;
-	GUINode_Scale9Grid scale9Grid;
-	string mask;
 };

@@ -48,6 +48,7 @@ using tdme::utilities::Time;
 class tdme::gui::GUI final: public virtual InputEventHandler
 {
 	friend class tdme::gui::elements::GUIDropDownController;
+	friend class tdme::gui::elements::GUIMenuHeaderItemController;
 	friend class tdme::gui::nodes::GUIElementController;
 	friend class tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
@@ -92,7 +93,56 @@ private:
 	 */
 	void addMouseOutClickCandidateElementNode(GUINode* node);
 
+	/**
+	 * Determine focussed nodes
+	 */
+	void determineFocussedNodes();
+
+	/**
+	 * Handle mouse event for given node
+	 * @param node node
+	 * @param event event
+	 * @param mouseOutCandidateEventNodeIds mouse out candidate event node ids
+	 * @param mouseOutClickCandidateEventNodeIds mouse out click candidate event node ids
+	 * @param mousePressedEventNodeIds mouse pressed event node ids
+	 * @param floatingNodes check if to gather floating nodes only
+	 */
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, const set<string>& mouseOutClickCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes);
+
+	/**
+	 * Handle mouse event for given node
+	 * @param event event
+	 */
+	void handleKeyboardEvent(GUIKeyboardEvent* event);
+
+	/**
+	 * Reshape screen
+	 * @param screenNode screen node
+	 */
+	void reshapeScreen(GUIScreenNode* screenNode);
+
+	/**
+	 * Fake mouse moved event
+	 */
+	void fakeMouseMovedEvent();
+
+	/**
+	 * Fake a keyboard modifier event
+	 */
+	void fakeKeyboardModifierEvent();
+
 public:
+	/**
+	 * Public constructor
+	 * @param engine engine
+	 * @param guiRenderer gui renderer
+	 */
+	GUI(Engine* engine, GUIRenderer* guiRenderer);
+
+	/**
+	 * Destructor
+	 */
+	~GUI();
 
 	/**
 	 * @return width
@@ -217,15 +267,6 @@ public:
 	 */
 	void invalidateFocussedNode();
 
-private:
-
-	/**
-	 * Determine focussed nodes
-	 */
-	void determineFocussedNodes();
-
-public:
-
 	/**
 	 * @return focussed node
 	 */
@@ -269,32 +310,6 @@ public:
 	 */
 	bool isHavingMouseInteraction(GUINode* node);
 
-private:
-
-	/**
-	 * Handle mouse event for given node
-	 * @param node node
-	 * @param event event
-	 * @param mouseOutCandidateEventNodeIds mouse out candidate event node ids
-	 * @param mouseOutClickCandidateEventNodeIds mouse out click candidate event node ids
-	 * @param mousePressedEventNodeIds mouse pressed event node ids
-	 * @param floatingNodes check if to gather floating nodes only
-	 */
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, const set<string>& mouseOutClickCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes);
-
-	/**
-	 * Handle mouse event for given node
-	 * @param event event
-	 */
-	void handleKeyboardEvent(GUIKeyboardEvent* event);
-
-	/**
-	 * Reshape screen
-	 * @param screenNode screen node
-	 */
-	void reshapeScreen(GUIScreenNode* screenNode);
-
-public:
 	/**
 	 * On char
 	 * @param key key
@@ -371,30 +386,5 @@ public:
 	 * Handle screen events
 	 */
 	void handleEvents();
-
-private:
-
-	/**
-	 * Fake mouse moved event
-	 */
-	void fakeMouseMovedEvent();
-
-	/**
-	 *
-	 */
-	void fakeKeyboardModifierEvent();
-
-public:
-	/**
-	 * Public constructor
-	 * @param engine engine
-	 * @param guiRenderer gui renderer
-	 */
-	GUI(Engine* engine, GUIRenderer* guiRenderer);
-
-	/**
-	 * Destructor
-	 */
-	~GUI();
 
 };

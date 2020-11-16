@@ -19,7 +19,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI tabs controller
  * @author Andreas Drewke
  * @version $Id$
@@ -35,25 +35,35 @@ private:
 	vector<GUINode*> childControllerNodes;
 	MutableString value;
 
-	/** 
+	/**
+	 * Private constructor
+	 * @param node node
+	 */
+	GUITabsController(GUINode* node);
+
+	/**
+	 * Initialize
+	 */
+	void init();
+
+	/**
 	 * Unselect all tab nodes
 	 */
 	void unselect();
 
-	/** 
+	/**
 	 * Set tab content selected
 	 * @param id id
 	 */
 	void setTabContentSelected(const string& id);
 
 public:
+	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
 	void initialize() override;
 	void dispose() override;
 	void postLayout() override;
-
-public:
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -63,15 +73,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	/**
-	 * Private constructor
-	 * @param node node
-	 */
-	GUITabsController(GUINode* node);
-
-	/**
-	 * Init
-	 */
-	void init();
 };

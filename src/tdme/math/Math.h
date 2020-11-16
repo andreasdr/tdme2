@@ -12,7 +12,7 @@
 	#undef min
 #endif
 
-/** 
+/**
  * Standard math functions
  * @author Andreas Drewke
  * @version $Id$

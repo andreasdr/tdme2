@@ -10,7 +10,7 @@
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * Lighting shader implementation
  * @author Andreas Drewke
  * @version $Id$
@@ -22,22 +22,22 @@ public:
 	static constexpr int WAVES_MAX { 4 };
 
 	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	LightingShaderWaterImplementation(Renderer* renderer);
+
+	/**
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
+	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
-
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	LightingShaderWaterImplementation(Renderer* renderer);
 
 protected:
 	int32_t uniformWaterHeight { -1 };

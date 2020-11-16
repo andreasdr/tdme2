@@ -12,7 +12,7 @@ using std::vector;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
 
-/** 
+/**
  * World listener which is about notifying adding or removing bodies
  * @author Andreas Drewke
  * @version $Id$
@@ -25,7 +25,7 @@ struct tdme::engine::physics::WorldListener
 	 */
 	virtual ~WorldListener() {}
 
-	/** 
+	/**
 	 * Event fired when rigid body was added
 	 * @param id id
 	 * @param type body type
@@ -40,7 +40,7 @@ struct tdme::engine::physics::WorldListener
 	 */
 	virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
 
-	/** 
+	/**
 	 * Event fired when rigid body was removed
 	 * @param id id
 	 * @param type rigid body type

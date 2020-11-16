@@ -15,7 +15,7 @@ using tdme::audio::AudioStream;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::utilities::ByteBuffer;
 
-/** 
+/**
  * Vorbis audio stream
  * @author Andreas Drewke
  * @version $Id$
@@ -40,11 +40,11 @@ public:
 	 */
 	VorbisAudioStream(const string& id, const string& pathName, const string& fileName);
 
-	// overriden methods
+	// overridden methods
 	void rewind() override;
 
 protected:
-	// overriden methods
+	// overridden methods
 	bool initialize() override;
 	void dispose() override;
 
@@ -53,6 +53,6 @@ protected:
 	 */
 	virtual ~VorbisAudioStream();
 
-	// overriden methods
+	// overridden methods
 	void fillBuffer(ByteBuffer* data) override;
 };

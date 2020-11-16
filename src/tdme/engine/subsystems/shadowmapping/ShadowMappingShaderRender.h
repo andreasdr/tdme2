@@ -19,7 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Shadow mapping shader to render shadow maps
  * @author Andreas Drewke
  * @version $Id$
@@ -39,24 +39,34 @@ private:
 	int32_t lightId { -1 };
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	ShadowMappingShaderRender(Renderer* renderer);
 
-	/** 
+	/**
+	 * Destructor
+	 */
+	~ShadowMappingShaderRender();
+
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Init shadow mapping
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use render shadow mapping program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
-	/** 
+	/**
 	 * Un use render shadow mapping program
 	 */
 	void unUseProgram();
@@ -93,7 +103,7 @@ public:
 	 */
 	void bindTexture(void* context, int32_t textureId);
 
-	/** 
+	/**
 	 * Set up program depth bias mvp matrix
 	 * @param context context
 	 * @param depthBiasMVPMatrix depth bias mvp matrix
@@ -112,14 +122,4 @@ public:
 	 */
 	void setShader(void* context, const string& id);
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	ShadowMappingShaderRender(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~ShadowMappingShaderRender();
 };

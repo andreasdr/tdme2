@@ -7,7 +7,7 @@
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
@@ -24,7 +24,7 @@ using tdme::engine::ModelUtilities;
 using tdme::engine::Object3DModel;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
@@ -52,7 +52,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 }
 
 Model::~Model() {
-	deleteSubGroups(subGroups);
+	deleteSubNodes(subNodes);
 	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		delete it->second;
 	}
@@ -62,28 +62,28 @@ Model::~Model() {
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
-void Model::deleteSubGroups(const map<string, Group*>& subGroups) {
-	for (auto it = subGroups.begin(); it != subGroups.end(); ++it) {
-		deleteSubGroups(it->second->getSubGroups());
+void Model::deleteSubNodes(const map<string, Node*>& subNodes) {
+	for (auto it = subNodes.begin(); it != subNodes.end(); ++it) {
+		deleteSubNodes(it->second->getSubNodes());
 		delete it->second;
 	}
 }
 
-Group* Model::getGroupById(const string& id)
+Node* Model::getNodeById(const string& id)
 {
-	auto groupIt = groups.find(id);
-	if (groupIt != groups.end()) {
-		return groupIt->second;
+	auto nodeIt = nodes.find(id);
+	if (nodeIt != nodes.end()) {
+		return nodeIt->second;
 	}
 	return nullptr;
 
 }
 
-Group* Model::getSubGroupById(const string& id)
+Node* Model::getSubNodeById(const string& id)
 {
-	auto groupIt = subGroups.find(id);
-	if (groupIt != subGroups.end()) {
-		return groupIt->second;
+	auto nodeIt = subNodes.find(id);
+	if (nodeIt != subNodes.end()) {
+		return nodeIt->second;
 	}
 	return nullptr;
 }
@@ -100,9 +100,9 @@ AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, i
 	return animationSetup;
 }
 
-AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop, float speed)
+AnimationSetup* Model::addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromGroupId, speed);
+	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, overlayFromNodeId, speed);
 	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
@@ -125,31 +125,31 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix)
 {
-	// iterate through groups
-	for (auto it: groups) {
-		Group* group = it.second;
+	// iterate through nodes
+	for (auto it: nodes) {
+		Node* node = it.second;
 		// compute animation matrix if animation setups exist
-		auto animation = group->getAnimation();
+		auto animation = node->getAnimation();
 		if (animation != nullptr) {
 			auto& animationMatrices = animation->getTransformationsMatrices();
 			transformationsMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
-			// no animation matrix, set up local transformation matrix up as group matrix
-			transformationsMatrix.set(group->getTransformationsMatrix());
+			// no animation matrix, set up local transformation matrix up as node matrix
+			transformationsMatrix.set(node->getTransformationsMatrix());
 		}
 
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
 
-		// return matrix if group matches
-		if (group->getId() == groupId) return true;
+		// return matrix if node matches
+		if (node->getId() == nodeId) return true;
 
-		// calculate sub groups
-		auto& subGroups = group->getSubGroups();
-		if (subGroups.size() > 0) {
-			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, transformationsMatrix.clone(), frame, groupId, transformationsMatrix);
+		// calculate sub nodes
+		auto& subNodes = node->getSubNodes();
+		if (subNodes.size() > 0) {
+			auto haveTransformationsMatrix = computeTransformationsMatrix(subNodes, transformationsMatrix.clone(), frame, nodeId, transformationsMatrix);
 			if (haveTransformationsMatrix == true) return true;
 		}
 	}

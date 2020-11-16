@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 
-/** 
+/**
  * GUI node scale 9 grid entity
  * @author Andreas Drewke
  * @version $Id$

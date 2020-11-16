@@ -22,7 +22,7 @@ using std::string;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -35,7 +35,7 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
-/** 
+/**
  * Particle system screen controller
  * @author Andreas Drewke
  * @version $Id$
@@ -164,6 +164,16 @@ private:
 	FileDialogPath* audioPath { nullptr };
 
 public:
+	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	ParticleSystemScreenController(SharedParticleSystemView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ParticleSystemScreenController();
 
 	/**
 	 * @return entity display sub screen controller
@@ -181,7 +191,7 @@ public:
 	 */
 	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
 
-	// overriden methods
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 
 	/**
@@ -359,7 +369,7 @@ public:
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Get viewport rectangle
@@ -370,14 +380,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	ParticleSystemScreenController(SharedParticleSystemView* view);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ParticleSystemScreenController();
 };

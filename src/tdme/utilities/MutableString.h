@@ -8,7 +8,7 @@
 
 using std::string;
 
-/** 
+/**
  * Mutable string class
  * @author Andreas Drewke
  * @version $Id$
@@ -16,6 +16,29 @@ using std::string;
 class tdme::utilities::MutableString final
 {
 public:
+	/**
+	 * Public default constructor
+	 */
+	MutableString();
+
+	/**
+	 * Public constructor
+	 * @param s string
+	 */
+	MutableString(const string& s);
+
+	/**
+	 * Public constructor
+	 * @param i integer
+	 */
+	MutableString(int i);
+
+	/**
+	 * Public constructor
+	 * @param f f
+	 * @param decimals decimals
+	 */
+	MutableString(float f, int32_t decimals);
 
 	/**
 	 * @return length
@@ -193,30 +216,6 @@ public:
 	 * Clone
 	 */
 	MutableString clone();
-
-	/**
-	 * Public default constructor
-	 */
-	MutableString();
-
-	/**
-	 * Public constructor
-	 * @param s string
-	 */
-	MutableString(const string& s);
-
-	/**
-	 * Public constructor
-	 * @param i integer
-	 */
-	MutableString(int i);
-
-	/**
-	 * Public constructor
-	 * @param f f
-	 * @param decimals decimals
-	 */
-	MutableString(float f, int32_t decimals);
 
 private:
 	string data;

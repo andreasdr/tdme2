@@ -16,8 +16,8 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
- * Circle particle emitter with velocity that lives in plane only 
+/**
+ * Circle particle emitter with velocity that lives in plane only
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -44,7 +44,25 @@ private:
 	Vector3 axis1Transformed;
 
 public:
-	// overriden methods
+	/**
+	 * Public constructor
+	 * @param count particles to emit in one second
+	 * @param lifeTime life time
+	 * @param lifeTimeRnd life time rnd
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param center center
+	 * @param radius radius
+	 * @param mass mass
+	 * @param massRnd mass rnd
+	 * @param velocity velocity
+	 * @param velocityRnd velocity rnd
+	 * @param colorStart color start
+	 * @param colorEnd color end
+	 */
+	CircleParticleEmitterPlaneVelocity(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, float velocity, float velocityRnd, const Color4& colorStart, const Color4& colorEnd);
+
+	// overridden methods
 	inline const Vector3& getCenter() const override {
 		return centerTransformed;
 	}
@@ -80,21 +98,4 @@ public:
 	void emit(Particle* particle) override;
 	void fromTransformations(const Transformations& transformations) override;
 
-	/** 
-	 * Public constructor
-	 * @param count particles to emit in one second
-	 * @param lifeTime life time
-	 * @param lifeTimeRnd life time rnd
-	 * @param axis0 axis 0
-	 * @param axis1 axis 1
-	 * @param center center
-	 * @param radius radius
-	 * @param mass mass
-	 * @param massRnd mass rnd
-	 * @param velocity velocity
-	 * @param velocityRnd velocity rnd
-	 * @param colorStart color start
-	 * @param colorEnd color end
-	 */
-	CircleParticleEmitterPlaneVelocity(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, float velocity, float velocityRnd, const Color4& colorStart, const Color4& colorEnd);
 };

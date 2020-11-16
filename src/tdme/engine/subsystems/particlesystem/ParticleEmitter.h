@@ -12,7 +12,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Particle emitter interface
  * @author Andreas Drewke
  * @version $Id$
@@ -25,17 +25,17 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	virtual const Vector3& getCenter() const = 0;
 
 
-	/** 
+	/**
 	 * @return number of particles to emit in one second
 	 */
 	virtual int32_t getCount() const = 0;
 
-	/** 
+	/**
 	 * @return color start
 	 */
 	virtual const Color4& getColorStart() const = 0;
 
-	/** 
+	/**
 	 * Set start color
 	 * @param colorStart color start
 	 */
@@ -46,7 +46,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	 */
 	virtual const Color4& getColorEnd() const = 0;
 
-	/** 
+	/**
 	 * Set end color
 	 * @param colorEnd color end
 	 */
@@ -58,7 +58,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	 */
 	virtual void emit(Particle* particle) = 0;
 
-	/** 
+	/**
 	 * Update transformation with given transformations
 	 * @param transformations transformations
 	 */

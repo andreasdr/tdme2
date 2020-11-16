@@ -10,14 +10,16 @@ using std::string;
 
 using tdme::utilities::ExceptionBase;
 
-/** 
+/**
  * GUI parser exception
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::GUIParserException final
-	: public ExceptionBase
+class tdme::gui::GUIParserException final: public ExceptionBase
 {
 public:
+	/**
+	 * Public constructor
+	 */
 	GUIParserException(const string& message);
 };

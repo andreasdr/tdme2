@@ -20,14 +20,14 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Empty View
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::EmptyView
-	: public virtual View
-	, public virtual GUIInputEventHandler
+class tdme::tools::leveleditor::views::EmptyView final
+	: public View
+	, public GUIInputEventHandler
 {
 private:
 	Engine* engine {  };
@@ -42,41 +42,9 @@ private:
 	/**
 	 * Init entity
 	 */
-	virtual void initModel();
+	void initModel();
 
 public:
-
-	/** 
-	 * @return pop up views
-	 */
-	virtual PopUps* getPopUpsViews();
-
-	/** 
-	 * @return entity
-	 */
-	virtual LevelEditorEntity* getEntity();
-
-	/** 
-	 * @return selected entity
-	 */
-	virtual void setEntity(LevelEditorEntity* entity);
-
-	void handleInputEvents() override;
-
-	/** 
-	 * Renders the scene 
-	 */
-	void display() override;
-
-	/** 
-	 * Init GUI elements
-	 */
-	virtual void updateGUIElements();
-	void initialize() override;
-	void activate() override;
-	void deactivate() override;
-	void dispose() override;
-
 	/**
 	 * Public constructor
 	 * @param popUps pop ups view
@@ -86,5 +54,39 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~EmptyView();
+	~EmptyView();
+
+	/**
+	 * @return pop up views
+	 */
+	PopUps* getPopUpsViews();
+
+	/**
+	 * @return entity
+	 */
+	LevelEditorEntity* getEntity();
+
+	/**
+	 * @return selected entity
+	 */
+	void setEntity(LevelEditorEntity* entity);
+
+	void handleInputEvents() override;
+
+	/**
+	 * Renders the scene
+	 */
+	void display() override;
+
+	/**
+	 * Init GUI elements
+	 */
+	void updateGUIElements();
+
+	// overridden methods
+	void initialize() override;
+	void activate() override;
+	void deactivate() override;
+	void dispose() override;
+
 };

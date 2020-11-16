@@ -9,7 +9,7 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 
-/** 
+/**
  * PNG texture writer class
  * @author Andreas Drewke
  * @version $Id$
@@ -20,7 +20,7 @@ class tdme::engine::fileio::textures::PNGTextureWriter final
 
 public:
 
-	/** 
+	/**
 	 * Writes a texture to PNG
 	 * @param texture texture
 	 * @param pathName path name

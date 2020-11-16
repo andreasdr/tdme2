@@ -10,7 +10,7 @@
 
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
@@ -40,7 +40,7 @@ using std::vector;
 using tdme::engine::fileio::models::FBXReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -251,7 +251,7 @@ void FBXReader::setupModelImportRotationMatrix(Model* model) {
 		// no op
 	} else
 	if (model->getUpVector() == UpVector::Z_UP) {
-		model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
+		model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0));
 	}
 }
 
@@ -268,19 +268,19 @@ void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pat
 	}
 }
 
-void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
-	Group* group = nullptr;
+void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
+	Node* node = nullptr;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
 		switch (fbxAttributeType) {
 			case FbxNodeAttribute::eMesh:
 				{
-					group = processMeshNode(fbxNode, model, parentGroup, pathName);
+					node = processMeshNode(fbxNode, model, parentNode, pathName);
 					break;
 				}
 			case FbxNodeAttribute::eSkeleton:
 				{
-					group = processSkeletonNode(fbxNode, model, parentGroup, pathName);
+					node = processSkeletonNode(fbxNode, model, parentNode, pathName);
 					break;
 				}
 			default:
@@ -289,12 +289,12 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, 
 				}
 		}
 	}
-	if (group == nullptr) {
+	if (node == nullptr) {
 		auto fbxNodeName = fbxNode->GetName();
-		group = new Group(model, parentGroup, fbxNodeName, fbxNodeName);
+		node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
 	}
 	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
-	group->setTransformationsMatrix(
+	node->setTransformationsMatrix(
 		Matrix4x4(
 			fbxNodeLocalTransform.Get(0,0),
 			fbxNodeLocalTransform.Get(0,1),
@@ -314,23 +314,23 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, 
 			fbxNodeLocalTransform.Get(3,3)
 		)
 	);
-	if (parentGroup == nullptr) {
-		model->getSubGroups()[group->getId()] = group;
+	if (parentNode == nullptr) {
+		model->getSubNodes()[node->getId()] = node;
 	} else {
-		parentGroup->getSubGroups()[group->getId()] = group;
+		parentNode->getSubNodes()[node->getId()] = node;
 	}
-	model->getGroups()[group->getId()] = group;
-	parentGroup = group;
+	model->getNodes()[node->getId()] = node;
+	parentNode = node;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, parentGroup, pathName);
+		processNode(fbxNode->GetChild(i), model, parentNode, pathName);
 	}
 }
 
-Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
+Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
 	auto fbxNodeName = fbxNode->GetName();
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
-	auto group = new Group(model, parentGroup, fbxNodeName, fbxNodeName);
+	auto node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;
@@ -643,12 +643,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 				facesEntity->setFaces(faces);
 				faces.clear();
 			}
-			facesEntities.push_back(FacesEntity(group, facesEntityName));
+			facesEntities.push_back(FacesEntity(node, facesEntityName));
 			facesEntity = &facesEntities[facesEntities.size() - 1];
 			facesEntity->setMaterial(material);
 		}
 		auto fbxPolygonSize = fbxMesh->GetPolygonSize(i);
-		if (fbxPolygonSize != 3) throw ModelFileIOException("we only support triangles in '" + group->getName() + "'");
+		if (fbxPolygonSize != 3) throw ModelFileIOException("we only support triangles in '" + node->getName() + "'");
 		int controlPointIndicesIdx = 0;
 		array<int, 3> controlPointIndices;
 		int textureCoordinateIndicesIdx = 0;
@@ -760,7 +760,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			fbxVertexId++;
 		}
 		Face f(
-			group,
+			node,
 			controlPointIndices[0],
 			controlPointIndices[1],
 			controlPointIndices[2],
@@ -793,14 +793,14 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		facesEntity->setFaces(faces);
 	}
 
-	group->setVertices(vertices);
-	group->setNormals(normals);
+	node->setVertices(vertices);
+	node->setNormals(normals);
 	if (tangents.size() > 0 && bitangents.size() > 0) {
-		group->setTangents(tangents);
-		group->setBitangents(bitangents);
+		node->setTangents(tangents);
+		node->setBitangents(bitangents);
 	}
-	if (textureCoordinates.size() > 0) group->setTextureCoordinates(textureCoordinates);
-	group->setFacesEntities(facesEntities);
+	if (textureCoordinates.size() > 0) node->setTextureCoordinates(textureCoordinates);
+	node->setFacesEntities(facesEntities);
 
 	int fbxSkinCount = fbxNode->GetMesh()->GetDeformerCount(FbxDeformer::eSkin);
 	if (fbxSkinCount == 0) {
@@ -889,28 +889,28 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeights);
-		group->setSkinning(skinning);
+		node->setSkinning(skinning);
 	} else {
 		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
 	}
 
-	return group;
+	return node;
 }
 
-Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
+Node* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
 	auto fbxNodeName = fbxNode->GetName();
-	return new Group(model, parentGroup, fbxNodeName, fbxNodeName);
+	return new Node(model, parentNode, fbxNodeName, fbxNodeName);
 }
 
 void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset) {
 	auto fbxNodeName = fbxNode->GetName();
-	auto group = model->getGroupById(fbxNodeName);
-	auto animation = group->getAnimation();
-	if (group->getAnimation() == nullptr) {
+	auto node = model->getNodeById(fbxNodeName);
+	auto animation = node->getAnimation();
+	if (node->getAnimation() == nullptr) {
 		animation = new Animation();
-		group->setAnimation(animation);
+		node->setAnimation(animation);
 	}
-	auto transformationsMatrices = group->getAnimation()->getTransformationsMatrices();
+	auto transformationsMatrices = node->getAnimation()->getTransformationsMatrices();
 	transformationsMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;
 	fbxFrameTime.SetMilliSeconds(1000.0f * 1.0f / 30.0f);
@@ -936,7 +936,7 @@ void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame,
 			fbxTransformationMatrix.Get(3,3)
 		);
 	}
-	group->getAnimation()->setTransformationsMatrices(transformationsMatrices);
+	node->getAnimation()->setTransformationsMatrices(transformationsMatrices);
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processAnimation(fbxNode->GetChild(i), fbxStartFrame, fbxEndFrame, model, frameOffset);
 	}

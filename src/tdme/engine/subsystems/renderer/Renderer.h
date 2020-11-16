@@ -9,9 +9,6 @@
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -26,9 +23,6 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
@@ -40,6 +34,76 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::renderer::Renderer
 {
 public:
+
+	/**
+	 * Bean holding light properties
+	 */
+	struct Renderer_Light
+	{
+		int32_t enabled { 0 };
+		array<float, 4> ambient {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		array<float, 4> diffuse {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> specular {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> position {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		array<float, 3> spotDirection {{ 0.0f, 0.0f, -1.0f }};
+		float spotExponent { 0.0f };
+		float spotCosCutoff { 0.0f };
+		float constantAttenuation { 1.0f };
+		float linearAttenuation { 0.0f };
+		float quadraticAttenuation { 0.0f };
+	};
+
+	/**
+	 * Bean holding PBR material properties
+	 */
+	struct Renderer_PBRMaterial
+	{
+		array<float, 4> baseColorFactor {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		float metallicFactor { 1.0f };
+		float roughnessFactor { 1.0f };
+		float normalScale { 1.0f };
+		float exposure { 1.0f };
+		int baseColorTextureMaskedTransparency { 0 };
+		float baseColorTextureMaskedTransparencyThreshold { 0.0f };
+	};
+
+	/**
+	 *  Bean holding specular material properties
+	 */
+	struct Renderer_SpecularMaterial
+	{
+		array<float, 4> ambient {{ 0.2f, 0.2f, 0.2f, 1.0f }};
+		array<float, 4> diffuse {{ 0.8f, 0.8f, 0.8f, 1.0f }};
+		array<float, 4> specular {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		array<float, 4> emission {{ 0.0f, 0.0f, 0.0f, 1.0f }};
+		float shininess { 0.0f };
+		int diffuseTextureMaskedTransparency { 0 };
+		float diffuseTextureMaskedTransparencyThreshold { 0.0f };
+		int textureAtlasSize { 1 };
+		array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
+	};
+
+	/**
+	 * Bean holding light properties
+	 */
+	struct Renderer_Statistics
+	{
+		int64_t time { -1LL };
+		int64_t memoryUsageGPU { -1LL };
+		int64_t memoryUsageShared { -1LL };
+		uint32_t clearCalls { 0 };
+		uint32_t renderCalls { 0 };
+		uint32_t computeCalls { 0 };
+		uint32_t triangles { 0 };
+		uint32_t points { 0 };
+		uint32_t linePoints { 0 };
+		uint32_t bufferUploads { 0 };
+		uint32_t textureUploads { 0 };
+		uint32_t renderPasses { 0 };
+		uint32_t drawCommands { 0 };
+		uint32_t submits { 0 };
+	};
+
 	int32_t ID_NONE;
 	int32_t CLEAR_DEPTH_BUFFER_BIT;
 	int32_t CLEAR_COLOR_BUFFER_BIT;
@@ -74,6 +138,7 @@ protected:
 	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
+	Renderer_Statistics statistics;
 private:
 	Vector3 cameraPosition;
 	Matrix4x4 projectionMatrix;
@@ -160,6 +225,11 @@ public:
 	 * @return requires program attribute location
 	 */
 	virtual bool isUsingProgramAttributeLocation() = 0;
+
+	/**
+	 * @return is supporting integer program attributes
+	 */
+	virtual bool isSupportingIntegerProgramAttributes() = 0;
 
 	/**
 	 * @return if specular mapping is supported
@@ -707,13 +777,6 @@ public:
 	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
-	 * Bind sprite indices buffer object
-	 * @param context context
-	 * @param bufferObjectId buffer object id
-	 */
-	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
-
-	/**
 	 * Bind colors buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -745,22 +808,45 @@ public:
 	 * Bind effect color muls buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
+	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind effect color adds buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
+	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind origins buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindOrigins(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindOriginsBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind texture and sprite indices buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind point sizes buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind sprite sheet dimension buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Draw instanced indexed triangles from buffer objects
@@ -797,7 +883,7 @@ public:
 	virtual void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/**
-	 * Draw points from buffer objects 
+	 * Draw points from buffer objects
 	 * @param context context
 	 * @param points points
 	 * @param pointsOffset points offset
@@ -1090,6 +1176,11 @@ public:
 	 * Set up renderer for 3d rendering
 	 */
 	virtual void doneGuiMode() = 0;
+
+	/**
+	 * @return renderer statistics
+	 */
+	virtual const Renderer_Statistics getStatistics() = 0;
 
 	/**
 	 * Generate mip map for atlas texture currently

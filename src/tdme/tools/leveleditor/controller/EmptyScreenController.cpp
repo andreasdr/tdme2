@@ -37,7 +37,7 @@ using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EmptyScreenController::EmptyScreenController(EmptyView* view) 
+EmptyScreenController::EmptyScreenController(EmptyView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
 	{
@@ -129,7 +129,7 @@ void EmptyScreenController::onValueChanged(GUIElementNode* node)
 	entityBaseSubScreenController->onValueChanged(node, view->getEntity());
 }
 
-void EmptyScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
+void EmptyScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 }

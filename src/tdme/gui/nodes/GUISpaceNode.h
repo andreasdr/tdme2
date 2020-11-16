@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
-/** 
+/**
  * GUI space node
  * @author Andreas Drewke
  * @version $Id$
@@ -35,13 +35,6 @@ class tdme::gui::nodes::GUISpaceNode final
 	friend class tdme::gui::GUIParser;
 
 protected:
-
-	/** 
-	 * @return node type
-	 */
-	const string getNodeType() override;
-	bool isContentNode() override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -78,12 +71,16 @@ protected:
 		const GUINodeConditions& hideOn
 	);
 
+	// overridden methods
+	const string getNodeType() override;
+	bool isContentNode() override;
+
 public:
-	// overriden methods
+	// overridden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
-	/** 
+	/**
 	 * Create requested constraints
 	 * @param left left
 	 * @param top top
@@ -93,7 +90,7 @@ public:
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
-	// overriden methods
+	// overridden methods
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 

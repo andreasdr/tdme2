@@ -3,7 +3,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/elements/GUITabsHeaderController.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -19,7 +18,6 @@ using tdme::gui::elements::GUITabController;
 using tdme::gui::GUI;
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::elements::GUITabsHeaderController;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementController;
@@ -36,7 +34,7 @@ string GUITabController::CONDITION_ENABLED = "enabled";
 string GUITabController::CONDITION_SELECTED = "selected";
 string GUITabController::CONDITION_UNSELECTED = "unselected";
 
-GUITabController::GUITabController(GUINode* node) 
+GUITabController::GUITabController(GUINode* node)
 	: GUIElementController(node)
 {
 	this->tabsNode = nullptr;
@@ -122,7 +120,7 @@ void GUITabController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			auto guiTabsController = dynamic_cast< GUITabsController* >(tabsNode->getController());
 			guiTabsController->unselect();
 			setSelected(selected == true ? false : true);

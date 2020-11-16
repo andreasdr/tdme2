@@ -97,5 +97,5 @@ void Thread::stop() {
 
 bool Thread::isStopRequested() {
 	return stopRequested;
-} 
+}
 

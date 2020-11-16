@@ -15,6 +15,7 @@ namespace nodes {
 	class GUIInputInternalController;
 	class GUIInputInternalController_CursorMode;
 	class GUIInputInternalNode;
+	class GUILayerNode;
 	class GUILayoutNode;
 	class GUILayoutNode_Alignment;
 	class GUIMultilineTextNode;

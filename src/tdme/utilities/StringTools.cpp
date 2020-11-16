@@ -30,24 +30,35 @@ const bool StringTools::endsWith(const string& src, const string& suffix) {
 		src.compare(src.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-const string StringTools::replace(const string& src, const char what, const char by) {
+const string StringTools::replace(const string& src, const char what, const char by, int beginIndex) {
 	string result = src;
-	std::replace(result.begin(), result.end(), what, by);
+	std::replace(result.begin() + beginIndex, result.end(), what, by);
 	return result;
 }
 
-const string StringTools::replace(const string& src, const string& what, const string& by) {
+const string StringTools::replace(const string& src, const string& what, const string& by, int beginIndex) {
 	string result = src;
 	if (what.empty()) return result;
-	size_t start_pos = 0;
-	while ((start_pos = result.find(what, start_pos)) != std::string::npos) {
-		result.replace(start_pos, what.length(), by);
-		start_pos += by.length();
+	while ((beginIndex = result.find(what, beginIndex)) != std::string::npos) {
+		result.replace(beginIndex, what.length(), by);
+		beginIndex += by.length();
 	}
 	return result;
 }
 
+int32_t StringTools::firstIndexOf(const string& src, char what) {
+	return src.find_first_of(what);
+}
+
+int32_t StringTools::firstIndexOf(const string& src, const string& what) {
+	return src.find_first_of(what);
+}
+
 int32_t StringTools::lastIndexOf(const string& src, char what) {
+	return src.find_last_of(what);
+}
+
+int32_t StringTools::lastIndexOf(const string& src, const string& what) {
 	return src.find_last_of(what);
 }
 

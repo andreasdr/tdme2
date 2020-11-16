@@ -28,19 +28,17 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-/** 
+/**
  * GUI panel node
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUIPanelNode
+class tdme::gui::nodes::GUIPanelNode final
 	: public GUILayoutNode
 {
 	friend class tdme::gui::GUIParser;
 
 protected:
-	const string getNodeType() override;
-
 	/**
 	 * Constructor
 	 * @param screenNode screen node
@@ -83,8 +81,11 @@ protected:
 		GUILayoutNode_Alignment* alignment
 	);
 
+	// overridden methods
+	const string getNodeType() override;
+
 public:
-	// overriden methods
+	// overridden methods
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 

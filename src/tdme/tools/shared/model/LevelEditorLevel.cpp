@@ -41,9 +41,9 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::Console;
 
-LevelEditorLevel::LevelEditorLevel() 
+LevelEditorLevel::LevelEditorLevel()
 {
-	gameRoot = "";
+	applicationRoot = "";
 	pathName = ".";
 	fileName = "untitled.tl";
 	rotationOrder = RotationOrder::XYZ;

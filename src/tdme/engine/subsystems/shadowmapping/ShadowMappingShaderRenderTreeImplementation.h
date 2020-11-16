@@ -13,7 +13,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderTreeImplementation;
 
-/** 
+/**
  * Shadow mapping foliage shader to render shadow map
  * @author Andreas Drewke
  * @version $Id$
@@ -27,10 +27,6 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
-	virtual const string getId() override;
-	virtual void initialize() override;
-
 	/**
 	 * Public constructor
 	 * @param renderer renderer
@@ -41,4 +37,9 @@ public:
 	 * Destructor
 	 */
 	virtual ~ShadowMappingShaderRenderTreeImplementation();
+
+	// overridden methods
+	virtual const string getId() override;
+	virtual void initialize() override;
+
 };

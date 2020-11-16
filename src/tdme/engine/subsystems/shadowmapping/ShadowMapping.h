@@ -21,7 +21,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-/** 
+/**
  * Shadow mapping module
  * @author Andreas Drewke
  * @version $Id$
@@ -47,24 +47,37 @@ private:
 	vector<Object3D*> visibleObjectsReceivingShadows;
 
 public:
-	/** 
+	/**
+	 * Constructor
+	 * @param engine engine
+	 * @param renderer renderer
+	 * @param object3DRenderer object 3d renderer
+	 */
+	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer);
+
+	/**
+	 * Destructor
+	 */
+	~ShadowMapping();
+
+	/**
 	 * @return engine
 	 */
 	Engine* getEngine();
 
-	/** 
+	/**
 	 * Reshape shadow maps
 	 * @param width width
 	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	/** 
+	/**
 	 * Create shadow maps
 	 */
 	void createShadowMaps();
 
-	/** 
+	/**
 	 * @return shadow map
 	 * @param idx index
 	 */
@@ -76,24 +89,24 @@ public:
 	 */
 	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
 
-	/** 
+	/**
 	 * Dispose shadow maps
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Start object transformations
 	 * @param context context
 	 * @param transformationsMatrix transformations matrix
 	 */
 	void startObjectTransformations(void* context, Matrix4x4& transformationsMatrix);
 
-	/** 
+	/**
 	 * End object transformations
 	 */
 	void endObjectTransformations();
 
-	/** 
+	/**
 	 * Update model view and projection matrix
 	 * @param context context
 	 */
@@ -130,29 +143,17 @@ public:
 	 */
 	void bindTexture(void* context, int32_t textureId);
 
-	/** 
+	/**
 	 * Update depth bias mvp matrix with given matrix
 	 * @param context context
 	 * @param depthBiasMVPMatrix depth bias MVP matrix
 	 */
 	void updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBiasMVPMatrix);
 
-	/** 
+	/**
 	 * Update depth bias mvp matrix / upload only
 	 * @param context context
 	 */
 	void updateDepthBiasMVPMatrix(void* context);
 
-	/**
-	 * Constructor
-	 * @param engine engine
-	 * @param renderer renderer
-	 * @param object3DRenderer object 3d renderer
-	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer);
-
-	/**
-	 * Destructor
-	 */
-	~ShadowMapping();
 };

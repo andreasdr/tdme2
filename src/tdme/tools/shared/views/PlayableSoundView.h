@@ -6,13 +6,17 @@
 
 using std::string;
 
-/** 
+/**
  * Playable sound view interface, which represents a application view that supports playing sounds additionally
  * @author Andreas Drewke
  * @version $Id$
  */
 struct tdme::tools::shared::views::PlayableSoundView
 {
+	/**
+	 * Destructor
+	 */
+	virtual ~PlayableSoundView() {}
 
 	/**
 	 * Play sound
@@ -20,9 +24,4 @@ struct tdme::tools::shared::views::PlayableSoundView
 	 */
 	virtual void playSound(const string& soundId) = 0;
 
-
-	/**
-	 * Destructor
-	 */
-	virtual ~PlayableSoundView() {}
 };

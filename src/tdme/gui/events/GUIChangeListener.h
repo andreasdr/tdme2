@@ -5,7 +5,7 @@
 
 using tdme::gui::nodes::GUIElementNode;
 
-/** 
+/**
  * GUI change listener interface
  * @author Andreas Drewke
  * @version $Id$
@@ -18,7 +18,7 @@ struct tdme::gui::events::GUIChangeListener
 	 */
 	virtual ~GUIChangeListener() {}
 
-	/** 
+	/**
 	 * On value changed
 	 * @param node node
 	 */

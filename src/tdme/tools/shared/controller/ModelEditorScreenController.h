@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -23,7 +24,7 @@ using tdme::engine::model::Material;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -124,12 +125,18 @@ private:
 	GUIElementNode* animationsDropDownDelete { nullptr };
 	GUIElementNode* animationsAnimationStartFrame { nullptr };
 	GUIElementNode* animationsAnimationEndFrame { nullptr };
-	GUIElementNode* animationsAnimationOverlayFromGroupIdDropDown { nullptr };
+	GUIElementNode* animationsAnimationOverlayFromNodeIdDropDown { nullptr };
 	GUIElementNode* animationsAnimationLoop { nullptr };
 	GUIElementNode* animationsAnimationSpeed { nullptr };
 	GUIElementNode* animationsAnimationName { nullptr };
 	GUIElementNode* animationsAnimationApply { nullptr };
+	GUIElementNode* previewAnimationsBaseDropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay1DropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay2DropDown { nullptr };
+	GUIElementNode* previewAnimationsOverlay3DropDown { nullptr };
+	GUIElementNode* buttonPreviewApply { nullptr };
 	GUIElementNode* buttonToolsComputeNormals { nullptr };
+	GUIElementNode* buttonToolsOptimizeModel { nullptr };
 	GUIElementNode* statsOpaqueFaces { nullptr };
 	GUIElementNode* statsTransparentFaces { nullptr };
 	GUIElementNode* statsMaterialCount { nullptr };
@@ -148,6 +155,16 @@ private:
 	 */
 	Material* getSelectedMaterial();
 public:
+	/**
+	 * Public constructor
+	 * @param view view
+	 */
+	ModelEditorScreenController(SharedModelEditorView* view);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~ModelEditorScreenController();
 
 	/**
 	 * Get view
@@ -169,7 +186,7 @@ public:
 	 */
 	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
 
-	// overriden method
+	// overridden method
 	GUIScreenNode* getScreenNode() override;
 
 	/**
@@ -376,6 +393,21 @@ public:
 	void unsetAnimations();
 
 	/**
+	 * Set preview
+	 */
+	void setPreview();
+
+	/**
+	 * On preview apply
+	 */
+	void onPreviewApply();
+
+	/**
+	 * Unset preview
+	 */
+	void unsetPreview();
+
+	/**
 	 * Set up model statistics
 	 * @param statsOpaqueFaces stats opaque faces
 	 * @param statsTransparentFaces stats transparent faces
@@ -439,6 +471,11 @@ public:
 	void onToolsComputeNormal();
 
 	/**
+	 * On tools optimize model
+	 */
+	void onToolsOptimizeModel();
+
+	/**
 	 * Save file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -468,7 +505,7 @@ public:
 	 * @param type type
 	 * @param node node
 	 */
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Get viewport rectangle
@@ -479,14 +516,4 @@ public:
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
 
-	/**
-	 * Public constructor
-	 * @param view view
-	 */
-	ModelEditorScreenController(SharedModelEditorView* view);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~ModelEditorScreenController();
 };

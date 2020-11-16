@@ -479,7 +479,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 	Value jBoundingVolumes;
 	jBoundingVolumes.SetArray();
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
+		auto entityBoundingVolume = entity->getBoundingVolume(i);
 		auto bv = entityBoundingVolume->getBoundingVolume();
 		if (bv == nullptr) continue;
 		Value jBoundingVolume;

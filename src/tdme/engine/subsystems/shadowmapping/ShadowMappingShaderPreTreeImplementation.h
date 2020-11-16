@@ -11,7 +11,7 @@ using std::string;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 
-/** 
+/**
  * Shadow mapping foliage shader class to create shadow map
  * @author Andreas Drewke
  * @version $Id$
@@ -25,11 +25,7 @@ public:
 	 */
 	static bool isSupported(Renderer* renderer);
 
-	// overriden methods
-	virtual const string getId() override;
-	virtual void initialize() override;
-
-/**
+	/**
 	 * Constructor
 	 * @param renderer renderer
 	 */
@@ -39,4 +35,9 @@ public:
 	 * Destructor
 	 */
 	~ShadowMappingShaderPreTreeImplementation();
+
+	// overridden methods
+	virtual const string getId() override;
+	virtual void initialize() override;
+
 };

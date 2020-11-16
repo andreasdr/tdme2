@@ -19,12 +19,12 @@ using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Entity sounds view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntitySoundsView
+class tdme::tools::shared::views::EntitySoundsView final
 {
 private:
 	Engine* engine {  };

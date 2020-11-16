@@ -22,7 +22,19 @@ public:
 	static LevelEditorEntityPhysics_BodyType* COLLISION_BODY;
 	static LevelEditorEntityPhysics_BodyType* DYNAMIC_RIGIDBODY;
 	static LevelEditorEntityPhysics_BodyType* STATIC_RIGIDBODY;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	LevelEditorEntityPhysics_BodyType(const string& name, int ordinal);
-	static LevelEditorEntityPhysics_BodyType* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static LevelEditorEntityPhysics_BodyType* valueOf(const string& name);
 
 };

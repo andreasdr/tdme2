@@ -1,4 +1,4 @@
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 
 #include <map>
 #include <string>
@@ -17,7 +17,7 @@ using std::map;
 using std::vector;
 using std::string;
 
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -27,10 +27,10 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Group::Group(Model* model, Group* parentGroup, const string& id, const string& name)
+Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
 {
 	this->model = model;
-	this->parentGroup = parentGroup;
+	this->parentNode = parentNode;
 	this->id = id;
 	this->name = name;
 	this->transformationsMatrix.identity();
@@ -39,12 +39,12 @@ Group::Group(Model* model, Group* parentGroup, const string& id, const string& n
 	this->joint = false;
 }
 
-Group::~Group() {
+Node::~Node() {
 	if (animation != nullptr) delete animation;
 	if (skinning != nullptr) delete skinning;
 }
 
-void Group::setVertices(const vector<Vector3>& vertices)
+void Node::setVertices(const vector<Vector3>& vertices)
 {
 	this->vertices.resize(vertices.size());
 	auto i = 0;
@@ -53,7 +53,7 @@ void Group::setVertices(const vector<Vector3>& vertices)
 	}
 }
 
-void Group::setNormals(const vector<Vector3>& normals)
+void Node::setNormals(const vector<Vector3>& normals)
 {
 	this->normals.resize(normals.size());
 	auto i = 0;
@@ -62,7 +62,7 @@ void Group::setNormals(const vector<Vector3>& normals)
 	}
 }
 
-void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
+void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
 	auto i = 0;
@@ -71,7 +71,7 @@ void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordi
 	}
 }
 
-void Group::setTangents(const vector<Vector3>& tangents)
+void Node::setTangents(const vector<Vector3>& tangents)
 {
 	this->tangents.resize(tangents.size());
 	auto i = 0;
@@ -80,7 +80,7 @@ void Group::setTangents(const vector<Vector3>& tangents)
 	}
 }
 
-void Group::setBitangents(const vector<Vector3>& bitangents)
+void Node::setBitangents(const vector<Vector3>& bitangents)
 {
 	this->bitangents.resize(bitangents.size());
 	auto i = 0;
@@ -89,19 +89,19 @@ void Group::setBitangents(const vector<Vector3>& bitangents)
 	}
 }
 
-void Group::setAnimation(Animation* animation) {
+void Node::setAnimation(Animation* animation) {
 	if (this->animation != nullptr && this->animation != animation) delete this->animation;
 	this->animation = animation;
 }
 
-void Group::setSkinning(Skinning* skinning)
+void Node::setSkinning(Skinning* skinning)
 {
 	if (this->skinning != nullptr && this->skinning != skinning) delete this->skinning;
 	if (skinning != nullptr) model->setHasSkinning(true);
 	this->skinning = skinning;
 }
 
-int32_t Group::getFaceCount() const
+int32_t Node::getFaceCount() const
 {
 	auto faceCount = 0;
 	for (auto& facesEntity : facesEntities) {
@@ -110,14 +110,14 @@ int32_t Group::getFaceCount() const
 	return faceCount;
 }
 
-FacesEntity* Group::getFacesEntity(const string& id) {
+FacesEntity* Node::getFacesEntity(const string& id) {
 	for (auto& facesEntity: facesEntities) {
 		if (facesEntity.getId() == id) return &facesEntity;
 	}
 	return nullptr;
 }
 
-void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
+void Node::setFacesEntities(const vector<FacesEntity>& facesEntities)
 {
 	this->facesEntities.resize(facesEntities.size());
 	auto i = 0;
@@ -126,7 +126,7 @@ void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 	}
 }
 
-void Group::setOrigins(const vector<Vector3>& origins) {
+void Node::setOrigins(const vector<Vector3>& origins) {
 	this->origins.resize(origins.size());
 	auto i = 0;
 	for (auto& origin: origins) {
@@ -134,11 +134,11 @@ void Group::setOrigins(const vector<Vector3>& origins) {
 	}
 }
 
-Group* Group::getSubGroupById(const string& groupId)
+Node* Node::getSubNodeById(const string& nodeId)
 {
-	auto groupIt = subGroups.find(groupId);
-	if (groupIt != subGroups.end()) {
-		return groupIt->second;
+	auto nodeIt = subNodes.find(nodeId);
+	if (nodeIt != subNodes.end()) {
+		return nodeIt->second;
 	}
 	return nullptr;
 }

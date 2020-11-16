@@ -25,6 +25,45 @@ private:
 
 public:
 	/**
+	 * Public constructor
+	 */
+	inline Matrix2D3x3() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
+	 * @param m matrix as float values
+	 */
+	inline Matrix2D3x3(const array<float, 9>& m) {
+		data = m;
+	}
+
+	/**
+	 * Public constructor
+	 * @param matrix matrix
+	 */
+	inline Matrix2D3x3(const Matrix2D3x3& matrix) {
+		data = matrix.data;
+	}
+
+	/**
+	 * Public constructor
+	 * @param r0c0 r0c0
+	 * @param r1c0 r1c0
+	 * @param r2c0 r2c0
+	 * @param r0c1 r0c1
+	 * @param r1c1 r1c1
+	 * @param r2c1 r2c1
+	 * @param r0c2 r0c2
+	 * @param r1c2 r1c2
+	 * @param r2c2 r2c2
+	 */
+	inline Matrix2D3x3(float r0c0, float r1c0, float r2c0, float r0c1, float r1c1, float r2c1, float r0c2, float r1c2, float r2c2) {
+		set(r0c0, r1c0, r2c0, r0c1, r1c1, r2c1, r0c2, r1c2, r2c2);
+	}
+
+	/**
 	 * Set up matrix by values
 	 * @param r0c0 row 0, column 0
 	 * @param r1c0 row 1, column 0
@@ -322,45 +361,6 @@ public:
 	 */
 	inline Matrix2D3x3 clone() const {
 		return Matrix2D3x3(data);
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline Matrix2D3x3() {
-		data.fill(0.0f);
-	}
-
-	/**
-	 * Public constructor
-	 * @param m matrix as float values
-	 */
-	inline Matrix2D3x3(const array<float, 9>& m) {
-		data = m;
-	}
-
-	/**
-	 * Public constructor
-	 * @param matrix matrix
-	 */
-	inline Matrix2D3x3(const Matrix2D3x3& matrix) {
-		data = matrix.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param r0c0 r0c0
-	 * @param r1c0 r1c0
-	 * @param r2c0 r2c0
-	 * @param r0c1 r0c1
-	 * @param r1c1 r1c1
-	 * @param r2c1 r2c1
-	 * @param r0c2 r0c2
-	 * @param r1c2 r1c2
-	 * @param r2c2 r2c2
-	 */
-	inline Matrix2D3x3(float r0c0, float r1c0, float r2c0, float r0c1, float r1c1, float r2c1, float r0c2, float r1c2, float r2c2) {
-		set(r0c0, r1c0, r2c0, r0c1, r1c1, r2c1, r0c2, r1c2, r2c2);
 	}
 
 };

@@ -93,7 +93,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-SharedModelEditorView::SharedModelEditorView(PopUps* popUps) 
+SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();
@@ -201,7 +201,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 	engine->removeEntity("model");
 	struct AnimationSetupStruct {
 		bool loop;
-		string overlayFromGroupId;
+		string overlayFromNodeId;
 		float speed;
 	};
 	// store old animation setups
@@ -210,7 +210,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 		auto animationSetup = animationSetupIt.second;
 		originalAnimationSetups[animationSetup->getId()] = {
 			.loop = animationSetup->isLoop(),
-			.overlayFromGroupId = animationSetup->getOverlayFromGroupId(),
+			.overlayFromNodeId = animationSetup->getOverlayFromNodeId(),
 			.speed = animationSetup->getSpeed()
 		};
 	}
@@ -235,7 +235,7 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 			}
 			Console::println("SharedModelEditorView::reimportModel(): reimport animation setup: " + originalAnimationSetupId);
 			animationSetup->setLoop(originalAnimationSetup.loop);
-			animationSetup->setOverlayFromGroupId(originalAnimationSetup.overlayFromGroupId);
+			animationSetup->setOverlayFromNodeId(originalAnimationSetup.overlayFromNodeId);
 			animationSetup->setSpeed(originalAnimationSetup.speed);
 		}
 		// set model in entity
@@ -266,7 +266,7 @@ void SharedModelEditorView::pivotApply(float x, float y, float z)
 }
 
 void SharedModelEditorView::computeNormals() {
-	if (entity == nullptr) return;
+	if (entity == nullptr || entity->getModel() == nullptr) return;
 	engine->removeEntity("model");
 	class ComputeNormalsProgressCallback: public ProgressCallback {
 	private:
@@ -281,6 +281,13 @@ void SharedModelEditorView::computeNormals() {
 	popUps->getProgressBarScreenController()->show();
 	ModelTools::computeNormals(entity->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
 	popUps->getProgressBarScreenController()->close();
+	resetEntity();
+}
+
+void SharedModelEditorView::optimizeModel() {
+	if (entity == nullptr || entity->getModel() == nullptr) return;
+	engine->removeEntity("model");
+	entity->setModel(ModelTools::optimizeModel(entity->getModel()));
 	resetEntity();
 }
 
@@ -351,6 +358,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
+		modelEditorScreenController->setPreview();
 		modelEditorScreenController->setTools();
 		entitySoundsView->setSounds(entity);
 	} else {
@@ -366,6 +374,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();
+		modelEditorScreenController->unsetPreview();
 		modelEditorScreenController->unsetTools();
 		entitySoundsView->unsetSounds();
 	}
@@ -509,11 +518,15 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 	return nullptr;
 }
 
-void SharedModelEditorView::playAnimation(const string& animationId) {
+void SharedModelEditorView::playAnimation(const string& baseAnimationId, const string& overlay1AnimationId, const string& overlay2AnimationId, const string& overlay3AnimationId) {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object != nullptr) {
 		audio->removeEntity("sound");
-		object->setAnimation(animationId);
+		object->removeOverlayAnimations();
+		object->setAnimation(baseAnimationId);
+		if (overlay1AnimationId.empty() == false) object->addOverlayAnimation(overlay1AnimationId);
+		if (overlay2AnimationId.empty() == false) object->addOverlayAnimation(overlay2AnimationId);
+		if (overlay3AnimationId.empty() == false) object->addOverlayAnimation(overlay3AnimationId);
 	}
 }
 

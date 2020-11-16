@@ -18,12 +18,12 @@ LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_Enti
 LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::EMPTY = new LevelEditorEntity_EntityType("EMPTY", 2);
 LevelEditorEntity_EntityType* tdme::tools::shared::model::LevelEditorEntity_EntityType::PARTICLESYSTEM = new LevelEditorEntity_EntityType("PARTICLESYSTEM", 3);
 
-LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(const string& a0)
+LevelEditorEntity_EntityType* LevelEditorEntity_EntityType::valueOf(const string& name)
 {
-	if (EMPTY->getName() == a0) return EMPTY;
-	if (MODEL->getName() == a0) return MODEL;
-	if (PARTICLESYSTEM->getName() == a0) return PARTICLESYSTEM;
-	if (TRIGGER->getName() == a0) return TRIGGER;
+	if (EMPTY->getName() == name) return EMPTY;
+	if (MODEL->getName() == name) return MODEL;
+	if (PARTICLESYSTEM->getName() == name) return PARTICLESYSTEM;
+	if (TRIGGER->getName() == name) return TRIGGER;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

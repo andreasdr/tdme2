@@ -18,7 +18,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Transformations::Transformations() 
+Transformations::Transformations()
 {
 	transformationsMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);
@@ -40,9 +40,9 @@ void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotatio
 	matrix.getTranslation(translation);
 	matrix.computeEulerAngles(eulerAngles);
 	rotations.clear();
-	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
-	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
-	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
+	rotations.push_back(Rotation(rotationOrder->getAxis0(), eulerAngles[rotationOrder->getAxis0VectorIndex()]));
+	rotations.push_back(Rotation(rotationOrder->getAxis1(), eulerAngles[rotationOrder->getAxis1VectorIndex()]));
+	rotations.push_back(Rotation(rotationOrder->getAxis2(), eulerAngles[rotationOrder->getAxis2VectorIndex()]));
 	update();
 }
 

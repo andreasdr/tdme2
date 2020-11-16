@@ -93,7 +93,7 @@ RayTracingTest::RayTracingTest()
 RayTracingTest::~RayTracingTest()
 {
 	delete world;
-} 
+}
 
 void RayTracingTest::main(int argc, char** argv)
 {
@@ -209,12 +209,10 @@ void RayTracingTest::display()
 	if (keyInfo == true) keyInfo = false;
 
 	// update world, display engine
-	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
 	engine->getEntity("player")->fromTransformations(transformations);
 	engine->display();
 	engine->getGUI()->render();
-	auto end = Time::getCurrentMillis();
 }
 
 void RayTracingTest::dispose()
@@ -256,7 +254,7 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = levelEditorEntityDeleter.add(ModelMetaDataFileImport::doImport("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
-	entityBoundingVolumeModel = modelDeleter.add(PrimitiveModel::createModel(interactionTable->getBoundingVolumeAt(0)->getBoundingVolume(), "interactiontable.bv"));
+	entityBoundingVolumeModel = modelDeleter.add(PrimitiveModel::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {

@@ -18,7 +18,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Sphere particle emitter
  * @author Andreas Drewke
  * @version $Id$
@@ -40,7 +40,26 @@ private:
 	Color4 colorEnd;
 
 public:
-	// overriden methods
+	/**
+	 * @param count number of particles to emit in one second
+	 * @param lifeTime life time in milli seconds
+	 * @param lifeTimeRnd life time rnd in milli seconds
+	 * @param mass mass in kg
+	 * @param massRnd mass rnd in kg
+	 * @param sphere sphere
+	 * @param velocity velocity in meter / seconds
+	 * @param velocityRnd velocity rnd in meter / seconds
+	 * @param colorStart color start
+	 * @param colorEnd color end
+	 */
+	SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~SphereParticleEmitter();
+
+	// overridden methods
 	inline const Vector3& getCenter() const override {
 		return sphereTransformed->getCenter();
 	}
@@ -75,24 +94,5 @@ public:
 
 	void emit(Particle* particle) override;
 	void fromTransformations(const Transformations& transformations) override;
-
-	/**
-	 * @param count number of particles to emit in one second
-	 * @param lifeTime life time in milli seconds
-	 * @param lifeTimeRnd life time rnd in milli seconds
-	 * @param mass mass in kg
-	 * @param massRnd mass rnd in kg
-	 * @param sphere sphere
-	 * @param velocity velocity in meter / seconds
-	 * @param velocityRnd velocity rnd in meter / seconds
-	 * @param colorStart color start
-	 * @param colorEnd color end
-	 */
-	SphereParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, Sphere* sphere, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~SphereParticleEmitter();
 
 };

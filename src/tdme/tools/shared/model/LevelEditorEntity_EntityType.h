@@ -17,13 +17,23 @@ class tdme::tools::shared::model::LevelEditorEntity_EntityType final
 	friend class LevelEditorEntity;
 
 public:
-	static LevelEditorEntity_EntityType *TRIGGER;
-	static LevelEditorEntity_EntityType *MODEL;
-	static LevelEditorEntity_EntityType *EMPTY;
-	static LevelEditorEntity_EntityType *PARTICLESYSTEM;
+	static LevelEditorEntity_EntityType* TRIGGER;
+	static LevelEditorEntity_EntityType* MODEL;
+	static LevelEditorEntity_EntityType* EMPTY;
+	static LevelEditorEntity_EntityType* PARTICLESYSTEM;
 
-public:
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	LevelEditorEntity_EntityType(const string& name, int ordinal);
-	static LevelEditorEntity_EntityType* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static LevelEditorEntity_EntityType* valueOf(const string& name);
 
 };

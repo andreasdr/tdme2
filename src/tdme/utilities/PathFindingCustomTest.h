@@ -12,6 +12,10 @@ using tdme::engine::primitives::BoundingVolume;
  */
 struct tdme::utilities::PathFindingCustomTest
 {
+	/**
+	 * Destructor
+	 */
+	virtual ~PathFindingCustomTest() {}
 
 	/**
 	 * Initialize custom test for a sequence of isWalkable calls for the current path finding execution
@@ -32,10 +36,5 @@ struct tdme::utilities::PathFindingCustomTest
 	 * @return is walkable
 	 */
 	virtual bool isWalkable(PathFinding* pathFinding, float x, float y, float z) = 0;
-
-	/**
-	 * Destructor
-	 */
-	virtual ~PathFindingCustomTest() {}
 
 };

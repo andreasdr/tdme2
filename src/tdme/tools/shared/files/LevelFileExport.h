@@ -15,7 +15,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
 
-/** 
+/**
  * TDME Level Editor File Export
  * @author Andreas Drewke
  * @version $Id$
@@ -24,7 +24,7 @@ class tdme::tools::shared::files::LevelFileExport final
 {
 
 public:
-	/** 
+	/**
 	 * Exports a level to a TDME level file
 	 * @param pathName path name
 	 * @param fileName file name

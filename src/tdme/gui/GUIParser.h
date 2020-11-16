@@ -26,8 +26,8 @@ using tdme::gui::GUIParserException;
 using tinyxml::TiXmlElement;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
- * GUI parser 
+/**
+ * GUI parser
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -35,11 +35,11 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	static map<string, GUIElement*> elements;
+	static map<string, GUIElement*>* elements;
 
 public:
 
-	/** 
+	/**
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -50,7 +50,7 @@ public:
 	 */
 	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = unordered_map<string, string>());
 
-	/** 
+	/**
 	 * Parses a GUI XML content
 	 * @param xml xml
 	 * @param parameters parameters aka key value paris for substitution
@@ -61,7 +61,7 @@ public:
 	 */
 	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = unordered_map<string, string>(), const string& pathName = string());
 
-	/** 
+	/**
 	 * Parses a GUI XML file into parent node
 	 * @param parentNode parent node
 	 * @param pathName path name
@@ -71,7 +71,7 @@ public:
 	 */
 	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName);
 
-	/** 
+	/**
 	 * Parses a GUI XML content into parent node
 	 * @param parentNode parent node
 	 * @param xml xml
@@ -82,7 +82,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Parse GUI node
 	 * @param guiParentNode gui parent node
 	 * @param xmlParentNode xml parent node
@@ -92,7 +92,7 @@ private:
 	 */
 	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement);
 
-	/** 
+	/**
 	 * Returns immediate children tags
 	 * @param parent parent
 	 * @param name name
@@ -100,7 +100,7 @@ private:
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
-	/** 
+	/**
 	 * Get inner XML
 	 * @param node node
 	 * @return string
@@ -119,7 +119,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Unescape quotes
 	 * @param str string
 	 * @return string with unescaped quotes
@@ -133,7 +133,7 @@ public:
 	 */
 	static const string escapeQuotes(const string& str);
 
-	/** 
+	/**
 	 * Add GUI element
 	 * @param guiElement guiElement
 	 * @throws tdme::gui::GUIParserException

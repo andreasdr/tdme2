@@ -11,7 +11,7 @@ using std::vector;
 
 using tdme::engine::subsystems::manager::VBOManager;
 
-/** 
+/**
  * Managed VBO entity
  * @author Andreas Drewke
  */
@@ -25,23 +25,30 @@ private:
 	int32_t referenceCounter { 0 };
 	volatile bool uploaded { false };
 
+	/**
+	 * Private constructor
+	 * @param id id
+	 * @param vboIds VBO ids
+	 */
+	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
+
 public:
 
-	/** 
+	/**
 	 * @return vbo id
 	 */
 	inline const string& getId() {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return vbo gl ids
 	 */
 	inline vector<int32_t>* getVBOIds() {
 		return &vboIds;
 	}
 
-	/** 
+	/**
 	 * @return reference counter
 	 */
 	inline int32_t getReferenceCounter() {
@@ -49,7 +56,7 @@ public:
 	}
 
 private:
-	/** 
+	/**
 	 * decrement reference counter
 	 * @return if reference counter = 0
 	 */
@@ -58,7 +65,7 @@ private:
 		return referenceCounter == 0;
 	}
 
-	/** 
+	/**
 	 * increment reference counter
 	 */
 	inline void incrementReferenceCounter() {
@@ -75,18 +82,11 @@ public:
 		this->uploaded = uploaded;
 	}
 
-	/** 
+	/**
 	 * @return if vbo's have been uploaded
 	 */
 	inline bool isUploaded() {
 		return uploaded;
 	}
 
-private:
-	/**
-	 * Private constructor
-	 * @param id id
-	 * @param vboIds VBO ids
-	 */
-	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
 };

@@ -4,9 +4,7 @@
 #include <string>
 
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -24,9 +22,7 @@ using std::array;
 using std::to_string;
 
 using tdme::gui::GUI;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -73,17 +69,17 @@ void GUIKnobController::postLayout() {
 void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node &&
-		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
+		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
 		this->node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(this->node));
 		event->setProcessed(true);
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
-		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		mouseLastX = event->getX();
 		event->setProcessed(true);
 	} else
-	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true &&
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		valueFloat = Math::clamp(
 			static_cast<float>(valueFloat + ((event->getX() - mouseLastX) / 75.0f)) ,
@@ -103,7 +99,7 @@ void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* eve
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
 						updateKnob();
 						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
@@ -112,7 +108,7 @@ void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* eve
 				break;
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
 						updateKnob();
 						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));

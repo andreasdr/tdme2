@@ -11,7 +11,7 @@
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Particle entity
  * @author Andreas Drewke
  * @version $Id$

@@ -10,7 +10,7 @@ using std::vector;
 
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Animation entity
  * @author andreas.drewke
  * @version $Id$
@@ -21,15 +21,20 @@ private:
 	vector<Matrix4x4> transformationsMatrices;
 
 public:
+	/**
+	 * Public constructor
+	 * @param frames frames
+	 */
+	Animation();
 
-	/** 
+	/**
 	 * @return number of frames
 	 */
 	inline int getFrames() const {
 		return transformationsMatrices.size();
 	}
 
-	/** 
+	/**
 	 * Returns transformation matrices
 	 * @return transformation matrices
 	 */
@@ -45,9 +50,4 @@ public:
 		this->transformationsMatrices = transformationsMatrices;
 	}
 
-	/**
-	 * Public constructor
-	 * @param frames frames
-	 */
-	Animation();
 };

@@ -5,7 +5,7 @@
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUINode;
 
-GUINodeController::GUINodeController(GUINode* node) 
+GUINodeController::GUINodeController(GUINode* node)
 {
 	this->node = node;
 }

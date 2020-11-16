@@ -6,7 +6,7 @@
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-/** 
+/**
  * GUI shader
  * @author Andreas Drewke
  * @version $Id$
@@ -31,34 +31,39 @@ private:
 	bool isRunning;
 
 public:
+	/**
+	 * Public constructor
+	 * @param renderer renderer
+	 */
+	GUIShader(Renderer* renderer);
 
-	/** 
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Init shadow mapping
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use render GUI program
 	 */
 	void useProgram();
 
-	/** 
+	/**
 	 * Un use render GUI program
 	 */
 	void unUseProgram();
 
-	/** 
+	/**
 	 * Bind texture
 	 * @param textureId texture id
 	 */
 	void bindTexture(int32_t textureId);
 
-	/** 
+	/**
 	 * Update effect to program
 	 */
 	void updateEffect();
@@ -68,9 +73,4 @@ public:
 	 */
 	void updateTextureMatrix();
 
-	/**
-	 * Public constructor
-	 * @param renderer renderer
-	 */
-	GUIShader(Renderer* renderer);
 };

@@ -29,7 +29,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Particle system group, which combines several particle systems into a group, to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -69,8 +69,47 @@ private:
 	}
 
 public:
-	// overriden methods
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param autoEmit auto emit
+	 * @param contributesShadows contributes shadows
+	 * @param receivesShadows receives shadows
+	 * @param particleSystems particle systems
+	 */
+	ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems);
+
+	/**
+	 * Destructor
+	 */
+	~ParticleSystemGroup();
+
+	/**
+	 * @return particle systems
+	 */
+	inline const vector<ParticleSystemEntity*>& getParticleSystems() {
+		return particleSystems;
+	}
+
+	// overridden methods
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
 	void initialize() override;
+	void dispose() override;
+
+	inline bool isEnabled() override {
+		return enabled;
+	}
+
+	void setEnabled(bool enabled) override;
+
+	inline bool isFrustumCulling() override {
+		return frustumCulling;
+	}
+
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		if (particleSystems.empty() == false) {
@@ -105,44 +144,6 @@ public:
 		//
 		return &boundingBoxTransformed;
 	}
-
-	/** 
-	 * @return particle systems
-	 */
-	inline const vector<ParticleSystemEntity*>& getParticleSystems() {
-		return particleSystems;
-	}
-
-	// overriden methods
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	inline bool isFrustumCulling() override {
-		return frustumCulling;
-	}
-	void setFrustumCulling(bool frustumCulling) override;
-
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param autoEmit auto emit
-	 * @param contributesShadows contributes shadows
-	 * @param receivesShadows receives shadows
-	 * @param particleSystems particle systems
-	 */
-	ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems);
-
-	/**
-	 * Destructor
-	 */
-	~ParticleSystemGroup();
-
-public:
-
-	// overriden methods
-	void dispose() override;
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
 
 	inline ParticleEmitter* getEmitter() override {
 		return nullptr;
@@ -192,10 +193,6 @@ public:
 			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
 			if (ops != nullptr) ops->setReceivesShadows(receivesShadows);
 		}
-	}
-
-	inline bool isEnabled() override {
-		return enabled;
 	}
 
 	inline bool isPickable() override {

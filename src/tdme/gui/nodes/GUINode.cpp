@@ -117,6 +117,10 @@ GUINode::GUINode(
 	this->conditionsMet = false;
 	this->layouted = false;
 	this->haveOutEffect = false;
+	// register this id with related element nodes
+	vector<string> elementNodeDependencies;
+	cfDetermineElementNodeDependencies(elementNodeDependencies);
+	for (auto elementNodeId: elementNodeDependencies) screenNode->addNodeElementNodeDependency(elementNodeId, id);
 }
 
 GUINode::~GUINode() {
@@ -200,7 +204,7 @@ void GUINode::layout()
 {
 	if (conditionsMet == false) {
 		computedConstraints = GUINode_ComputedConstraints();
-		layouted = false;
+		screenNode->forceInvalidateLayout(this);
 		return;
 	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
@@ -258,6 +262,9 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)) {
 		return autoValue;
+	} else
+	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STAR)) {
+		return value;
 	}
 	return -1;
 }
@@ -469,15 +476,32 @@ void GUINode::setConditionsMet()
 }
 
 void GUINode::layoutOnDemand() {
-	if (conditionsMet == false) return;
-	if (screenNode->layouted == false || layouted == false) {
-		screenNode->layout(this);
-	}
+	if (conditionsMet == false || layouted == true) return;
+	screenNode->forceLayout(this);
 }
 
 void GUINode::render(GUIRenderer* guiRenderer)
 {
+	layoutOnDemand();
+
 	if (shouldRender() == false) return;
+
+	// floating nodes should always be in screen constraints
+	// if this does not seem to be feasible we can add a property for this
+	if (flow == GUINode_Flow::FLOATING) {
+		if (computedConstraints.left < 0) {
+			setLeft(0);
+		} else
+		if (computedConstraints.left + computedConstraints.width > screenNode->getScreenWidth()) {
+			setLeft(screenNode->getScreenWidth() - computedConstraints.width);
+		}
+		if (computedConstraints.top < 0) {
+			setTop(0);
+		} else
+		if (computedConstraints.top + computedConstraints.height > screenNode->getScreenHeight()) {
+			setTop(screenNode->getScreenHeight() - computedConstraints.height);
+		}
+	}
 
 	vector<Action*> actions;
 	for (auto& effectIt: effects) {
@@ -1056,6 +1080,7 @@ void GUINode::scrollToNodeY()
 
 void GUINode::scrollToNodeY(GUIParentNode* toNode)
 {
+	if (layouted == false) return;
 	auto scrollYParentNode = this->parentNode;
 	while (true == true) {
 		if (scrollYParentNode == toNode || scrollYParentNode == nullptr) return;
@@ -1079,6 +1104,7 @@ void GUINode::scrollToNodeX()
 
 void GUINode::scrollToNodeX(GUIParentNode* toNode)
 {
+	if (layouted == false) return;
 	auto scrollXParentNode = this->parentNode;
 	while (true == true) {
 		if (scrollXParentNode == toNode || scrollXParentNode == nullptr)
@@ -1110,7 +1136,12 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->computedConstraints.contentAlignmentTop) + "; " +
+		StringTools::substring(node->requestedConstraints.leftType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.topType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.widthType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
+		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
@@ -1134,11 +1165,35 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
 		to_string(node->computedConstraints.alignmentTop) + "; content alignment: " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
-		to_string(node->computedConstraints.contentAlignmentTop) + ": conditions met: " +
+		to_string(node->computedConstraints.contentAlignmentTop) + "; " +
+		StringTools::substring(node->requestedConstraints.leftType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.topType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.widthType->getName(), 0, 2) + "/" +
+		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
+		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted)
 	);
 	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 2);
+}
+
+void GUINode::cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies) {
+	auto& showOn = this->showOn.conditions;
+	auto& hideOn = this->hideOn.conditions;
+
+	StringTokenizer t;
+	string function;
+	vector<string> arguments;
+	for (auto i = 0; i < hideOn.size(); i++) {
+		auto conditionTerm = hideOn[i];
+		cfParse(hideOn[i], function, arguments);
+		cfCallDetermineElementNodeDependencies(function, arguments, elementNodeDependencies);
+	}
+	for (auto i = 0; i < showOn.size(); i++) {
+		cfParse(showOn[i], function, arguments);
+		cfCallDetermineElementNodeDependencies(function, arguments, elementNodeDependencies);
+	}
+
 }
 
 void GUINode::cfParse(const string& term, string& function, vector<string>& arguments) {
@@ -1197,6 +1252,18 @@ bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const 
 	}
 }
 
+void GUINode::cfCallDetermineElementNodeDependencies(const string& function, const vector<string>& arguments, vector<string>& elementNodeDependencies) {
+	if (function == "empty") {
+		// no op
+	} else
+	if (function == "hasCondition") {
+		cfHasConditionDetermineElementNodeDependencies(arguments, elementNodeDependencies);
+	} else {
+		Console::println("GUINode::cfCallDetermineElementNodeDependencies(): Unknown function: " + function + ": returning false");
+	}
+
+}
+
 bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments) {
 	StringTokenizer t;
 	for (auto& argument: arguments) {
@@ -1215,6 +1282,20 @@ bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& 
 		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;
 	}
 	return false;
+}
+
+void GUINode::cfHasConditionDetermineElementNodeDependencies(const vector<string>& arguments, vector<string>& elementNodeDependencies) {
+	StringTokenizer t;
+	for (auto& argument: arguments) {
+		string elementNodeId;
+		auto condition = argument;
+		if (condition.find('.') != -1) {
+			t.tokenize(condition, ".");
+			elementNodeId = t.nextToken();
+			condition = t.nextToken();
+		}
+		if (elementNodeId.empty() == false) elementNodeDependencies.push_back(elementNodeId);
+	}
 }
 
 bool GUINode::cfEmpty(const vector<string>& arguments) {

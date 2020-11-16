@@ -17,7 +17,7 @@ using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
+/**
  * Model reader class
  * @author Andreas Drewke
  * @version $Id$
@@ -32,7 +32,7 @@ public:
 	 */
 	static const vector<string>& getModelExtensions();
 
-	/** 
+	/**
 	 * Reads a model
 	 * @param pathName path name
 	 * @param fileName file name

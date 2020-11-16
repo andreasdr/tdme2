@@ -10,7 +10,7 @@ using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
-/** 
+/**
  * Frame buffer class
  * @author Andreas Drewke
  * @version $Id$
@@ -30,52 +30,63 @@ private:
 	int32_t colorBufferTextureId;
 	int32_t buffers;
 public:
+	/**
+	 * Public constructor
+	 * @param width width
+	 * @param height height
+	 * @param buffers buffers (see FrameBuffer::FRAMEBUFFER_*)
+	 */
+	FrameBuffer(int32_t width, int32_t height, int32_t buffers);
 
-	/** 
+	/**
 	 * @return width
 	 */
-	int32_t getWidth();
+	inline int32_t getWidth() {
+		return width;
+	}
 
-	/** 
+	/**
 	 * @return height
 	 */
-	int32_t getHeight();
+	inline int32_t getHeight() {
+		return height;
+	}
 
-	/** 
+	/**
 	 * Init the frame buffer
 	 * currently only depth buffer rendering is enabled, can be extended to color buffer easily
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Resize the frame buffer
 	 * @param width width
 	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	/** 
+	/**
 	 * Disposes this frame buffer
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Enables this frame buffer to be rendered
 	 */
 	void enableFrameBuffer();
 
-	/** 
+	/**
 	 * Switches back to non offscreen main frame buffer to be rendered
 	 */
 	static void disableFrameBuffer();
 
-	/** 
+	/**
 	 * Bind depth texture
 	 * @param context context
 	 */
 	void bindDepthBufferTexture(void* context);
 
-	/** 
+	/**
 	 * Bind color texture
 	 * @param context context
 	 */
@@ -107,11 +118,4 @@ public:
 	 */
 	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr, bool fixedLightScatteringIntensity = false, float lightScatteringItensityValue = 0.5f);
 
-	/**
-	 * Public constructor
-	 * @param width width
-	 * @param height height
-	 * @param buffers buffers (see FrameBuffer::FRAMEBUFFER_*)
-	 */
-	FrameBuffer(int32_t width, int32_t height, int32_t buffers);
 };

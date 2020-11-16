@@ -48,7 +48,7 @@ using tdme::utilities::StringTools;
 
 volatile uint32_t LevelEditorEntityBoundingVolume::modelIdx = 0;
 
-LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity) 
+LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity)
 {
 	this->id = id;
 	this->levelEditorEntity = levelEditorEntity;

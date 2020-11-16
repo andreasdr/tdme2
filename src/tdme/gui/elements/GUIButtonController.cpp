@@ -2,7 +2,7 @@
 
 using tdme::gui::elements::GUIButtonController;
 
-GUIButtonController::GUIButtonController(GUINode* node) 
+GUIButtonController::GUIButtonController(GUINode* node)
 	: GUIElementController(node)
 {
 }

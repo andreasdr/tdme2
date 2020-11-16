@@ -12,7 +12,7 @@ using tdme::utilities::MutableString;
 using tdme::math::Math;
 using tdme::utilities::Time;
 
-MutableString::MutableString() 
+MutableString::MutableString()
 {
 }
 

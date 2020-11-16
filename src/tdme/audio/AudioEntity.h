@@ -11,7 +11,7 @@ using std::string;
 
 using tdme::math::Vector3;
 
-/** 
+/**
  * Audio entity base class
  * @author Andreas Drewke
  * @version $Id$
@@ -30,23 +30,49 @@ protected:
 	Vector3 sourceDirection;
 	Vector3 sourceVelocity;
 
+protected:
+	/**
+	 * Constructor
+	 */
+	AudioEntity(const string& id);
+
+	/**
+	 * Constructor
+	 */
+	virtual ~AudioEntity();
+
+	/**
+	 * Initiates this OpenAL entity to OpenAl
+	 */
+	virtual bool initialize() = 0;
+
+	/**
+	 * Commits properties to OpenAl
+	 */
+	virtual void update() = 0;
+
+	/**
+	 * Dispose this entity from OpenAL
+	 */
+	virtual void dispose() = 0;
+
 public:
 
-	/** 
+	/**
 	 * @return id
 	 */
 	inline virtual const string& getId() const {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return if sound will be looped
 	 */
 	inline virtual const bool isLooping() const {
 		return looping;
 	}
 
-	/** 
+	/**
 	 * Set looping
 	 * @param looping if sound will be looped
 	 */
@@ -54,14 +80,14 @@ public:
 		this->looping = looping;
 	}
 
-	/** 
+	/**
 	 * @return fixed, means the sound will always played no matter where the position and listener is located
 	 */
 	inline virtual const bool isFixed() const {
 		return fixed;
 	}
 
-	/** 
+	/**
 	 * Set this entity fixed, means the sound will always played no matter where the position and listener is located
 	 * @param fixed fixed
 	 */
@@ -69,14 +95,14 @@ public:
 		this->fixed = fixed;
 	}
 
-	/** 
+	/**
 	 * @return pitch
 	 */
 	inline virtual const float getPitch() const {
 		return pitch;
 	}
 
-	/** 
+	/**
 	 * Set up pitch
 	 * @param pitch pitch
 	 */
@@ -84,14 +110,14 @@ public:
 		this->pitch = pitch;
 	}
 
-	/** 
+	/**
 	 * @return gain
 	 */
 	inline virtual const float getGain() const {
 		return gain;
 	}
 
-	/** 
+	/**
 	 * Set up gain
 	 * @param gain gain
 	 */
@@ -99,14 +125,14 @@ public:
 		this->gain = gain;
 	}
 
-	/** 
+	/**
 	 * @return source position
 	 */
 	inline virtual const Vector3& getSourcePosition() const {
 		return sourcePosition;
 	}
 
-	/** 
+	/**
 	 * Set source position
 	 * @return source position
 	 */
@@ -129,14 +155,14 @@ public:
 		this->sourceDirection = sourceDirection;
 	}
 
-	/** 
+	/**
 	 * @return source velocity
 	 */
 	inline virtual const Vector3& getSourceVelocity() const {
 		return sourceVelocity;
 	}
 
-	/** 
+	/**
 	 * Set source velocity
 	 * @param sourceVelocity source velocity
 	 */
@@ -149,50 +175,24 @@ public:
 	 */
 	virtual bool isPlaying() = 0;
 
-	/** 
+	/**
 	 * Rewinds this audio entity
 	 */
 	virtual void rewind() = 0;
 
-	/** 
+	/**
 	 * Plays this audio entity
 	 */
 	virtual void play() = 0;
 
-	/** 
+	/**
 	 * Pauses this audio entity
 	 */
 	virtual void pause() = 0;
 
-	/** 
+	/**
 	 * Stops this audio entity
 	 */
 	virtual void stop() = 0;
 
-protected:
-
-	/** 
-	 * Initiates this OpenAL entity to OpenAl
-	 */
-	virtual bool initialize() = 0;
-
-	/** 
-	 * Commits properties to OpenAl
-	 */
-	virtual void update() = 0;
-
-	/** 
-	 * Dispose this entity from OpenAL
-	 */
-	virtual void dispose() = 0;
-
-	/**
-	 * Constructor
-	 */
-	AudioEntity(const string& id);
-
-	/**
-	 * Constructor
-	 */
-	virtual ~AudioEntity();
 };

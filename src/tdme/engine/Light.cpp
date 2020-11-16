@@ -30,7 +30,7 @@ Light::Light()
 	quadraticAttenuation = 0.0f;
 }
 
-Light::Light(Renderer* renderer, int32_t id) 
+Light::Light(Renderer* renderer, int32_t id)
 {
 	this->renderer = renderer;
 	this->id = id;

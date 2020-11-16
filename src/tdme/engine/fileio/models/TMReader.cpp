@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
@@ -44,7 +44,7 @@ using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
@@ -127,7 +127,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 		auto material = readMaterial(pathName, &is, version);
 		model->getMaterials()[material->getId()] = material;
 	}
-	readSubGroups(&is, model, nullptr, model->getSubGroups());
+	readSubNodes(&is, model, nullptr, model->getSubNodes());
 	auto animationSetupCount = is.readInt();
 	for (auto i = 0; i < animationSetupCount; i++) {
 		readAnimationSetup(&is, model, version);
@@ -264,7 +264,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 
 void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) {
 	auto id = is->readString();
-	auto overlayFromGroupId = is->readString();
+	auto overlayFromNodeId = is->readString();
 	auto startFrame = is->readInt();
 	auto endFrame = is->readInt();
 	auto loop = is->readBoolean();
@@ -276,10 +276,10 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 		(version[0] == 1 && version[1] == 9 && version[2] == 15)) {
 		speed = is->readFloat();
 	}
-	if (overlayFromGroupId.length() == 0) {
+	if (overlayFromNodeId.length() == 0) {
 		model->addAnimationSetup(id, startFrame, endFrame, loop, speed);
 	} else {
-		model->addOverlayAnimationSetup(id, overlayFromGroupId, startFrame, endFrame, loop, speed);
+		model->addOverlayAnimationSetup(id, overlayFromNodeId, startFrame, endFrame, loop, speed);
 	}
 }
 
@@ -327,7 +327,7 @@ bool TMReader::readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices)
 	}
 }
 
-Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
+Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 {
 	if (is->readBoolean() == false) {
 		return nullptr;
@@ -347,7 +347,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 	}
 }
 
-void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
+void TMReader::readFacesEntities(TMReaderInputStream* is, Node* g)
 {
 	vector<FacesEntity> facesEntities;
 	facesEntities.resize(is->readInt());
@@ -413,7 +413,7 @@ JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is)
 	return JointWeight(jointIndex, weightIndex);
 }
 
-void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
+void TMReader::readSkinning(TMReaderInputStream* is, Node* g)
 {
 	if (is->readBoolean() == true) {
 		auto skinning = new Skinning();
@@ -437,39 +437,39 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups)
+void TMReader::readSubNodes(TMReaderInputStream* is, Model* model, Node* parentNode, map<string, Node*>& subNodes)
 {
-	auto subGroupCount = is->readInt();
-	for (auto i = 0; i < subGroupCount; i++) {
-		auto subGroup = readGroup(is, model, parentGroup);
-		subGroups[subGroup->getId()] = subGroup;
-		model->getGroups()[subGroup->getId()] = subGroup;
+	auto subNodeCount = is->readInt();
+	for (auto i = 0; i < subNodeCount; i++) {
+		auto subNode = readNode(is, model, parentNode);
+		subNodes[subNode->getId()] = subNode;
+		model->getNodes()[subNode->getId()] = subNode;
 	}
 }
 
-Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup)
+Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode)
 {
 
-	auto groupId = is->readString();
-	auto groupName = is->readString();
-	auto group = new Group(model, parentGroup, groupId, groupName);
-	group->setJoint(is->readBoolean());
+	auto nodeId = is->readString();
+	auto nodeName = is->readString();
+	auto node = new Node(model, parentNode, nodeId, nodeName);
+	node->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
-	group->setTransformationsMatrix(Matrix4x4(matrixArray));
+	node->setTransformationsMatrix(Matrix4x4(matrixArray));
 	vector<Vector3> vertices = readVertices(is);
-	group->setVertices(vertices);
+	node->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
-	group->setNormals(normals);
+	node->setNormals(normals);
 	vector<TextureCoordinate> textureCoordinates = readTextureCoordinates(is);
-	group->setTextureCoordinates(textureCoordinates);
+	node->setTextureCoordinates(textureCoordinates);
 	vector<Vector3> tangents = readVertices(is);
-	group->setTangents(tangents);
+	node->setTangents(tangents);
 	vector<Vector3> bitangents = readVertices(is);
-	group->setBitangents(bitangents);
-	readAnimation(is, group);
-	readSkinning(is, group);
-	readFacesEntities(is, group);
-	readSubGroups(is, model, parentGroup, group->getSubGroups());
-	return group;
+	node->setBitangents(bitangents);
+	readAnimation(is, node);
+	readSkinning(is, node);
+	readFacesEntities(is, node);
+	readSubNodes(is, model, parentNode, node->getSubNodes());
+	return node;
 }

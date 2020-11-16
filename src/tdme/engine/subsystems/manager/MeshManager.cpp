@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/MeshManager_MeshManaged.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/utilities/Console.h>
 
 using std::map;
@@ -12,10 +12,10 @@ using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::utilities::Console;
 
-MeshManager::MeshManager() 
+MeshManager::MeshManager()
 {
 }
 
@@ -25,7 +25,7 @@ MeshManager::~MeshManager() {
 	}
 }
 
-Object3DGroupMesh* MeshManager::getMesh(const string& meshId)
+Object3DNodeMesh* MeshManager::getMesh(const string& meshId)
 {
 	// check if we already manage this mesh
 	auto meshManagedIt = meshes.find(meshId);
@@ -38,7 +38,7 @@ Object3DGroupMesh* MeshManager::getMesh(const string& meshId)
 	return nullptr;
 }
 
-void MeshManager::addMesh(const string& meshId, Object3DGroupMesh* mesh)
+void MeshManager::addMesh(const string& meshId, Object3DNodeMesh* mesh)
 {
 	// create managed texture
 	auto meshManaged = new MeshManager_MeshManaged(meshId, mesh);

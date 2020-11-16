@@ -1,6 +1,10 @@
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
+	#include <tdme/engine/Engine.h>
+	#include <tdme/engine/subsystems/renderer/VKRenderer.h>
+	using tdme::engine::Engine;
+	using tdme::engine::subsystems::renderer::VKRenderer;
 #elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
@@ -11,7 +15,7 @@
 #if defined(GLFW3)
 	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
-#else
+#elif !defined(VULKAN)
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
@@ -344,8 +348,10 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	#if defined(VULKAN) || defined(GLFW3)
-		// not yet
+	#if defined(VULKAN)
+		static_cast<VKRenderer*>(Engine::renderer)->setVSyncEnabled(vSync);
+	#elif defined(GLFW3)
+		glfwSwapInterval(vSync == true?1:0);
 	#else
 		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 			// TODO: a.drewke: vsync

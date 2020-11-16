@@ -48,6 +48,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool
 	vbos[vboManaged->getId()] = vboManaged;
 	rwLock.unlock();
 	created = true;
+
 	// return vbo managed
 	return vboManaged;
 }

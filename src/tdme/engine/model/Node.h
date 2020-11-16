@@ -23,15 +23,15 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * Model group
+ * Model node
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::engine::model::Group final
+class tdme::engine::model::Node final
 {
 private:
 	Model* model;
-	Group* parentGroup;
+	Node* parentNode;
 	string id;
 	string name;
 	bool joint;
@@ -45,21 +45,21 @@ private:
 	Skinning* skinning;
 	vector<FacesEntity> facesEntities;
 	vector<Vector3> origins;
-	map<string, Group*> subGroups;
+	map<string, Node*> subNodes;
 public:
 	/**
 	 * Public constructor
 	 * @param model model
-	 * @param parentGroup parent group
+	 * @param parentNode parent node
 	 * @param id id
 	 * @param name name
 	 */
-	Group(Model* model, Group* parentGroup, const string& id, const string& name);
+	Node(Model* model, Node* parentNode, const string& id, const string& name);
 
 	/**
 	 * Destructor
 	 */
-	~Group();
+	~Node();
 
 	/**
 	 * @return model
@@ -69,10 +69,10 @@ public:
 	}
 
 	/**
-	 * @return parent group
+	 * @return parent node
 	 */
-	inline Group* getParentGroup() {
-		return parentGroup;
+	inline Node* getParentNode() {
+		return parentNode;
 	}
 
 	/**
@@ -84,21 +84,21 @@ public:
 	}
 
 	/**
-	 * @return group's name
+	 * @return node's name
 	 */
 	inline const string& getName() {
 		return name;
 	}
 
 	/**
-	 * @return if this group is a joint/bone
+	 * @return if this node is a joint/bone
 	 */
 	inline bool isJoint() const {
 		return joint;
 	}
 
 	/**
-	 * Sets up if this group is a joint or not 
+	 * Sets up if this node is a joint or not
 	 * @param isJoint isbone
 	 */
 	inline void setJoint(bool isJoint) {
@@ -106,14 +106,14 @@ public:
 	}
 
 	/**
-	 * @return transformations matrix related to parent group
+	 * @return transformations matrix related to parent node
 	 */
 	inline const Matrix4x4& getTransformationsMatrix() const {
 		return transformationsMatrix;
 	}
 
 	/**
-	 * @return transformations matrix related to parent group
+	 * @return transformations matrix related to parent node
 	 */
 	inline void setTransformationsMatrix(const Matrix4x4& transformationsMatrix) {
 		this->transformationsMatrix = transformationsMatrix;
@@ -211,7 +211,7 @@ public:
 	void setSkinning(Skinning* skinning);
 
 	/**
-	 * @return number of faces in group
+	 * @return number of faces in node
 	 */
 	int32_t getFaceCount() const;
 
@@ -244,21 +244,21 @@ public:
 
 	/**
 	 * Set origins
-	 * @param origins render group object origins
+	 * @param origins render node object origins
 	 */
 	void setOrigins(const vector<Vector3>& origins);
 
 	/**
-	 * @return sub sub groups of this group
+	 * @return sub sub nodes of this node
 	 */
-	inline map<string, Group*>& getSubGroups() {
-		return subGroups;
+	inline map<string, Node*>& getSubNodes() {
+		return subNodes;
 	}
 
 	/**
-	 * Returns a sub group by id
-	 * @param groupId groupId
-	 * @return sub group or null
+	 * Returns a sub node by id
+	 * @param nodeId nodeId
+	 * @return sub node or null
 	 */
-	Group* getSubGroupById(const string& groupId);
+	Node* getSubNodeById(const string& nodeId);
 };

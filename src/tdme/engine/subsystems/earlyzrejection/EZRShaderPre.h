@@ -19,7 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Early z rejection shader
  * @author Andreas Drewke
  * @version $Id$
@@ -38,28 +38,39 @@ private:
 	vector<EZRShaderPreContext> contexts;
 
 public:
-	/** 
+	/**
+	 * Constructor
+	 * @param renderer renderer
+	 */
+	EZRShaderPre(Renderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~EZRShaderPre();
+
+	/**
 	 * @return if initialized and ready to use
 	 */
 	bool isInitialized();
 
-	/** 
+	/**
 	 * Init shadow mapping
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Use pre render shadow mapping program
 	 * @param engine engine
 	 */
 	void useProgram(Engine* engine);
 
-	/** 
+	/**
 	 * Un use pre render shadow mapping program
 	 */
 	void unUseProgram();
 
-	/** 
+	/**
 	 * Set up pre program mvp matrix
 	 * @param renderer renderer
 	 * @param context context
@@ -94,16 +105,5 @@ public:
 	 * @param id shader id
 	 */
 	void setShader(void* context, const string& id);
-
-	/**
-	 * Constructor
-	 * @param renderer renderer
-	 */
-	EZRShaderPre(Renderer* renderer);
-
-	/**
-	 * Destructor
-	 */
-	~EZRShaderPre();
 
 };

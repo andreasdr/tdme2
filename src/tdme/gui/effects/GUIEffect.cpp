@@ -9,7 +9,7 @@ using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::gui::events::Action;
 
-GUIEffect::GUIEffect() 
+GUIEffect::GUIEffect()
 {
 	active = false;
 	timeTotal = 0.0f;

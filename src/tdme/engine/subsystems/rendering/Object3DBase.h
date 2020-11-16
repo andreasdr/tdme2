@@ -12,7 +12,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -22,22 +22,22 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DGroupMesh;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 
-/** 
+/**
  * Object3D base class
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::Object3DBase
 {
-	friend class Object3DGroup;
-	friend class Object3DGroupMesh;
+	friend class Object3DNode;
+	friend class Object3DNodeMesh;
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class ModelUtilitiesInternal;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
@@ -47,7 +47,7 @@ private:
 
 protected:
 	Model* model;
-	vector<Object3DGroup*> object3dGroups;
+	vector<Object3DNode*> object3dNodes;
 	bool usesManagers;
 	int instances;
 	int enabledInstances;
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * Private constructor
 	 * @param model model
-	 * @param useManagers use mesh and object 3d group renderer model manager
+	 * @param useManagers use mesh and object 3d node renderer model manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param instances instances to compute and render by duplication
 	 */
@@ -73,7 +73,7 @@ protected:
 
 public:
 
-	/** 
+	/**
 	 * @return model
 	 */
 	inline Model* getModel() {
@@ -93,40 +93,40 @@ public:
 			instanceAnimations[i]->computeTransformations(context, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
 			enabledInstances++;
 		}
-		if (enabledInstances > 0) Object3DGroup::computeTransformations(context, object3dGroups);
-	} 
+		if (enabledInstances > 0) Object3DNode::computeTransformations(context, object3dNodes);
+	}
 
 	/**
-	 * @return group count
+	 * @return node count
 	 */
-	int getGroupCount() const;
+	int getNodeCount() const;
 
-	/** 
-	 * Retrieves list of triangles of all or given groups
+	/**
+	 * Retrieves list of triangles of all or given nodes
 	 * @param triangles triangles
-	 * @param groupIdx group index or -1 for all groups
+	 * @param nodeIdx node index or -1 for all nodes
 	 */
-	void getTriangles(vector<Triangle>& triangles, int groupIdx = -1);
+	void getTriangles(vector<Triangle>& triangles, int nodeIdx = -1);
 
-	/** 
+	/**
 	 * @return transformed faces iterator
 	 */
 	Object3DBase_TransformedFacesIterator* getTransformedFacesIterator();
 
-	/** 
-	 * Returns object3d group mesh object
-	 * @param groupId group id
-	 * @return object3d group mesh object
+	/**
+	 * Returns object3d node mesh object
+	 * @param nodeId node id
+	 * @return object3d node mesh object
 	 */
-	Object3DGroupMesh* getMesh(const string& groupId);
+	Object3DNodeMesh* getMesh(const string& nodeId);
 
-	/** 
-	 * Initiates this object3d 
+	/**
+	 * Initiates this object3d
 	 */
 	virtual void initialize();
 
-	/** 
-	 * Disposes this object3d 
+	/**
+	 * Disposes this object3d
 	 */
 	virtual void dispose();
 
@@ -248,29 +248,29 @@ public:
 	}
 
 	/**
-	 * Returns transformation matrix for given group
-	 * @param id group id
+	 * Returns transformation matrix for given node
+	 * @param id node id
 	 * @return transformation matrix or identity matrix if not found
 	 */
-	inline const Matrix4x4 getGroupTransformationsMatrix(const string& id) {
-		return instanceAnimations[currentInstance]->getGroupTransformationsMatrix(id);
+	inline const Matrix4x4 getNodeTransformationsMatrix(const string& id) {
+		return instanceAnimations[currentInstance]->getNodeTransformationsMatrix(id);
 	}
 
 	/**
-	 * Set transformation matrix for given group
-	 * @param id group id
+	 * Set transformation matrix for given node
+	 * @param id node id
 	 * @param matrix transformation matrix
 	 */
-	inline void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
-		instanceAnimations[currentInstance]->setGroupTransformationsMatrix(id, matrix);
+	inline void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+		instanceAnimations[currentInstance]->setNodeTransformationsMatrix(id, matrix);
 	}
 
 	/**
-	 * Unset transformation matrix for given group
-	 * @param id group id
+	 * Unset transformation matrix for given node
+	 * @param id node id
 	 */
-	inline void unsetGroupTransformationsMatrix(const string& id) {
-		instanceAnimations[currentInstance]->unsetGroupTransformationsMatrix(id);
+	inline void unsetNodeTransformationsMatrix(const string& id) {
+		instanceAnimations[currentInstance]->unsetNodeTransformationsMatrix(id);
 	}
 
 	/**

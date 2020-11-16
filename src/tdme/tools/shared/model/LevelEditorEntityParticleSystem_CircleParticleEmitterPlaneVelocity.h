@@ -10,7 +10,7 @@
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Circle particle emitter plane velocity
  * @author Andreas Drewke
  * @version $Id$
@@ -33,15 +33,19 @@ private:
 	Vector3 axis1;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity();
 
-	/** 
+	/**
 	 * @return count
 	 */
 	inline int32_t getCount() {
 		return count;
 	}
 
-	/** 
+	/**
 	 * Set count
 	 * @param count count
 	 */
@@ -49,14 +53,14 @@ public:
 		this->count = count;
 	}
 
-	/** 
+	/**
 	 * @return life time
 	 */
 	inline int64_t getLifeTime() {
 		return lifeTime;
 	}
 
-	/** 
+	/**
 	 * Set life time
 	 * @param lifeTime life time
 	 */
@@ -64,14 +68,14 @@ public:
 		this->lifeTime = lifeTime;
 	}
 
-	/** 
+	/**
 	 * @return life time rnd
 	 */
 	inline int64_t getLifeTimeRnd() {
 		return lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
@@ -79,14 +83,14 @@ public:
 		this->lifeTimeRnd = lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * @return mass
 	 */
 	inline float getMass() {
 		return mass;
 	}
 
-	/** 
+	/**
 	 * Set mass
 	 * @param mass mass
 	 */
@@ -94,14 +98,14 @@ public:
 		this->mass = mass;
 	}
 
-	/** 
+	/**
 	 * @return mass rnd
 	 */
 	inline float getMassRnd() {
 		return massRnd;
 	}
 
-	/** 
+	/**
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
@@ -109,14 +113,14 @@ public:
 		this->massRnd = massRnd;
 	}
 
-	/** 
+	/**
 	 * @return velocity
 	 */
 	inline float getVelocity() {
 		return velocity;
 	}
 
-	/** 
+	/**
 	 * Set velocity
 	 * @param velocity velocity
 	 */
@@ -124,14 +128,14 @@ public:
 		this->velocity = velocity;
 	}
 
-	/** 
+	/**
 	 * @return velocity rnd
 	 */
 	inline float getVelocityRnd() {
 		return velocityRnd;
 	}
 
-	/** 
+	/**
 	 * Set velocity rnd
 	 * @param velocityRnd velocity rnd
 	 */
@@ -139,14 +143,14 @@ public:
 		this->velocityRnd = velocityRnd;
 	}
 
-	/** 
+	/**
 	 * @return color start
 	 */
 	inline const Color4& getColorStart() {
 		return colorStart;
 	}
 
-	/** 
+	/**
 	 * Set start color
 	 * @param colorStart start color
 	 */
@@ -169,14 +173,14 @@ public:
 		this->colorEnd = colorEnd;
 	}
 
-	/** 
+	/**
 	 * @return center
 	 */
 	inline const Vector3& getCenter() {
 		return center;
 	}
 
-	/** 
+	/**
 	 * Set center
 	 * @param center center
 	 */
@@ -191,7 +195,7 @@ public:
 		return radius;
 	}
 
-	/** 
+	/**
 	 * Set radius
 	 * @param radius radius
 	 */
@@ -199,14 +203,14 @@ public:
 		this->radius = radius;
 	}
 
-	/** 
+	/**
 	 * @return axis 0
 	 */
 	inline const Vector3& getAxis0() {
 		return axis0;
 	}
 
-	/** 
+	/**
 	 * Set axis 0
 	 * @param axis0 axis 0
 	 */
@@ -229,8 +233,4 @@ public:
 		this->axis1 = axis1;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity();
 };

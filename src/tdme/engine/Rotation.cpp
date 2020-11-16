@@ -9,14 +9,14 @@ using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Rotation::Rotation() 
+Rotation::Rotation()
 {
 	this->angle = 0.0f;
 	this->axis.set(0.0f, 0.0f, 0.0f);
 	this->quaternion.identity();
 }
 
-Rotation::Rotation(float angle, const Vector3& axis)
+Rotation::Rotation(const Vector3& axis, float angle)
 {
 	this->angle = angle;
 	this->axis.set(axis);

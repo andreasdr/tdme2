@@ -30,7 +30,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Point particle system entity to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -58,21 +58,6 @@ private:
 	}
 
 public:
-
-	// overriden methods
-	void initialize() override;
-	inline BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-	inline BoundingBox* getBoundingBoxTransformed() override {
-		return &boundingBoxTransformed;
-	}
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -86,11 +71,29 @@ public:
 	 * @param fps frames per seconds
 	 */
 	PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
-public:
+
 	// overridden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return PointsParticleSystemInternal::isEnabled();
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
+
+	inline BoundingBox* getBoundingBox() override {
+		return &boundingBox;
+	}
+	inline BoundingBox* getBoundingBoxTransformed() override {
+		return &boundingBoxTransformed;
+	}
 
 	inline ParticleEmitter* getEmitter() override {
 		return PointsParticleSystemInternal::getEmitter();
@@ -114,10 +117,6 @@ public:
 
 	inline const string& getId() override {
 		return PointsParticleSystemInternal::getId();
-	}
-
-	inline bool isEnabled() override {
-		return PointsParticleSystemInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {

@@ -15,7 +15,7 @@ using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::utilities::Console;
 
-AudioBufferManager::AudioBufferManager() 
+AudioBufferManager::AudioBufferManager()
 {
 }
 

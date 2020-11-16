@@ -212,7 +212,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		levelEditorEntity->setContributesShadows(jEntityRoot["cs"].GetBool());
 		levelEditorEntity->setReceivesShadows(jEntityRoot["rs"].GetBool());
 	}
-	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
+	levelEditorEntity->setRenderNodes(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
@@ -229,9 +229,9 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 		 ),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
-	auto gameRoot = Tools::getGameRootPath(pathName);
-	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(gameRoot, modelFile);
-	return (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
+	auto applicationRoot = Tools::getApplicationRootPath(pathName);
+	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
+	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
 LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)

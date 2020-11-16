@@ -21,14 +21,14 @@ EntityPhysicsSubScreenController_BoundingVolumeType* tdme::tools::shared::contro
 EntityPhysicsSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX = new EntityPhysicsSubScreenController_BoundingVolumeType("ORIENTEDBOUNDINGBOX", 4);
 EntityPhysicsSubScreenController_BoundingVolumeType* tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType::CONVEXMESH = new EntityPhysicsSubScreenController_BoundingVolumeType("CONVEXMESH", 5);
 
-EntityPhysicsSubScreenController_BoundingVolumeType* EntityPhysicsSubScreenController_BoundingVolumeType::valueOf(const string& a0)
+EntityPhysicsSubScreenController_BoundingVolumeType* EntityPhysicsSubScreenController_BoundingVolumeType::valueOf(const string& name)
 {
-	if (BOUNDINGBOX->getName() == a0) return BOUNDINGBOX;
-	if (CAPSULE->getName() == a0) return CAPSULE;
-	if (CONVEXMESH->getName() == a0) return CONVEXMESH;
-	if (NONE->getName() == a0) return NONE;
-	if (ORIENTEDBOUNDINGBOX->getName() == a0) return ORIENTEDBOUNDINGBOX;
-	if (SPHERE->getName() == a0) return SPHERE;
+	if (BOUNDINGBOX->getName() == name) return BOUNDINGBOX;
+	if (CAPSULE->getName() == name) return CAPSULE;
+	if (CONVEXMESH->getName() == name) return CONVEXMESH;
+	if (NONE->getName() == name) return NONE;
+	if (ORIENTEDBOUNDINGBOX->getName() == name) return ORIENTEDBOUNDINGBOX;
+	if (SPHERE->getName() == name) return SPHERE;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

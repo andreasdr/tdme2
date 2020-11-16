@@ -21,7 +21,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Frustum class
  * @author Mark Morley, Andreas Drewke
  * @version $Id$
@@ -46,12 +46,17 @@ private:
 	array<Plane, 6> planes;
 
 public:
-	/** 
-	 * Setups frustum, should be called if frustum did change 
+	/**
+	 * Public constructor
+	 */
+	Frustum(Renderer* renderer);
+
+	/**
+	 * Setups frustum, should be called if frustum did change
 	 */
 	void updateFrustum();
 
-	/** 
+	/**
 	 * Checks if given vector is in frustum
 	 * @param vector vecto
 	 * @return visibility
@@ -67,7 +72,7 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Checks if sphere is in frustum
 	 * @param s s
 	 * @return visibility
@@ -84,7 +89,7 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Checks if bounding box is in frustum
 	 * @param b s
 	 * @return visibility
@@ -113,8 +118,4 @@ public:
 		return true;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	Frustum(Renderer* renderer);
 };

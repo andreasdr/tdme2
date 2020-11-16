@@ -13,7 +13,7 @@ using tdme::tools::shared::model::ModelProperties;
 using tdme::engine::Transformations;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level Editor Object
  * @author Andreas Drewke
  * @version $Id$
@@ -26,64 +26,6 @@ private:
 	string description;
 	Transformations transformations;
 	LevelEditorEntity* entity { nullptr };
-
-public:
-	/** 
-	 * @return id
-	 */
-	inline const string& getId() {
-		return id;
-	}
-
-	/** 
-	 * Set id
-	 * @param id id
-	 */
-	inline void setId(const string& id) {
-		this->id = id;
-	}
-
-	/** 
-	 * @return description
-	 */
-	inline const string& getDescription() {
-		return description;
-	}
-
-	/** 
-	 * Set description
-	 * @param description description
-	 */
-	inline void setDescription(const string& description) {
-		this->description = description;
-	}
-
-	/** 
-	 * @return transformations
-	 */
-	inline Transformations& getTransformations() {
-		return transformations;
-	}
-
-	/** 
-	 * @return entity
-	 */
-	inline LevelEditorEntity* getEntity() {
-		return entity;
-	}
-
-	/** 
-	 * Set up entity
-	 * @param entity entity
-	 */
-	inline void setEntity(LevelEditorEntity* entity) {
-		this->entity = entity;
-	}
-
-	/** 
-	 * @return merged properties from entity and object
-	 */
-	ModelProperties* getTotalProperties();
 
 public:
 	/**
@@ -99,5 +41,62 @@ public:
 	 * Destructor
 	 */
 	~LevelEditorObject();
+
+	/**
+	 * @return id
+	 */
+	inline const string& getId() {
+		return id;
+	}
+
+	/**
+	 * Set id
+	 * @param id id
+	 */
+	inline void setId(const string& id) {
+		this->id = id;
+	}
+
+	/**
+	 * @return description
+	 */
+	inline const string& getDescription() {
+		return description;
+	}
+
+	/**
+	 * Set description
+	 * @param description description
+	 */
+	inline void setDescription(const string& description) {
+		this->description = description;
+	}
+
+	/**
+	 * @return transformations
+	 */
+	inline Transformations& getTransformations() {
+		return transformations;
+	}
+
+	/**
+	 * @return entity
+	 */
+	inline LevelEditorEntity* getEntity() {
+		return entity;
+	}
+
+	/**
+	 * Set up entity
+	 * @param entity entity
+	 */
+	inline void setEntity(LevelEditorEntity* entity) {
+		this->entity = entity;
+	}
+
+	/**
+	 * @return merged properties from entity and object
+	 */
+	ModelProperties* getTotalProperties();
 
 };

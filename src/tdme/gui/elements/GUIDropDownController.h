@@ -22,7 +22,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * GUI drop down controller
  * @author Andreas Drewke
  * @version $Id$
@@ -40,64 +40,68 @@ private:
 	static string CONDITION_CLOSED;
 	vector<GUINode*> childControllerNodes;
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
-	bool isOpen_;
+	bool open;
 	bool disabled;
 	GUIParentNode* dropDownNode { nullptr };
 	GUIElementNode* arrowNode { nullptr };
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
-
-public:
-	bool isDisabled() override;
-	void setDisabled(bool disabled) override;
-	void initialize() override;
-	void dispose() override;
-	void postLayout() override;
+	string search;
 
 private:
-
-	/** 
-	 * @return drop down open state
-	 */
-	bool isOpen();
-
-	/** 
-	 * Unselect all nodes
-	 */
-	void unselect();
-
-	/** 
-	 * Toggle open state
-	 */
-	void toggleOpenState();
-
-	/** 
-	 * Determine drop down option controllers
-	 */
-	void determineDropDownOptionControllers();
-
-	/** 
-	 * Get selected option idx
-	 */
-	int32_t getSelectedOptionIdx();
-
-	/** 
-	 * Select next node
-	 */
-	void selectNext();
-
-	/** 
-	 * Select previous
-	 */
-	void selectPrevious();
-
 	/**
 	 * Private constructor
 	 * @param node node
 	 */
 	GUIDropDownController(GUINode* node);
 
+	/**
+	 * @return drop down open state
+	 */
+	bool isOpen();
+
+	/**
+	 * Unselect all nodes
+	 */
+	void unselect();
+
+	/**
+	 * Toggle open state
+	 */
+	void toggleOpenState();
+
+	/**
+	 * Determine drop down option controllers
+	 */
+	void determineDropDownOptionControllers();
+
+	/**
+	 * Get selected option idx
+	 */
+	int32_t getSelectedOptionIdx();
+
+	/**
+	 * Select next node
+	 */
+	void selectNext();
+
+	/**
+	 * Select previous
+	 */
+	void selectPrevious();
+
+	/**
+	 * Do search
+	 */
+	void doSearch();
+
 public:
+	// overridden methods
+	bool isDisabled() override;
+	void setDisabled(bool disabled) override;
+	void initialize() override;
+	void dispose() override;
+	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
 	void tick() override;
@@ -107,6 +111,4 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 
-private:
-	void init();
 };

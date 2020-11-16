@@ -15,7 +15,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 
-Skinning::Skinning() 
+Skinning::Skinning()
 {
 }
 
@@ -53,7 +53,7 @@ void Skinning::setupJointsByName()
 {
 	for (auto i = 0; i < joints.size(); i++) {
 		auto& joint = joints[i];
-		jointsByName[joint.getGroupId()] = &joint;
+		jointsByName[joint.getNodeId()] = &joint;
 	}
 }
 

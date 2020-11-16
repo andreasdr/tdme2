@@ -15,7 +15,7 @@ public:
 	 * Default constructor
 	 */
 	FlowMapCell(): walkable(false) {
-	} 
+	}
 
 	/**
 	 * Private constructor

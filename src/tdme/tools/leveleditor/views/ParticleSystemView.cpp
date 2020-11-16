@@ -29,7 +29,7 @@ using tdme::tools::shared::model::LevelEditorEntityLibrary;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::StringTools;;
 
-ParticleSystemView::ParticleSystemView(PopUps* popUps) 
+ParticleSystemView::ParticleSystemView(PopUps* popUps)
 	: SharedParticleSystemView(popUps)
 {
 }

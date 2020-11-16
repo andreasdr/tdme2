@@ -14,7 +14,7 @@ using std::string;
 using tdme::audio::AudioEntity;
 using tdme::utilities::ByteBuffer;
 
-/** 
+/**
  * Audio stream
  * @author Andreas Drewke
  * @version $Id$
@@ -34,6 +34,29 @@ private:
 	int32_t format;
 	bool playing { false };
 
+protected:
+	/**
+	 * Protected constructor
+	 * @param id id
+	 */
+	AudioStream(const string& id);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~AudioStream();
+
+	// overridden methods
+	virtual bool initialize() override;
+	virtual void update() override;
+	virtual void dispose() override;
+
+	/**
+	 * Fill buffer
+	 * @param data data
+	 */
+	virtual void fillBuffer(ByteBuffer* data) = 0;
+
 public:
 	/**
 	 * Set audio initialization parameters
@@ -43,7 +66,7 @@ public:
 	 */
 	virtual void setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize = 32768);
 
-	// overriden methods
+	// overridden methods
 	virtual bool isPlaying() override;
 	virtual void rewind() override;
 	virtual void play() override;
@@ -56,31 +79,9 @@ private:
 	 */
 	bool isPlayingBuffers();
 
-	/** 
+	/**
 	 * Updates properties to Open AL
 	 */
 	void updateProperties();
 
-protected:
-	/**
-	 * Protected constructor
-	 * @param id id
-	 */
-	AudioStream(const string& id);
-
-	// overriden methods
-	virtual bool initialize() override;
-	virtual void update() override;
-	virtual void dispose() override;
-
-	/**
-	 * Fill buffer
-	 * @param data data
-	 */
-	virtual void fillBuffer(ByteBuffer* data) = 0;
-
-	/**
-	 * Destructor
-	 */
-	virtual ~AudioStream();
 };

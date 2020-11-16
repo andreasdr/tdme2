@@ -23,7 +23,7 @@ using tdme::os::network::UDPSocket;
 
 // determine which SO_REUSE option to use
 #if defined(_WIN32)
-	#define SO_REUSEOPTION	SO_REUSEADDR	
+	#define SO_REUSEOPTION	SO_REUSEADDR
 #elif defined(__linux__)
 	// on linux < 3.9 we need to to use "addr". it behaves like "port" on BSD for UDP sockets
 	#define SO_REUSEOPTION	SO_REUSEADDR

@@ -10,8 +10,8 @@
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 
-/** 
- * Bounding box particle emitter 
+/**
+ * Bounding box particle emitter
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -34,15 +34,19 @@ private:
 	Vector3 obbAxis2;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter();
 
-	/** 
+	/**
 	 * @return count
 	 */
 	inline int32_t getCount() {
 		return count;
 	}
 
-	/** 
+	/**
 	 * Set count
 	 * @param count count
 	 */
@@ -50,14 +54,14 @@ public:
 		this->count = count;
 	}
 
-	/** 
+	/**
 	 * @return life time
 	 */
 	inline int64_t getLifeTime() {
 		return lifeTime;
 	}
 
-	/** 
+	/**
 	 * Set life time
 	 * @param lifeTime life time
 	 */
@@ -65,14 +69,14 @@ public:
 		this->lifeTime = lifeTime;
 	}
 
-	/** 
+	/**
 	 * @return life time rnd
 	 */
 	inline int64_t getLifeTimeRnd() {
 		return lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
@@ -80,14 +84,14 @@ public:
 		this->lifeTimeRnd = lifeTimeRnd;
 	}
 
-	/** 
+	/**
 	 * @return mass
 	 */
 	inline float getMass() {
 		return mass;
 	}
 
-	/** 
+	/**
 	 * Set mass
 	 * @param mass mass
 	 */
@@ -95,14 +99,14 @@ public:
 		this->mass = mass;
 	}
 
-	/** 
+	/**
 	 * @return mass rnd
 	 */
 	inline float getMassRnd() {
 		return massRnd;
 	}
 
-	/** 
+	/**
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
@@ -110,7 +114,7 @@ public:
 		this->massRnd = massRnd;
 	}
 
-	/** 
+	/**
 	 * @return velocity
 	 */
 	inline const Vector3& getVelocity() {
@@ -125,7 +129,7 @@ public:
 		this->velocity = velocity;
 	}
 
-	/** 
+	/**
 	 * @return velocity rnd
 	 */
 	inline const Vector3& getVelocityRnd() {
@@ -140,14 +144,14 @@ public:
 		this->velocityRnd = velocityRnd;
 	}
 
-	/** 
+	/**
 	 * @return color start
 	 */
 	inline const Color4& getColorStart() {
 		return colorStart;
 	}
 
-	/** 
+	/**
 	 * Set start color
 	 * @param colorStart start color
 	 */
@@ -170,14 +174,14 @@ public:
 		this->colorEnd = colorEnd;
 	}
 
-	/** 
+	/**
 	 * @return obb center
 	 */
 	inline const Vector3& getObbCenter() {
 		return obbCenter;
 	}
 
-	/** 
+	/**
 	 * Set obb center
 	 * @param obbCenter obb center
 	 */
@@ -200,14 +204,14 @@ public:
 		this->obbHalfextension = obbHalfExtension;
 	}
 
-	/** 
+	/**
 	 * @return obb axis 0
 	 */
 	inline const Vector3& getObbAxis0() {
 		return obbAxis0;
 	}
 
-	/** 
+	/**
 	 * Set obb axis 0
 	 * @param obbAxis0 obb axis 0
 	 */
@@ -222,7 +226,7 @@ public:
 		return obbAxis1;
 	}
 
-	/** 
+	/**
 	 * Set obb axis 1
 	 * @param obbAxis1 obb axis 1
 	 */
@@ -245,8 +249,4 @@ public:
 		this->obbAxis2 = obbAxis2;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter();
 };

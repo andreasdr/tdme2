@@ -12,7 +12,7 @@ using std::find;
 namespace tdme {
 namespace utilities {
 
-/** 
+/**
  * Object deleter
  * @author Andreas Drewke
  * @version $Id$
@@ -24,17 +24,6 @@ private:
 	vector<T*> objects;
 
 public:
-
-	/** 
-	 * Adds vector to iterator
-	 * @param vector vector
-	 */
-	T* add(T* object) {
-		if (find(objects.begin(), objects.end(), object) != objects.end()) return object;
-		objects.push_back(object);
-		return object;
-	}
-
 	/**
 	 * Public constructor
 	 */
@@ -47,6 +36,16 @@ public:
 	~ObjectDeleter() {
 		for (auto object: objects) delete object;
 		objects.clear();
+	}
+
+	/**
+	 * Adds vector to iterator
+	 * @param vector vector
+	 */
+	T* add(T* object) {
+		if (find(objects.begin(), objects.end(), object) != objects.end()) return object;
+		objects.push_back(object);
+		return object;
 	}
 
 };

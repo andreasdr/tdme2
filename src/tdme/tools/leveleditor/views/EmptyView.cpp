@@ -47,7 +47,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-EmptyView::EmptyView(PopUps* popUps) 
+EmptyView::EmptyView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	emptyScreenController = nullptr;

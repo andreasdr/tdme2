@@ -7,7 +7,7 @@
 #if defined(_WIN32)
 	#include <winsock2.h>
 	#include <ws2tcpip.h>
-	#define SHUT_RDWR SD_BOTH	
+	#define SHUT_RDWR SD_BOTH
 #else
 	#include <errno.h>
 	#include <fcntl.h>

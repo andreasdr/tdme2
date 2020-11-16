@@ -8,7 +8,7 @@
 
 using std::array;
 
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 
 /**
  * Represents a model face, consisting of vertex, normal, tangent and bitangent vectors, indices and texture coordinate
@@ -20,7 +20,7 @@ class tdme::engine::model::Face final
 	friend class tdme::utilities::ModelTools;
 
 private:
-	Group* group { nullptr };
+	Node* node { nullptr };
 	array<int32_t, 3> vertexIndices {{ -1, -1, -1 }};
 	array<int32_t, 3> normalIndices {{ -1, -1, -1 }};
 	array<int32_t, 3> textureCoordinateIndices {{ -1, -1, -1 }};
@@ -42,7 +42,7 @@ public:
 	/**
 	 * Public constructor, requires vertex, normals indices
 	 * we only support triangulated faces
-	 * @param group model
+	 * @param node model
 	 * @param vi0 vertex index 0
 	 * @param vi1 vertex index 1
 	 * @param vi2 vertex index 2
@@ -50,12 +50,12 @@ public:
 	 * @param ni1 normal index 1
 	 * @param ni2 normal index 2
 	 */
-	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2);
+	Face(Node* node, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2);
 
 	/**
 	 * Public constructor, requires vertex, normals indices, texture coordinate indices
 	 * we only support triangulated faces
-	 * @param group model
+	 * @param node model
 	 * @param vi0 vertex index 0
 	 * @param vi1 vertex index 1
 	 * @param vi2 vertex index 2
@@ -66,13 +66,13 @@ public:
 	 * @param vt1 texture coordinate index 1
 	 * @param vt2 texture coordinate index 2
 	 */
-	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
+	Face(Node* node, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
 
 	/**
-	 * @return group
+	 * @return node
 	 */
-	inline Group* getGroup() const {
-		return group;
+	inline Node* getNode() const {
+		return node;
 	}
 
 	/**

@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/model/Face.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Vector3.h>
@@ -14,7 +14,7 @@ using std::string;
 
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Face;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
@@ -22,16 +22,16 @@ using tdme::math::Vector3;
 FacesEntity::FacesEntity()
 {
 	this->id = "";
-	this->group = nullptr;
+	this->node = nullptr;
 	this->material = nullptr;
 	this->textureCoordinatesAvailable = false;
 	this->tangentBitangentAvailable = false;
 }
 
-FacesEntity::FacesEntity(Group* group, const string& id)
+FacesEntity::FacesEntity(Node* node, const string& id)
 {
 	this->id = id;
-	this->group = group;
+	this->node = node;
 	this->material = nullptr;
 	this->textureCoordinatesAvailable = false;
 	this->tangentBitangentAvailable = false;

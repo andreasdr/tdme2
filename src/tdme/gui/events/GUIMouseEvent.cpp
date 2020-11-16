@@ -1,14 +1,11 @@
 	#include <tdme/gui/events/GUIMouseEvent.h>
 
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
-
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 
-GUIMouseEvent::GUIMouseEvent() 
+GUIMouseEvent::GUIMouseEvent()
 {
 	this->time = -1;
-	this->type = GUIMouseEvent_Type::MOUSEEVENT_NONE;
+	this->type = GUIMouseEventType::MOUSEEVENT_NONE;
 	this->x = -1;
 	this->y = -1;
 	this->xUnscaled = -1;

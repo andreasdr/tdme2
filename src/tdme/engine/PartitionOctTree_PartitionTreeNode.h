@@ -1,8 +1,8 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,11 +15,11 @@ using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
 
 using std::list;
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
-/** 
+/**
  * Partition oct tree node
  * @author Andreas Drewke
  * @version $Id$
@@ -44,7 +44,7 @@ struct tdme::engine::PartitionOctTree_PartitionTreeNode
 	list<PartitionOctTree_PartitionTreeNode> subNodes;
 
 	// sub nodes of oct tree nodes by partition coordinate, only used in root node
-	map<string, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate;
+	unordered_map<string, PartitionOctTree_PartitionTreeNode*> subNodesByCoordinate;
 
 	// or finally our partition entities
 	vector<Entity*> partitionEntities;

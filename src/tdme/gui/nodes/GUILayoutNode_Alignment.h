@@ -21,6 +21,18 @@ public:
 	static GUILayoutNode_Alignment* VERTICAL;
 	static GUILayoutNode_Alignment* HORIZONTAL;
 	static GUILayoutNode_Alignment* NONE;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	GUILayoutNode_Alignment(const string& name, int ordinal);
-	static GUILayoutNode_Alignment* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static GUILayoutNode_Alignment* valueOf(const string& name);
 };

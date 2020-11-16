@@ -22,15 +22,15 @@ using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 
-/** 
+/**
  * Trigger view
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::views::TriggerView
-	: public virtual View
-	, public virtual GUIInputEventHandler
-	, protected virtual CameraRotationInputHandlerEventHandler
+class tdme::tools::leveleditor::views::TriggerView final
+	: public View
+	, public GUIInputEventHandler
+	, protected CameraRotationInputHandlerEventHandler
 {
 private:
 	Engine* engine { nullptr };
@@ -42,50 +42,6 @@ private:
 	Vector3 objectScale;
 
 public:
-
-	/** 
-	 * @return pop up views
-	 */
-	virtual PopUps* getPopUpsViews();
-
-	/** 
-	 * @return entity
-	 */
-	virtual LevelEditorEntity* getEntity();
-
-	/** 
-	 * @return selected entity
-	 */
-	virtual void setEntity(LevelEditorEntity* entity);
-
-	void handleInputEvents() override;
-
-	/** 
-	 * Renders the scene 
-	 */
-	void display() override;
-
-	/** 
-	 * Init GUI elements
-	 */
-	virtual void updateGUIElements();
-
-	// overridden methods
-	void initialize() override;
-	void activate() override;
-	void deactivate() override;
-	void dispose() override;
-
-	/**
-	 * On rotation event to be overloaded
-	 */
-	virtual void onRotation() override;
-
-	/**
-	 * On scale event to be overloaded
-	 */
-	virtual void onScale() override;
-
 	/**
 	 * Public constructor
 	 * @param popUps pop ups view
@@ -96,4 +52,47 @@ public:
 	 * Destructor
 	 */
 	~TriggerView();
+
+	/**
+	 * @return pop up views
+	 */
+	PopUps* getPopUpsViews();
+
+	/**
+	 * @return entity
+	 */
+	LevelEditorEntity* getEntity();
+
+	/**
+	 * @return selected entity
+	 */
+	void setEntity(LevelEditorEntity* entity);
+
+	/**
+	 * Renders the scene
+	 */
+	void display() override;
+
+	/**
+	 * Init GUI elements
+	 */
+	void updateGUIElements();
+
+	// overridden methods
+	void initialize() override;
+	void activate() override;
+	void deactivate() override;
+	void dispose() override;
+	void handleInputEvents() override;
+
+	/**
+	 * On rotation event to be overloaded
+	 */
+	void onRotation() override;
+
+	/**
+	 * On scale event to be overloaded
+	 */
+	void onScale() override;
+
 };

@@ -23,7 +23,7 @@ using tdme::os::filesystem::FileSystemException;
 
 using rapidjson::Value;
 
-/** 
+/**
  * TDME Model meta data file import
  * @author Andreas Drewke
  * @version $Id$
@@ -31,7 +31,7 @@ using rapidjson::Value;
 class tdme::tools::shared::files::ModelMetaDataFileImport final
 {
 public:
-	/** 
+	/**
 	 * Imports a model meta data file from file
 	 * @param pathName path name
 	 * @param fileName file name
@@ -54,7 +54,7 @@ public:
 	 */
 	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName);
 
-	/** 
+	/**
 	 * Imports a model meta data file from JSON object
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name or null
@@ -75,7 +75,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Parse bounding volume
 	 * @param idx idx
 	 * @param levelEditorEntity level editor entity

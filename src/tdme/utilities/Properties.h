@@ -26,6 +26,11 @@ private:
 
 public:
 	/**
+	 * Public constructor
+	 */
+	Properties();
+
+	/**
 	 * Get property value by key
 	 * @param key key
 	 * @param defaultValue default value
@@ -59,8 +64,4 @@ public:
 	 */
 	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr);
 
-	/**
-	 * Public constructor
-	 */
-	Properties();
 };

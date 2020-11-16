@@ -34,7 +34,7 @@ void testthread_test() {
 	}
 }
 
-void pc_test() { 
+void pc_test() {
 	// producer, consumer test
 	Queue<int> queue(128);
 	ProducerThread p(0, &queue);

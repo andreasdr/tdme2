@@ -13,7 +13,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Oriented bounding box physics primitive
  * @author Andreas Drewke
  * @version $Id$
@@ -43,35 +43,6 @@ public:
 
 public:
 	/**
-	 * @return 3 axes
-	 */
-	const array<Vector3, 3>& getAxes() const;
-
-	/** 
-	 * @return half extension
-	 */
-	const Vector3& getHalfExtension() const;
-
-	/** 
-	 * Set up oriented bounding box from oriented bounding box
-	 * @param scale bb
-	 */
-
-	// overrides
-	void setScale(const Vector3& scale) override;
-	BoundingVolume* clone() const override;
-
-	/** 
-	 * @return oriented bounding box vertices
-	 */
-	const array<Vector3, 8> getVertices() const;
-
-	/**
-	 * @return faces vertices indexes
-	 */
-	static const array<array<int32_t,3>,12>& getFacesVerticesIndexes();
-
-	/**
 	 * Public constructor
 	 * @param center center
 	 * @param axis0 axis0
@@ -93,6 +64,35 @@ public:
 	 * Public constructor
 	 */
 	OrientedBoundingBox();
+
+	/**
+	 * @return 3 axes
+	 */
+	const array<Vector3, 3>& getAxes() const;
+
+	/**
+	 * @return half extension
+	 */
+	const Vector3& getHalfExtension() const;
+
+	/**
+	 * Set up oriented bounding box from oriented bounding box
+	 * @param scale bb
+	 */
+
+	// overrides
+	void setScale(const Vector3& scale) override;
+	BoundingVolume* clone() const override;
+
+	/**
+	 * @return oriented bounding box vertices
+	 */
+	const array<Vector3, 8> getVertices() const;
+
+	/**
+	 * @return faces vertices indexes
+	 */
+	static const array<array<int32_t,3>,12>& getFacesVerticesIndexes();
 
 private:
 	array<Vector3, 3> axes;

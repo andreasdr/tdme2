@@ -21,18 +21,18 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utilities::MutableString;
 
-/** 
+/**
  * File dialog screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::FileDialogScreenController
+class tdme::tools::shared::controller::FileDialogScreenController final
 	: public ScreenController
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
@@ -40,37 +40,37 @@ class tdme::tools::shared::controller::FileDialogScreenController
 {
 
 private:
-	GUIScreenNode* screenNode {  };
-	string cwd {  };
-	vector<string> extensions {  };
-	string captionText {  };
-	GUITextNode* caption {  };
-	GUIElementNode* fileName {  };
-	GUIElementNode* files {  };
-	Action* applyAction {  };
+	GUIScreenNode* screenNode { nullptr };
+	string cwd;
+	vector<string> extensions;
+	string captionText;
+	GUITextNode* caption { nullptr };
+	GUIElementNode* fileName { nullptr };
+	GUIElementNode* files { nullptr };
+	Action* applyAction { nullptr };
 	vector<string> fileList;
-	bool enableFilter { false };
-	bool filtered {  };
+	bool enableFilter;
+	bool filtered;
 
 public:
 	GUIScreenNode* getScreenNode() override;
 
-	/** 
+	/**
 	 * @return path name
 	 */
-	virtual const string& getPathName();
+	const string& getPathName();
 
-	/** 
+	/**
 	 * @return file name
 	 */
-	virtual const string getFileName();
+	const string getFileName();
 
 	void initialize() override;
 	void dispose() override;
 
 private:
 
-	/** 
+	/**
 	 * Set up file dialog list box
 	 * @return success
 	 */
@@ -85,7 +85,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Shows the file dialog pop up
 	 * @param cwd current working directory
 	 * @param captionText caption text
@@ -93,18 +93,18 @@ public:
 	 * @param fileName file name
 	 * @param enableFilter enable filter
 	 * @param applyAction apply action
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	virtual void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
+	void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
 
-	/** 
+	/**
 	 * Abort the file dialog pop up
 	 */
-	virtual void close();
+	void close();
 
-	// overriden methods
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 

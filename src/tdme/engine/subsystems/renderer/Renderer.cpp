@@ -4,8 +4,6 @@
 
 #include <tdme/math/Math.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/ByteBuffer.h>
 
@@ -14,8 +12,6 @@ using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
@@ -128,7 +124,6 @@ void Renderer::setShaderPrefix(const string& shaderPrefix) {
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
-	// TODO: bilinear filtering
 	auto generatedTextureWidth = texture->getTextureWidth() / 2;
 	auto generatedTextureHeight = texture->getTextureHeight() / 2;
 	auto generatedTextureByteBuffer = ByteBuffer::allocate(generatedTextureWidth * generatedTextureHeight * 4);

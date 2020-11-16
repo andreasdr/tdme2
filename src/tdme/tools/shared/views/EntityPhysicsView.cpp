@@ -18,9 +18,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
-#include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -54,9 +52,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
-using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -120,7 +116,7 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 		aabb = BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 	}
 	auto obb = OrientedBoundingBox(&aabb);
-	auto boundingVolume = entity->getBoundingVolumeAt(idx);
+	auto boundingVolume = entity->getBoundingVolume(idx);
 	if (type == 0) {
 		entityPhysicsSubScreenController->selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 	} else
@@ -174,7 +170,7 @@ void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 		resetBoundingVolume(entity, i, 0);
 	}
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto bv = entity->getBoundingVolumeAt(i);
+		auto bv = entity->getBoundingVolume(i);
 		if (bv == nullptr) {
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 			continue;
@@ -248,7 +244,7 @@ void EntityPhysicsView::clearModelBoundingVolume(int32_t idx) {
 
 void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	if (entityBoundingVolume == nullptr) return;
 
 	{
@@ -269,7 +265,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID;
 		auto boundingVolumesEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
 		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bv = entity->getBoundingVolumeAt(idx);
+			auto bv = entity->getBoundingVolume(idx);
 			if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
 				auto obb = dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume());
 				Transformations transformations;
@@ -316,7 +312,7 @@ void EntityPhysicsView::applyBoundingVolumeNone(LevelEditorEntity* entity, int32
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupNone();
 	setupModelBoundingVolume(entity, idx);
 }
@@ -325,7 +321,7 @@ void EntityPhysicsView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupSphere(center, radius);
 	setupModelBoundingVolume(entity, idx);
 }
@@ -334,7 +330,7 @@ void EntityPhysicsView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, in
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupCapsule(a, b, radius);
 	setupModelBoundingVolume(entity, idx);
 }
@@ -343,7 +339,7 @@ void EntityPhysicsView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int32
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupAabb(min, max);
 	setupModelBoundingVolume(entity, idx);
 }
@@ -352,7 +348,7 @@ void EntityPhysicsView::applyBoundingVolumeObb(LevelEditorEntity* entity, int32_
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupObb(center, axis0, axis1, axis2, halfExtension);
 	setupModelBoundingVolume(entity, idx);
 }
@@ -361,7 +357,7 @@ void EntityPhysicsView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity,
 {
 	if (entity == nullptr) return;
 	clearModelBoundingVolume(idx);
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto entityBoundingVolume = entity->getBoundingVolume(idx);
 	entityBoundingVolume->setupConvexMesh(
 		FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
@@ -420,7 +416,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 	displayBoundingVolumeIdxLast = displayBoundingVolumeIdx;
 
 	// we only support sphere, capsule and obb
-	auto bv = entity->getBoundingVolumeAt(displayBoundingVolumeIdx);
+	auto bv = entity->getBoundingVolume(displayBoundingVolumeIdx);
 	if (bv == nullptr) return;
 
 	if (dynamic_cast<Sphere*>(bv->getBoundingVolume()) == nullptr &&
@@ -432,7 +428,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
@@ -444,7 +440,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
 				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(entity, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
@@ -454,16 +450,16 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 				totalDeltaScale.set(0.0, 0.0f, 0.0f);
 				event.setProcessed(true);
 			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
-				Group* selectedEntityGroup = nullptr;
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup);
+				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityNode);
 				if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
 					removeGizmo();
 					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
 				} else
-				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
 					mouseDownLastX = event.getXUnscaled();
 					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);
@@ -474,7 +470,7 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 					event.setProcessed(true);
 				}
 			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
@@ -538,7 +534,7 @@ void EntityPhysicsView::applyBoundingVolumeTransformations(LevelEditorEntity* en
 	);
 	transformations.setScale(transformations.getScale().clone().scale(objectScaleInverted));
 	transformations.update();
-	auto bv = entity->getBoundingVolumeAt(i);
+	auto bv = entity->getBoundingVolume(i);
 	if (dynamic_cast<Sphere*>(bv->getBoundingVolume()) != nullptr) {
 		auto sphere = dynamic_cast<Sphere*>(bv->getBoundingVolume());
 		auto center = sphere->getCenter().clone().add(transformations.getTranslation().clone().scale(objectScaleInverted));

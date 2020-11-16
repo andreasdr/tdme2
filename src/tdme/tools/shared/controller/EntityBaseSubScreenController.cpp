@@ -6,7 +6,7 @@
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -29,7 +29,7 @@ using std::string;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
-using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -47,7 +47,7 @@ using tdme::utilities::Exception;
 
 MutableString EntityBaseSubScreenController::TEXT_EMPTY = MutableString("");
 
-EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction) 
+EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction)
 {
 	this->view = new EntityBaseView(this);
 	this->popUps = popUps;
@@ -260,28 +260,24 @@ void EntityBaseSubScreenController::onValueChanged(GUIElementNode* node, LevelEd
 	}
 }
 
-void EntityBaseSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntityBaseSubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, LevelEditorEntity* entity)
 {
+	if (type == GUIActionListenerType::PERFORMED)
 	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED)
-		{
-			if (node->getId().compare("button_entity_apply") == 0) {
-				onEntityDataApply(entity);
-			} else
-			if (node->getId().compare("button_entity_properties_presetapply") == 0) {
-				onEntityPropertyPresetApply(entity);
-			} else
-			if (node->getId().compare("button_entity_properties_add") == 0) {
-				onEntityPropertyAdd(entity);
-			} else
-			if (node->getId().compare("button_entity_properties_remove") == 0) {
-				onEntityPropertyRemove(entity);
-			} else
-			if (node->getId().compare("button_entity_properties_save") == 0) {
-				onEntityPropertySave(entity);
-			}
+		if (node->getId().compare("button_entity_apply") == 0) {
+			onEntityDataApply(entity);
+		} else
+		if (node->getId().compare("button_entity_properties_presetapply") == 0) {
+			onEntityPropertyPresetApply(entity);
+		} else
+		if (node->getId().compare("button_entity_properties_add") == 0) {
+			onEntityPropertyAdd(entity);
+		} else
+		if (node->getId().compare("button_entity_properties_remove") == 0) {
+			onEntityPropertyRemove(entity);
+		} else
+		if (node->getId().compare("button_entity_properties_save") == 0) {
+			onEntityPropertySave(entity);
 		}
 	}
-
 }

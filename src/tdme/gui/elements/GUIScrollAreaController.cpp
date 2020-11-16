@@ -8,12 +8,13 @@
 
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
-GUIScrollAreaController::GUIScrollAreaController(GUINode* node) 
+GUIScrollAreaController::GUIScrollAreaController(GUINode* node)
 	: GUINodeController(node), actionListener(nullptr)
 {
 }
@@ -34,7 +35,7 @@ void GUIScrollAreaController::initialize()
 	{
 
 	public:
-		void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override {
+		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override {
 			if (node == upArrowNode) {
 				float elementHeight = contentNode->getComputedConstraints().height;
 				float contentHeight = contentNode->getContentHeight();

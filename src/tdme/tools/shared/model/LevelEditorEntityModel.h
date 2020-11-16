@@ -13,7 +13,7 @@ using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level editor model properties
  * @author Andreas Drewke
  * @version $Id$
@@ -25,6 +25,17 @@ private:
 	bool terrainMesh { false };
 
 public:
+	/**
+	 * Public constructor
+	 * @param levelEditorEntity level editor entity
+	 */
+	inline LevelEditorEntityModel(LevelEditorEntity* entity): entity(entity) {
+	}
+
+	/**
+	 * Destructor
+	 */
+	~LevelEditorEntityModel();
 
 	/**
 	 * @return entity
@@ -48,17 +59,5 @@ public:
 	inline void setTerrainMesh(bool terrainMesh) {
 		this->terrainMesh = terrainMesh;
 	}
-
-	/**
-	 * Public constructor
-	 * @param levelEditorEntity level editor entity
-	 */
-	inline LevelEditorEntityModel(LevelEditorEntity* entity): entity(entity) {
-	}
-
-	/**
-	 * Destructor
-	 */
-	~LevelEditorEntityModel();
 
 };

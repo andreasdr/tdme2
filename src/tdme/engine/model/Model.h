@@ -16,7 +16,7 @@ using std::string;
 
 using std::string;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
@@ -30,7 +30,7 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::model::Model final
 {
-	friend class Group;
+	friend class Node;
 
 public:
 	enum AuthoringTool {AUTHORINGTOOL_UNKNOWN, AUTHORINGTOOL_BLENDER};
@@ -46,8 +46,8 @@ private:
 	RotationOrder* rotationOrder;
 	ShaderModel* shaderModel;
 	map<string, Material*> materials;
-	map<string, Group*> groups;
-	map<string, Group*> subGroups;
+	map<string, Node*> nodes;
+	map<string, Node*> subNodes;
 	bool skinning;
 	float fps;
 	map<string, AnimationSetup*> animationSetups;
@@ -55,10 +55,10 @@ private:
 	BoundingBox* boundingBox;
 
 	/**
-	 * Delete sub groups
-	 * @param subGroups sub groups
+	 * Delete sub nodes
+	 * @param subNodes sub nodes
 	 */
-	void deleteSubGroups(const map<string, Group*>& subGroups);
+	void deleteSubNodes(const map<string, Node*>& subNodes);
 
 	/**
 	 * Set up if model has skinning
@@ -69,15 +69,15 @@ private:
 	}
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param groups groups
+	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * @param nodes nodes
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param frame frame
-	 * @param groupId group id
+	 * @param nodeId node id
 	 * @param transformationsMatrix transformations matrix
-	 * @return target group transformations
+	 * @return target node transformations
 	 */
-	bool computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
+	bool computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix);
 
 public:
 	/**
@@ -163,34 +163,34 @@ public:
 	}
 
 	/**
-	 * Returns all object's groups
-	 * @return all groups
+	 * Returns all object's nodes
+	 * @return all nodes
 	 */
-	inline map<string, Group*>& getGroups() {
-		return groups;
+	inline map<string, Node*>& getNodes() {
+		return nodes;
 	}
 
 	/**
-	 * Returns a group by given name or null
+	 * Returns a node by given name or null
 	 * @param id id
 	 * @return
 	 */
-	Group* getGroupById(const string& id);
+	Node* getNodeById(const string& id);
 
 	/**
-	 * Returns object's sub groups
-	 * @return sub groups
+	 * Returns object's sub nodes
+	 * @return sub nodes
 	 */
-	inline map<string, Group*>& getSubGroups() {
-		return subGroups;
+	inline map<string, Node*>& getSubNodes() {
+		return subNodes;
 	}
 
 	/**
-	 * Returns a sub group by given name or null
+	 * Returns a sub node by given name or null
 	 * @param id id
 	 * @return
 	 */
-	Group* getSubGroupById(const string& id);
+	Node* getSubNodeById(const string& id);
 
 	/**
 	 * @return has skinning
@@ -228,14 +228,14 @@ public:
 	/**
 	 * Adds an overlay animation setup
 	 * @param id id
-	 * @param overlayFromGroupId overlay from group id
+	 * @param overlayFromNodeId overlay from node id
 	 * @param startFrame start frame
 	 * @param endFrame end frame
 	 * @param loop loop
 	 * @param speed speed whereas 1.0 is default speed
 	 * @return animation setup
 	 */
-	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
+	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromNodeId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
 	/**
 	 * @return animation setup for given id or null
@@ -280,24 +280,24 @@ public:
 	BoundingBox* getBoundingBox();
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param groupId group id
+	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * @param nodeId node id
 	 * @param parentTransformationsMatrix parent transformations matrix
-	 * @param transformationsMatrix target group transformations matrix
+	 * @param transformationsMatrix target node transformations matrix
 	 * @param frame frame
 	 */
-	inline bool computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
-		return computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
+	inline bool computeTransformationsMatrix(const string& nodeId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
+		return computeTransformationsMatrix(subNodes, parentTransformationsMatrix, frame, nodeId, transformationsMatrix);
 	}
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param groupId group id
-	 * @param transformationsMatrix target group transformations matrix
+	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * @param nodeId node id
+	 * @param transformationsMatrix target node transformations matrix
 	 * @param frame frame
 	 */
-	inline bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
-		return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
+	inline bool computeTransformationsMatrix(const string& nodeId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
+		return computeTransformationsMatrix(subNodes, importTransformationsMatrix, frame, nodeId, transformationsMatrix);
 	}
 
 };

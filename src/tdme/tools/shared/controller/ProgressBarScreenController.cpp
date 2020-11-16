@@ -6,7 +6,6 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
-#include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -22,7 +21,6 @@ using tdme::engine::Engine;
 using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
-using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;

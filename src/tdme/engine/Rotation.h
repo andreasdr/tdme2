@@ -28,6 +28,17 @@ private:
 	Quaternion quaternion;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	Rotation();
+
+	/**
+	 * Public constructor
+	 * @param axis axis
+	 * @param angle angle
+	 */
+	Rotation(const Vector3& axis, float angle);
 
 	/**
 	 * Interpolate from given rotation to target rotation taking time passed in seconds and rotation degrees per second into account
@@ -92,15 +103,4 @@ public:
 	 */
 	void update();
 
-	/**
-	 * Public constructor
-	 */
-	Rotation();
-
-	/**
-	 * Public constructor
-	 * @param angle angle
-	 * @param axis axis
-	 */
-	Rotation(float angle, const Vector3& axis);
 };

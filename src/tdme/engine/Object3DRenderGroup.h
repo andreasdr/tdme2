@@ -15,7 +15,7 @@
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -34,14 +34,14 @@ using tdme::engine::LODObject3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Object 3D render group for static objects that might be animated by shaders
  * @author Andreas Drewke
  * @version $Id$
@@ -87,14 +87,14 @@ private:
 	}
 
 	/**
-	 * Combine group into given combined model
-	 * @param sourceGroup source group to combine into current model
+	 * Combine node into given combined model
+	 * @param sourceNode source node to combine into current model
 	 * @param origins origins
 	 * @param objectParentTransformationsMatrices object parent transformations matrix
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
+	static void combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model
@@ -119,15 +119,6 @@ private:
 	}
 
 public:
-	// overriden methods
-	void setEngine(Engine* engine) override;
-	void setRenderer(Renderer* renderer) override;
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
-	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
-	void setFrustumCulling(bool frustumCulling) override;
-
 	/**
 	 * Public constructor
 	 * @param id id
@@ -157,8 +148,6 @@ public:
 	 */
 	void updateRenderGroup();
 
-public:
-
 	/**
 	 * @return entity
 	 */
@@ -167,14 +156,27 @@ public:
 	}
 
 	/**
-	 * Adds a instance this render group
+	 * Adds a instance to this render group
 	 * @param model model
 	 * @param transformations transformations
 	 */
 	void addObject(Model* model, const Transformations& transformations);
 
-	// overriden methods
+	// overridden methods
+	void setEngine(Engine* engine) override;
+	void setRenderer(Renderer* renderer) override;
+	void initialize() override;
 	void dispose() override;
+
+	inline bool isEnabled() override {
+		return enabled;
+	}
+
+	void setEnabled(bool enabled) override;
+	bool isFrustumCulling() override;
+	void setFrustumCulling(bool frustumCulling) override;
+	void fromTransformations(const Transformations& transformations) override;
+	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
@@ -202,12 +204,6 @@ public:
 
 	inline const string& getId() override {
 		return id;
-	}
-
-	void initialize() override;
-
-	inline bool isEnabled() override {
-		return enabled;
 	}
 
 	inline bool isPickable() override {

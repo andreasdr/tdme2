@@ -35,7 +35,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-/** 
+/**
  * Fog particle system
  * @author Andreas Drewke
  * @version $Id$
@@ -86,6 +86,24 @@ protected:
 	}
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param emitter emitter
+	 * @param maxPoints max points
+	 * @param pointSize point size
+	 * @param texture texture
+	 * @param textureHorizontalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
+	 */
+	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FogParticleSystemInternal();
+
 	/**
 	 * Initialize
 	 */
@@ -217,7 +235,7 @@ public:
 		return textureVerticalSprites;
 	}
 
-	// overriden methods
+	// overridden methods
 	void update() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;
@@ -233,28 +251,11 @@ public:
 		updateInternal();
 	}
 
-	/** 
+	/**
 	 * @return render points pool
 	 */
 	inline TransparentRenderPointsPool* getRenderPointsPool() {
 		return pointsRenderPool;
 	}
 
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param emitter emitter
-	 * @param maxPoints max points
-	 * @param pointSize point size
-	 * @param texture texture
-	 * @param textureHorizontalSprites texture horizonal sprites
-	 * @param textureVerticalSprites texture vertical sprites
-	 * @param fps frames per seconds
-	 */
-	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
-
-	/**
-	 * Destructor
-	 */
-	virtual ~FogParticleSystemInternal();
 };

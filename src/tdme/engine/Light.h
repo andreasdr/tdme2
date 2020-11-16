@@ -14,7 +14,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-/** 
+/**
  * Light representation
  * @author Andreas Drewke
  * @version $Id$
@@ -36,22 +36,33 @@ private:
 	float quadraticAttenuation;
 	Renderer* renderer { nullptr };
 public:
+	/**
+	 * Public default constructor
+	 */
+	Light();
 
-	/** 
+	/**
+	 * Public default constructor
+	 * @param renderer renderer
+	 * @param id id
+	 */
+	Light(Renderer* renderer, int32_t id);
+
+	/**
 	 * @return light id
 	 */
 	inline int32_t getId() const {
 		return id;
 	}
 
-	/** 
+	/**
 	 * @return enabled
 	 */
 	inline bool isEnabled() const {
 		return enabled;
 	}
 
-	/** 
+	/**
 	 * Set enabled
 	 * @param enabled enabled
 	 */
@@ -59,14 +70,14 @@ public:
 		this->enabled = enabled;
 	}
 
-	/** 
+	/**
 	 * @return ambient light component
 	 */
 	inline const Color4& getAmbient() const {
 		return ambient;
 	}
 
-	/** 
+	/**
 	 * Set ambient light component
 	 * @param ambient ambient light component
 	 */
@@ -81,7 +92,7 @@ public:
 		return diffuse;
 	}
 
-	/** 
+	/**
 	 * Set diffuse light component
 	 * @param diffuse diffuse light
 	 */
@@ -96,7 +107,7 @@ public:
 		return specular;
 	}
 
-	/** 
+	/**
 	 * Set specular light component
 	 * @param specular specular light
 	 */
@@ -119,7 +130,7 @@ public:
 		this->position = position;
 	}
 
-	/** 
+	/**
 	 * @return spot direction
 	 */
 	inline const Vector3& getSpotDirection() const {
@@ -134,14 +145,14 @@ public:
 		this->spotDirection = spotDirection;
 	}
 
-	/** 
+	/**
 	 * @return spot exponent
 	 */
 	inline float getSpotExponent() const {
 		return spotExponent;
 	}
 
-	/** 
+	/**
 	 * Set up spot exponent
 	 * @param spotExponent spot exponent
 	 */
@@ -149,14 +160,14 @@ public:
 		this->spotExponent = spotExponent;
 	}
 
-	/** 
+	/**
 	 * @return spot cutoff
 	 */
 	inline float getSpotCutOff() const {
 		return spotCutOff;
 	}
 
-	/** 
+	/**
 	 * Set spot cut off
 	 * @param spotCutOff spot cut off
 	 */
@@ -164,14 +175,14 @@ public:
 		this->spotCutOff = spotCutOff;
 	}
 
-	/** 
+	/**
 	 * @return constant attenuation
 	 */
 	inline float getConstantAttenuation() const {
 		return constantAttenuation;
 	}
 
-	/** 
+	/**
 	 * Set up constant attenuation
 	 * @param constantAttenuation constant attenuation
 	 */
@@ -179,14 +190,14 @@ public:
 		this->constantAttenuation = constantAttenuation;
 	}
 
-	/** 
+	/**
 	 * @return linear attenuation
 	 */
 	inline float getLinearAttenuation() const {
 		return linearAttenuation;
 	}
 
-	/** 
+	/**
 	 * Set up linear attenuation
 	 * @param linearAttenuation linear attenuation
 	 */
@@ -194,14 +205,14 @@ public:
 		this->linearAttenuation = linearAttenuation;
 	}
 
-	/** 
+	/**
 	 * @return quadratic attenuation
 	 */
 	inline float getQuadraticAttenuation() const {
 		return quadraticAttenuation;
 	}
 
-	/** 
+	/**
 	 * Set up quadratic attenuation
 	 * @param quadraticAttenuation quadraticAttenuation
 	 */
@@ -209,22 +220,10 @@ public:
 		this->quadraticAttenuation = quadraticAttenuation;
 	}
 
-	/** 
+	/**
 	 * Update light
 	 * @param context context
 	 */
 	void update(void* context);
 
-
-	/**
-	 * Public default constructor
-	 */
-	Light();
-
-	/**
-	 * Public default constructor
-	 * @param renderer renderer
-	 * @param id id
-	 */
-	Light(Renderer* renderer, int32_t id);
 };

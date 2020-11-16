@@ -9,7 +9,7 @@ using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntity;
 
-/** 
+/**
  * Level editor entity audio
  * @author Andreas Drewke
  * @version $Id$

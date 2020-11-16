@@ -6,7 +6,7 @@
 
 using tdme::engine::model::AnimationSetup;
 
-/** 
+/**
  * Animation state entity
  * @author Andreas Drewke
  * @version $Id$

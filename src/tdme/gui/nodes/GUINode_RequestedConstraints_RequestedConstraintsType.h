@@ -31,6 +31,19 @@ public:
 	static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
+
+	/**
+	 * Public constructor
+	 * @param name name
+	 * @param ordinal ordinal
+	 */
 	GUINode_RequestedConstraints_RequestedConstraintsType(const string& name, int ordinal);
-	static GUINode_RequestedConstraints_RequestedConstraintsType* valueOf(const string& a0);
+
+	/**
+	 * Returns enum object given by name
+	 * @param name name
+	 * @return enum object
+	 */
+	static GUINode_RequestedConstraints_RequestedConstraintsType* valueOf(const string& name);
+
 };

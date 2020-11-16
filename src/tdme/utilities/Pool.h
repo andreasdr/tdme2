@@ -11,7 +11,7 @@ using std::vector;
 namespace tdme {
 namespace utilities {
 
-/** 
+/**
  * Pool template class
  * @author Andreas Drewke
  * @version $Id$
@@ -31,8 +31,22 @@ protected:
 	virtual T instantiate() = 0;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	Pool() {
+	}
 
-	/** 
+	virtual ~Pool() {
+		for (auto element: usedElements) {
+			delete element;
+		}
+		for (auto element: freeElements) {
+			delete element;
+		}
+	}
+
+	/**
 	 * Allocate a new element from pool
 	 * @return element
 	 */
@@ -48,7 +62,7 @@ public:
 		return element;
 	}
 
-	/** 
+	/**
 	 * Release element in pool for being reused
 	 * @param element element
 	 */
@@ -62,21 +76,21 @@ public:
 		}
 	}
 
-	/** 
+	/**
 	 * @return element capacity
 	 */
 	int32_t capacity() {
 		return usedElements.size() + freeElements.size();
 	}
 
-	/** 
+	/**
 	 * @return elements in use
 	 */
 	int32_t size() {
 		return usedElements.size();
 	}
 
-	/** 
+	/**
 	 * Reset this pool
 	 */
 	void reset() {
@@ -84,21 +98,6 @@ public:
 			freeElements.push_back(usedElements[i]);
 		}
 		usedElements.clear();
-	}
-
-	/**
-	 * Public constructor
-	 */
-	Pool() {
-	}
-
-	virtual ~Pool() {
-		for (auto element: usedElements) {
-			delete element;
-		}
-		for (auto element: freeElements) {
-			delete element;
-		}
 	}
 
 };

@@ -29,7 +29,7 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Batch renderer for transparent triangles
  * @author andreas.drewke
  * @version $Id$
@@ -91,31 +91,6 @@ private:
 	}
 
 public:
-
-	/** 
-	 * @return acquired
-	 */
-	bool isAcquired();
-
-	/** 
-	 * Acquire
-	 */
-	bool acquire();
-
-	/** 
-	 * Release
-	 */
-	void release();
-
-	/** 
-	 * Init
-	 */
-	void initialize();
-
-	/** 
-	 * Dispose
-	 */
-	void dispose();
 	/**
 	 * Public constructor
 	 * @param renderer renderer
@@ -127,4 +102,30 @@ public:
 	 * Destructor
 	 */
 	~BatchRendererTriangles();
+
+	/**
+	 * @return acquired
+	 */
+	bool isAcquired();
+
+	/**
+	 * Acquire
+	 */
+	bool acquire();
+
+	/**
+	 * Release
+	 */
+	void release();
+
+	/**
+	 * Init
+	 */
+	void initialize();
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
+
 };

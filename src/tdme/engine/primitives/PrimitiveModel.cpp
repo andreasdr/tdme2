@@ -7,7 +7,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/utilities/ModelTools.h>
@@ -34,7 +34,7 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Group;
+using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::utilities::ModelTools;
@@ -86,8 +86,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
-	// group
-	auto group = new Group(model, nullptr, "group", "group");
+	// node
+	auto node = new Node(model, nullptr, "node", "node");
 	// triangle vertices indexes
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -106,37 +106,37 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	// faces
 	vector<Face> faces;
 	//	left
-	faces.push_back(Face(group, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
-	faces.push_back(Face(group, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
+	faces.push_back(Face(node, (*fvi)[0][0], (*fvi)[0][1], (*fvi)[0][2], 0, 0, 0));
+	faces.push_back(Face(node, (*fvi)[1][0], (*fvi)[1][1], (*fvi)[1][2], 0, 0, 0));
 	//	right
-	faces.push_back(Face(group, (*fvi)[2][0], (*fvi)[2][1], (*fvi)[2][2], 1, 1, 1));
-	faces.push_back(Face(group, (*fvi)[3][0], (*fvi)[3][1], (*fvi)[3][2], 1, 1, 1));
+	faces.push_back(Face(node, (*fvi)[2][0], (*fvi)[2][1], (*fvi)[2][2], 1, 1, 1));
+	faces.push_back(Face(node, (*fvi)[3][0], (*fvi)[3][1], (*fvi)[3][2], 1, 1, 1));
 	//	top
-	faces.push_back(Face(group, (*fvi)[4][0], (*fvi)[4][1], (*fvi)[4][2], 2, 2, 2));
-	faces.push_back(Face(group, (*fvi)[5][0], (*fvi)[5][1], (*fvi)[5][2], 2, 2, 2));
+	faces.push_back(Face(node, (*fvi)[4][0], (*fvi)[4][1], (*fvi)[4][2], 2, 2, 2));
+	faces.push_back(Face(node, (*fvi)[5][0], (*fvi)[5][1], (*fvi)[5][2], 2, 2, 2));
 	//	bottom
-	faces.push_back(Face(group, (*fvi)[6][0], (*fvi)[6][1], (*fvi)[6][2], 3, 3, 3));
-	faces.push_back(Face(group, (*fvi)[7][0], (*fvi)[7][1], (*fvi)[7][2], 3, 3, 3));
+	faces.push_back(Face(node, (*fvi)[6][0], (*fvi)[6][1], (*fvi)[6][2], 3, 3, 3));
+	faces.push_back(Face(node, (*fvi)[7][0], (*fvi)[7][1], (*fvi)[7][2], 3, 3, 3));
 	//	near
-	faces.push_back(Face(group, (*fvi)[8][0], (*fvi)[8][1], (*fvi)[8][2], 4, 4, 4));
-	faces.push_back(Face(group, (*fvi)[9][0], (*fvi)[9][1], (*fvi)[9][2], 4, 4, 4));
+	faces.push_back(Face(node, (*fvi)[8][0], (*fvi)[8][1], (*fvi)[8][2], 4, 4, 4));
+	faces.push_back(Face(node, (*fvi)[9][0], (*fvi)[9][1], (*fvi)[9][2], 4, 4, 4));
 	//	far
-	faces.push_back(Face(group, (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5));
-	faces.push_back(Face(group, (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5));
+	faces.push_back(Face(node, (*fvi)[10][0], (*fvi)[10][1], (*fvi)[10][2], 5, 5, 5));
+	faces.push_back(Face(node, (*fvi)[11][0], (*fvi)[11][1], (*fvi)[11][2], 5, 5, 5));
 	// faces entity
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	// setup group vertex data
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	// register group
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	// setup node vertex data
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	// register node
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	// prepare for indexed rendering
 	ModelTools::prepareForIndexedRendering(model);
 	//
@@ -169,8 +169,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
-	// group
-	auto group = new Group(model, nullptr, "group", "group");
+	// node
+	auto node = new Node(model, nullptr, "node", "node");
 	// triangle vertices indexes
 	auto fvi = OrientedBoundingBox::getFacesVerticesIndexes();
 	// vertices
@@ -190,37 +190,37 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// faces
 	vector<Face> faces;
 	//	left
-	faces.push_back(Face(group, fvi[0][0], fvi[0][1], fvi[0][2], 0, 0, 0));
-	faces.push_back(Face(group, fvi[1][0], fvi[1][1], fvi[1][2], 0, 0, 0));
+	faces.push_back(Face(node, fvi[0][0], fvi[0][1], fvi[0][2], 0, 0, 0));
+	faces.push_back(Face(node, fvi[1][0], fvi[1][1], fvi[1][2], 0, 0, 0));
 	//	right
-	faces.push_back(Face(group, fvi[2][0], fvi[2][1], fvi[2][2], 1, 1, 1));
-	faces.push_back(Face(group, fvi[3][0], fvi[3][1], fvi[3][2], 1, 1, 1));
+	faces.push_back(Face(node, fvi[2][0], fvi[2][1], fvi[2][2], 1, 1, 1));
+	faces.push_back(Face(node, fvi[3][0], fvi[3][1], fvi[3][2], 1, 1, 1));
 	//	top
-	faces.push_back(Face(group, fvi[4][0], fvi[4][1], fvi[4][2], 2, 2, 2));
-	faces.push_back(Face(group, fvi[5][0], fvi[5][1], fvi[5][2], 2, 2, 2));
+	faces.push_back(Face(node, fvi[4][0], fvi[4][1], fvi[4][2], 2, 2, 2));
+	faces.push_back(Face(node, fvi[5][0], fvi[5][1], fvi[5][2], 2, 2, 2));
 	//	bottom
-	faces.push_back(Face(group, fvi[6][0], fvi[6][1], fvi[6][2], 3, 3, 3));
-	faces.push_back(Face(group, fvi[7][0], fvi[7][1], fvi[7][2], 3, 3, 3));
+	faces.push_back(Face(node, fvi[6][0], fvi[6][1], fvi[6][2], 3, 3, 3));
+	faces.push_back(Face(node, fvi[7][0], fvi[7][1], fvi[7][2], 3, 3, 3));
 	//	near
-	faces.push_back(Face(group, fvi[8][0], fvi[8][1], fvi[8][2], 4, 4, 4));
-	faces.push_back(Face(group, fvi[9][0], fvi[9][1], fvi[9][2], 4, 4, 4));
+	faces.push_back(Face(node, fvi[8][0], fvi[8][1], fvi[8][2], 4, 4, 4));
+	faces.push_back(Face(node, fvi[9][0], fvi[9][1], fvi[9][2], 4, 4, 4));
 	//	far
-	faces.push_back(Face(group, fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5));
-	faces.push_back(Face(group, fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5));
+	faces.push_back(Face(node, fvi[10][0], fvi[10][1], fvi[10][2], 5, 5, 5));
+	faces.push_back(Face(node, fvi[11][0], fvi[11][1], fvi[11][2], 5, 5, 5));
 	// faces entity
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	// setup group vertex data
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	// register group
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	// setup node vertex data
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	// register node
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	// prepare for indexed rendering
 	ModelTools::prepareForIndexedRendering(model);
 	//
@@ -255,8 +255,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
-	// group
-	auto group = new Group(model, nullptr, "group", "group");
+	// node
+	auto node = new Node(model, nullptr, "node", "node");
 	// vertices
 	vector<Vector3> vertices;
 	for (auto ySegment = 0; ySegment < segmentsY + 1; ySegment++)
@@ -293,7 +293,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
@@ -310,23 +310,23 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}
 	}
 	// set up faces entity
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
-	// group faces entities
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	// setup group vertex data
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	// register group
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
+	// node faces entities
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	// setup node vertex data
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	// register node
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	// prepare for indexed rendering
 	ModelTools::computeNormals(model);
 	ModelTools::prepareForIndexedRendering(model);
@@ -387,8 +387,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
-	// group
-	auto group = new Group(model, nullptr, "group", "group");
+	// node
+	auto node = new Node(model, nullptr, "node", "node");
 	// vertices
 	vector<Vector3> vertices;
 	//	bottom half sphere
@@ -449,7 +449,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 			vi0 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 0) % (segmentsX));
 			vi1 = ((y + 0) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
 			vi2 = ((y + 1) % (segmentsY + 1)) * segmentsX + ((x + 1) % (segmentsX));
@@ -465,23 +465,23 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					normals.push_back(normal);
 				}
 			}
-			faces.push_back(Face(group, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
+			faces.push_back(Face(node, vi0, vi1, vi2, ni + 0, ni + 1, ni + 2));
 		}
 	}
-	// group faces entities
-	FacesEntity groupFacesEntity(group, "faces entity");
-	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(faces);
+	// node faces entities
+	FacesEntity nodeFacesEntity(node, "faces entity");
+	nodeFacesEntity.setMaterial(material);
+	nodeFacesEntity.setFaces(faces);
 	// set up faces entity
-	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntities.push_back(groupFacesEntity);
-	// setup group vertex data
-	group->setVertices(vertices);
-	group->setNormals(normals);
-	group->setFacesEntities(groupFacesEntities);
-	// register group
-	model->getGroups()["group"] = group;
-	model->getSubGroups()["group"] = group;
+	vector<FacesEntity> nodeFacesEntities;
+	nodeFacesEntities.push_back(nodeFacesEntity);
+	// setup node vertex data
+	node->setVertices(vertices);
+	node->setNormals(normals);
+	node->setFacesEntities(nodeFacesEntities);
+	// register node
+	model->getNodes()["node"] = node;
+	model->getSubNodes()["node"] = node;
 	// prepare for indexed rendering
 	ModelTools::computeNormals(model);
 	ModelTools::prepareForIndexedRendering(model);
@@ -520,19 +520,19 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
-	setupConvexMeshMaterial(model->getSubGroups(), material);
+	setupConvexMeshMaterial(model->getSubNodes(), material);
 }
 
-void PrimitiveModel::setupConvexMeshMaterial(const map<string, Group*>& groups, Material* material)
+void PrimitiveModel::setupConvexMeshMaterial(const map<string, Node*>& nodes, Material* material)
 {
-	for (auto it: groups) {
-		Group* group = it.second;
-		auto facesEntities = group->getFacesEntities();
+	for (auto it: nodes) {
+		Node* node = it.second;
+		auto facesEntities = node->getFacesEntities();
 		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);
 		}
-		group->setFacesEntities(group->getFacesEntities());
-		setupConvexMeshMaterial(group->getSubGroups(), material);
+		node->setFacesEntities(node->getFacesEntities());
+		setupConvexMeshMaterial(node->getSubNodes(), material);
 	}
 }
 
