@@ -65,7 +65,7 @@ public:
 	 * Select entity by entity id
 	 * @param entityId entity id
 	 */
-	void selectEntity(int32_t entityId);
+	void selectEntity(int entityId);
 
 	/**
 	 * Set up complete entity library

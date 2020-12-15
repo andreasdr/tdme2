@@ -32,6 +32,6 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doExport(const string& pathName, const string& fileName, LevelEditorLevel* level);
+	static void doExport(const string& pathName, const string& fileName, LevelEditorLevel& level);
 
 };

@@ -42,10 +42,6 @@ struct Light
 {
     int enabled;
 
-    #ifndef USE_IBL
-        vec3 ambient;
-    #endif
-
     vec3 direction;
     float range;
 
@@ -114,12 +110,12 @@ vec3 getIBLContribution(MaterialInfo materialInfo, vec3 n, vec3 v)
     // retrieve a scale and bias to F0. See [1], Figure 3
     vec2 brdf = texture(u_brdfLUT, brdfSamplePoint).rg;
 
-    vec4 diffuseSample = textureCube(u_DiffuseEnvSampler, n);
+    vec4 diffuseSample = texture(u_DiffuseEnvSampler, n);
 
 #ifdef USE_TEX_LOD
-    vec4 specularSample = textureCubeLodEXT(u_SpecularEnvSampler, reflection, lod);
+    vec4 specularSample = textureLodEXT(u_SpecularEnvSampler, reflection, lod);
 #else
-    vec4 specularSample = textureCube(u_SpecularEnvSampler, reflection);
+    vec4 specularSample = texture(u_SpecularEnvSampler, reflection);
 #endif
 
 #ifdef USE_HDR
@@ -380,10 +376,6 @@ void main()
         Light light = u_Lights[i];
 
         if (light.enabled == 0) continue;
-
-        #ifndef USE_IBL
-            color += light.ambient * baseColor.rgb;
-        #endif
 
         if (light.type == LightType_Directional)
         {

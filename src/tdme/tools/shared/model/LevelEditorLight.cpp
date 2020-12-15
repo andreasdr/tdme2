@@ -9,7 +9,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
-LevelEditorLight::LevelEditorLight(int32_t id)
+LevelEditorLight::LevelEditorLight(int id)
 {
 	this->id = id;
 	enabled = false;

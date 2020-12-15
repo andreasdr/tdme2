@@ -46,9 +46,9 @@ using tdme::utilities::Exception;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
-volatile uint32_t LevelEditorEntityBoundingVolume::modelIdx = 0;
+volatile unsigned int LevelEditorEntityBoundingVolume::modelIdx = 0;
 
-LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity)
+LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int id, LevelEditorEntity* levelEditorEntity)
 {
 	this->id = id;
 	this->levelEditorEntity = levelEditorEntity;
@@ -69,7 +69,7 @@ void LevelEditorEntityBoundingVolume::setupNone()
 	modelMeshFile = "";
 }
 
-int32_t LevelEditorEntityBoundingVolume::allocateModelIdx() {
+int LevelEditorEntityBoundingVolume::allocateModelIdx() {
 	return AtomicOperations::increment(modelIdx);
 }
 

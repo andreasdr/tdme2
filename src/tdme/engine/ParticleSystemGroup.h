@@ -42,6 +42,7 @@ private:
 	Engine* engine { nullptr };
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
+	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	string id;
 	bool contributesShadows;
@@ -269,6 +270,14 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
 	}
 
 	inline bool isActive() override {

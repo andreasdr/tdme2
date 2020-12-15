@@ -8,12 +8,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 
 using std::string;
 
 using tdme::utilities::Exception;
-using tdme::utilities::ReferenceCounter;
+using tdme::utilities::Reference;
 
 namespace tdme {
 namespace network {
@@ -23,7 +23,7 @@ namespace udpserver {
  * Base class for network server group
  * @author Andreas Drewke
  */
-class ServerGroupBase : public ReferenceCounter {
+class ServerGroupBase : public Reference {
 friend class ServerWorkerThread;
 
 protected:

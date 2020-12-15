@@ -111,7 +111,7 @@ void GUISelectBoxMultipleController::determineSelectBoxMultipleOptionControllers
 	}
 }
 
-int32_t GUISelectBoxMultipleController::getFocussedOptionIdx()
+int GUISelectBoxMultipleController::getFocussedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
 	for (auto i = 0; i < selectBoxMultipleOptionControllers.size(); i++) {

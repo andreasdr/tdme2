@@ -65,6 +65,7 @@ private:
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ;
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile;
 	bool isModelBoundingVolumes;
+	int maxBoundingVolumeCount;
 	GUIElementNode* terrainMesh { nullptr };
 	GUIElementNode* terrainMeshApply { nullptr };
 	GUIElementNode* convexmeshesModeGenerate { nullptr };
@@ -92,15 +93,28 @@ private:
 	GUIElementNode* bodyApply { nullptr };
 	bool boundingVolumeTabActivated;
 	int boundingVolumeIdxActivated;
+	int boundingVolumeTypeCount;
 
 public:
+	enum BoundingVolumeType {
+		BOUNDINGVOLUMETYPE_NONE = 1,
+		BOUNDINGVOLUMETYPE_SPHERE = 2,
+		BOUNDINGVOLUMETYPE_CAPSULE = 4,
+		BOUNDINGVOLUMETYPE_BOUNDINGBOX = 8,
+		BOUNDINGVOLUMETYPE_ORIENTEDBOUNDINGBOX = 16,
+		BOUNDINGVOLUMETYPE_CONVEXMESH = 32,
+		BOUNDINGVOLUMETYPE_ALL = 1 + 2 + 4 +8 + 16 + 32
+	};
+
 	/**
 	 * Public constructor
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
+	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
+	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, int maxBoundingVolumeCount = -1, int32_t boundingVolumeTypeMask = BOUNDINGVOLUMETYPE_ALL);
 
 	/**
 	 * Destructor
@@ -126,33 +140,34 @@ public:
 	/**
 	 * Disable bounding volume
 	 */
-	void disableBoundingVolume(int32_t idx);
+	void disableBoundingVolume(int idx);
 
 	/**
 	 * Enable bounding volume
 	 * @param idx idx
 	 */
-	void enableBoundingVolume(int32_t idx);
+	void enableBoundingVolume(int idx);
 
 	/**
 	 * Set up model bounding volume type
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx);
+	void setupModelBoundingVolumeType(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * Set up bounding volume types
 	 * @param idx idx
+	 * @param boundingVolumeTypeMask bounding volume type mask
 	 */
-	void setupBoundingVolumeTypes(int32_t idx);
+	void setupBoundingVolumeTypes(int idx, int boundingVolumeTypeMask);
 
 	/**
 	 * Display given bounding volume GUI elements
 	 * @param idx idx
 	 * @param bvType bounding volume type
 	 */
-	void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
+	void selectBoundingVolume(int idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
 
 	/**
 	 * Setup sphere bounding volume
@@ -160,7 +175,7 @@ public:
 	 * @param center center
 	 * @param radius radius
 	 */
-	void setupSphere(int32_t idx, const Vector3& center, float radius);
+	void setupSphere(int idx, const Vector3& center, float radius);
 
 	/**
 	 * Setup capsule bounding volume
@@ -169,7 +184,7 @@ public:
 	 * @param b b
 	 * @param radius radius
 	 */
-	void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);
+	void setupCapsule(int idx, const Vector3& a, const Vector3& b, float radius);
 
 	/**
 	 * Setup AABB bounding volume
@@ -177,7 +192,7 @@ public:
 	 * @param min min
 	 * @param max max
 	 */
-	void setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max);
+	void setupBoundingBox(int idx, const Vector3& min, const Vector3& max);
 
 	/**
 	 * Setup oriented bounding box
@@ -188,70 +203,70 @@ public:
 	 * @param axis2 axis 2
 	 * @param halfExtension half extension
 	 */
-	void setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	void setupOrientedBoundingBox(int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/**
 	 * Setup convex mesh bounding volume
 	 * @param idx idx
 	 * @param file file
 	 */
-	void setupConvexMesh(int32_t idx, const string& file);
+	void setupConvexMesh(int idx, const string& file);
 
 	/**
 	 * On pivot apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume none apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume sphere apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume capsule apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume AABB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume OBB apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeObbApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume convex mesh apply
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume convex mesh file clicked
 	 * @param entity entity
 	 * @param idx idx
 	 */
-	void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
+	void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int idx);
 
 	/**
 	 * On bounding volume convex meshes file

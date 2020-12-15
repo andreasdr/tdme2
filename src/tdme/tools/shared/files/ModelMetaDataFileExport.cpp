@@ -22,7 +22,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
@@ -160,7 +159,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 			Console::println(exception.what());
 		}
 		*/
-		jEntityRoot.AddMember("tm", Value(entity->getModelSettings()->isTerrainMesh()), jAllocator);
+		jEntityRoot.AddMember("tm", Value(entity->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = entity->getLODLevel2();
@@ -572,4 +571,8 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 	jEntityRoot.AddMember("s", Value(entity->getShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sds", Value(entity->getDistanceShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sdsd", Value(entity->getDistanceShaderDistance()), jAllocator);
+	if (entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+		jEntityRoot.AddMember("emrpm", Value(entity->getEnvironmentMapRenderPassMask()), jAllocator);
+		jEntityRoot.AddMember("emtf", Value(entity->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
+	}
 }

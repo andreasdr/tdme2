@@ -355,7 +355,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
-	rotationQuaternion.rotate(angle, rotationAxis);
+	rotationQuaternion.rotate(rotationAxis, angle);
 	Matrix4x4 rotationQuaternionMatrixInverted;
 	rotationQuaternion.computeMatrix(rotationQuaternionMatrixInverted);
 	rotationQuaternionMatrixInverted.invert();

@@ -51,7 +51,7 @@ public:
 	/**
 	 * @return property count
 	 */
-	inline int32_t getPropertyCount() {
+	inline int getPropertyCount() {
 		return properties.size();
 	}
 
@@ -60,14 +60,14 @@ public:
 	 * @param name name
 	 * @return index or -1 if not found
 	 */
-	int32_t getPropertyIndex(const string& name);
+	int getPropertyIndex(const string& name);
 
 	/**
 	 * Get property by index
 	 * @param idx idx
 	 * @return property or null
 	 */
-	inline PropertyModelClass* getPropertyByIndex(int32_t idx) {
+	inline PropertyModelClass* getPropertyByIndex(int idx) {
 		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
 	}
 

@@ -13,7 +13,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/utilities/Character.h>
-#include <tdme/utilities/Console.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::engine::Camera;
@@ -27,7 +26,6 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::utilities::Character;
-using tdme::utilities::Console;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler)
 {
@@ -201,7 +199,6 @@ void CameraRotationInputHandler::handleInputEvents()
 	auto cam = engine->getCamera();
 	auto lookAt = cam->getLookAt();
 	if (resetRequested == true) {
-		Console::println("CameraRotationInputHandler::handleInputEvents(): reset");
 		if (entity != nullptr) {
 			auto entityBoundingBoxTransformed = entity->getBoundingBoxTransformed();
 			for (auto i = 0; i < 3; i++) {

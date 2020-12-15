@@ -52,7 +52,7 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName);
+	static LevelEditorEntity* doImport(int id, const string& pathName, const string& fileName);
 
 	/**
 	 * Imports a model meta data file from JSON object
@@ -63,7 +63,7 @@ public:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot);
+	static LevelEditorEntity* doImportFromJSON(int id, const string& pathName, Value& jEntityRoot);
 
 	/**
 	 * Get resource path name
@@ -85,7 +85,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv);
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv);
 
 	/**
 	 * Parse LOD level

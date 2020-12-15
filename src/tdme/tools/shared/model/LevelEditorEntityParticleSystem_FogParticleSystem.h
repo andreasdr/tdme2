@@ -18,13 +18,13 @@ using tdme::engine::fileio::textures::Texture;
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem final
 {
 private:
-	int32_t maxPoints { 4000 };
+	int maxPoints { 4000 };
 	float pointSize{ 10.0f };
 	string textureFileName;
 	string transparencyTextureFileName;
 	Texture* texture { nullptr };
-	int32_t textureHorizontalSprites{ 1 };
-	int32_t textureVerticalSprites{ 1 };
+	int textureHorizontalSprites{ 1 };
+	int textureVerticalSprites{ 1 };
 	float textureSpritesFPS { 10.0f };
 
 public:
@@ -41,7 +41,7 @@ public:
 	/**
 	 * @return max points
 	 */
-	inline int32_t getMaxPoints() {
+	inline int getMaxPoints() {
 		return maxPoints;
 	}
 
@@ -49,7 +49,7 @@ public:
 	 * Set max points
 	 * @param maxPoints max points
 	 */
-	inline void setMaxPoints(int32_t maxPoints) {
+	inline void setMaxPoints(int maxPoints) {
 		this->maxPoints = maxPoints;
 	}
 
@@ -99,7 +99,7 @@ public:
 	/**
 	 * @return horizontal number of sprites in texture
 	 */
-	inline int32_t getTextureHorizontalSprites() {
+	inline int getTextureHorizontalSprites() {
 		return textureHorizontalSprites;
 	}
 
@@ -107,14 +107,14 @@ public:
 	 * Set texture horizontal number of sprites
 	 * @param textureHorizontalSprites horizontal number of sprites
 	 */
-	inline void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
+	inline void setTextureHorizontalSprites(int textureHorizontalSprites) {
 		this->textureHorizontalSprites = textureHorizontalSprites;
 	}
 
 	/**
 	 * @return vertical number of sprites in texture
 	 */
-	inline int32_t getTextureVerticalSprites() {
+	inline int getTextureVerticalSprites() {
 		return textureVerticalSprites;
 	}
 
@@ -122,7 +122,7 @@ public:
 	 * Set texture vertical number of sprites
 	 * @param textureVerticalSprites vertical number of sprites
 	 */
-	inline void setTextureVerticalSprites(int32_t textureVerticalSprites) {
+	inline void setTextureVerticalSprites(int textureVerticalSprites) {
 		this->textureVerticalSprites = textureVerticalSprites;
 	}
 

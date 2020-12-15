@@ -11,9 +11,11 @@
             - stores its model as TM file additionally
     - render with generated ground, shadowing, bounding volume
     - rotate, zoom
-    - setting up model properties
-        - key, value map for what ever reason
     - setting up the model pivot
+    - set up rendering options
+        - shader
+        - contribute/receiving dynamic shadowing
+        - set up as render group
     - setting up bounding volumes
         - none
         - sphere
@@ -25,6 +27,10 @@
           - or be imported from a given model with each top level node representing a convex mesh
         - concave terrain mesh
         - bounding volumes can be transformed by using a gizmo 
+    - setting up physics properties
+      - body type, mass, bounciness, friction, inertia tensor
+    - setting up model properties
+        - key, value map for what ever reason
     - LOD level editor
         - type, distance, model, adjustment add/mul color, ... 
     - material editor
@@ -32,14 +38,15 @@
     - animations editor
         - create, edit and delete animations
         - relate sounds to animations
+    - preview to test your model
+      - set up base animation and up to 3 animation overlays
+      - attach models on bones
     - sound
         - attach sounds to optional animations with optional additional key
         - also set up gain, pitch, looping, fixed and offset for each sound
-    - set up rendering options
-        - shader
-        - use dynamic shadowing
     - tools
         - be able to compute smooth normals
+        - be able to optimize models in terms of mesh nodes and materials
     - see statistics
         - opaque faces
         - transparent faces

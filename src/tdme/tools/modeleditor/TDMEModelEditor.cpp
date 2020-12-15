@@ -133,7 +133,7 @@ void TDMEModelEditor::initialize()
 	setView(modelEditorView = new SharedModelEditorView(popUps));
 }
 
-void TDMEModelEditor::reshape(int32_t width, int32_t height)
+void TDMEModelEditor::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }

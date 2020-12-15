@@ -73,12 +73,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback)
 {
 	doImport(pathName, fileName, level, "", progressCallback);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, const string& objectIdPrefix, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -89,13 +89,13 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
-	level->setApplicationRoot(Tools::getApplicationRootPath(pathName));
+	level.setApplicationRoot(Tools::getApplicationRootPath(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
-	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
-	level->clearProperties();
+	level.setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
+	level.clearProperties();
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
 		auto& jMapProperty = jRoot["properties"].GetArray()[i];
-		level->addProperty(
+		level.addProperty(
 			jMapProperty["name"].GetString(),
 			jMapProperty["value"].GetString()
 		);
@@ -103,7 +103,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
 		for (auto i = 0; i < jRoot["lights"].GetArray().Size(); i++) {
 			auto& jLight = jRoot["lights"].GetArray()[i];
-			auto light = level->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
+			auto light = level.getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
 			light->getAmbient().set(
 				jLight["ar"].GetFloat(),
 				jLight["ag"].GetFloat(),
@@ -146,7 +146,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			light->setEnabled(jLight["e"].GetBool());
 		}
 	}
-	level->getEntityLibrary()->clear();
+	level.getEntityLibrary()->clear();
 
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
@@ -160,7 +160,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
-		level->getEntityLibrary()->addEntity(levelEditorEntity);
+		level.getEntityLibrary()->addEntity(levelEditorEntity);
 		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
 			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
 				auto& jModelProperty = jModel["properties"].GetArray()[j];
@@ -174,11 +174,11 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	level->clearObjects();
+	level.clearObjects();
 
 	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
 		auto& jObject = jRoot["objects"].GetArray()[i];
-		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].GetInt());
+		auto model = level.getEntityLibrary()->getEntity(jObject["mid"].GetInt());
 		if (model == nullptr) {
 			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
 
@@ -209,9 +209,9 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			jObject["ry"].GetFloat(),
 			jObject["rz"].GetFloat()
 		);
-		transformations.addRotation(level->getRotationOrder()->getAxis0(), rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()]);
-		transformations.addRotation(level->getRotationOrder()->getAxis1(), rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()]);
-		transformations.addRotation(level->getRotationOrder()->getAxis2(), rotation.getArray()[level->getRotationOrder()->getAxis2VectorIndex()]);
+		transformations.addRotation(level.getRotationOrder()->getAxis0(), rotation.getArray()[level.getRotationOrder()->getAxis0VectorIndex()]);
+		transformations.addRotation(level.getRotationOrder()->getAxis1(), rotation.getArray()[level.getRotationOrder()->getAxis1VectorIndex()]);
+		transformations.addRotation(level.getRotationOrder()->getAxis2(), rotation.getArray()[level.getRotationOrder()->getAxis2VectorIndex()]);
 		transformations.update();
 		auto levelEditorObject = new LevelEditorObject(
 			objectIdPrefix != "" ?
@@ -230,24 +230,48 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 				);
 			}
 		}
-		level->addObject(levelEditorObject);
+		levelEditorObject->setReflectionEnvironmentMappingId(jObject.FindMember("r") != jObject.MemberEnd()?jObject["r"].GetString():"");
+		level.addObject(levelEditorObject);
 
 		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	level->setObjectIdx(jRoot["objects_eidx"].GetInt());
-	level->setPathName(pathName);
-	level->setFileName(fileName);
-	level->update();
+	level.setObjectIdx(jRoot["objects_eidx"].GetInt());
+	level.setPathName(pathName);
+	level.setFileName(fileName);
+	level.update();
 
+	//
+	if (jRoot.FindMember("sky") != jRoot.MemberEnd()) {
+		auto& jSky = jRoot["sky"];
+		level.setSkyModelFileName(jSky["file"].GetString());
+		level.setSkyModelScale(
+			Vector3(
+				jSky["sx"].GetFloat(),
+				jSky["sy"].GetFloat(),
+				jSky["sz"].GetFloat()
+			)
+		);
+		if (level.getSkyModelFileName().empty() == false) {
+			auto skyModelPathName = ModelMetaDataFileImport::getResourcePathName(pathName, level.getSkyModelFileName());
+			level.setSkyModel(
+				ModelReader::read(
+					skyModelPathName,
+					FileSystem::getInstance()->getFileName(level.getSkyModelFileName())
+				)
+			);
+		}
+	}
+
+	//
 	if (progressCallback != nullptr) {
 		progressCallback->progress(1.0f);
 		delete progressCallback;
 	}
 }
 
-void LevelFileImport::determineMeshNodes(LevelEditorLevel* level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes) {
-	auto entityLibrary = level->getEntityLibrary();
+void LevelFileImport::determineMeshNodes(LevelEditorLevel& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes) {
+	auto entityLibrary = level.getEntityLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
 	auto modelName = nodeId;
@@ -313,12 +337,12 @@ void LevelFileImport::determineMeshNodes(LevelEditorLevel* level, Node* node, co
 	}
 }
 
-void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) {
+void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback) {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
-	level->clearProperties();
-	level->getEntityLibrary()->clear();
-	level->clearObjects();
+	level.clearProperties();
+	level.getEntityLibrary()->clear();
+	level.clearObjects();
 
 	string modelPathName = pathName + "/" + fileName + "-models";
 	if (FileSystem::getInstance()->fileExists(modelPathName)) {
@@ -333,9 +357,9 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	auto upVector = levelModel->getUpVector();
 	RotationOrder* rotationOrder = levelModel->getRotationOrder();
 
-	level->setRotationOrder(rotationOrder);
+	level.setRotationOrder(rotationOrder);
 
-	auto entityLibrary = level->getEntityLibrary();
+	auto entityLibrary = level.getEntityLibrary();
 	auto nodeIdx = 0;
 	LevelEditorEntity* emptyEntity = nullptr;
 	Matrix4x4 modelImportRotationMatrix;
@@ -351,7 +375,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 		determineMeshNodes(level, nodeIt.second, "", (Matrix4x4()).identity(), meshNodes);
 		for (auto& meshNode: meshNodes) {
 			auto model = new Model(
-				modelPathName,
+				modelPathName + "/" + meshNode.name + ".tm",
 				fileName + "-" + meshNode.name,
 				upVector,
 				rotationOrder,
@@ -420,8 +444,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			}
 			LevelEditorEntity* levelEditorEntity = nullptr;
 			if (entityType == LevelEditorEntity_EntityType::MODEL && model != nullptr) {
-				for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
-					auto levelEditorEntityCompare = level->getEntityLibrary()->getEntityAt(i);
+				for (auto i = 0; i < level.getEntityLibrary()->getEntityCount(); i++) {
+					auto levelEditorEntityCompare = level.getEntityLibrary()->getEntityAt(i);
 					if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
 						continue;
 
@@ -474,8 +498,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				levelEditorObjectTransformations,
 				levelEditorEntity
 			);
-			level->addObject(object);
-
+			level.addObject(object);
 		}
 		//
 		progressIdx++;

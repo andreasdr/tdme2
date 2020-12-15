@@ -82,6 +82,11 @@ private:
 	GUIElementNode* mapPropertySave { nullptr };
 	GUIElementNode* mapPropertyRemove { nullptr };
 	GUIElementNode* mapPropertiesListBox { nullptr };
+	GUIElementNode* mapSkyModel { nullptr };
+	GUIElementNode* btnMapSkyModelLoad { nullptr };
+	GUIElementNode* btnMapSkyModelClear { nullptr };
+	GUIElementNode* mapSkyModelScale { nullptr };
+	GUIElementNode* btnMapSkyApply { nullptr };
 	GUIElementNode* objectName { nullptr };
 	GUIElementNode* objectDescription { nullptr };
 	GUIElementNode* objectModel { nullptr };
@@ -105,6 +110,8 @@ private:
 	GUIElementNode* objectPropertiesListBox { nullptr };
 	GUIElementNode* objectPropertiesPresets { nullptr };
 	GUIElementNode* objectsListBox { nullptr };
+	GUIElementNode* objectReflectionsEnvironmentmappingDropDown { nullptr };
+	GUIElementNode* btnObjectReflectionsEnvironmentmappingApply { nullptr };
 	array<GUIElementNode*, 4> lightsPresets;
 	array<GUIElementNode*, 4> lightsAmbient;
 	array<GUIElementNode*, 4> lightsDiffuse;
@@ -121,6 +128,7 @@ private:
 	array<GUIElementNode*, 4> lightsEnabled;
 	GUIElementNode* viewPort { nullptr };
 	FileDialogPath* mapPath { nullptr };
+	FileDialogPath* modelPath { nullptr };
 
 public:
 	/**
@@ -138,6 +146,8 @@ public:
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
+	void onValueChanged(GUIElementNode* node) override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
 	 * Set up screen caption
@@ -201,7 +211,7 @@ public:
 	 * Set up object list box
 	 * @param level object by ids hash map
 	 */
-	void setObjectListbox(LevelEditorLevel* level);
+	void setObjectListbox(LevelEditorLevel& level);
 
 	/**
 	 * Unselect objects in object list box
@@ -236,8 +246,9 @@ public:
 	 * @param rotationX rotation x
 	 * @param rotationY rotation y
 	 * @param rotationZ rotation z
+	 * @oaram disableRotation disable rotation input fields
 	 */
-	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ);
+	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation);
 
 	/**
 	 * Unset current object
@@ -254,7 +265,7 @@ public:
 	 * @param level map properties
 	 * @param selectedName selected name
 	 */
-	void setMapProperties(LevelEditorLevel* level, const string& selectedName);
+	void setMapProperties(LevelEditorLevel& level, const string& selectedName);
 
 	/**
 	 * On map property save
@@ -392,7 +403,7 @@ public:
 	 * @param spotCutoff spot cutoff
 	 * @param enabled enabled
 	 */
-	void setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
+	void setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/**
 	 * On light 0 apply
@@ -418,7 +429,7 @@ public:
 	 * On light 3 apply
 	 * @param lightIdx light idx
 	 */
-	void onLightApply(int32_t lightIdx);
+	void onLightApply(int lightIdx);
 
 	/**
 	 * On light 0 preset apply
@@ -444,7 +455,7 @@ public:
 	 * On light preset apply for light
 	 * @param lightIdx i
 	 */
-	void onLightPresetApply(int32_t lightIdx);
+	void onLightPresetApply(int lightIdx);
 
 	/**
 	 * On Light 0 spot direction compute
@@ -469,11 +480,54 @@ public:
 	/**
 	 * On Light spot direction compute for given light idx
 	 */
-	void onLightSpotDirectionCompute(int32_t lightIdx);
-	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onLightSpotDirectionCompute(int lightIdx);
+
+	/**
+	 * Save file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Load file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void loadFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Set sky
+	 * @param level level
+	 */
+	void setSky(LevelEditorLevel& level);
+
+	/**
+	 * On map sky model load
+	 */
+	void onMapSkyModelLoad();
+
+	/**
+	 * On map sky model clear
+	 */
+	void onMapSkyModelClear();
+
+	/**
+	 * On map sky apply
+	 */
+	void onMapSkyApply();
+
+	/**
+	 * Set object reflections environment mappings
+	 * @param level level
+	 * @param selectedEnvironmentMappingId selected environment mapping id
+	 */
+	void setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId);
+
+	/**
+	 * Unset object reflections environment mappings
+	 */
+	void unsetObjectReflectionsEnvironmentMappings();
 
 	/**
 	 * Shows the error pop up

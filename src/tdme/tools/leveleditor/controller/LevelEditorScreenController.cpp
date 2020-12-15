@@ -87,6 +87,7 @@ LevelEditorScreenController::LevelEditorScreenController(LevelEditorView* view)
 {
 	this->view = view;
 	this->mapPath = new FileDialogPath(".");
+	this->modelPath = new FileDialogPath(".");
 }
 
 GUIScreenNode* LevelEditorScreenController::getScreenNode()
@@ -119,6 +120,11 @@ void LevelEditorScreenController::initialize()
 		mapPropertySave = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_save"));
 		mapPropertyRemove = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_properties_remove"));
 		mapPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_properties_listbox"));
+		mapSkyModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model"));
+		btnMapSkyModelLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_load"));
+		btnMapSkyModelClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_model_clear"));
+		mapSkyModelScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_sky_model_scale"));
+		btnMapSkyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_map_sky_apply"));
 		objectName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_name"));
 		objectDescription = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_description"));
 		objectModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_model"));
@@ -149,6 +155,8 @@ void LevelEditorScreenController::initialize()
 		objectPropertiesListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_listbox"));
 		objectPropertiesPresets = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_properties_presets"));
 		objectsListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("objects_listbox"));
+		objectReflectionsEnvironmentmappingDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("object_reflections_environmentmapping"));
+		btnObjectReflectionsEnvironmentmappingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_object_reflections_environmentmapping_apply"));
 		mapWidth->getController()->setDisabled(true);
 		mapDepth->getController()->setDisabled(true);
 		mapHeight->getController()->setDisabled(true);
@@ -258,7 +266,7 @@ void LevelEditorScreenController::onObjectDataApply()
 	}
 }
 
-void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
+void LevelEditorScreenController::setObjectListbox(LevelEditorLevel& level)
 {
 	auto selectedObjects = objectsListBox->getController()->getValue();
 	auto objectsListBoxInnerNode = dynamic_cast< GUIParentNode* >((objectsListBox->getScreenNode()->getNodeById(objectsListBox->getId() + "_inner")));
@@ -270,7 +278,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto objectIdx = 0;
-	for (int i = 0; i < level->getObjectCount(); i++) {
+	for (int i = 0; i < level.getObjectCount(); i++) {
 		if (objectIdx > 25000) {
 			objectsListBoxSubNodesXML =
 				"<scrollarea-vertical id=\"" +
@@ -278,7 +286,7 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
 		}
-		auto object = level->getObjectAt(i);
+		auto object = level.getObjectAt(i);
 		if (object->getEntity()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
 		objectsListBoxSubNodesXML =
@@ -344,7 +352,7 @@ void LevelEditorScreenController::onObjectsUnselect()
 	view->unselectObjects();
 }
 
-void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ)
+void LevelEditorScreenController::setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ, bool disableRotation)
 {
 	btnObjectTranslationApply->getController()->setDisabled(false);
 	btnObjectScaleApply->getController()->setDisabled(false);
@@ -358,9 +366,9 @@ void LevelEditorScreenController::setObject(const Vector3& translation, const Ve
 	objectScaleX->getController()->setDisabled(false);
 	objectScaleY->getController()->setDisabled(false);
 	objectScaleZ->getController()->setDisabled(false);
-	objectRotationX->getController()->setDisabled(false);
-	objectRotationY->getController()->setDisabled(false);
-	objectRotationZ->getController()->setDisabled(false);
+	objectRotationX->getController()->setDisabled(disableRotation);
+	objectRotationY->getController()->setDisabled(disableRotation);
+	objectRotationZ->getController()->setDisabled(disableRotation);
 	objectTranslationX->getController()->setValue(MutableString(Tools::formatFloat(translation.getX())));
 	objectTranslationY->getController()->setValue(MutableString(Tools::formatFloat(translation.getY())));
 	objectTranslationZ->getController()->setValue(MutableString(Tools::formatFloat(translation.getZ())));
@@ -419,7 +427,7 @@ void LevelEditorScreenController::onMapPropertiesSelectionChanged()
 	}
 }
 
-void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, const string& selectedName)
+void LevelEditorScreenController::setMapProperties(LevelEditorLevel& level, const string& selectedName)
 {
 	mapPropertyName->getController()->setDisabled(true);
 	mapPropertyValue->getController()->setDisabled(true);
@@ -432,8 +440,8 @@ void LevelEditorScreenController::setMapProperties(LevelEditorLevel* level, cons
 		"<scrollarea-vertical id=\"" +
 		mapPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (auto i = 0; i < level->getPropertyCount(); i++) {
-		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
+	for (auto i = 0; i < level.getPropertyCount(); i++) {
+		PropertyModelClass* mapProperty = level.getPropertyByIndex(i);
 		mapPropertiesListBoxSubNodesXML =
 			mapPropertiesListBoxSubNodesXML +
 			"<selectbox-option text=\"" +
@@ -631,14 +639,14 @@ void LevelEditorScreenController::onObjectScaleApply()
 		auto x = Float::parseFloat(objectScaleX->getController()->getValue().getString());
 		auto y = Float::parseFloat(objectScaleY->getController()->getValue().getString());
 		auto z = Float::parseFloat(objectScaleZ->getController()->getValue().getString());
-		if (x < -10.0f || x > 10.0f)
-			throw ExceptionBase("x scale must be within -10 .. +10");
+		if (x < -500.0f || x > 500.0f)
+			throw ExceptionBase("x scale must be within -500 .. +500");
 
-		if (y < -10.0f || y > 10.0f)
-			throw ExceptionBase("y scale must be within -10 .. +10");
+		if (y < -500.0f || y > 500.0f)
+			throw ExceptionBase("y scale must be within -500 .. +500");
 
-		if (z < -10.0f || z > 10.0f)
-			throw ExceptionBase("z scale must be within -10 .. +10");
+		if (z < -500.0f || z > 500.0f)
+			throw ExceptionBase("z scale must be within -500 .. +500");
 
 		view->objectScaleApply(x, y, z);
 	} catch (Exception& exception) {
@@ -823,7 +831,7 @@ void LevelEditorScreenController::unselectLightPresets()
 {
 }
 
-void LevelEditorScreenController::setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
+void LevelEditorScreenController::setLight(int i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled)
 {
 	lightsAmbient[i]->getController()->setValue(MutableString(Tools::formatFloat(ambient.getRed())).append(", ").append(Tools::formatFloat(ambient.getGreen())).append(", ").append(Tools::formatFloat(ambient.getBlue())).append(", ").append(Tools::formatFloat(ambient.getAlpha())));
 	lightsDiffuse[i]->getController()->setValue(MutableString(Tools::formatFloat(diffuse.getRed())).append(", ").append(Tools::formatFloat(diffuse.getGreen())).append(", ").append(Tools::formatFloat(diffuse.getBlue())).append(", ").append(Tools::formatFloat(diffuse.getAlpha())));
@@ -871,7 +879,7 @@ void LevelEditorScreenController::onLight3Apply()
 	onLightApply(3);
 }
 
-void LevelEditorScreenController::onLightApply(int32_t lightIdx)
+void LevelEditorScreenController::onLightApply(int lightIdx)
 {
 	try {
 		auto enabled = lightsEnabled[lightIdx]->getController()->getValue().equals(CHECKBOX_CHECKED);
@@ -927,7 +935,7 @@ void LevelEditorScreenController::onLight3PresetApply()
 	onLightPresetApply(3);
 }
 
-void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
+void LevelEditorScreenController::onLightPresetApply(int lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
@@ -958,7 +966,7 @@ void LevelEditorScreenController::onLight3SpotDirectionCompute()
 	onLightSpotDirectionCompute(3);
 }
 
-void LevelEditorScreenController::onLightSpotDirectionCompute(int32_t lightIdx)
+void LevelEditorScreenController::onLightSpotDirectionCompute(int lightIdx)
 {
 	try {
 		view->computeSpotDirection(
@@ -979,6 +987,129 @@ void LevelEditorScreenController::saveFile(const string& pathName, const string&
 void LevelEditorScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->loadMap(pathName, fileName);
+}
+
+void LevelEditorScreenController::setSky(LevelEditorLevel& level) {
+	mapSkyModel->getController()->setValue(MutableString(level.getSkyModelFileName()));
+	mapSkyModelScale->getController()->setValue(MutableString(Tools::formatVector3(level.getSkyModelScale())));
+}
+
+void LevelEditorScreenController::onMapSkyModelLoad() {
+	class OnMapSkyModelLoad: public virtual Action
+	{
+
+	public:
+		void performAction() override {
+			levelEditorScreenController->mapSkyModel->getController()->setValue(
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			levelEditorScreenController->modelPath->setPath(
+				levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
+		OnMapSkyModelLoad(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		}
+
+	private:
+		LevelEditorScreenController* levelEditorScreenController;
+	};
+
+	vector<string> extensions = ModelReader::getModelExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		mapSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(mapSkyModel->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(mapSkyModel->getController()->getValue().getString()),
+		true,
+		new OnMapSkyModelLoad(this)
+	);
+}
+
+void LevelEditorScreenController::onMapSkyModelClear() {
+	mapSkyModel->getController()->setValue(MutableString());
+}
+
+void LevelEditorScreenController::onMapSkyApply() {
+	try {
+		auto skyModelScale = Tools::convertToVector3(mapSkyModelScale->getController()->getValue().getString());
+		if (skyModelScale.getX() < 0.01f || skyModelScale.getX() > 150.0f)
+			throw ExceptionBase("x scale must be within 0.01 .. 150.0");
+
+		if (skyModelScale.getY() < 0.01f || skyModelScale.getY() > 150.0f)
+			throw ExceptionBase("y scale must be within 0.01 .. 150.0");
+
+		if (skyModelScale.getZ() < 0.01f || skyModelScale.getZ() > 150.0f)
+			throw ExceptionBase("z scale must be within 0.01 .. 150.0");
+
+		view->getLevel()->setSkyModelScale(skyModelScale);
+		view->getLevel()->setSkyModelFileName(mapSkyModel->getController()->getValue().getString());
+		auto model =
+			mapSkyModel->getController()->getValue().getString().empty() == true?
+				nullptr:
+				ModelReader::read(
+					Tools::getPath(mapSkyModel->getController()->getValue().getString()),
+					Tools::getFileName(mapSkyModel->getController()->getValue().getString())
+				);
+		view->getLevel()->setSkyModel(model);
+		setSky(*view->getLevel());
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (exception.what()));
+	}
+	view->updateSky();
+}
+
+void LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(LevelEditorLevel& level, const string& selectedEnvironmentMappingId) {
+	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(false);
+	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(false);
+	auto environmentMappingIdsDropDownInnerNode = dynamic_cast< GUIParentNode* >((objectReflectionsEnvironmentmappingDropDown->getScreenNode()->getNodeById(objectReflectionsEnvironmentmappingDropDown->getId() + "_inner")));
+	string environmentMappingIdsInnerNodeSubNodesXML = "";
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"<scrollarea-vertical id=\"" +
+		objectReflectionsEnvironmentmappingDropDown->getId() +
+		"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"<dropdown-option text=\"" +
+		GUIParser::escapeQuotes("<None>") +
+		"\" value=\"\" " +
+		(selectedEnvironmentMappingId.empty() == true?"selected=\"true\" ":"") +
+		" />\n";
+	for (auto& environmentMappingId: level.getEnvironmentMappingIds()) {
+		environmentMappingIdsInnerNodeSubNodesXML =
+			environmentMappingIdsInnerNodeSubNodesXML +
+			"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(environmentMappingId) +
+			"\" " +
+			(selectedEnvironmentMappingId == environmentMappingId?"selected=\"true\" ":"") +
+			" />\n";
+	}
+	environmentMappingIdsInnerNodeSubNodesXML =
+		environmentMappingIdsInnerNodeSubNodesXML +
+		"</scrollarea-vertical>\n";
+	try {
+		environmentMappingIdsDropDownInnerNode->replaceSubNodes(environmentMappingIdsInnerNodeSubNodesXML, true);
+	} catch (Exception& exception) {
+		Console::print(string("LevelEditorScreenController::setObjectReflectionsEnvironmentMappings(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
+void LevelEditorScreenController::unsetObjectReflectionsEnvironmentMappings() {
+	objectReflectionsEnvironmentmappingDropDown->getController()->setDisabled(true);
+	objectReflectionsEnvironmentmappingDropDown->getController()->setValue(MutableString());
+	btnObjectReflectionsEnvironmentmappingApply->getController()->setDisabled(true);
 }
 
 void LevelEditorScreenController::onValueChanged(GUIElementNode* node)
@@ -1093,6 +1224,18 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListenerType type, 
 		} else
 		if (node->getId().compare("button_light3_apply") == 0) {
 			onLight3Apply();
+		} else
+		if (node->getId().compare("button_map_sky_model_load") == 0) {
+			onMapSkyModelLoad();
+		} else
+		if (node->getId().compare("button_map_sky_model_clear") == 0) {
+			onMapSkyModelClear();
+		} else
+		if (node->getId().compare("button_map_sky_apply") == 0) {
+			onMapSkyApply();
+		} else
+		if (node->getId().compare("button_object_reflections_environmentmapping_apply") == 0) {
+			view->applyReflectionEnvironmentMappingId(objectReflectionsEnvironmentmappingDropDown->getController()->getValue().getString());
 		}
 	}
 }

@@ -95,7 +95,7 @@ void GUISelectBoxController::determineSelectBoxOptionControllers()
 	}
 }
 
-int32_t GUISelectBoxController::getSelectedOptionIdx()
+int GUISelectBoxController::getSelectedOptionIdx()
 {
 	auto selectBoxOptionControllerIdx = -1;
 	for (auto i = 0; i < selectBoxOptionControllers.size(); i++) {

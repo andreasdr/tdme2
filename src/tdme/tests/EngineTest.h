@@ -88,11 +88,11 @@ public:
 	 */
 	~EngineTest();
 
+	// overriden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
-
 	void onChar(unsigned int key, int x, int y) override;
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;

@@ -69,6 +69,7 @@ private:
 	Entity* combinedEntity;
 	map<Model*, vector<Transformations>> transformationsByModel;
 	vector<Model*> combinedModels;
+	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
@@ -298,6 +299,16 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
+		if (combinedEntity == nullptr) return;
+		combinedEntity->setRenderPass(renderPass);
 	}
 
 	/**

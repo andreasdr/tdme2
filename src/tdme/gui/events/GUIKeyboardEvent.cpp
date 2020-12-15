@@ -2,7 +2,7 @@
 
 using tdme::gui::events::GUIKeyboardEvent;
 
-int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
+int GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 	#if defined(VULKAN) || defined(GLFW3)
 		return -1;
 	#else

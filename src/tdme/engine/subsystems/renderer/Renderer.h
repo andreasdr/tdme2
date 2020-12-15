@@ -6,25 +6,28 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::FrameBuffer;
+using tdme::engine::fileio::textures::Texture;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
-using tdme::engine::fileio::textures::Texture;
-using tdme::math::Matrix2D3x3;
-using tdme::math::Matrix4x4;
 
 /**
  * Renderer interface
@@ -125,6 +128,12 @@ public:
 	int32_t FRAMEBUFFER_DEFAULT;
 	int32_t FRONTFACE_CW;
 	int32_t FRONTFACE_CCW;
+	int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_X;
+	int32_t CUBEMAPTEXTUREINDEX_POSITIVE_X;
+	int32_t CUBEMAPTEXTUREINDEX_POSITIVE_Y;
+	int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_Y;
+	int32_t CUBEMAPTEXTUREINDEX_POSITIVE_Z;
+	int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_Z;
 
 	int32_t LIGHTING_NONE;
 	int32_t LIGHTING_SPECULAR;
@@ -550,6 +559,11 @@ public:
 	virtual void enableBlending() = 0;
 
 	/**
+	 * Enable blending with c = a + b
+	 */
+	virtual void enableAdditionBlending() = 0;
+
+	/**
 	 * Disables blending
 	 */
 	virtual void disableBlending() = 0;
@@ -627,9 +641,23 @@ public:
 	/**
 	 * Uploads cube map texture data to current bound texture
 	 * @param context context
-	 * @param texture texture
+	 * @param textureLeft texture left
+	 * @param textureRight texture right
+	 * @param textureTop texture top
+	 * @param textureBottom texture bottom
+	 * @param textureFront texture front
+	 * @param textureBack texture back
 	 */
 	virtual void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) = 0;
+
+	/**
+	 * Create cube map texture from frame buffers
+	 * @param context context
+	 * @param width width
+	 * @param height height
+	 * @return texture id
+	 */
+	virtual int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) = 0;
 
 	/**
 	 * Resizes a depth texture
@@ -678,9 +706,11 @@ public:
 	 * Creates a frame buffer object with depth texture attached
 	 * @param depthBufferTextureGlId colorBufferTextureGlId TODO
 	 * @param colorBufferTextureGlId depth texture gl id
+	 * @param cubeMapTextureId cube map texture id
+	 * @param cubeMapTextureIndex cube map texture index
 	 * @return frame buffer object id
 	 */
-	virtual int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) = 0;
+	virtual int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) = 0;
 
 	/**
 	 * Enables a framebuffer to be rendered
@@ -1166,6 +1196,20 @@ public:
 	 * @param maskMinValue mask mask value
 	 */
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) = 0;
+
+	/**
+	 * Get environment mapping cube map position
+	 * @param context context
+	 * @return environment mapping position
+	 */
+	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) = 0;
+
+	/**
+	 * Set environment mapping cube map position
+	 * @param context context
+	 * @param position position
+	 */
+	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) = 0;
 
 	/**
 	 * Set up renderer for GUI rendering

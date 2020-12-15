@@ -1,0 +1,67 @@
+screen_main
+screen_progressbar
+screen_import
+screen_infodialog
+
+template_files_thumbnail
+
+template_outliner_object
+
+template_viewport_map
+template_viewport_mesh
+template_viewport_script
+template_viewport_screen
+template_viewport_material
+template_viewport_particle
+
+template_details_transform
+template_details_mesh
+template_details_material
+template_details_sound
+template_details_boundingvolume
+template_details_rendering
+template_details_physics
+template_details_animations
+template_details_particle
+
+definition_button
+definition_dropdown
+definition_scrollarea
+definition_progressbar
+definition_checkbox
+definition_radiobutton
+definition_selectbox
+definition_slider
+definition_tab
+definition_table
+definition_hirarchy
+definition_contextmenu
+
+
+
+resources
+	maps
+	meshes
+	music
+	objects
+	particles
+	scripts
+	sounds
+	textures
+	ui
+		definitions
+		fonts
+		images
+		screens
+		templates
+
+
+object   = tmm
+texture  = png
+script 	 = wss
+sound  	 = ogg
+screen 	 = xml
+mesh   	 = tm
+map    	 = tl
+particle = tps
+ 

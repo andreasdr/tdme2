@@ -18,7 +18,7 @@ using tdme::math::Vector3;
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity final
 {
 private:
-	int32_t count;
+	int count;
 	int64_t lifeTime;
 	int64_t lifeTimeRnd;
 	float mass;
@@ -41,7 +41,7 @@ public:
 	/**
 	 * @return count
 	 */
-	inline int32_t getCount() {
+	inline int getCount() {
 		return count;
 	}
 
@@ -49,7 +49,7 @@ public:
 	 * Set count
 	 * @param count count
 	 */
-	inline void setCount(int32_t count) {
+	inline void setCount(int count) {
 		this->count = count;
 	}
 

@@ -25,6 +25,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -57,6 +58,7 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ObjectDeleter;
@@ -352,7 +354,7 @@ void PhysicsTest1::onChar(unsigned int key, int x, int y) {
 }
 
 void PhysicsTest1::onKeyDown (unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = true;
 	if (keyChar == u'a') keyA = true;
 	if (keyChar == u's') keyS = true;
@@ -360,7 +362,7 @@ void PhysicsTest1::onKeyDown (unsigned char key, int x, int y) {
 }
 
 void PhysicsTest1::onKeyUp(unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = false;
 	if (keyChar == u'a') keyA = false;
 	if (keyChar == u's') keyS = false;

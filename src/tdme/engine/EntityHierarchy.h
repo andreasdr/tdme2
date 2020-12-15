@@ -76,6 +76,8 @@ private:
 	vector<Entity*> entities;
 	EntityHierarchyLevel entityRoot;
 
+	RenderPass renderPass { RENDERPASS_STANDARD };
+
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
@@ -115,9 +117,10 @@ private:
 	 * Update hierarchy from given entity hierarchy level ongoing
 	 * @param parentTransformations parent transformations
 	 * @param entityHierarchyLevel entity hierarchy level
-	 * @param depth
+	 * @param depth depth
+	 * @param firstEntity first entity
 	 */
-	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth);
+	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity);
 
 public:
 	/**
@@ -301,6 +304,14 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
 	}
 
 };

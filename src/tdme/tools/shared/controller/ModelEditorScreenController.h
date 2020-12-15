@@ -134,6 +134,10 @@ private:
 	GUIElementNode* previewAnimationsOverlay1DropDown { nullptr };
 	GUIElementNode* previewAnimationsOverlay2DropDown { nullptr };
 	GUIElementNode* previewAnimationsOverlay3DropDown { nullptr };
+	GUIElementNode* previewAnimationsAttachment1BoneDropdown { nullptr };
+	GUIElementNode* previewAnimationsAttachment1ModelModel { nullptr };
+	GUIElementNode* previewAnimationsAttachment1ModelLoad { nullptr };
+	GUIElementNode* previewAnimationsAttachment1ModelClear { nullptr };
 	GUIElementNode* buttonPreviewApply { nullptr };
 	GUIElementNode* buttonToolsComputeNormals { nullptr };
 	GUIElementNode* buttonToolsOptimizeModel { nullptr };
@@ -403,6 +407,16 @@ public:
 	void onPreviewApply();
 
 	/**
+	 * On preview animations attachment 1 model load
+	 */
+	void onPreviewAnimationsAttachment1ModelLoad();
+
+	/**
+	 * On preview animations attachment 1 model clear
+	 */
+	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
 	 * Unset preview
 	 */
 	void unsetPreview();
@@ -413,7 +427,7 @@ public:
 	 * @param statsTransparentFaces stats transparent faces
 	 * @param statsMaterialCount stats material count
 	 */
-	void setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount);
+	void setStatistics(int statsOpaqueFaces, int statsTransparentFaces, int statsMaterialCount);
 
 	/**
 	 * Unset statistics

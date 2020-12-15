@@ -24,11 +24,11 @@ public:
 private:
 	int64_t time;
 	GUIMouseEventType type { MOUSEEVENT_NONE };
-	int32_t xUnscaled;
-	int32_t yUnscaled;
-	int32_t x;
-	int32_t y;
-	int32_t button;
+	int xUnscaled;
+	int yUnscaled;
+	int x;
+	int y;
+	int button;
 	float wheelX;
 	float wheelY;
 	float wheelZ;
@@ -77,7 +77,7 @@ public:
 	/**
 	 * @return x unscaled
 	 */
-	inline int32_t getXUnscaled() {
+	inline int getXUnscaled() {
 		return xUnscaled;
 	}
 
@@ -85,14 +85,14 @@ public:
 	 * Set x unscaled
 	 * @param x x unscaled
 	 */
-	inline void setXUnscaled(int32_t xUnscaled) {
+	inline void setXUnscaled(int xUnscaled) {
 		this->xUnscaled = xUnscaled;
 	}
 
 	/**
 	 * @return y unscaled
 	 */
-	inline int32_t getYUnscaled() {
+	inline int getYUnscaled() {
 		return yUnscaled;
 	}
 
@@ -100,14 +100,14 @@ public:
 	 * Set y unscaled
 	 * @param y y  unscaled
 	 */
-	inline void setYUnscaled(int32_t yUnscaled) {
+	inline void setYUnscaled(int yUnscaled) {
 		this->yUnscaled = yUnscaled;
 	}
 
 	/**
 	 * @return x
 	 */
-	inline int32_t getX() {
+	inline int getX() {
 		return x;
 	}
 
@@ -115,14 +115,14 @@ public:
 	 * Set x
 	 * @param x x
 	 */
-	inline void setX(int32_t x) {
+	inline void setX(int x) {
 		this->x = x;
 	}
 
 	/**
 	 * @return y
 	 */
-	inline int32_t getY() {
+	inline int getY() {
 		return y;
 	}
 
@@ -130,14 +130,14 @@ public:
 	 * Set y
 	 * @param y y
 	 */
-	inline void setY(int32_t y) {
+	inline void setY(int y) {
 		this->y = y;
 	}
 
 	/**
 	 * @return button
 	 */
-	inline int32_t getButton() {
+	inline int getButton() {
 		return button;
 	}
 
@@ -145,7 +145,7 @@ public:
 	 * Set button
 	 * @param button button
 	 */
-	inline void setButton(int32_t button) {
+	inline void setButton(int button) {
 		this->button = button;
 	}
 

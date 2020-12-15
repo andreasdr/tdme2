@@ -6,7 +6,7 @@
 #include <map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -20,13 +20,12 @@ using std::string;
 using std::vector;
 using std::remove;
 
-using tdme::engine::LODObject3D;
+using tdme::engine::Entity;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::ModelProperties;
@@ -43,15 +42,15 @@ class tdme::tools::shared::model::LevelEditorEntity final
 	friend class LevelEditorEntity_EntityType;
 
 public:
-	static constexpr int32_t ID_NONE { -1 };
-	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 64 };
-	static constexpr int32_t MODEL_SOUNDS_COUNT { 32 };
+	static constexpr int ID_NONE { -1 };
+	static constexpr int MODEL_BOUNDINGVOLUME_COUNT { 64 };
+	static constexpr int MODEL_SOUNDS_COUNT { 32 };
 	static char MODEL_BOUNDINGVOLUME_EDITING_ID[];
 	static char MODEL_BOUNDINGVOLUMES_ID[];
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
-	int32_t id;
+	int id;
 	LevelEditorEntity_EntityType* type { nullptr };
 	string name;
 	string description;
@@ -65,17 +64,19 @@ private:
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes;
 	LevelEditorEntityPhysics* physics { nullptr };
 	vector<LevelEditorEntityParticleSystem*> particleSystems;
-	LevelEditorEntityModel* modelSettings { nullptr };
-	bool renderGroups;
+	bool terrainMesh { false };
+	bool renderGroups { false };
 	string shaderId { "default"};
 	string distanceShaderId { "default"};
-	float distanceShaderDistance;
-	bool contributesShadows;
-	bool receivesShadows;
+	float distanceShaderDistance { 10000.0f };
+	bool contributesShadows { true };
+	bool receivesShadows { true };
 	map<string, LevelEditorEntityAudio*> soundsById;
 	vector<LevelEditorEntityAudio*> sounds;
 	map<string, string> shaderParameters;
 	map<string, string> distanceShaderParameters;
+	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
+	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 
 public:
 
@@ -91,7 +92,7 @@ public:
 	 * @param model model
 	 * @param pivot pivot
 	 */
-	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
+	LevelEditorEntity(int id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
 
 	/**
 	 * Destructor
@@ -101,7 +102,7 @@ public:
 	/**
 	 * @return id
 	 */
-	inline int32_t getId() {
+	inline int getId() {
 		return id;
 	}
 
@@ -193,6 +194,16 @@ public:
 	void setModel(Model* model);
 
 	/**
+	 * Unset model without deleting current one
+	 * @return model
+	 */
+	inline Model* unsetModel() {
+		auto currentModel = model;
+		model = nullptr;
+		return currentModel;
+	}
+
+	/**
 	 * @return pivot
 	 */
 	inline Vector3& getPivot() {
@@ -202,7 +213,7 @@ public:
 	/**
 	 * @return bounding volume count
 	 */
-	inline int32_t getBoundingVolumeCount() {
+	inline int getBoundingVolumeCount() {
 		return boundingVolumes.size();
 	}
 
@@ -211,7 +222,7 @@ public:
 	 * @param idx idx
 	 * @return level editor object bounding volume
 	 */
-	inline LevelEditorEntityBoundingVolume* getBoundingVolume(int32_t idx) {
+	inline LevelEditorEntityBoundingVolume* getBoundingVolume(int idx) {
 		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
@@ -221,18 +232,19 @@ public:
 	 * @param levelEditorEntityBoundingVolume level editor entity bounding volume
 	 * @return level editor bounding volume
 	 */
-	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
+	bool addBoundingVolume(int idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
 
 	/**
 	 * Remove bounding volume
 	 * @param idx idx
 	 */
-	void removeBoundingVolume(int32_t idx);
+	void removeBoundingVolume(int idx);
 
 	/**
 	 * Set default (up to 24) bounding volumes, to be used with LevelEditor
+	 * @param maxBoundingVolumeCount maximum number of editable bounding volumes or -1 for default
 	 */
-	void setDefaultBoundingVolumes();
+	void setDefaultBoundingVolumes(int maxBoundingVolumeCount = -1);
 
 	/**
 	 * @return physics
@@ -270,7 +282,7 @@ public:
 	/**
 	 * @return particle systems count
 	 */
-	inline int32_t getParticleSystemsCount() {
+	inline int getParticleSystemsCount() {
 		return particleSystems.size();
 	}
 
@@ -304,13 +316,6 @@ public:
 	}
 
 	/**
-	 * @return model settings
-	 */
-	inline LevelEditorEntityModel* getModelSettings() {
-		return modelSettings;
-	}
-
-	/**
 	 * @return if entity contributes to shadows
 	 */
 	inline bool isContributesShadows() {
@@ -341,6 +346,22 @@ public:
 	}
 
 	/**
+	 * Is terrain mesh
+	 * @return terrain mesh
+	 */
+	inline bool isTerrainMesh() {
+		return terrainMesh;
+	}
+
+	/**
+	 * Set terrain mesh
+	 * @param terrainMesh terrain mesh
+	 */
+	inline void setTerrainMesh(bool terrainMesh) {
+		this->terrainMesh = terrainMesh;
+	}
+
+	/**
 	 * Is using render groups
 	 * @return render groups enabled
 	 */
@@ -352,7 +373,7 @@ public:
 	 * Set using render groups
 	 * @param renderGroups use render groups
 	 */
-	inline void setRenderNodes(bool renderGroups) {
+	inline void setRenderGroups(bool renderGroups) {
 		this->renderGroups = renderGroups;
 	}
 
@@ -486,6 +507,36 @@ public:
 	 */
 	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
 		distanceShaderParameters = parameters;
+	}
+
+	/**
+	 * @return render pass mask
+	 */
+	inline int getEnvironmentMapRenderPassMask() {
+		return environmentMapRenderPassMask;
+	}
+
+	/**
+	 * Set up render pass mask
+	 * @param renderPassMask render pass mask
+	 */
+	inline void setEnvironmentMapRenderPassMask(int renderPassMask) {
+		this->environmentMapRenderPassMask = renderPassMask;
+	}
+
+	/**
+	 * @return render update time frequency in milliseconds
+	 */
+	inline int64_t getEnvironmentMapTimeRenderUpdateFrequency() {
+		return environmentMapTimeRenderUpdateFrequency;
+	}
+
+	/**
+	 * Set up render update time frequency
+	 * @param frequency frequency in milliseconds
+	 */
+	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {
+		environmentMapTimeRenderUpdateFrequency = frequency;
 	}
 
 };

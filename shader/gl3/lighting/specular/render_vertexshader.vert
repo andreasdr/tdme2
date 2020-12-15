@@ -60,38 +60,40 @@ out vec3 vsEyeDirection;
 {$FUNCTIONS}
 
 void main(void) {
+	mat4 _modelMatrix = inModelMatrix;
 	#if defined(HAVE_TREE)
 		mat4 shaderTransformMatrix = createTreeTransformMatrix(
 			inOrigin,
-			inVertex * mat3(inModelMatrix),
-			vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2])
+			inVertex * mat3(_modelMatrix),
+			vec3(_modelMatrix[3][0], _modelMatrix[3][1], _modelMatrix[3][2])
 		);
 	#elif defined(HAVE_FOLIAGE)
 		mat4 shaderTransformMatrix = createFoliageTransformMatrix(
 			inOrigin,
-			inVertex * mat3(inModelMatrix),
-			vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
+			inVertex * mat3(_modelMatrix),
+			vec3(_modelMatrix[3][0], _modelMatrix[3][1], _modelMatrix[3][2]));
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif
 
 	// normal matrix
-	mat4 normalMatrix = mat4(transpose(inverse(mat3(inModelMatrix * shaderTransformMatrix))));
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(_modelMatrix * shaderTransformMatrix))));
 
 	#if defined(HAVE_TERRAIN_SHADER)
-		vec4 heightVector4 = inModelMatrix * vec4(inVertex, 1.0);
+		vec4 heightVector4 = _modelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
 		vertex = heightVector3;
 		height = heightVector3.y;
-		vec4 normalVector4 = mat4(transpose(inverse(mat3(inModelMatrix)))) * vec4(inNormal, 0.0);
+		vec4 normalVector4 = mat4(transpose(inverse(mat3(_modelMatrix)))) * vec4(inNormal, 0.0);
 		normal = normalize(normalVector4.xyz);
 		slope = abs(180.0 / 3.14 * acos(clamp(dot(normal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 		vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices
-		vec4 worldPosition4 = inModelMatrix * vec4(inVertex, 1.0);
-		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
+		vec4 worldPosition4 = _modelMatrix * vec4(inVertex, 1.0);
+		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 2.0;
 		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
+		_modelMatrix[1][1] = 1.0;
 		shaderTransformMatrix =
 			mat4(
 				1.0, 0.0, 0.0, 0.0,
@@ -99,14 +101,14 @@ void main(void) {
 				0.0, 0.0, 1.0, 0.0,
 				0.0, height, 0.0, 1.0
 			);
-		vsNormal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(waveNormal(worldPosition.x, worldPosition.z), 0.0)));
+		vsNormal = waveNormal(worldPosition.x, worldPosition.z);
 	#else
 		// compute the normal
 		vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	#endif
 
 	// transformations matrices
-	mat4 mvpMatrix = projectionMatrix * cameraMatrix * inModelMatrix * shaderTransformMatrix;
+	mat4 mvpMatrix = projectionMatrix * cameraMatrix * _modelMatrix * shaderTransformMatrix;
 
 	// texure UV
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
@@ -128,7 +130,7 @@ void main(void) {
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 
 	// world position
-	vec4 vsPosition4 = inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vec4 vsPosition4 = _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	// eye direction

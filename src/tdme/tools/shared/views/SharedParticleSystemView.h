@@ -63,8 +63,8 @@ private:
 	int64_t audioOffset { -1LL };
 	int particleSystemIdx { 0 };
 	Vector3 objectScale;
-	int32_t mouseDownLastX;
-	int32_t mouseDownLastY;
+	int mouseDownLastX { -1 };
+	int mouseDownLastY { -1 };
 	Vector3 totalDeltaScale;
 
 	/**

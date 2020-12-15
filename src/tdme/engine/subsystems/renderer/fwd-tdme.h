@@ -9,9 +9,6 @@ namespace renderer {
 	class GL3Renderer;
 	class GLES2Renderer;
 	class Renderer;
-	class Renderer_Light;
-	class Renderer_PBRMaterial;
-	class Renderer_SpecularMaterial;
 	class SingleThreadedRenderer;
 	class VKRenderer;
 }  // namespace renderer

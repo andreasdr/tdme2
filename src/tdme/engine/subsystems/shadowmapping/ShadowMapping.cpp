@@ -149,14 +149,18 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		//	will be disabled after rendering transparent faces
 		renderer->enableBlending();
 		// 	only opaque face entities as shadows will not be produced on transparent faces
-		object3DRenderer->render(
-			visibleObjectsReceivingShadows,
-			false,
-			EntityRenderer::RENDERTYPE_NORMALS |
-			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			EntityRenderer::RENDERTYPE_SHADOWMAPPING
-		);
+		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
+			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
+			object3DRenderer->render(
+				renderPass,
+				visibleObjectsReceivingShadows,
+				false,
+				EntityRenderer::RENDERTYPE_NORMALS |
+				EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+				EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+				EntityRenderer::RENDERTYPE_SHADOWMAPPING
+			);
+		}
 		//	disable blending
 		renderer->disableBlending();
 	}

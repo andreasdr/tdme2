@@ -18,6 +18,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/math/Math.h>
@@ -39,10 +40,12 @@ using std::vector;
 using std::string;
 using std::to_string;
 
+using tdme::engine::subsystems::renderer::GL3Renderer;
+
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
@@ -81,6 +84,12 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_X = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Y = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Y = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	activeTextureUnit = 0;
 	engineVAO = 0;
 }
@@ -119,7 +128,6 @@ void GL3Renderer::initialize()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
@@ -456,6 +464,12 @@ void GL3Renderer::setCullFace(int32_t cullFace)
 
 void GL3Renderer::enableBlending()
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+}
+
+void GL3Renderer::enableAdditionBlending() {
+	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 }
 
@@ -594,69 +608,153 @@ void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
 		0,
-		textureLeft->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureLeft->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureLeft->getTextureWidth(),
 		textureLeft->getTextureHeight(),
 		0,
-		textureLeft->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureLeft->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureLeft->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 		0,
-		textureRight->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureRight->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureRight->getTextureWidth(),
 		textureRight->getTextureHeight(),
 		0,
-		textureRight->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureRight->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureRight->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
 		0,
-		textureTop->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureTop->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureTop->getTextureWidth(),
 		textureTop->getTextureHeight(),
 		0,
-		textureTop->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureTop->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureTop->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 		0,
-		textureBottom->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureBottom->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureBottom->getTextureWidth(),
 		textureBottom->getTextureHeight(),
 		0,
-		textureBottom->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureBottom->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureBottom->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 		0,
-		textureFront->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureFront->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureFront->getTextureWidth(),
 		textureFront->getTextureHeight(),
 		0,
-		textureFront->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureFront->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureFront->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 		0,
-		textureBack->getDepth() == 32 ? GL_RGBA : GL_RGB,
+		textureBack->getDepth() == 32?GL_RGBA:GL_RGB,
 		textureBack->getTextureWidth(),
 		textureBack->getTextureHeight(),
 		0,
-		textureBack->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE,
+		textureBack->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
 		textureBack->getTextureData()->getBuffer()
 	);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	statistics.textureUploads+= 6;
+}
+
+int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+	// generate open gl texture
+	uint32_t textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glTexImage2D(
+		GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+		0,
+		GL_RGBA,
+		width,
+		height,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		nullptr
+	);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	return textureId;
 }
 
 void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -689,7 +787,7 @@ void GL3Renderer::disposeTexture(int32_t textureId)
 	glDeleteTextures(1, (const uint32_t*)&textureId);
 }
 
-int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
+int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	uint32_t frameBufferGlId;
 	// create a frame buffer object
@@ -704,6 +802,9 @@ int32_t GL3Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorBufferTextureGlId, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glReadBuffer(GL_COLOR_ATTACHMENT0);
+	} else
+	if (cubeMapTextureId != ID_NONE) {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cubeMapTextureIndex, cubeMapTextureId, 0);
 	} else {
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
@@ -979,6 +1080,7 @@ void GL3Renderer::initGuiMode()
 {
 	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

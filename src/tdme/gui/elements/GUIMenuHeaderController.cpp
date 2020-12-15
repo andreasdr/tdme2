@@ -188,6 +188,14 @@ void GUIMenuHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEven
 				}
 			}
 			break;
+		case GUIKeyboardEvent::KEYCODE_SPACE: {
+				determineMenuHeaderItemControllers();
+				if (menuHeaderItemControllers.size() == 0) return;
+				auto menuHeaderItemControllerIdx = getSelectedHeaderItemIdx();
+				if (menuHeaderItemControllerIdx == -1) menuHeaderItemControllerIdx = 0;
+				menuHeaderItemControllers[menuHeaderItemControllerIdx]->handleCurrentMenuItemKeyboardEvent(event);
+			}
+			break;
 		}
 	}
 }

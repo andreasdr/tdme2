@@ -5,6 +5,8 @@
 #include <regex>
 #include <string>
 
+#include <tdme/utilities/StringTokenizer.h>
+
 using std::find_if;
 using std::isspace;
 using std::not1;
@@ -18,6 +20,7 @@ using std::toupper;
 using std::string;
 using std::regex;
 
+using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
 const bool StringTools::startsWith(const string& src, const string& prefix) {
@@ -121,4 +124,10 @@ bool StringTools::regexMatch(const string& src, const string& pattern) {
 
 const string StringTools::regexReplace(const string& src, const string& pattern, const string& by) {
 	return regex_replace(src, regex(pattern), by);
+}
+
+const vector<string> StringTools::tokenize(const string& str, const string& delimiters) {
+	StringTokenizer t;
+	t.tokenize(str, delimiters);
+	return t.getTokens();
 }

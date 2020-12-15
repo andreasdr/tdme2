@@ -4,20 +4,20 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 
 using std::string;
 
 using tdme::utilities::ByteBuffer;
-using tdme::utilities::ReferenceCounter;
+using tdme::utilities::Reference;
 
 /**
  * Texture entity
  * @version $Id$
  * @author Andreas Drewke
  */
-class tdme::engine::fileio::textures::Texture final: public ReferenceCounter
+class tdme::engine::fileio::textures::Texture final: public Reference
 {
 public:
 
@@ -37,7 +37,7 @@ public:
 		int32_t width, int32_t height,
 		int32_t textureWidth, int32_t textureHeight,
 		ByteBuffer* textureData):
-		ReferenceCounter(),
+		Reference(),
 		id(id),
 		depth(depth),
 		width(width),

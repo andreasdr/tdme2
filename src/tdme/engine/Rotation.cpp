@@ -53,7 +53,7 @@ void Rotation::fromQuaternion(const Quaternion& q)
 void Rotation::update()
 {
 	quaternion.identity();
-	quaternion.rotate(angle, axis);
+	quaternion.rotate(axis, angle);
 }
 
 float Rotation::interpolate(float rotationAngle, float targetRotationAngle, float timeSecondsPassed, float rotationDeegreePerSeconds) {

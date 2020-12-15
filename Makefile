@@ -262,6 +262,7 @@ SRCS = \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
+	src/tdme/engine/EnvironmentMapping.cpp \
 	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
@@ -319,6 +320,7 @@ SRCS = \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPre.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/environmentmapping/EnvironmentMapping.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
@@ -376,9 +378,11 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
@@ -551,11 +555,13 @@ SRCS = \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
+	src/tdme/tools/leveleditor/controller/EnvironmentMappingScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
 	src/tdme/tools/leveleditor/logic/Level.cpp \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \
+	src/tdme/tools/leveleditor/views/EnvironmentMappingView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.cpp \
 	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \
@@ -581,7 +587,6 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntity.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityAudio.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityBoundingVolume.cpp \
-	src/tdme/tools/shared/model/LevelEditorEntityModel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLibrary.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityLODLevel.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem.cpp \
@@ -627,7 +632,7 @@ SRCS = \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Properties.cpp \
-	src/tdme/utilities/ReferenceCounter.cpp \
+	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \

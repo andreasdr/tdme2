@@ -324,7 +324,7 @@ bool Application::limitFPS = false;
 
 #if defined(VULKAN) || defined(GLFW3)
 	GLFWwindow* Application::glfwWindow = nullptr;
-	array<uint32_t, 10> Application::glfwMouseButtonDownFrames;
+	array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
 	int Application::glfwMouseButtonLast = -1;
 	int Application::glfwMods = 0;
 	bool Application::capsLockEnabled = false;
@@ -414,27 +414,27 @@ bool Application::isActive() {
 	#endif
 }
 
-int32_t Application::getWindowXPosition() const {
+int Application::getWindowXPosition() const {
 	return windowXPosition;
 }
 
-void Application::setWindowXPosition(int32_t windowXPosition) {
+void Application::setWindowXPosition(int windowXPosition) {
 	this->windowXPosition = windowXPosition;
 }
 
-int32_t Application::getWindowYPosition() const {
+int Application::getWindowYPosition() const {
 	return windowYPosition;
 }
 
-void Application::setWindowYPosition(int32_t windowYPosition) {
+void Application::setWindowYPosition(int windowYPosition) {
 	this->windowYPosition = windowYPosition;
 }
 
-int32_t Application::getWindowWidth() const {
+int Application::getWindowWidth() const {
 	return windowWidth;
 }
 
-void Application::setWindowWidth(int32_t windowWidth) {
+void Application::setWindowWidth(int windowWidth) {
 	this->windowWidth = windowWidth;
 	if (initialized == true) {
 		#if defined(VULKAN) || defined(GLFW3)
@@ -445,11 +445,11 @@ void Application::setWindowWidth(int32_t windowWidth) {
 	}
 }
 
-int32_t Application::getWindowHeight() const {
+int Application::getWindowHeight() const {
 	return windowHeight;
 }
 
-void Application::setWindowHeight(int32_t windowHeight) {
+void Application::setWindowHeight(int windowHeight) {
 	this->windowHeight = windowHeight;
 	if (initialized == true) {
 		#if defined(VULKAN) || defined(GLFW3)
@@ -734,7 +734,7 @@ void Application::displayInternal() {
 	#endif
 }
 
-void Application::reshapeInternal(int32_t width, int32_t height) {
+void Application::reshapeInternal(int width, int height) {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
 		Application::application->initialized = true;

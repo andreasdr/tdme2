@@ -77,10 +77,12 @@ private:
 	Color4 effectColorAddLOD2;
 	Color4 effectColorMulLOD3;
 	Color4 effectColorAddLOD3;
+	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
+
 	map<string, string> shaderParameters;
 	map<string, string> distanceShaderParameters;
 
@@ -427,6 +429,17 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
+		if (objectLOD1 != nullptr) objectLOD1->setRenderPass(renderPass);
+		if (objectLOD2 != nullptr) objectLOD2->setRenderPass(renderPass);
+		if (objectLOD3 != nullptr) objectLOD3->setRenderPass(renderPass);
 	}
 
 	/**

@@ -250,7 +250,17 @@ public:
 	 * @param value2 value 2
 	 * @return pow
 	 */
-	inline static double pow(double value1, double value2) {
+	inline static int32_t pow(int32_t value1, int32_t value2) {
+		return std::pow(value1, value2);
+	}
+
+	/**
+	 * Returns the value of the value 1 raised to the power of value2
+	 * @param value1 value 1
+	 * @param value2 value 2
+	 * @return pow
+	 */
+	inline static float pow(float value1, float value2) {
 		return std::pow(value1, value2);
 	}
 

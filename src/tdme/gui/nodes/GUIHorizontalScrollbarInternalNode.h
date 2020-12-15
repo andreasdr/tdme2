@@ -88,8 +88,8 @@ public:
 	);
 
 	// overridden methods
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
+	int getContentWidth() override;
+	int getContentHeight() override;
 	void render(GUIRenderer* guiRenderer) override;
 
 };

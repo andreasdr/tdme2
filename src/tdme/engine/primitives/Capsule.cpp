@@ -66,7 +66,7 @@ void Capsule::setScale(const Vector3& scale) {
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	Quaternion rotationQuaternion;
-	rotationQuaternion.rotate(angle, rotationAxis);
+	rotationQuaternion.rotate(rotationAxis, angle);
 
 	// set shape orientation
 	collisionShapeLocalTransform.setOrientation(

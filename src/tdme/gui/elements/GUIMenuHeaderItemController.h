@@ -109,6 +109,12 @@ private:
 	 */
 	void selectPrevious();
 
+	/**
+	 * Handle current menu item keyboard event
+	 * @param event event
+	 */
+	void handleCurrentMenuItemKeyboardEvent(GUIKeyboardEvent* event);
+
 public:
 	// overridden methods
 	void initialize() override;

@@ -9,7 +9,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/network/NetworkException.h>
 #include <tdme/network/udpserver/ServerClient.h>
@@ -114,7 +114,7 @@ public:
 
 protected:
 	/**
-	 * @brief public destructor, should only be called implicitly by ReferenceCounter::releaseReference()
+	 * @brief public destructor, should only be called implicitly by Reference::releaseReference()
 	 */
 	virtual ~UDPServerClient();
 

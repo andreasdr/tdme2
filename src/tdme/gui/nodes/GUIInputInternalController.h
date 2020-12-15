@@ -36,8 +36,8 @@ private:
 	GUIElementNode* inputNode { nullptr };
 	int64_t cursorModeStarted;
 	CursorMode cursorMode;
-	int32_t index;
-	int32_t offset;
+	int index;
+	int offset;
 	bool isDragging;
 	array<float, 2> dragPosition;
 	int64_t draggingTickLast;
@@ -52,12 +52,12 @@ private:
 	/**
 	 * @return index
 	 */
-	int32_t getIndex();
+	int getIndex();
 
 	/**
 	 * @return offset
 	 */
-	int32_t getOffset();
+	int getOffset();
 
 	/**
 	 * Reset cursor mode

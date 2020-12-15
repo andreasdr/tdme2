@@ -12,17 +12,18 @@
 #include <vector>
 #include <string>
 
-#include <tdme/utilities/Buffer.h>
-#include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/FloatBuffer.h>
-#include <tdme/utilities/IntBuffer.h>
-#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Buffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
@@ -32,17 +33,19 @@ using std::to_string;
 using std::string;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
-using tdme::utilities::Buffer;
-using tdme::utilities::ByteBuffer;
-using tdme::utilities::FloatBuffer;
-using tdme::utilities::IntBuffer;
-using tdme::utilities::ShortBuffer;
+
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTools;
 
 GLES2Renderer::GLES2Renderer()
@@ -63,6 +66,12 @@ GLES2Renderer::GLES2Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_X = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Y = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Y = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	activeTextureUnit = 0;
 }
 
@@ -95,7 +104,6 @@ void GLES2Renderer::initialize()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 }
@@ -354,12 +362,18 @@ void GLES2Renderer::setCullFace(int32_t cullFace)
 	glCullFace(cullFace);
 }
 
-void GLES2Renderer::enableBlending()
+void GL3Renderer::enableBlending()
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 }
 
-void GLES2Renderer::disableBlending()
+void GL3Renderer::enableAdditionBlending() {
+	glBlendFunc(GL_ONE, GL_ONE);
+	glEnable(GL_BLEND);
+}
+
+void GL3Renderer::disableBlending()
 {
 	glDisable(GL_BLEND);
 }
@@ -547,6 +561,11 @@ void GLES2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Te
 	statistics.textureUploads+= 6;
 }
 
+int32_t GLES2Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+	Console::println("GLES2Renderer::setCubeMapTexture(): Not implemented");
+	return 0;
+}
+
 void GLES2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -577,7 +596,7 @@ void GLES2Renderer::disposeTexture(int32_t textureId)
 	glDeleteTextures(1, (const uint32_t*)&textureId);
 }
 
-int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
+int32_t GLES2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	uint32_t frameBufferGlId;
 	// create a frame buffer object
@@ -830,6 +849,7 @@ void GLES2Renderer::initGuiMode()
 {
 	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

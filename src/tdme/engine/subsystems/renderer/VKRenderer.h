@@ -16,7 +16,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -35,6 +35,7 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
@@ -539,6 +540,7 @@ public:
 	void setFrontFace(void* context, int32_t frontFace) override;
 	void setCullFace(int32_t cullFace) override;
 	void enableBlending() override;
+	void enableAdditionBlending() override;
 	void disableBlending() override;
 	void enableDepthBufferWriting() override;
 	void disableDepthBufferWriting() override;
@@ -552,12 +554,13 @@ public:
 	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
 	void uploadTexture(void* context, Texture* texture) override;
 	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
+	int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;
 	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
-	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
+	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId = 0, int32_t cubeMapTextureIndex = 0) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared) override;

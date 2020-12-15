@@ -1,5 +1,10 @@
-
 #pragma once
+
+#if defined(_WIN32) && defined(_MSC_VER)
+	#define NOMINMAX
+	#undef max
+	#undef min
+#endif
 
 #include <tdme/utilities/fwd-tdme.h>
 

@@ -14,6 +14,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
@@ -52,7 +53,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -88,6 +88,7 @@ using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
@@ -125,7 +126,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
@@ -161,24 +161,24 @@ int Level::renderGroupsLOD2ReduceBy = 4;
 int Level::renderGroupsLOD3ReduceBy = 16;
 bool Level::enableEarlyZRejection = false;
 
-void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
+void Level::setLight(Engine* engine, LevelEditorLevel& level, const Vector3& translation)
 {
-	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level->getLightCount(); i++) {
-		engine->getLightAt(i)->setAmbient(Color4(level->getLightAt(i)->getAmbient()));
-		engine->getLightAt(i)->setDiffuse(Color4(level->getLightAt(i)->getDiffuse()));
-		engine->getLightAt(i)->setSpecular(Color4(level->getLightAt(i)->getSpecular()));
-		engine->getLightAt(i)->setSpotDirection(level->getLightAt(i)->getSpotDirection());
-		engine->getLightAt(i)->setSpotExponent(level->getLightAt(i)->getSpotExponent());
-		engine->getLightAt(i)->setSpotCutOff(level->getLightAt(i)->getSpotCutOff());
-		engine->getLightAt(i)->setConstantAttenuation(level->getLightAt(i)->getConstantAttenuation());
-		engine->getLightAt(i)->setLinearAttenuation(level->getLightAt(i)->getLinearAttenuation());
-		engine->getLightAt(i)->setQuadraticAttenuation(level->getLightAt(i)->getQuadraticAttenuation());
-		engine->getLightAt(i)->setEnabled(level->getLightAt(i)->isEnabled());
+	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level.getLightCount(); i++) {
+		engine->getLightAt(i)->setAmbient(Color4(level.getLightAt(i)->getAmbient()));
+		engine->getLightAt(i)->setDiffuse(Color4(level.getLightAt(i)->getDiffuse()));
+		engine->getLightAt(i)->setSpecular(Color4(level.getLightAt(i)->getSpecular()));
+		engine->getLightAt(i)->setSpotDirection(level.getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->setSpotExponent(level.getLightAt(i)->getSpotExponent());
+		engine->getLightAt(i)->setSpotCutOff(level.getLightAt(i)->getSpotCutOff());
+		engine->getLightAt(i)->setConstantAttenuation(level.getLightAt(i)->getConstantAttenuation());
+		engine->getLightAt(i)->setLinearAttenuation(level.getLightAt(i)->getLinearAttenuation());
+		engine->getLightAt(i)->setQuadraticAttenuation(level.getLightAt(i)->getQuadraticAttenuation());
+		engine->getLightAt(i)->setEnabled(level.getLightAt(i)->isEnabled());
 		engine->getLightAt(i)->setPosition(
 			Vector4(
-				level->getLightAt(i)->getPosition().getX() + translation.getX(),
-				level->getLightAt(i)->getPosition().getY() + translation.getY(),
-				level->getLightAt(i)->getPosition().getZ() + translation.getZ(),
+				level.getLightAt(i)->getPosition().getX() + translation.getX(),
+				level.getLightAt(i)->getPosition().getY() + translation.getY(),
+				level.getLightAt(i)->getPosition().getZ() + translation.getZ(),
 				1.0f
 			)
 		);
@@ -324,6 +324,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				lodObject->setEffectColorAddLOD3(lodLevel3->getColorAdd());
 				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
+			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(levelEditorEntity->getShader());
 			lodObject->setDistanceShader(levelEditorEntity->getDistanceShader());
 			lodObject->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
@@ -335,10 +336,11 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				instances
 			);
 			auto object = dynamic_cast<Object3D*>(entity);
+			if (levelEditorEntity->getShader() == "water" || levelEditorEntity->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(levelEditorEntity->getShader());
 			object->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
-			if (enableEarlyZRejection == true && levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+			if (enableEarlyZRejection == true && levelEditorEntity->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
 			}
 		}
@@ -367,16 +369,27 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 			);
 		}
 	} else
-	// particle system
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	// trigger/environment mapping
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+		levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = levelEditorEntity->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
+		}
+		if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING &&
+			levelEditorEntity->getBoundingVolumeCount() == 1 &&
+			dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
+			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(levelEditorEntity->getBoundingVolume(0)->getBoundingVolume()));
+			auto environmentMapping = new EnvironmentMapping("environmentmapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), aabb);
+			environmentMapping->setRenderPassMask(levelEditorEntity->getEnvironmentMapRenderPassMask());
+			environmentMapping->setTimeRenderUpdateFrequency(levelEditorEntity->getEnvironmentMapTimeRenderUpdateFrequency());
+			entityBoundingVolumesHierarchy->addEntity(environmentMapping);
 		}
 		entityBoundingVolumesHierarchy->update();
 		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {
@@ -389,6 +402,9 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 
 	//
 	if (entity != nullptr) {
+		if (levelEditorEntity->isTerrainMesh() == true) {
+			entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
+		}
 		entity->setContributesShadows(levelEditorEntity->isContributesShadows());
 		entity->setReceivesShadows(levelEditorEntity->isReceivesShadows());
 		entity->fromTransformations(transformations);
@@ -408,16 +424,16 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void Level::addLevel(Engine* engine, LevelEditorLevel& level, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, map<string, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto object = level.getObjectAt(i);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 0.5f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level.getObjectCount()) * 0.5f);
 		progressStepCurrent++;
 
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
@@ -443,8 +459,25 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}
+			if (object->getEntity()->getType()->hasNonEditScaleDownMode() == true) {
+				entity->setScale(
+					object->getEntity()->getType()->getNonEditScaleDownModeDimension().
+					clone().
+					scale(
+						Vector3(
+							1.0f / (object->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+							1.0f / (object->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+							1.0f / (object->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+						)
+					)
+				);
+			}
 			entity->update();
 			entity->setEnabled(enable);
+
+			auto object3D = dynamic_cast<Object3D*>(entity);
+			if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(object->getReflectionEnvironmentMappingId());
+
 			engine->addEntity(entity);
 		}
 	}
@@ -521,7 +554,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 		);
 	} else
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::MODEL &&
-		levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+		levelEditorEntity->isTerrainMesh() == true) {
 		Object3DModel terrainModel(levelEditorEntity->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
 		if (physicsType == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
@@ -609,17 +642,17 @@ Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, cons
 	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index, overrideType);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void Level::addLevel(World* world, LevelEditorLevel& level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
 	//
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto levelEditorObject = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto levelEditorObject = level.getObjectAt(i);
 
 		//
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 1.0f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level.getObjectCount()) * 1.0f);
 		progressStepCurrent++;
 
 		//
@@ -641,10 +674,10 @@ void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const V
 	}
 }
 
-void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
+void Level::disableLevel(Engine* engine, LevelEditorLevel& level)
 {
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto object = level.getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -653,22 +686,22 @@ void Level::disableLevel(Engine* engine, LevelEditorLevel* level)
 	}
 }
 
-void Level::disableLevel(World* world, LevelEditorLevel* level)
+void Level::disableLevel(World* world, LevelEditorLevel& level)
 {
 	Transformations transformations;
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto object = level.getObjectAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		rigidBody->setEnabled(false);
 	}
 }
 
-void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
+void Level::enableLevel(Engine* engine, LevelEditorLevel& level, const Vector3& translation)
 {
 	// TODO: a.drewke, Object3DRenderGroups
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto object = level.getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());
 		if (entity == nullptr)
 			continue;
@@ -683,11 +716,11 @@ void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& 
 	}
 }
 
-void Level::enableLevel(World* world, LevelEditorLevel* level, const Vector3& translation)
+void Level::enableLevel(World* world, LevelEditorLevel& level, const Vector3& translation)
 {
 	Transformations transformations;
-	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
+	for (auto i = 0; i < level.getObjectCount(); i++) {
+		auto object = level.getObjectAt(i);
 		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(object->getTransformations());

@@ -456,6 +456,7 @@ void SharedParticleSystemView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
+	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(particleSystemScreenController->getScreenNode()->getId());
 	onInitAdditionalScreens();
@@ -581,11 +582,10 @@ void SharedParticleSystemView::updateGizmo(LevelEditorEntity* entity) {
 	auto pse = dynamic_cast<ParticleSystemEntity*>(selectedEntity);
 	if (selectedEntity != nullptr) {
 		if (pse != nullptr) {
-			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()));
+			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransformations());
 		} else {
-			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter());
+			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
 		}
-		setGizmoRotation(entity, selectedEntity->getTransformations());
 	} else {
 		removeGizmo();
 	}

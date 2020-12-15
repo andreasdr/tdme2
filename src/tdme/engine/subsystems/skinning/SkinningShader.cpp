@@ -253,6 +253,7 @@ void SkinningShader::computeSkinning(void* context, Object3DBase* object3DBase, 
 
 void SkinningShader::unUseProgram()
 {
+	if (isRunning == false) return;
 	isRunning = false;
 	for (auto& skinningContext: contexts) skinningContext.running = false;
 	// we are done, do memory barrier

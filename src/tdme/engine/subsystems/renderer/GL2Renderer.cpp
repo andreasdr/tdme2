@@ -14,17 +14,18 @@
 #include <vector>
 #include <string>
 
-#include <tdme/utilities/Buffer.h>
-#include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/FloatBuffer.h>
-#include <tdme/utilities/IntBuffer.h>
-#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Buffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -35,17 +36,19 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
-using tdme::utilities::Buffer;
-using tdme::utilities::ByteBuffer;
-using tdme::utilities::FloatBuffer;
-using tdme::utilities::IntBuffer;
-using tdme::utilities::ShortBuffer;
+
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
@@ -67,6 +70,12 @@ GL2Renderer::GL2Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_X = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Y = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Y = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	// TODO: buffer objects available
 	activeTextureUnit = 0;
 	bufferObjectsAvailable = true;
@@ -119,7 +128,6 @@ void GL2Renderer::initialize()
 	glEnable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	glEnable(GL_POINT_SPRITE);
@@ -396,6 +404,12 @@ void GL2Renderer::setCullFace(int32_t cullFace)
 
 void GL2Renderer::enableBlending()
 {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+}
+
+void GL2Renderer::enableAdditionBlending() {
+	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 }
 
@@ -597,6 +611,11 @@ void GL2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	statistics.textureUploads+= 6;
 }
 
+int32_t GL2Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+	Console::println("GL2Renderer::setCubeMapTexture(): Not implemented");
+	return 0;
+}
+
 void GL2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -627,7 +646,7 @@ void GL2Renderer::disposeTexture(int32_t textureId)
 	glDeleteTextures(1, (const uint32_t*)&textureId);
 }
 
-int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
+int32_t GL2Renderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	// create a frame buffer object
 	uint32_t frameBufferGlId;
@@ -892,6 +911,7 @@ void GL2Renderer::initGuiMode()
 {
 	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);

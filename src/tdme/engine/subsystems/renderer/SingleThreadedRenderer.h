@@ -35,11 +35,12 @@ private:
 	Matrix2D3x3 textureMatrix;
 	float maskMaxValue { 1.0f };
 	int32_t lighting { 0 };
-
+	array<float, 3> environmentMappingCubeMapPosition;
 protected:
 	string shader;
 	map<string, string> shaderParameters;
 	string shaderParametersHash;
+
 
 public:
 	/**
@@ -68,6 +69,8 @@ public:
 	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
+	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) override;
+	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) override;
 	virtual const Renderer_Statistics getStatistics() override;
 
 private:

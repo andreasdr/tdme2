@@ -64,7 +64,7 @@ private:
 	/**
 	 * Get selected option idx
 	 */
-	int32_t getSelectedOptionIdx();
+	int getSelectedOptionIdx();
 
 	/**
 	 * Select current option

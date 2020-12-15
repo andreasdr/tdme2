@@ -6,6 +6,7 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -18,6 +19,7 @@ using std::string;
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
+using tdme::engine::model::Model;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
@@ -62,6 +64,8 @@ private:
 	int64_t audioStarted;
 	int64_t audioOffset;
 	Vector3 objectScale;
+	string attachment1Bone;
+	Model* attachment1Model { nullptr };
 
 	/**
 	 * Init model
@@ -120,7 +124,7 @@ public:
 	/**
 	 * @return pop up views
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * @return entity
@@ -247,6 +251,13 @@ public:
 	 * @param overlay3AnimationId overlay 3 animation id
 	 */
 	void playAnimation(const string& baseAnimationId, const string& overlay1AnimationId = string(), const string& overlay2AnimationId = string(), const string& overlay3AnimationId = string());
+
+	/**
+	 * Add attachment 1
+	 * @param nodeId node id to attach model to
+	 * @param attachmentModelFile attachment model mile
+	 */
+	void addAttachment1(const string& nodeId, const string& attachmentModelFile);
 
 	/**
 	 * Update rendering options

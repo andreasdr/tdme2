@@ -6,6 +6,7 @@
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
+      - Read about the [philosophy](./README-Philosophy.md) if interested
     - TDME2 is open source
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
@@ -69,6 +70,8 @@
               - there is also support for particle system groups
             - lines based objects
             - entity hierarchy objects
+            - environment mapping objects
+              - which can be used as reflection sources of other objects
         - object/entity transformations
             - scaling
             - rotations
@@ -95,8 +98,10 @@
         - early z rejection
         - post processing
           - depth blur
-          - SSAO
+          - desaturation
           - light scattering
+          - SSAO
+          - vignette
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
@@ -209,7 +214,7 @@
             - installation using HTTP download from a repository which is easy to set up
             - updating/repairing/uninstalling
         - TDME2 tools contains the installer creation application, whereas
-            - installer definitions are set up using simple property files
+            - installer definitions are set up using property files
             - create-installer is able to group files into components
 
 - What does it (maybe still) lack
@@ -219,6 +224,7 @@
     - documentation
 
 - What is WIP or planned
+    - Reflections via environment mapping
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects

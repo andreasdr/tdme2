@@ -8,22 +8,22 @@ using tdme::tests::CrashTest;
 using tdme::application::Application;
 using tdme::utilities::Console;
 
-class XXX {
+class CrashTestClass {
 public:
-	static void xxxTest() {
+	static void crash() {
 		char* i = nullptr;
-		Console::println(string("CrashTest::main(): message: ") + i);
+		Console::println(string("CrashTestClass::crash(): message: ") + i);
 	}
 };
 
-void test() {
-	XXX::xxxTest();
+static void crashTestFunction() {
+	CrashTestClass::crash();
 }
 
 void CrashTest::main()
 {
 	Application::installExceptionHandler();
 	Console::println("CrashTest::main(): init");
-	test();
+	crashTestFunction();
 	Console::println("CrashTest::main(): done");
 }

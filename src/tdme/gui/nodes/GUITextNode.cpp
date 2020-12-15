@@ -67,12 +67,12 @@ bool GUITextNode::isContentNode()
 	return true;
 }
 
-int32_t GUITextNode::getContentWidth()
+int GUITextNode::getContentWidth()
 {
 	return font != nullptr?font->getTextWidth(text) + border.left + border.right + padding.left + padding.right:0;
 }
 
-int32_t GUITextNode::getContentHeight()
+int GUITextNode::getContentHeight()
 {
 	return font != nullptr?font->getTextHeight(text) + border.top + border.bottom + padding.top + padding.bottom:0;
 }

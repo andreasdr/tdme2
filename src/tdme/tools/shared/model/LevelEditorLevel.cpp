@@ -52,8 +52,8 @@ LevelEditorLevel::LevelEditorLevel()
 	lights.push_back(new LevelEditorLight(2));
 	lights.push_back(new LevelEditorLight(3));
 	auto light = lights[0];
-	light->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
+	light->getAmbient().set(0.7f, 0.7f, 0.7f, 1.0f);
+	light->getDiffuse().set(0.3f, 0.3f, 0.3f, 1.0f);
 	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
 	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()));
@@ -66,6 +66,7 @@ LevelEditorLevel::LevelEditorLevel()
 	light->setEnabled(true);
 	entityLibrary = new LevelEditorEntityLibrary(this);
 	objectIdx = 0;
+	skyModelScale = Vector3(1.0f, 1.0f, 1.0f);
 }
 
 LevelEditorLevel::~LevelEditorLevel() {
@@ -158,10 +159,11 @@ void LevelEditorLevel::clearObjects()
 {
 	objectsById.clear();
 	objects.clear();
+	environmentMappingIds.clear();
 	objectIdx = 0;
 }
 
-void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId) {
+void LevelEditorLevel::getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId) {
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == entityId) {
 			objectsByEntityId.push_back(object->getId());
@@ -169,7 +171,7 @@ void LevelEditorLevel::getObjectsByEntityId(int32_t entityId, vector<string>& ob
 	}
 }
 
-void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
+void LevelEditorLevel::removeObjectsByEntityId(int entityId)
 {
 	vector<string> objectsToRemove;
 	getObjectsByEntityId(entityId, objectsToRemove);
@@ -178,7 +180,7 @@ void LevelEditorLevel::removeObjectsByEntityId(int32_t entityId)
 	}
 }
 
-void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEntityId)
+void LevelEditorLevel::replaceEntity(int searchEntityId, int replaceEntityId)
 {
 	auto replaceEntity = getEntityLibrary()->getEntity(replaceEntityId);
 	if (replaceEntity == nullptr)
@@ -187,16 +189,6 @@ void LevelEditorLevel::replaceEntity(int32_t searchEntityId, int32_t replaceEnti
 	for (auto object: objects) {
 		if (object->getEntity()->getId() == searchEntityId) {
 			object->setEntity(replaceEntity);
-		}
-	}
-}
-
-void LevelEditorLevel::updatePivot(int32_t modelId, const Vector3& pivot)
-{
-	for (auto object: objects) {
-		if (object->getEntity()->getId() == modelId) {
-			object->getTransformations().setPivot(pivot);
-			object->getTransformations().update();
 		}
 	}
 }
@@ -214,6 +206,7 @@ void LevelEditorLevel::addObject(LevelEditorObject* object)
 	}
 	objectsById[object->getId()] = object;
 	objects.push_back(object);
+	if (object->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.insert(object->getId());
 }
 
 void LevelEditorLevel::removeObject(const string& id)
@@ -223,6 +216,7 @@ void LevelEditorLevel::removeObject(const string& id)
 		auto object = objectByIdIt->second;
 		objectsById.erase(objectByIdIt);
 		objects.erase(remove(objects.begin(), objects.end(), object), objects.end());
+		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) environmentMappingIds.erase(object->getId());
 		delete object;
 	}
 }
@@ -234,6 +228,12 @@ LevelEditorObject* LevelEditorLevel::getObjectById(const string& id)
 		return objectByIdIt->second;
 	}
 	return nullptr;
+}
+
+void LevelEditorLevel::setSkyModel(Model* model) {
+	if (this->skyModel== model) return;
+	delete this->skyModel;
+	this->skyModel = model;
 }
 
 void LevelEditorLevel::update() {

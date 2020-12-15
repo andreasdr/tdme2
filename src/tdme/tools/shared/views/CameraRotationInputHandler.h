@@ -33,8 +33,8 @@ private:
 	bool keyPlus;
 	bool keyMinus;
 	bool keyR;
-	int32_t mouseLastX;
-	int32_t mouseLastY;
+	int mouseLastX;
+	int mouseLastY;
 	float maxAxisDimension;
 	Transformations lookFromRotations;
 	float scale;

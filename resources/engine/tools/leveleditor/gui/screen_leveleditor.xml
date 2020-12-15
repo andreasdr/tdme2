@@ -63,9 +63,11 @@
 					<tab id="tab_properties_snapping" text="Snapping" />
 					<tab id="tab_properties_map" text="Map" />
 					<tab id="tab_properties_map_properties" text="Map Properties" />
+					<tab id="tab_properties_map_sky" text="Sky" />
 					<tab id="tab_properties_object" text="Object" />
 					<tab id="tab_properties_object_transformations" text="Object Transformations" />
 					<tab id="tab_properties_object_properties" text="Object Properties" />
+					<tab id="tab_properties_reflections" text="Object Reflections" />
 					<tab id="tab_properties_lights" text="Lights" />
 				</tabs-header>
 				<tabs-content>
@@ -163,6 +165,29 @@
 								<button id="button_map_properties_remove" name="button_map_properties_remove" text="Remove" width="80" />
 								<space height="5" />
 								<button id="button_map_properties_save" name="button_map_properties_save" text="Save" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_map_sky" vertical-align="center">
+						<layout width="100%" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center">
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Model" width="150" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="map_sky_model" name="map_sky_model" width="*" height="auto" text="./model.tm" />
+								<space width="10" />
+								<button id="button_map_sky_model_load" name="button_map_sky_model_load" text="Load" width="60" height="auto" />
+								<space width="10" />
+								<button id="button_map_sky_model_clear" name="button_map_sky_model_clear" text="Clear" width="60" height="auto" />
+							</layout>
+							<space height="5" />
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Scale" width="150" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="map_sky_model_scale" name="map_sky_model_scale" width="*" height="auto" text="1.0, 1.0, 1.0" />
+							</layout>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_map_sky_apply" name="button_map_sky_apply" text="Apply" />
 							</layout>
 						</layout>
 					</tab-content>
@@ -319,6 +344,21 @@
 								<button id="button_object_properties_remove" name="button_object_properties_remove" text="Remove" width="80" />
 								<space height="5" />
 								<button id="button_object_properties_save" name="button_object_properties_save" text="Save" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_reflections" vertical-align="center">
+						<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+							<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center">
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Choose a environment map to reflect on this object" width="auto" height="auto"/>
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal">
+								<dropdown id="object_reflections_environmentmapping" name="object_reflections_environmentmapping" width="530" height="auto" text="<None>">
+									<dropdown-option text="<None>" value="1" />
+								</dropdown>
+								<space width="10" />
+								<button id="button_object_reflections_environmentmapping_apply" name="button_object_reflections_environmentmapping_apply" text="Apply" width="80" />
 							</layout>
 						</layout>
 					</tab-content>

@@ -68,6 +68,20 @@ public:
 	~Camera();
 
 	/**
+	 * @return width
+	 */
+	inline int getWidth() {
+		return width;
+	}
+
+	/**
+	 * @return height
+	 */
+	inline int getHeight() {
+		return height;
+	}
+
+	/**
 	 * @return camera mode
 	 */
 	inline CameraMode getCameraMode() const {

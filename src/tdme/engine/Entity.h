@@ -51,6 +51,9 @@ private:
 	virtual void applyParentTransformations(const Transformations& parentTransformations) = 0;
 
 public:
+	static constexpr int RENDERPASS_MAX { 5 };
+	static constexpr int RENDERPASS_ALL { 1 + 2 + 4 + 8 + 16 };
+	enum RenderPass { RENDERPASS_NONE = 0, RENDERPASS_NOFRUSTUMCULLING = 1, RENDERPASS_TERRAIN = 2, RENDERPASS_WATER = 4, RENDERPASS_STANDARD = 8, RENDERPASS_POST_POSTPROCESSING = 16 };
 
 	/**
 	 * Set up engine
@@ -277,6 +280,17 @@ public:
 	 * @return this transformations
 	 */
 	virtual const Transformations& getTransformations() const = 0;
+
+	/**
+	 * @return render pass
+	 */
+	virtual RenderPass getRenderPass() const = 0;
+
+	/**
+	 * Set render pass
+	 * @param renderPass render pass
+	 */
+	virtual void setRenderPass(RenderPass renderPass) = 0;
 
 	/**
 	 * Destructor

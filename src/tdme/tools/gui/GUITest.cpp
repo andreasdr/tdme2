@@ -154,7 +154,7 @@ void GUITest::dispose()
 	engine->dispose();
 }
 
-void GUITest::reshape(int32_t width, int32_t height)
+void GUITest::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }

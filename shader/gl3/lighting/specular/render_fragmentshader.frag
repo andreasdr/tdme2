@@ -72,6 +72,11 @@ uniform Light lights[MAX_LIGHTS];
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
 
+
+uniform samplerCube environmentMappingTextureUnit;
+uniform int environmentMappingTextureAvailable;
+uniform vec3 environmentMappingPosition;
+
 #if defined(HAVE_SOLID_SHADING)
 #else
 	uniform sampler2D specularTextureUnit;
@@ -375,10 +380,16 @@ void main(void) {
 		}
 	#elif defined(HAVE_WATER_SHADER)
 		//
-		outColor = vec4(0.25, 0.25, 0.8, 0.5);
+		vec4 envColor = vec4(0.0f, 0.0f, 0.4f, 1.0f);
+		if (environmentMappingTextureAvailable == 1) {
+			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.1, 1.0, 0.1)));
+			envColor = texture(environmentMappingTextureUnit, -reflectionVector) * 0.6;
+		}
+		outColor = fragColor * 0.4;
+		outColor+= vec4(envColor.rgb, 0.0);
 		outColor+= vsEffectColorAdd;
-		outColor*= fragColor;
 		outColor = clamp(outColor, 0.0, 1.0);
+		outColor.a = 0.5;
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +

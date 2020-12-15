@@ -24,7 +24,7 @@ namespace utilities {
 	class PathFindingNode;
 	class PathFindingCustomTest;
 	class Properties;
-	class ReferenceCounter;
+	class Reference;
 	class RTTI;
 	class Time;
 	class ShortBuffer;

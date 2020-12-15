@@ -99,6 +99,7 @@ using tdme::utilities::StringTools;
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
 Model* Tools::gizmoAll = nullptr;
+Model* Tools::gizmoTranslationScale = nullptr;
 Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
@@ -178,12 +179,12 @@ float Tools::convertToFloat(const string& text)
 	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(const string& text)
+int Tools::convertToInt(const string& text)
 {
 	return Integer::parseInt(text);
 }
 
-int32_t Tools::convertToIntSilent(const string& text)
+int Tools::convertToIntSilent(const string& text)
 {
 	try {
 		return Integer::parseInt(text);
@@ -315,7 +316,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
+		entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
@@ -394,18 +396,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
+	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(
 		Vector4(
-			entityBoundingBoxToUse->getMin().getX() + ((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) / 2.0f),
-			entityBoundingBoxToUse->getMin().getY() + ((entityBoundingBoxToUse->getMax().getY() - entityBoundingBoxToUse->getMin().getY()) / 2.0f),
-			-entityBoundingBoxToUse->getMin().getZ() * 4.0f,
+			0.0f,
+			10.0f,
+			10.0f,
 			1.0f
 		)
 	);
-	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())).normalize());
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);
@@ -521,28 +523,35 @@ void Tools::loadSettings(Application* application) {
 
 Model* Tools::getGizmoAll() {
 	if (gizmoAll == nullptr) {
-		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.fbx.tm");
+		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.tm");
 	}
 	return gizmoAll;
 }
 
+Model* Tools::getGizmoTranslationScale() {
+	if (gizmoTranslationScale == nullptr) {
+		gizmoTranslationScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_transscale.tm");
+	}
+	return gizmoTranslationScale;
+}
+
 Model* Tools::getGizmoTranslation() {
 	if (gizmoTranslation == nullptr) {
-		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.fbx.tm");
+		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.tm");
 	}
 	return gizmoTranslation;
 }
 
 Model* Tools::getGizmoScale() {
 	if (gizmoScale == nullptr) {
-		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.fbx.tm");
+		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.tm");
 	}
 	return gizmoScale;
 }
 
 Model* Tools::getGizmoRotations() {
 	if (gizmoRotations == nullptr) {
-		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
+		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.tm");
 	}
 	return gizmoRotations;
 }

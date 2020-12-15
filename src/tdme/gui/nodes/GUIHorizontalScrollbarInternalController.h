@@ -31,7 +31,7 @@ private:
 	GUILayoutNode* contentNode { nullptr };
 	float contentWidth;
 	State state { STATE_NONE };
-	int32_t mouseXOffset;
+	int mouseXOffset;
 	MutableString value;
 
 	/**

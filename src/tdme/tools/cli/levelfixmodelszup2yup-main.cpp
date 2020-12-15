@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 		LevelFileImport::doImport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
-			&level
+			level
 		);
 		Console::println("Fixing level models up axis from Z-Up to Y-Up");
 		Matrix4x4 z2yUpMatrix;
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 		LevelFileExport::doExport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
-			&level
+			level
 		);
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));

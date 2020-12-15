@@ -7,6 +7,7 @@ namespace tools {
 namespace leveleditor {
 namespace controller {
 	class EmptyScreenController;
+	class EnvironmentMappingScreenController;
 	class LevelEditorEntityLibraryScreenController;
 	class LevelEditorScreenController;
 	class TriggerScreenController;

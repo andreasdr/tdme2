@@ -39,7 +39,7 @@ PropertyModelClass* ModelProperties::getProperty(const string& name)
 	return nullptr;
 }
 
-int32_t ModelProperties::getPropertyIndex(const string& name)
+int ModelProperties::getPropertyIndex(const string& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
 		if (properties[i]->getName() == name) {

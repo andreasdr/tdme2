@@ -215,7 +215,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 				vhacd->Compute(
 					&meshPoints[0],
 					(unsigned int)meshPoints.size() / 3,
-					(const uint32_t *)&meshTriangles[0],
+					(const unsigned int *)&meshTriangles[0],
 					(unsigned int)meshTriangles.size() / 3,
 					vhacdParams
 				);
@@ -322,7 +322,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 	}
 }
 
-Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, uint32_t* triangles, uint32_t pointCount, uint32_t triangleCount) {
+Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());

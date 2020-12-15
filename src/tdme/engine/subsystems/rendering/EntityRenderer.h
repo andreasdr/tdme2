@@ -10,6 +10,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
@@ -32,6 +33,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Engine;
+using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
@@ -184,6 +186,7 @@ private:
 	inline void renderFunction(
 		int threadCount,
 		int threadIdx,
+		Entity::RenderPass renderPass,
 		const vector<Object3D*>& objects,
 		unordered_map<string, unordered_map<string, vector<Object3D*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
@@ -200,6 +203,7 @@ private:
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
+			if (object->renderPass != renderPass) continue;
 			auto objectShader = object->getDistanceShader().length() == 0?
 				object->getShader():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
@@ -289,23 +293,26 @@ public:
 
 	/**
 	 * Renders all given objects
+	 * @param renderPass render pass
 	 * @param objects objects
 	 * @param renderTransparentFaces render transparent faces
 	 * @param renderTypes render types
 	 */
-	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
+	void render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Render points particle system entities
+	 * @param renderPass render pass
 	 * @param pses points particle system entities
 	 */
-	void render(const vector<Entity*>& pses);
+	void render(Entity::RenderPass renderPass, const vector<Entity*>& pses);
 
 	/**
 	 * Renders all given lines objects
+	 * @param renderPass render pass
 	 * @param objects lines objects
 	 */
-	void render(const vector<LinesObject3D*>& objects);
+	void render(Entity::RenderPass renderPass, const vector<LinesObject3D*>& objects);
 
 	/**
 	 * Compare entities by distance from camera

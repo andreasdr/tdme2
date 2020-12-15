@@ -33,29 +33,6 @@ float dWavedy(int i, float x, float y) {
 vec3 waveNormal(float x, float y) {
     float dx = 0.0;
     float dy = 0.0;
-    /*
-    for (int i = 0; i < numWaves; ++i) {
-        dx += dWavedx(i, x - 1.0, y);
-        dy += dWavedy(i, x, y);
-    }
-    for (int i = 0; i < numWaves; ++i) {
-        dx += dWavedx(i, x + 1.0, y);
-        dy += dWavedy(i, x, y);
-    }
-    for (int i = 0; i < numWaves; ++i) {
-        dx += dWavedx(i, x, y);
-        dy += dWavedy(i, x, y - 1.0);
-    }
-    for (int i = 0; i < numWaves; ++i) {
-        dx += dWavedx(i, x, y);
-        dy += dWavedy(i, x, y + 1.0);
-    }
-    for (int i = 0; i < numWaves; ++i) {
-        dx += dWavedx(i, x, y);
-        dy += dWavedy(i, x, y);
-    }
-	vec3 n = vec3(-dx / 5.0, 1.0, -dy / 5.0);
-    */
     for (int i = 0; i < numWaves; ++i) {
         dx += dWavedx(i, x, y);
         dy += dWavedy(i, x, y);

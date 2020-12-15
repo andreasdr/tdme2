@@ -13,14 +13,14 @@
 
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 
 using std::string;
 using std::ostringstream;;
 
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Exception;
-using tdme::utilities::ReferenceCounter;
+using tdme::utilities::Reference;
 
 namespace tdme {
 namespace network {

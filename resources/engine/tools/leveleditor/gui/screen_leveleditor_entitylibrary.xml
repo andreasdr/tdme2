@@ -47,9 +47,10 @@
 										<dropdown-option text="Edit" value="edit" />
 										<dropdown-option text="Delete" value="delete" />
 										<dropdown-option text="Create model" value="create_model" />
+										<dropdown-option text="Create particle system" value="create_particlesystem" />
+										<dropdown-option text="Create environment mapping" value="create_environmentmapping" />
 										<dropdown-option text="Create trigger" value="create_trigger" />
 										<dropdown-option text="Create empty" value="create_empty" />
-										<dropdown-option text="Create particle system" value="create_particlesystem" />
 										<dropdown-option text="Partition" value="partition" />
 										<!-- 
 										<dropdown-option text="Create light" value="create_light" />

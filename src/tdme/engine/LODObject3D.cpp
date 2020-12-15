@@ -58,6 +58,10 @@ LODObject3D::LODObject3D(
 		objectLOD3->setParentEntity(this);
 	}
 
+	if (objectLOD1 != nullptr) objectLOD1->setRenderPass(renderPass);
+	if (objectLOD2 != nullptr) objectLOD2->setRenderPass(renderPass);
+	if (objectLOD3 != nullptr) objectLOD3->setRenderPass(renderPass);
+
 	if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
 	if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
 	if (objectLOD3 != nullptr) objectLOD3->setShader(shaderId);

@@ -57,6 +57,9 @@ protected:
 	int32_t uniformMaterialShininess { -1 };
 	int32_t uniformTime { -1 };
 	int32_t uniformApplyFoliageAnimation { -1 };
+	int32_t uniformEnvironmentMappingTextureUnit { -1 };
+	int32_t uniformEnvironmentMappingTextureAvailable { -1 };
+	int32_t uniformEnvironmentMappingPosition { -1 };
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;

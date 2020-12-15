@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -12,6 +13,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -64,18 +66,17 @@ void LightingShaderBaseImplementation::initialize()
 		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
 	}
 
+	// environment mapping
+	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureUnit");
+	uniformEnvironmentMappingTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureAvailable");
+	uniformEnvironmentMappingPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingPosition");
+
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
 
 	// matrices as uniform only if not using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
-		uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
-		if (uniformMVPMatrix == -1) return;
-
-		uniformMVMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvMatrix");
-		if (uniformMVMatrix == -1) return;
-
 		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
 		if (uniformNormalMatrix == -1) return;
 
@@ -84,12 +85,13 @@ void LightingShaderBaseImplementation::initialize()
 
 		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
 		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
-	} else {
-		uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
-		if (uniformCameraMatrix == -1) return;
-		uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
-		if (uniformProjectionMatrix == -1) return;
 	}
+
+	// camera, projection matrix
+	uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
+	if (uniformCameraMatrix == -1) return;
+	uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
+	if (uniformProjectionMatrix == -1) return;
 
 	//	material
 	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
@@ -138,12 +140,19 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
+
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
 	updateMaterial(renderer, context);
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		updateLight(renderer, context, i);
 	}
+
+	// environment mapping texture unit
+	if (uniformEnvironmentMappingTextureUnit != -1) {
+		renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+	}
+
 	// frame
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
@@ -232,24 +241,14 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
 	// set up camera and projection matrices if using instanced rendering
-	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
-	} else
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		// matrices
-		Matrix4x4 mvMatrix;
-		Matrix4x4 mvpMatrix;
 		Matrix4x4 normalMatrix;
-		// model view matrix
-		mvMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getCameraMatrix());
-		// object to screen matrix
-		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
 		// normal matrix
 		normalMatrix.set(renderer->getModelViewMatrix()).invert().transpose();
 		// upload matrices
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, mvMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformNormalMatrix, normalMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 	}
@@ -282,5 +281,16 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* con
 
 			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT:
+			if (uniformEnvironmentMappingTextureUnit != -1 && textureId != 0) {
+				if (uniformEnvironmentMappingTextureAvailable != -1) {
+					renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 1);
+				}
+				if (uniformEnvironmentMappingPosition != -1) {
+					renderer->setProgramUniformFloatVec3(context, uniformEnvironmentMappingPosition, renderer->getEnvironmentMappingCubeMapPosition(context));
+				}
+			} else {
+				if (uniformEnvironmentMappingTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformEnvironmentMappingTextureAvailable, 0);
+			}
 	}
 }

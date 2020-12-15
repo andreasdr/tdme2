@@ -50,13 +50,13 @@ protected:
 	 * Set computed top
 	 * @param top top
 	 */
-	void setTop(int32_t top) override;
+	void setTop(int top) override;
 
 	/**
 	 * Set computed left
 	 * @param left left
 	 */
-	void setLeft(int32_t left) override;
+	void setLeft(int left) override;
 	void layoutSubNodes() override;
 	void layout() override;
 
@@ -101,8 +101,8 @@ protected:
 	);
 
 public:
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
+	int getContentWidth() override;
+	int getContentHeight() override;
 
 private:
 	void init();

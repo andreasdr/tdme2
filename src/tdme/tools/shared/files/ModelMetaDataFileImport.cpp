@@ -16,7 +16,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
@@ -78,7 +77,7 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -90,7 +89,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& p
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int id, const string& pathName, Value& jEntityRoot)
 {
 	LevelEditorEntity* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
@@ -187,7 +186,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		}
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
-		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].GetBool());
+		levelEditorEntity->setTerrainMesh(jEntityRoot["tm"].GetBool());
 		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
@@ -212,10 +211,15 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		levelEditorEntity->setContributesShadows(jEntityRoot["cs"].GetBool());
 		levelEditorEntity->setReceivesShadows(jEntityRoot["rs"].GetBool());
 	}
-	levelEditorEntity->setRenderNodes(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
+	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+		levelEditorEntity->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
+		levelEditorEntity->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());
+	}
+	//
 	if (levelEditorEntity->getModel() != nullptr) ModelTools::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
 	return levelEditorEntity;
 }
@@ -234,7 +238,7 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;

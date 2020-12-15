@@ -39,11 +39,11 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ObjectDeleter.h>
 
-using std::tolower;
 using std::to_string;
 using std::vector;
 
@@ -83,6 +83,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ObjectDeleter;
@@ -392,7 +393,7 @@ void EngineTest::onChar(unsigned int key, int x, int y) {
 }
 
 void EngineTest::onKeyDown (unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = true;
 	if (keyChar == u'a') keyA = true;
 	if (keyChar == u's') keyS = true;
@@ -400,7 +401,7 @@ void EngineTest::onKeyDown (unsigned char key, int x, int y) {
 }
 
 void EngineTest::onKeyUp(unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = false;
 	if (keyChar == u'a') keyA = false;
 	if (keyChar == u's') keyS = false;

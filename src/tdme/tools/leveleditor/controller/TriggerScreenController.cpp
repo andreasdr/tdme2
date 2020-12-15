@@ -72,7 +72,7 @@ TriggerScreenController::TriggerScreenController(TriggerView* view)
 
 
 	private:
-		TriggerScreenController *triggerScreenController;
+		TriggerScreenController* triggerScreenController;
 		TriggerView* finalView;
 
 	};

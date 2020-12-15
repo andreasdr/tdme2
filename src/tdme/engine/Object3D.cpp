@@ -23,11 +23,8 @@ using tdme::math::Vector3;
 using tdme::math::Quaternion;
 using tdme::utilities::StringTools;
 
-Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances) {
-	if (model->getShaderModel() == ShaderModel::PBR) {
-		shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
-		distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
-	}
+Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances)
+{
 }
 
 Object3D::Object3D(const string& id, Model* model): Object3DInternal(id, model, 1)
@@ -109,3 +106,20 @@ void Object3D::initialize()
 	Object3DInternal::initialize();
 }
 
+void Object3D::setShader(const string& id) {
+	if (model->getShaderModel() == ShaderModel::PBR) {
+		shaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
+	} else
+	if (model->getShaderModel() == ShaderModel::SPECULAR) {
+		shaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
+	}
+}
+
+void Object3D::setDistanceShader(const string& id) {
+	if (model->getShaderModel() == ShaderModel::PBR) {
+		distanceShaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
+	} else
+	if (model->getShaderModel() == ShaderModel::SPECULAR) {
+		distanceShaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
+	}
+}

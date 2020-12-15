@@ -39,14 +39,13 @@ void Frustum::updateFrustum()
 	projectionMatrixTransposed.set(renderer->getProjectionMatrix()).transpose();
 	modelViewMatrixTransposed.set(renderer->getModelViewMatrix()).transpose();
 	frustumMatrix.set(projectionMatrixTransposed).multiply(modelViewMatrixTransposed);
-	auto& data = frustumMatrix.getArray();
 	float x, y, z, d, t;
 
 	// right plane
-	x = data[12] - data[0];
-	y = data[13] - data[1];
-	z = data[14] - data[2];
-	d = data[15] - data[3];
+	x = frustumMatrix[12] - frustumMatrix[0];
+	y = frustumMatrix[13] - frustumMatrix[1];
+	z = frustumMatrix[14] - frustumMatrix[2];
+	d = frustumMatrix[15] - frustumMatrix[3];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -56,14 +55,14 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[0].getNormal().set(x, y, z);
+	planes[0].setNormal(Vector3(x, y, z));
 	planes[0].setDistance(d);
 
 	// left plane
-	x = data[12] + data[0];
-	y = data[13] + data[1];
-	z = data[14] + data[2];
-	d = data[15] + data[3];
+	x = frustumMatrix[12] + frustumMatrix[0];
+	y = frustumMatrix[13] + frustumMatrix[1];
+	z = frustumMatrix[14] + frustumMatrix[2];
+	d = frustumMatrix[15] + frustumMatrix[3];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -73,14 +72,14 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[1].getNormal().set(x, y, z);
+	planes[1].setNormal(Vector3(x, y, z));
 	planes[1].setDistance(d);
 
 	// bottom plane
-	x = data[12] + data[4];
-	y = data[13] + data[5];
-	z = data[14] + data[6];
-	d = data[15] + data[7];
+	x = frustumMatrix[12] + frustumMatrix[4];
+	y = frustumMatrix[13] + frustumMatrix[5];
+	z = frustumMatrix[14] + frustumMatrix[6];
+	d = frustumMatrix[15] + frustumMatrix[7];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -90,14 +89,14 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[2].getNormal().set(x, y, z);
+	planes[2].setNormal(Vector3(x, y, z));
 	planes[2].setDistance(d);
 
 	// top plane
-	x = data[12] - data[4];
-	y = data[13] - data[5];
-	z = data[14] - data[6];
-	d = data[15] - data[7];
+	x = frustumMatrix[12] - frustumMatrix[4];
+	y = frustumMatrix[13] - frustumMatrix[5];
+	z = frustumMatrix[14] - frustumMatrix[6];
+	d = frustumMatrix[15] - frustumMatrix[7];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -107,14 +106,14 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[3].getNormal().set(x, y, z);
+	planes[3].setNormal(Vector3(x, y, z));
 	planes[3].setDistance(d);
 
 	// far plane
-	x = data[12] - data[8];
-	y = data[13] - data[9];
-	z = data[14] - data[10];
-	d = data[15] - data[11];
+	x = frustumMatrix[12] - frustumMatrix[8];
+	y = frustumMatrix[13] - frustumMatrix[9];
+	z = frustumMatrix[14] - frustumMatrix[10];
+	d = frustumMatrix[15] - frustumMatrix[11];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -124,14 +123,14 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[4].getNormal().set(x, y, z);
+	planes[4].setNormal(Vector3(x, y, z));
 	planes[4].setDistance(d);
 
 	// near plane
-	x = data[12] + data[8];
-	y = data[13] + data[9];
-	z = data[14] + data[10];
-	d = data[15] + data[11];
+	x = frustumMatrix[12] + frustumMatrix[8];
+	y = frustumMatrix[13] + frustumMatrix[9];
+	z = frustumMatrix[14] + frustumMatrix[10];
+	d = frustumMatrix[15] + frustumMatrix[11];
 
 	// 	normalize
 	t = Math::sqrt((x * x) + (y * y) + (z * z));
@@ -141,7 +140,7 @@ void Frustum::updateFrustum()
 	d /= t;
 
 	//	setup plane
-	planes[5].getNormal().set(x, y, z);
+	planes[5].setNormal(Vector3(x, y, z));
 	planes[5].setDistance(d);
 }
 

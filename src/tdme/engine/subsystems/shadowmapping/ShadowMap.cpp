@@ -220,8 +220,8 @@ void ShadowMap::render(Light* light)
 	camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * 0.5f) - 1.0f,
-			1.0f - (2.0f * 0.5f),
-			2.0f * 0.8f - 1.0f,
+			1.0f - (2.0f * 1.0f),
+			2.0f * 0.5f - 1.0f,
 			1.0f
 		),
 		center4
@@ -230,7 +230,7 @@ void ShadowMap::render(Light* light)
 
 	// so we get some contraints for the shadow map camera, TODO: improve me
 	Vector3 center(Vector3(center4.getX(), center4.getY(), center4.getZ()));
-	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * Engine::getShadowMapLightEyeDistanceScale();
+	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * shadowMapping->engine->getShadowMapLightEyeDistanceScale();
 
 	// viewers camera
 	Vector3 lightDirection;
@@ -255,19 +255,23 @@ void ShadowMap::render(Light* light)
 	lightCamera->setSideVector(lightCameraSideVector);
 	lightCamera->setUpVector(lightCameraUpVector);
 	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
-	// Bind frame buffer to shadow map fbo id
+	// bind frame buffer
 	frameBuffer->enableFrameBuffer();
 	// clear depth buffer
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
 	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();
 	// only draw opaque face entities as shadows will not be produced from transparent objects
-	shadowMapping->object3DRenderer->render(
-		visibleObjects,
-		false,
-		EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
-	);
+	for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
+		auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
+		shadowMapping->object3DRenderer->render(
+			renderPass,
+			visibleObjects,
+			false,
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+		);
+	}
 }
 
 void ShadowMap::computeDepthBiasMVPMatrix()

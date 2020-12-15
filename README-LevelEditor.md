@@ -14,6 +14,7 @@
             - see particle system editor
         - empties
         - trigger
+        - environment mappings
     - level editor
         - setting up a grid where to place objects on
         - setting up snapping where to align objects at
@@ -31,6 +32,7 @@
              - color your objects
              - center objects
              - remove objects
+             - reflection using a environment mapping
         - objects can be transformed by using a gizmo
         - setting up object properties
              - key, value map for what ever reason

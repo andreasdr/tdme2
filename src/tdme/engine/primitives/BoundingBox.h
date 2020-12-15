@@ -5,7 +5,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -14,7 +13,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Vector3;
 
 /**
@@ -56,6 +55,12 @@ public:
 	 * @param boundingBox bounding box
 	 */
 	BoundingBox(BoundingBox* boundingBox);
+
+	/**
+	 * Public constructor
+	 * @param obb oriented bounding box
+	 */
+	BoundingBox(OrientedBoundingBox* obb);
 
 	/**
 	 * Public constructor
@@ -144,6 +149,18 @@ public:
 		for (auto i = 0; i < 3; i++) {
 			if (boundingBox->getMin()[i] < min[i]) min[i] = boundingBox->getMin()[i];
 			if (boundingBox->getMax()[i] > max[i]) max[i] = boundingBox->getMax()[i];
+		}
+		update();
+	}
+
+	/**
+	 * Extend bounding box with given point
+	 * @param point point
+	 */
+	inline void extend(const Vector3& point) {
+		for (auto i = 0; i < 3; i++) {
+			if (point[i] < min[i]) min[i] = point[i];
+			if (point[i] > max[i]) max[i] = point[i];
 		}
 		update();
 	}

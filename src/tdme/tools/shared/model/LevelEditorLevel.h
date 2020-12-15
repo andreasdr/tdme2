@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -15,10 +16,12 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 using std::map;
-using std::vector;
+using std::set;
 using std::string;
+using std::vector;
 
 using tdme::tools::shared::model::ModelProperties;
+using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
@@ -43,10 +46,14 @@ private:
 	LevelEditorEntityLibrary* entityLibrary { nullptr };
 	map<string, LevelEditorObject*> objectsById;
 	vector<LevelEditorObject*> objects;
-	int32_t objectIdx;
+	set<string> environmentMappingIds;
+	int objectIdx;
 	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
+	string skyModelFileName;
+	Model* skyModel { nullptr };
+	Vector3 skyModelScale;
 
 	/**
 	 * Computes level bounding box
@@ -133,7 +140,7 @@ public:
 	/**
 	 * @return number of lights
 	 */
-	inline int32_t getLightCount() {
+	inline int getLightCount() {
 		return lights.size();
 	}
 
@@ -142,7 +149,7 @@ public:
 	 * @param i i
 	 * @return
 	 */
-	inline LevelEditorLight* getLightAt(int32_t i) {
+	inline LevelEditorLight* getLightAt(int i) {
 		return lights[i];
 	}
 
@@ -177,14 +184,14 @@ public:
 	/**
 	 * @return new object idx
 	 */
-	inline int32_t allocateObjectId() {
+	inline int allocateObjectId() {
 		return objectIdx++;
 	}
 
 	/**
 	 * @return object idx
 	 */
-	inline int32_t getObjectIdx() {
+	inline int getObjectIdx() {
 		return objectIdx;
 	}
 
@@ -192,7 +199,7 @@ public:
 	 * Set entity idx
 	 * @param entityIdx objectIdx
 	 */
-	inline void setObjectIdx(int32_t entityIdx) {
+	inline void setObjectIdx(int entityIdx) {
 		this->objectIdx = entityIdx;
 	}
 
@@ -206,27 +213,27 @@ public:
 	 * @param entityId entity id
 	 * @param objectsByEntityId objects by entity id
 	 */
-	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
+	void getObjectsByEntityId(int entityId, vector<string>& objectsByEntityId);
 
 	/**
 	 * Remove objects with given entity id
 	 * @param entityId entity id
 	 */
-	void removeObjectsByEntityId(int32_t entityId);
+	void removeObjectsByEntityId(int entityId);
 
 	/**
 	 * Replace entity
 	 * @param searchEntityId search model id
 	 * @param replaceEntityId replace model id
 	 */
-	void replaceEntity(int32_t searchEntityId, int32_t replaceEntityId);
+	void replaceEntity(int searchEntityId, int replaceEntityId);
 
 	/**
-	 * Updates pivot
-	 * @param modelId model id
-	 * @param pivot pivot
+	 * @return environment mapping object ids
 	 */
-	void updatePivot(int32_t modelId, const Vector3& pivot);
+	inline set<string> getEnvironmentMappingIds() {
+		return environmentMappingIds;
+	}
 
 	/**
 	 * Adds an object to level
@@ -250,7 +257,7 @@ public:
 	/**
 	 * @return number of objects
 	 */
-	inline int32_t getObjectCount() {
+	inline int getObjectCount() {
 		return objects.size();
 	}
 
@@ -259,8 +266,49 @@ public:
 	 * @param idx idx
 	 * @return level object
 	 */
-	inline LevelEditorObject* getObjectAt(int32_t idx) {
+	inline LevelEditorObject* getObjectAt(int idx) {
 		return objects[idx];
+	}
+
+	/**
+	 * @return sky model file name
+	 */
+	inline const string& getSkyModelFileName() {
+		return skyModelFileName;
+	}
+
+	/**
+	 * Set sky model file name
+	 * @param skyModelFileName sky model file name
+	 */
+	inline void setSkyModelFileName(const string& skyModelFileName) {
+		this->skyModelFileName = skyModelFileName;
+	}
+
+	/**
+	 * @return sky model
+	 */
+	inline Model* getSkyModel() {
+		return skyModel;
+	}
+
+	/**
+	 * Set sky model
+	 */
+	void setSkyModel(Model* model);
+
+	/**
+	 * @return sky model scale
+	 */
+	inline const Vector3& getSkyModelScale() {
+		return skyModelScale;
+	}
+
+	/**
+	 * Set sky model scale
+	 */
+	void setSkyModelScale(const Vector3& skyModelScale) {
+		this->skyModelScale = skyModelScale;
 	}
 
 	/**

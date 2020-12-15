@@ -33,7 +33,6 @@ class tdme::tools::shared::files::LevelFileImport final
 {
 
 public:
-
 	/**
 	 * Imports a level from a TDME level file to Level Editor
 	 * @param pathName path name
@@ -43,7 +42,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a TDME level file to Level Editor
@@ -55,7 +54,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel& level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a model file to Level Editor
@@ -66,7 +65,7 @@ public:
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
+	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel& level, ProgressCallback* progressCallback = nullptr);
 
 private:
 	struct LevelEditorEntityMeshNode {
@@ -84,5 +83,5 @@ private:
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshNodes(LevelEditorLevel* level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes);
+	static void determineMeshNodes(LevelEditorLevel& level, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshNode>& meshNodes);
 };

@@ -294,6 +294,13 @@ private:
 	static void prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader);
 
 	/**
+	 * Prepare node for water shader
+	 * @param node node
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 */
+	static void prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix);
+
+	/**
 	 * Check for optimization
 	 * @param node node
 	 * @param materialUseCount material use count

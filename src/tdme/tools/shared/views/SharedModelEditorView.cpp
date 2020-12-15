@@ -32,7 +32,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
@@ -79,7 +78,6 @@ using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
@@ -118,7 +116,7 @@ SharedModelEditorView::~SharedModelEditorView() {
 	delete cameraRotationInputHandler;
 }
 
-PopUps* SharedModelEditorView::getPopUpsViews()
+PopUps* SharedModelEditorView::getPopUps()
 {
 	return popUps;
 }
@@ -154,7 +152,12 @@ void SharedModelEditorView::reimportEntity()
 void SharedModelEditorView::initModel()
 {
 	if (entity == nullptr) return;
-
+	engine->removeEntity("model");
+	engine->removeEntity("attachment1");
+	if (attachment1Model != nullptr) {
+		delete attachment1Model;
+		attachment1Model = nullptr;
+	}
 	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(entity);
@@ -199,6 +202,11 @@ void SharedModelEditorView::reimportModel(const string& pathName, const string& 
 {
 	if (entity == nullptr) return;
 	engine->removeEntity("model");
+	engine->removeEntity("attachment1");
+	if (attachment1Model != nullptr) {
+		delete attachment1Model;
+		attachment1Model = nullptr;
+	}
 	struct AnimationSetupStruct {
 		bool loop;
 		string overlayFromNodeId;
@@ -287,8 +295,9 @@ void SharedModelEditorView::computeNormals() {
 void SharedModelEditorView::optimizeModel() {
 	if (entity == nullptr || entity->getModel() == nullptr) return;
 	engine->removeEntity("model");
-	entity->setModel(ModelTools::optimizeModel(entity->getModel()));
-	resetEntity();
+	entity->setModel(ModelTools::optimizeModel(entity->unsetModel()));
+	initModelRequested = true;
+	modelEditorScreenController->setMaterials(entity);
 }
 
 void SharedModelEditorView::handleInputEvents()
@@ -305,6 +314,32 @@ void SharedModelEditorView::display()
 		if (sound != nullptr) sound->play();
 		audioOffset = -1LL;
 	}
+
+	//
+	auto model = static_cast<Object3D*>(engine->getEntity("model"));
+
+	// attachment1
+	auto attachment1 = static_cast<Object3D*>(engine->getEntity("attachment1"));
+	if (model != nullptr && attachment1 != nullptr) {
+		// model attachment bone matrix
+		auto transformationsMatrix = model->getNodeTransformationsMatrix(attachment1Bone);
+		transformationsMatrix*= model->getTransformations().getTransformationsMatrix();
+		attachment1->setTranslation(transformationsMatrix * Vector3(0.0f, 0.0f, 0.0f));
+		// euler angles
+		Vector3 euler;
+		transformationsMatrix.computeEulerAngles(euler);
+		// rotations
+		attachment1->setRotationAngle(0, euler.getZ());
+		attachment1->setRotationAngle(1, euler.getY());
+		attachment1->setRotationAngle(2, euler.getX());
+		// scale
+		Vector3 scale;
+		transformationsMatrix.getScale(scale);
+		attachment1->setScale(scale);
+		// finally update
+		attachment1->update();
+	}
+
 	// commands
 	if (loadModelRequested == true) {
 		initModelRequested = true;
@@ -425,6 +460,7 @@ void SharedModelEditorView::activate()
 {
 	engine->reset();
 	engine->setPartition(new PartitionNone());
+	engine->setShadowMapLightEyeDistanceScale(0.1f);
 	engine->getGUI()->resetRenderScreens();
 	engine->getGUI()->addRenderScreen(modelEditorScreenController->getScreenNode()->getId());
 	onInitAdditionalScreens();
@@ -528,6 +564,26 @@ void SharedModelEditorView::playAnimation(const string& baseAnimationId, const s
 		if (overlay2AnimationId.empty() == false) object->addOverlayAnimation(overlay2AnimationId);
 		if (overlay3AnimationId.empty() == false) object->addOverlayAnimation(overlay3AnimationId);
 	}
+}
+
+void SharedModelEditorView::addAttachment1(const string& nodeId, const string& attachmentModelFile) {
+	engine->removeEntity("attachment1");
+	try {
+		if (attachment1Model != nullptr) delete attachment1Model;
+		attachment1Model = attachmentModelFile.empty() == true?nullptr:ModelReader::read(Tools::getPath(attachmentModelFile), Tools::getFileName(attachmentModelFile));
+	} catch (Exception& exception) {
+		Console::print(string("SharedModelEditorView::addAttachment1(): An error occurred: "));
+		Console::println(string(exception.what()));
+		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
+	}
+	if (attachment1Model != nullptr) {
+		Entity* attachment = nullptr;
+		engine->addEntity(attachment = new Object3D("attachment1", attachment1Model));
+		attachment->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
+		attachment->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+		attachment->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
+	}
+	attachment1Bone = nodeId;
 }
 
 void SharedModelEditorView::playSound(const string& soundId) {

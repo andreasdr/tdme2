@@ -2,7 +2,7 @@
 
 // see: https://fabiensanglard.net/lightScattering/index.php
 
-#define EXPOSURE	0.003
+#define EXPOSURE	0.0015
 #define DECAY		1.0
 #define DENSITY		0.84
 #define WEIGHT		5.65
@@ -43,6 +43,6 @@ void main(void) {
 			textureCoordinate -= deltaTextureCoordinate;
 		}
 	}
-	outColor*= EXPOSURE;
-	outColor.a = 0.5 * intensity;
+	outColor*= EXPOSURE * intensity;
+	outColor.a = 0.0;
 }

@@ -8,7 +8,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/Server.h>
 #include <tdme/network/udpserver/ServerRequest.h>
@@ -17,7 +17,7 @@ using std::string;
 using std::stringstream;
 
 using tdme::utilities::Exception;
-using tdme::utilities::ReferenceCounter;
+using tdme::utilities::Reference;
 using tdme::network::udpserver::Server;
 
 namespace tdme {
@@ -32,7 +32,7 @@ class ServerRequest;
  * Base class for network server clients
  * @author Andreas Drewke
  */
-class tdme::network::udpserver::ServerClient : public ReferenceCounter {
+class tdme::network::udpserver::ServerClient : public Reference {
 friend class ServerWorkerThread;
 
 public:

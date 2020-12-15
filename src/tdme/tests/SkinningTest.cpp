@@ -23,6 +23,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/utilities/Time.h>
@@ -50,6 +51,7 @@ using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Time;
@@ -69,19 +71,38 @@ void SkinningTest::main(int argc, char** argv)
 
 void SkinningTest::display()
 {
+	// camera
 	auto camLookFrom = engine->getCamera()->getLookFrom();
-	if (keyA == true) camLookFrom.add(Vector3(-20.0f / 60.0f, 0.0f, 0.0f));
-	if (keyD == true) camLookFrom.add(Vector3(+20.0f / 60.0f, 0.0f, 0.0f));
-	if (keyW == true) camLookFrom.add(Vector3(0.0f, 0.0f, -20.0f / 60.0f));
-	if (keyS == true) camLookFrom.add(Vector3(0.0f, 0.0f, +20.0f / 60.0f));
+	if (keyMinus == true) camLookFrom.add(Vector3(0.0f, -20.0f / 60.0f, 0.0f));
+	if (keyPlus == true) camLookFrom.add(Vector3(0.0f, +20.0f / 60.0f, 0.0f));
 	if (keyLeft == true) camRotationY+= 1.0f;
 	if (keyRight == true) camRotationY-= 1.0f;
+	if (keyDown == true) camRotationX+= 1.0f;
+	if (keyUp == true) camRotationX-= 1.0f;
+
 	Quaternion camRotationYQuaternion;
-	camRotationYQuaternion.rotate(camRotationY, Rotation::Y_AXIS);
-	auto camLookAt = engine->getCamera()->getLookAt();
-	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+	camRotationYQuaternion.rotate(Rotation::Y_AXIS, camRotationY);
+	Quaternion camRotationXQuaternion;
+	camRotationXQuaternion.rotate(Rotation::X_AXIS, camRotationX);
+	Quaternion camRotationQuaternion;
+	camRotationQuaternion.set(camRotationYQuaternion).multiply(camRotationXQuaternion);
+	Vector3 camLookAt;
+	camRotationQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+
+	auto forwardVector = camLookAt;
+	auto sideVector = Vector3();
+	Vector3::computeCrossProduct(forwardVector.normalize(), Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
+
+	if (keyA == true) camLookFrom.add(sideVector.clone().scale(-20.0f / 60.0f));
+	if (keyD == true) camLookFrom.add(sideVector.clone().scale(+20.0f / 60.0f));
+	if (keyW == true) camLookFrom.add(forwardVector.clone().scale(+20.0f / 60.0f));
+	if (keyS == true) camLookFrom.add(forwardVector.clone().scale(-20.0f / 60.0f));
+
 	engine->getCamera()->setLookFrom(camLookFrom);
 	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
+	engine->getCamera()->setUpVector(Camera::computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
+
+	// rendering
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
@@ -116,7 +137,7 @@ void SkinningTest::initialize()
 	cam->setZNear(0.1f);
 	cam->setZFar(30.0f);
 	cam->setLookFrom(Vector3(0.0f, 3.0f, 60.0f));
-	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
+	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -189,19 +210,23 @@ void SkinningTest::onChar(unsigned int key, int x, int y) {
 }
 
 void SkinningTest::onKeyDown (unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
-	if (keyChar == u'w') keyW = true;
-	if (keyChar == u'a') keyA = true;
-	if (keyChar == u's') keyS = true;
-	if (keyChar == u'd') keyD = true;
+	auto keyChar = Character::toLowerCase(key);
+	if (keyChar == 'w') keyW = true;
+	if (keyChar == 'a') keyA = true;
+	if (keyChar == 's') keyS = true;
+	if (keyChar == 'd') keyD = true;
+	if (keyChar == '-') keyMinus = true;
+	if (keyChar == '+') keyPlus = true;
 }
 
 void SkinningTest::onKeyUp(unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
-	if (keyChar == u'w') keyW = false;
-	if (keyChar == u'a') keyA = false;
-	if (keyChar == u's') keyS = false;
-	if (keyChar == u'd') keyD = false;
+	auto keyChar = Character::toLowerCase(key);
+	if (keyChar == 'w') keyW = false;
+	if (keyChar == 'a') keyA = false;
+	if (keyChar == 's') keyS = false;
+	if (keyChar == 'd') keyD = false;
+	if (keyChar == '-') keyMinus = false;
+	if (keyChar == '+') keyPlus = false;
 }
 
 void SkinningTest::onSpecialKeyDown (int key, int x, int y) {

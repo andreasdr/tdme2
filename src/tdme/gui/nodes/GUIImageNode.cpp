@@ -77,7 +77,7 @@ bool GUIImageNode::isContentNode()
 	return true;
 }
 
-int32_t GUIImageNode::getContentWidth()
+int GUIImageNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return texture != nullptr?texture->getWidth() + border.left + border.right + padding.left + padding.right:0;
@@ -86,7 +86,7 @@ int32_t GUIImageNode::getContentWidth()
 	}
 }
 
-int32_t GUIImageNode::getContentHeight()
+int GUIImageNode::getContentHeight()
 {
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return texture != nullptr?texture->getHeight() + border.top + border.bottom + padding.top + padding.bottom:0;

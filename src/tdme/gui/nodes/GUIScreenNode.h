@@ -63,9 +63,9 @@ class tdme::gui::nodes::GUIScreenNode final
 private:
 	string applicationRootPath;
 	GUI* gui { nullptr };
-	int32_t nodeCounter;
-	int32_t screenWidth;
-	int32_t screenHeight;
+	int nodeCounter;
+	int screenWidth;
+	int screenHeight;
 	map<string, GUINode*> nodesById;
 	map<string, GUINode*> tickNodesById;
 	vector<GUINode*> floatingNodes;
@@ -109,14 +109,14 @@ public:
 	/**
 	 * @return screen width
 	 */
-	inline int32_t getScreenWidth() {
+	inline int getScreenWidth() {
 		return screenWidth;
 	}
 
 	/**
 	 * @return screen height
 	 */
-	inline int32_t getScreenHeight() {
+	inline int getScreenHeight() {
 		return screenHeight;
 	}
 
@@ -231,12 +231,12 @@ public:
 	/**
 	 * @return content width
 	 */
-	int32_t getContentWidth() override;
+	int getContentWidth() override;
 
 	/**
 	 * @return content height
 	 */
-	int32_t getContentHeight() override;
+	int getContentHeight() override;
 
 	/**
 	 * Layout
@@ -282,7 +282,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	void setScreenSize(int32_t width, int32_t height);
+	void setScreenSize(int width, int height);
 
 	/**
 	 * Get GUI node by id

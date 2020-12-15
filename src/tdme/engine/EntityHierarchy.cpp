@@ -114,16 +114,20 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	return entities;
 }
 
-void EntityHierarchy::updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth) {
-	if (depth == 0 && entityHierarchyLevel.children.size() > 0) boundingBox = entityHierarchyLevel.children.begin()->second.entity->getBoundingBoxTransformed();
+void EntityHierarchy::updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
 		entity->update();
-		boundingBox.extend(entity->getBoundingBoxTransformed());
+		if (firstEntity == true) {
+			boundingBox = entity->getBoundingBoxTransformed();
+			firstEntity = false;
+		} else {
+			boundingBox.extend(entity->getBoundingBoxTransformed());
+		}
 		entity->applyParentTransformations(parentTransformations);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
-		updateHierarchy(childIt.second.entity->getTransformations(), childIt.second, depth++);
+		updateHierarchy(childIt.second.entity->getTransformations(), childIt.second, depth++, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes
@@ -138,14 +142,16 @@ void EntityHierarchy::fromTransformations(const Transformations& transformations
 {
 	Transformations::fromTransformations(transformations);
 	// update hierarchy
-	updateHierarchy(*this, entityRoot, 0);
+	auto firstEntity = true;
+	updateHierarchy(*this, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::update()
 {
 	Transformations::update();
 	// update hierarchy
-	updateHierarchy(*this, entityRoot, 0);
+	auto firstEntity = true;
+	updateHierarchy(*this, entityRoot, 0, firstEntity);
 }
 
 void EntityHierarchy::setEnabled(bool enabled)

@@ -379,7 +379,14 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
 				}
-				material->setPBRMaterialProperties(pbrMaterialProperties);
+				if (pbrMaterialProperties->getBaseColorTexture() != nullptr &&
+					pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr &&
+					pbrMaterialProperties->getNormalTexture() != nullptr) {
+					material->setPBRMaterialProperties(pbrMaterialProperties);
+				} else {
+					delete pbrMaterialProperties;
+					model->setShaderModel(ShaderModel::SPECULAR);
+				}
 				material->setSpecularMaterialProperties(specularMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
 			}

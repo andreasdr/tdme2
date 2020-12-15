@@ -8,7 +8,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FlowMapCell.h>
-#include <tdme/utilities/ReferenceCounter.h>
+#include <tdme/utilities/Reference.h>
 
 using std::map;
 using std::string;
@@ -19,14 +19,14 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::FlowMapCell;
-using tdme::utilities::ReferenceCounter;
+using tdme::utilities::Reference;
 
 /**
  * Flow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utilities::FlowMap final: public ReferenceCounter {
+class tdme::utilities::FlowMap final: public Reference {
 friend class PathFinding;
 private:
 	bool complete;

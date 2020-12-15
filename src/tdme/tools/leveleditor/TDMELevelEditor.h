@@ -19,6 +19,7 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
@@ -42,12 +43,12 @@ private:
 	Engine* engine { nullptr };
 	View* view { nullptr };
 	bool quitRequested;
-	LevelEditorLevel level;
 	LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController { nullptr };
 	PopUps* popUps { nullptr };
 	LevelEditorView* levelEditorView { nullptr };
 	ModelEditorView* modelEditorView { nullptr };
 	TriggerView* triggerView { nullptr };
+	EnvironmentMappingView* environmentMappingView { nullptr };
 	EmptyView* emptyView { nullptr };
 	ParticleSystemView* particleSystemView { nullptr };
 
@@ -125,7 +126,7 @@ public:
 	/**
 	 * reshape tdme level editor
 	 */
-	void reshape(int32_t width, int32_t height);
+	void reshape(int width, int height);
 
 	/**
 	 * Switch to level editor
@@ -141,6 +142,11 @@ public:
 	 * Switch to trigger view
 	 */
 	void switchToTriggerView();
+
+	/**
+	 * Switch to environment mappingview
+	 */
+	void switchToEnvironmentMappingView();
 
 	/**
 	 * Switch to empty view

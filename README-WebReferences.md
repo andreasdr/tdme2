@@ -53,6 +53,7 @@
   - https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
   - https://stackoverflow.com/questions/34963738/c11-get-current-date-and-time-as-string
   - https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+  - https://twvideo01.ubm-us.net/o1/vault/gdc2018/presentations/Sobek_Martin_Real-time_Reflections_in_MafiaIII.pdf
   - https://vulkan-tutorial.com
   - https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
   - https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/

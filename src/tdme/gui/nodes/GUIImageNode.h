@@ -43,13 +43,13 @@ class tdme::gui::nodes::GUIImageNode final
 
 private:
 	Texture* texture { nullptr };
-	int32_t textureId { 0 };
+	int textureId { 0 };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
 	Texture* maskTexture { nullptr };
 	float maskMaxValue;
-	int32_t maskTextureId { 0 };
+	int maskTextureId { 0 };
 
 	string source;
 	Matrix2D3x3 textureMatrix;
@@ -116,8 +116,8 @@ protected:
 
 public:
 	// overridden methods
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
+	int getContentWidth() override;
+	int getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 

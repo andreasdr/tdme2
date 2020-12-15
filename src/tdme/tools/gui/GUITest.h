@@ -51,7 +51,7 @@ public:
 
 	void initialize() override;
 	void dispose() override;
-	void reshape(int32_t width, int32_t height) override;
+	void reshape(int width, int height) override;
 	void display() override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onValueChanged(GUIElementNode* node) override;

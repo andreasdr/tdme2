@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::vector;
 
 /**
  * String tools class
@@ -144,6 +146,14 @@ public:
 	 * @param by string that will replace pattern occurrances
 	 */
 	static const string regexReplace(const string& src, const string& pattern, const string& by);
+
+	/**
+	 * Tokenize
+	 * @param str string to tokenize
+	 * @param delimiters delimiters
+	 * @return tokens
+	 */
+	static const vector<string> tokenize(const string& str, const string& delimiters);
 
 };
 

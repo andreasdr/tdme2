@@ -21,6 +21,14 @@ private:
 public:
 	/**
 	 * Public constructor
+	 */
+	inline Plane() {
+		normal.set(0.0f, 0.0f, 0.0f);
+		distance = 0.0f;
+	}
+
+	/**
+	 * Public constructor
 	 * @param normal normal
 	 * @param distance distance
 	 */
@@ -32,7 +40,7 @@ public:
 	/**
 	 * @return float distance from origin
 	 */
-	inline float getDistance() {
+	inline float getDistance() const {
 		return distance;
 	}
 
@@ -47,16 +55,24 @@ public:
 	/**
 	 * @return normal
 	 */
-	inline Vector3& getNormal() {
+	inline const Vector3& getNormal() const {
 		return normal;
 	}
 
 	/**
-	 * Public constructor
+	 * @return normal
 	 */
-	inline Plane() {
-		normal.set(0.0f, 0.0f, 0.0f);
-		distance = 0.0f;
+	inline void setNormal(const Vector3& normal) {
+		this->normal = normal;
+	}
+
+	/**
+	 * Compute distance from plane
+	 * @param point point
+	 * @return distance
+	 */
+	inline float computeDistance(const Vector3& point) const {
+		return Vector3::computeDotProduct(normal, point) + getDistance();
 	}
 
 };

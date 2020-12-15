@@ -22,8 +22,8 @@ Camera::Camera(Renderer* renderer)
 	height = 0;
 	aspect = 1;
 	fovY = 45.0f;
-	zNear = 10.0f;
-	zFar = 4000.0f;
+	zNear = 0.1f;
+	zFar = 150.0f;
 	cameraMode = CAMERAMODE_LOOKAT;
 	upVector.set(0.0f, 1.0f, 0.0f);
 	forwardVector.set(0.0f, 0.0f, 1.0f);
@@ -65,7 +65,7 @@ Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 Matrix4x4& Camera::computeProjectionMatrix()
 {
 	// see: see http://www.songho.ca/opengl/gl_transform.html
-	auto tangent = static_cast< float >(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
+	auto tangent = static_cast<float>(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
 	auto height = zNear * tangent;
 	auto width = height * aspect;
 	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);
@@ -149,7 +149,7 @@ void Camera::update(void* context, int32_t width, int32_t height)
 		if (_height <= 0)
 			_height = 1;
 
-		aspect = static_cast< float >(_width) / static_cast< float >(_height);
+		aspect = static_cast<float>(_width) / static_cast<float>(_height);
 		this->width = _width;
 		this->height = _height;
 		renderer->getViewportMatrix().set(

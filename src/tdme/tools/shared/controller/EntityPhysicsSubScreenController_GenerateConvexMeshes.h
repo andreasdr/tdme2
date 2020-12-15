@@ -48,7 +48,7 @@ private:
 	 * @param pointCount point count
 	 * @param triangleCount triangle count
 	 */
-	static Model* createModel(const string& id, double* points, uint32_t* triangles, uint32_t pointCount, uint32_t triangleCount);
+	static Model* createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount);
 
 	/**
 	 * Create model

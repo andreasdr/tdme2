@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
+#include <tdme/tools/leveleditor/views/EnvironmentMappingView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
 #include <tdme/tools/leveleditor/views/ParticleSystemView.h>
@@ -34,6 +35,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
+using tdme::tools::leveleditor::views::EnvironmentMappingView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
 using tdme::tools::leveleditor::views::ParticleSystemView;
@@ -61,7 +63,6 @@ void TDMELevelEditor::main(int argc, char** argv) {
 TDMELevelEditor::TDMELevelEditor() {
 	Tools::loadSettings(this);
 	TDMELevelEditor::instance = this;
-	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(&level);
 	engine = Engine::getInstance();
 	view = nullptr;
 	popUps = new PopUps();
@@ -88,11 +89,11 @@ LevelEditorEntityLibraryScreenController* TDMELevelEditor::getLevelEditorEntityL
 }
 
 LevelEditorEntityLibrary* TDMELevelEditor::getEntityLibrary() {
-	return level.getEntityLibrary();
+	return levelEditorView->getLevel()->getEntityLibrary();
 }
 
 LevelEditorLevel* TDMELevelEditor::getLevel() {
-	return &level;
+	return levelEditorView->getLevel();
 }
 
 void TDMELevelEditor::setView(View* view) {
@@ -141,19 +142,22 @@ void TDMELevelEditor::initialize() {
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
-	levelEditorEntityLibraryScreenController =
-			new LevelEditorEntityLibraryScreenController(popUps);
+	levelEditorEntityLibraryScreenController = new LevelEditorEntityLibraryScreenController(popUps);
 	levelEditorEntityLibraryScreenController->initialize();
 	engine->getGUI()->addScreen(
-			levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
-			levelEditorEntityLibraryScreenController->getScreenNode());
+		levelEditorEntityLibraryScreenController->getScreenNode()->getId(),
+		levelEditorEntityLibraryScreenController->getScreenNode()
+	);
 	popUps->initialize();
 	levelEditorView = new LevelEditorView(popUps);
 	levelEditorView->initialize();
+	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(levelEditorView->getLevel());
 	modelEditorView = new ModelEditorView(popUps);
 	modelEditorView->initialize();
 	triggerView = new TriggerView(popUps);
 	triggerView->initialize();
+	environmentMappingView = new EnvironmentMappingView(popUps);
+	environmentMappingView->initialize();
 	emptyView = new EmptyView(popUps);
 	emptyView->initialize();
 	particleSystemView = new ParticleSystemView(popUps);
@@ -161,7 +165,7 @@ void TDMELevelEditor::initialize() {
 	setView(levelEditorView);
 }
 
-void TDMELevelEditor::reshape(int32_t width, int32_t height) {
+void TDMELevelEditor::reshape(int width, int height) {
 	engine->reshape(width, height);
 }
 
@@ -175,6 +179,10 @@ void TDMELevelEditor::switchToModelEditor() {
 
 void TDMELevelEditor::switchToTriggerView() {
 	setView(triggerView);
+}
+
+void TDMELevelEditor::switchToEnvironmentMappingView() {
+	setView(environmentMappingView);
 }
 
 void TDMELevelEditor::switchToEmptyView() {

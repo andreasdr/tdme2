@@ -13,6 +13,7 @@ namespace engine {
 		class Entity;
 		class EntityHierarchy;
 		struct EntityPickingFilter;
+		class EnvironmentMapping;
 		class FrameBuffer;
 		class Frustum;
 		class FogParticleSystem;

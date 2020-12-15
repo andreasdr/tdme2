@@ -3,12 +3,14 @@
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -44,6 +46,16 @@ BoundingBox::BoundingBox(BoundingBox* boundingBox)
 	this->min.set(boundingBox->min);
 	this->max.set(boundingBox->max);
 	update();
+}
+
+BoundingBox::BoundingBox(OrientedBoundingBox* obb)
+{
+	vertices.resize(8);
+	min = obb->getCenter();
+	max = obb->getCenter();
+	for (auto& vertex: obb->getVertices()) {
+		extend(vertex);
+	}
 }
 
 BoundingBox::BoundingBox(const Vector3& min, const Vector3& max)

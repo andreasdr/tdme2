@@ -4,6 +4,7 @@
 
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -19,6 +20,7 @@ using std::string;
 
 using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::elements::GUIMenuHeaderItemController;
+using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -93,7 +95,10 @@ void GUIMenuItemController::dispose()
 void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
+	if (node == this->node &&
+		node->isEventBelongingToNode(event) &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
 		event->setProcessed(true);
 	}
@@ -102,6 +107,14 @@ void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 void GUIMenuItemController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
 	GUIElementController::handleKeyboardEvent(node, event);
+	if (isDisabled() == false && node == this->node && event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+		switch (event->getKeyCode()) {
+			case GUIKeyboardEvent::KEYCODE_SPACE: {
+				dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
+				event->setProcessed(true);
+			}
+		}
+	}
 }
 
 void GUIMenuItemController::tick()

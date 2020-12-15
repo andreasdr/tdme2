@@ -133,46 +133,46 @@ public:
 	/**
 	 * @return window X position
 	 */
-	int32_t getWindowXPosition() const;
+	int getWindowXPosition() const;
 
 	/**
 	 * Set window X position when initializing
 	 * @param windowXPosition window X position
 	 */
-	void setWindowXPosition(int32_t windowXPosition);
+	void setWindowXPosition(int windowXPosition);
 
 	/**
 	 * @return window Y position
 	 */
-	int32_t getWindowYPosition() const;
+	int getWindowYPosition() const;
 
 	/**
 	 * Set window Y position when initializing
 	 * @param windowYPosition window Y position
 	 */
-	void setWindowYPosition(int32_t windowYPosition);
+	void setWindowYPosition(int windowYPosition);
 
 	/**
 	 * @return window width
 	 */
-	int32_t getWindowWidth() const;
+	int getWindowWidth() const;
 
 	/**
 	 * Set window width
 	 * @param windowWidth window width
 	 */
-	void setWindowWidth(int32_t windowWidth);
+	void setWindowWidth(int windowWidth);
 
 	/**
 	 * @return window height
 	 */
-	int32_t getWindowHeight() const;
+	int getWindowHeight() const;
 
 	/**
 	 * Set window height
 	 * @param windowHeight window height
 	 */
-	void setWindowHeight(int32_t windowHeight);
+	void setWindowHeight(int windowHeight);
 
 	/**
 	 * @return is full screen
@@ -228,7 +228,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	virtual void reshape(int32_t width, int32_t height) = 0;
+	virtual void reshape(int width, int height) = 0;
 
 	/**
 	 * Display
@@ -255,10 +255,10 @@ private:
 	static InputEventHandler* inputEventHandler;
 	string executableFileName;
 	bool initialized { false };
-	int32_t windowWidth { 1024 };
-	int32_t windowHeight { 768 };
-	int32_t windowXPosition { 100 };
-	int32_t windowYPosition { 100 };
+	int windowWidth { 1024 };
+	int windowHeight { 768 };
+	int windowXPosition { 100 };
+	int windowYPosition { 100 };
 	bool fullScreen { false };
 	static int64_t timeLast;
 	static bool limitFPS;
@@ -267,7 +267,7 @@ private:
 
 	#if defined(VULKAN) || defined(GLFW3)
 		static GLFWwindow* glfwWindow;
-		static array<uint32_t, 10> glfwMouseButtonDownFrames;
+		static array<unsigned int, 10> glfwMouseButtonDownFrames;
 		static int glfwMouseButtonLast;
 		static int glfwMods;
 		static bool capsLockEnabled;
@@ -288,7 +288,7 @@ private:
 	 * @param width width
 	 * @param height height
 	 */
-	static void reshapeInternal(int32_t width, int32_t height);
+	static void reshapeInternal(int width, int height);
 
 	#if defined(VULKAN) || defined(GLFW3)
 		/**

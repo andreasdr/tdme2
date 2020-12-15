@@ -31,7 +31,7 @@ class tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticle
 {
 private:
 	Vector3 scale;
-	int32_t maxCount;
+	int maxCount;
 	bool autoEmit;
 	Model* model { nullptr };
 	string modelFileName;
@@ -63,7 +63,7 @@ public:
 	/**
 	 * @return max count
 	 */
-	inline int32_t getMaxCount() {
+	inline int getMaxCount() {
 		return maxCount;
 	}
 
@@ -71,7 +71,7 @@ public:
 	 * Set max count
 	 * @param maxCount max count
 	 */
-	inline void setMaxCount(int32_t maxCount) {
+	inline void setMaxCount(int maxCount) {
 		this->maxCount = maxCount;
 	}
 

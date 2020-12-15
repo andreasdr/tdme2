@@ -328,7 +328,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 		clonedNode->setBitangents(sourceNode->getBitangents());
 		clonedNode->setOrigins(sourceNode->getOrigins());
 		auto facesEntities = clonedNode->getFacesEntities();
-		for (auto& facesEntity: facesEntities) {
+		for (auto& facesEntity: sourceNode->getFacesEntities()) {
 			if (facesEntity.getMaterial() == nullptr) continue;
 			Material* material = nullptr;
 			auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
@@ -338,7 +338,10 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 			} else {
 				material = materialIt->second;
 			}
-			facesEntity.setMaterial(material);
+			auto clonedFacesEntity = FacesEntity(clonedNode, facesEntity.getId());
+			clonedFacesEntity.setMaterial(material);
+			clonedFacesEntity.setFaces(facesEntity.getFaces());
+			facesEntities.push_back(clonedFacesEntity);
 		}
 		clonedNode->setFacesEntities(facesEntities);
 	}
@@ -714,6 +717,11 @@ void ModelTools::prepareForShader(Model* model, const string& shader) {
 		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
 		model->setImportTransformationsMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
+	} else
+	if (shader == "water") {
+		for (auto nodeIt: model->getSubNodes()) prepareForWaterShader(nodeIt.second, model->getImportTransformationsMatrix());
+		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		model->setUpVector(UpVector::Y_UP);
 	} else {
 		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second);
 	}
@@ -769,6 +777,46 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	node->setOrigins(objectOrigins);
 	for (auto nodeIt: node->getSubNodes()) {
 		prepareForFoliageTreeShader(nodeIt.second, transformationsMatrix, shader);
+	}
+}
+
+void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix) {
+	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	{
+		auto vertices = node->getVertices();
+		auto vertexIdx = 0;
+		for (auto& vertex: vertices) {
+			transformationsMatrix.multiply(vertex, vertex);
+		}
+		node->setVertices(vertices);
+	}
+	{
+		auto normals = node->getNormals();
+		for (auto& normal: normals) {
+			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal.normalize();
+		}
+		node->setNormals(normals);
+	}
+	{
+		auto tangents = node->getTangents();
+		for (auto& tangent: tangents) {
+			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent.normalize();
+		}
+		node->setTangents(tangents);
+	}
+	{
+		auto bitangents = node->getBitangents();
+		for (auto& bitangent: bitangents) {
+			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent.normalize();
+		}
+		node->setBitangents(bitangents);
+	}
+	node->setTransformationsMatrix(Matrix4x4().identity());
+	for (auto nodeIt: node->getSubNodes()) {
+		prepareForWaterShader(nodeIt.second, transformationsMatrix);
 	}
 }
 
@@ -1176,7 +1224,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// create optimized material
-	auto optimizedMaterial = new Material("material.optimized");
+	auto optimizedMaterial = new Material("tdme.material.optimized");
 	{
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexturePathName(texturePathName);
@@ -1188,7 +1236,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		Vector4 optimizedMaterialAmbient(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialDiffuse(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialSpecular(0.0f, 0.0f, 0.0f, 0.0f);
-		float optimizedMaterialShininess;
+		float optimizedMaterialShininess = 0.0f;
 		for (auto& atlasMaterialsIt: atlasMaterials) {
 			auto material = atlasMaterialsIt.second;
 			optimizedMaterialEmission+= Vector4(material->getSpecularMaterialProperties()->getEmissionColor().getArray());

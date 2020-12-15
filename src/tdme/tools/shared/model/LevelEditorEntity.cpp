@@ -7,7 +7,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/utilities/StringTools.h>
@@ -19,13 +18,12 @@ using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::utilities::StringTools;
 
-constexpr int32_t LevelEditorEntity::ID_NONE;
-constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
-constexpr int32_t LevelEditorEntity::MODEL_SOUNDS_COUNT;
+constexpr int LevelEditorEntity::ID_NONE;
+constexpr int LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
+constexpr int LevelEditorEntity::MODEL_SOUNDS_COUNT;
 
 char LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
@@ -98,7 +96,7 @@ char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUN
 	"model_bv.63"
 };
 
-LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
+LevelEditorEntity::LevelEditorEntity(int id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
 {
 	this->id = id;
 	this->type = entityType;
@@ -109,10 +107,6 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->thumbnail = thumbnail;
 	this->model = model;
 	this->pivot.set(pivot);
-	this->lodLevel2 = nullptr;
-	this->lodLevel3 = nullptr;
-	this->physics = nullptr;
-	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->physics = new LevelEditorEntityPhysics();
 	} else
@@ -121,13 +115,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
-		this->modelSettings = new LevelEditorEntityModel(this);
 		this->physics = new LevelEditorEntityPhysics();
 	}
-	renderGroups = false;
-	distanceShaderDistance = 10000.0f;
-	contributesShadows = true;
-	receivesShadows = true;
 }
 
 LevelEditorEntity::~LevelEditorEntity() {
@@ -136,7 +125,6 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (physics != nullptr) delete physics;
 	for (auto particleSystem: particleSystems) delete particleSystem;
-	if (modelSettings != nullptr) delete modelSettings;
 	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
 	for (auto sound: sounds) delete sound;
 }
@@ -147,7 +135,7 @@ void LevelEditorEntity::setModel(Model* model) {
 	this->model = model;
 }
 
-bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
+bool LevelEditorEntity::addBoundingVolume(int idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
 {
 	if (idx < 0)
 		return false;
@@ -161,15 +149,16 @@ bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBounding
 	return false;
 }
 
-void LevelEditorEntity::removeBoundingVolume(int32_t idx)
+void LevelEditorEntity::removeBoundingVolume(int idx)
 {
 	delete boundingVolumes[idx];
 	boundingVolumes.erase(boundingVolumes.begin() + idx);
 }
 
-void LevelEditorEntity::setDefaultBoundingVolumes()
+void LevelEditorEntity::setDefaultBoundingVolumes(int maxBoundingVolumeCount)
 {
-	for (auto i = boundingVolumes.size(); i < MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	auto boundingVolumeCount = maxBoundingVolumeCount == -1?MODEL_BOUNDINGVOLUME_COUNT:maxBoundingVolumeCount;
+	for (auto i = boundingVolumes.size(); i < boundingVolumeCount; i++) {
 		auto bv = new LevelEditorEntityBoundingVolume(i, this);
 		addBoundingVolume(i, bv);
 	}

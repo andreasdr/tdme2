@@ -66,12 +66,12 @@ bool GUIVerticalScrollbarInternalNode::isContentNode()
 	return false;
 }
 
-int32_t GUIVerticalScrollbarInternalNode::getContentWidth()
+int GUIVerticalScrollbarInternalNode::getContentWidth()
 {
 	return computedConstraints.width;
 }
 
-int32_t GUIVerticalScrollbarInternalNode::getContentHeight()
+int GUIVerticalScrollbarInternalNode::getContentHeight()
 {
 	return computedConstraints.height;
 }

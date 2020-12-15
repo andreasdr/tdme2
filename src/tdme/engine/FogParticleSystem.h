@@ -45,6 +45,8 @@ private:
 	bool frustumCulling { true };
 	Entity* parentEntity { nullptr };
 
+	RenderPass renderPass { RENDERPASS_STANDARD };
+
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
@@ -208,6 +210,14 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
 	}
 
 	inline bool isActive() override {

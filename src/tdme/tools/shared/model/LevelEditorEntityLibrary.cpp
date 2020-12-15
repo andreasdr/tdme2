@@ -36,7 +36,7 @@ using tdme::utilities::Console;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::StringTools;
 
-constexpr int32_t LevelEditorEntityLibrary::ID_ALLOCATE;
+constexpr int LevelEditorEntityLibrary::ID_ALLOCATE;
 
 LevelEditorEntityLibrary::LevelEditorEntityLibrary(LevelEditorLevel* level)
 {
@@ -60,23 +60,23 @@ void LevelEditorEntityLibrary::clear()
 	this->entityIdx = 0;
 }
 
-int32_t LevelEditorEntityLibrary::allocateEntityId()
+int LevelEditorEntityLibrary::allocateEntityId()
 {
 	return entityIdx++;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
-		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE ? allocateEntityId() : id, pathName, fileName);
+		levelEditorEntity = ModelMetaDataFileImport::doImport(id == ID_ALLOCATE?allocateEntityId():id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(
 			pathName,
 			fileName
 		);
 		levelEditorEntity = new LevelEditorEntity(
-			id == ID_ALLOCATE ? allocateEntityId() : id,
+			id == ID_ALLOCATE?allocateEntityId():id,
 			LevelEditorEntity_EntityType::MODEL,
 			name,
 			description,
@@ -91,14 +91,14 @@ LevelEditorEntity* LevelEditorEntityLibrary::addModel(int32_t id, const string& 
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string& name, const string& description, float width, float height, float depth) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int id, const string& name, const string& description, float width, float height, float depth)
 {
 	auto cacheId = "leveleditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 	auto modelId = cacheId + "_bv";
 	levelEditorEntity = new LevelEditorEntity(
-		id == ID_ALLOCATE ? allocateEntityId() : id,
+		id == ID_ALLOCATE?allocateEntityId():id,
 		LevelEditorEntity_EntityType::TRIGGER,
 		name,
 		description,
@@ -114,13 +114,36 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& name, const string& description) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addEnvironmentMapping(int id, const string& name, const string& description, float width, float height, float depth)
+{
+	auto cacheId = "leveleditor.environmentmapping." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
+	LevelEditorEntity* levelEditorEntity = nullptr;
+	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+	auto modelId = cacheId + "_bv";
+	levelEditorEntity = new LevelEditorEntity(
+		id == ID_ALLOCATE?allocateEntityId():id,
+		LevelEditorEntity_EntityType::ENVIRONMENTMAPPING,
+		name,
+		description,
+		"",
+		cacheId,
+		StringTools::replace(StringTools::replace(StringTools::replace(cacheId, "\\", "_"), "/", "_"), ":", "_") + ".png",
+		nullptr,
+		Vector3()
+	);
+	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));
+	levelEditorEntity->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+	addEntity(levelEditorEntity);
+	return levelEditorEntity;
+}
+
+LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int id, const string& name, const string& description)
 {
 	auto cacheId = "leveleditor.empty";
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
 	levelEditorEntity = new LevelEditorEntity(
-		id == ID_ALLOCATE ? allocateEntityId() : id,
+		id == ID_ALLOCATE?allocateEntityId():id,
 		LevelEditorEntity_EntityType::EMPTY,
 		name,
 		description,
@@ -134,10 +157,10 @@ LevelEditorEntity* LevelEditorEntityLibrary::addEmpty(int32_t id, const string& 
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, const string& name, const string& description) /* throws(Exception) */
+LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int id, const string& name, const string& description)
 {
 	auto levelEditorEntity = new LevelEditorEntity(
-		id == ID_ALLOCATE ? allocateEntityId() : id,
+		id == ID_ALLOCATE?allocateEntityId():id,
 		LevelEditorEntity_EntityType::PARTICLESYSTEM,
 		name,
 		description,
@@ -151,7 +174,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addParticleSystem(int32_t id, const
 	return levelEditorEntity;
 }
 
-void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /* throws(Exception) */
+void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity)
 {
 
 	auto entityByIdIt = entitiesById.find(levelEditorEntity->getId());
@@ -165,12 +188,12 @@ void LevelEditorEntityLibrary::addEntity(LevelEditorEntity* levelEditorEntity) /
 
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::getEntityAt(int32_t idx)
+LevelEditorEntity* LevelEditorEntityLibrary::getEntityAt(int idx)
 {
 	return entities[idx];
 }
 
-LevelEditorEntity* LevelEditorEntityLibrary::getEntity(int32_t id)
+LevelEditorEntity* LevelEditorEntityLibrary::getEntity(int id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
@@ -179,7 +202,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::getEntity(int32_t id)
 	return nullptr;
 }
 
-void LevelEditorEntityLibrary::removeEntity(int32_t id)
+void LevelEditorEntityLibrary::removeEntity(int id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
@@ -189,7 +212,7 @@ void LevelEditorEntityLibrary::removeEntity(int32_t id)
 	}
 }
 
-int32_t LevelEditorEntityLibrary::getEntityCount()
+int LevelEditorEntityLibrary::getEntityCount()
 {
 	return entities.size();
 }

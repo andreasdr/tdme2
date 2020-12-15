@@ -28,6 +28,16 @@ PostProcessing::PostProcessing() {
 
 	}
 	{
+		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_FINAL);
+		program->addPostProcessingStep("desaturation", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN);
+		if (program->isSupported() == true) {
+			programs["desaturation"] = program;
+		} else {
+			delete program;
+		}
+
+	}
+	{
 		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_OBJECTS);
 		program->addPostProcessingStep("ssao_map", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY);
 		program->addPostProcessingStep("ssao", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN, true);
@@ -66,6 +76,16 @@ PostProcessing::PostProcessing() {
 		} else {
 			delete program;
 		}
+	}
+	{
+		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_FINAL);
+		program->addPostProcessingStep("vignette", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN);
+		if (program->isSupported() == true) {
+			programs["vignette"] = program;
+		} else {
+			delete program;
+		}
+
 	}
 }
 

@@ -75,8 +75,8 @@ attribute vec2 inTextureUV;
 attribute vec3 inOrigin;
 
 // uniforms
-uniform mat4 mvpMatrix;
-uniform mat4 mvMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 cameraMatrix;
 uniform mat4 normalMatrix;
 uniform mat4 modelMatrix;
 uniform mat3 textureMatrix;
@@ -155,36 +155,38 @@ void computeLights(in vec3 normal, in vec3 position, in vec3 eyeDirection) {
 }
  
 void main(void) {
+	mat4 _modelMatrix = modelMatrix;
 	#if defined(HAVE_TREE)
 		mat4 shaderTransformMatrix = createTreeTransformMatrix(
 			inOrigin,
-			inVertex * mat3(modelMatrix),
-			vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2])
+			inVertex * mat3(_modelMatrix),
+			vec3(_modelMatrix[3][0], _modelMatrix[3][1], _modelMatrix[3][2])
 		);
 	#elif defined(HAVE_FOLIAGE)
 		mat4 shaderTransformMatrix =
 			createFoliageTransformMatrix(
 				inOrigin,
-				inVertex * mat3(modelMatrix),
-				vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2])
+				inVertex * mat3(_modelMatrix),
+				vec3(_modelMatrix[3][0], _modelMatrix[3][1], _modelMatrix[3][2])
 			);
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif
 
 	#if defined(HAVE_TERRAIN_SHADER)
-		vec4 heightVector4 = modelMatrix * vec4(inVertex, 1.0);
+		vec4 heightVector4 = _modelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
 		vertex = heightVector3;
 		height = heightVector3.y;
-		vec3 worldNormal = normalize(vec3(modelMatrix * vec4(inNormal, 0.0)));
+		vec3 worldNormal = normalize(vec3(_modelMatrix * vec4(inNormal, 0.0)));
 		slope = abs(180.0 / 3.14 * acos(clamp(dot(worldNormal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 		normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices
-		vec4 worldPosition4 = modelMatrix * vec4(inVertex, 1.0);
+		vec4 worldPosition4 = _modelMatrix * vec4(inVertex, 1.0);
 		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
 		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
+		_modelMatrix[1][1] = 1.0;
 		shaderTransformMatrix =
 			mat4(
 				1.0, 0.0, 0.0, 0.0,
@@ -207,14 +209,14 @@ void main(void) {
 	vsFragColor+= clamp(material.emission, 0.0, 1.0);
 
 	// compute gl position
-	gl_Position = mvpMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	gl_Position = projectionMatrix * cameraMatrix * _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 
 	// world position of vertex, needed in various calculations
-	vec4 position4 = modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vec4 position4 = _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vec3 position = position4.xyz / position4.w;
 
 	// eye direction
-	position4 = mvMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	position4 = cameraMatrix * _modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vec3 eyeDirection = normalize(-position4.xyz / position4.w);
 
 	// compute lights

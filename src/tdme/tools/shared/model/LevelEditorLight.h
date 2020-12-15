@@ -20,7 +20,7 @@ using tdme::math::Vector4;
 class tdme::tools::shared::model::LevelEditorLight final
 {
 private:
-	int32_t id;
+	int id;
 	bool enabled;
 	Color4 ambient;
 	Color4 diffuse;
@@ -39,12 +39,12 @@ public:
 	 * Public default constructor
 	 * @param id id
 	 */
-	LevelEditorLight(int32_t id);
+	LevelEditorLight(int id);
 
 	/**
 	 * @return light id
 	 */
-	inline int32_t getId() {
+	inline int getId() {
 		return id;
 	}
 

@@ -1103,7 +1103,7 @@ void Installer::dispose()
 	engine->dispose();
 }
 
-void Installer::reshape(int32_t width, int32_t height)
+void Installer::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }

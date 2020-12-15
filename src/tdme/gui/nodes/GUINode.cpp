@@ -150,7 +150,7 @@ const string& GUINode::getId()
 	return id;
 }
 
-int32_t GUINode::getAutoWidth()
+int GUINode::getAutoWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentWidth();
@@ -159,7 +159,7 @@ int32_t GUINode::getAutoWidth()
 	}
 }
 
-int32_t GUINode::getAutoHeight()
+int GUINode::getAutoHeight()
 {
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return getContentHeight();
@@ -188,13 +188,13 @@ GUINode_ComputedConstraints& GUINode::getComputedConstraints()
 	return computedConstraints;
 }
 
-void GUINode::setLeft(int32_t left)
+void GUINode::setLeft(int left)
 {
 	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	computedConstraints.left = left;
 }
 
-void GUINode::setTop(int32_t top)
+void GUINode::setTop(int top)
 {
 	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	computedConstraints.top = top;
@@ -249,7 +249,7 @@ void GUINode::computeContentAlignment()
 	}
 }
 
-int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value)
+int GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value)
 {
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::NONE)) {
 		return 0;
@@ -258,7 +258,7 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 		return value;
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT)) {
-		return static_cast< int32_t >((parentValue / 100.0 * value));
+		return static_cast< int >((parentValue / 100.0 * value));
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)) {
 		return autoValue;
@@ -309,7 +309,7 @@ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode::getRequestedCons
 	}
 }
 
-int32_t GUINode::getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue)
+int GUINode::getRequestedConstraintsValue(const string& constraint, int defaultConstraintsValue)
 {
 	if (constraint.empty() == true || constraint.length() == 0) {
 		return defaultConstraintsValue;
@@ -327,7 +327,7 @@ int32_t GUINode::getRequestedConstraintsValue(const string& constraint, int32_t 
 	}
 }
 
-int32_t GUINode::getRequestedPixelValue(const string& value, int32_t defaultValue)
+int GUINode::getRequestedPixelValue(const string& value, int defaultValue)
 {
 	if (value.empty() == true || value.length() == 0) {
 		return defaultValue;
@@ -983,8 +983,8 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
 		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
 	if (belongsToElement == true) {
-		position[0] = static_cast< int32_t >((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
-		position[1] = static_cast< int32_t >((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
+		position[0] = static_cast< int >((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
+		position[1] = static_cast< int >((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
 	}
 	return belongsToElement;
 }
@@ -1006,16 +1006,16 @@ void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float,
 	float top = computedConstraints.top + computedConstraints.alignmentTop;
 	float bottom = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height - 1;
 	if (eventX < left) {
-		position[0] = static_cast< int32_t >((eventX - left));
+		position[0] = static_cast< int >((eventX - left));
 	} else if (eventX > right) {
-		position[0] = static_cast< int32_t >((eventX - right));
+		position[0] = static_cast< int >((eventX - right));
 	} else {
 		position[0] = 0;
 	}
 	if (eventY < top) {
-		position[1] = static_cast< int32_t >((eventY - top));
+		position[1] = static_cast< int >((eventY - top));
 	} else if (eventY > bottom) {
-		position[1] = static_cast< int32_t >((eventY - bottom));
+		position[1] = static_cast< int >((eventY - bottom));
 	} else {
 		position[1] = 0;
 	}
@@ -1321,22 +1321,22 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 	}
 }
 
-int32_t GUINode::getGUIEffectOffsetX()
+int GUINode::getGUIEffectOffsetX()
 {
 	return guiEffectOffsetX;
 }
 
-void GUINode::setGUIEffectOffsetX(int32_t guiEffectOffsetX)
+void GUINode::setGUIEffectOffsetX(int guiEffectOffsetX)
 {
 	this->guiEffectOffsetX = guiEffectOffsetX;
 }
 
-int32_t GUINode::getGUIEffectOffsetY()
+int GUINode::getGUIEffectOffsetY()
 {
 	return guiEffectOffsetY;
 }
 
-void GUINode::setGUIEffectOffsetY(int32_t guiEffectOffsetY)
+void GUINode::setGUIEffectOffsetY(int guiEffectOffsetY)
 {
 	this->guiEffectOffsetY = guiEffectOffsetY;
 }

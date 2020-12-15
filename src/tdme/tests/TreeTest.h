@@ -30,12 +30,14 @@ private:
 	bool keyRight { false };
 	bool keyUp { false };
 	bool keyDown { false };
-	bool keyA { false };
-	bool keyD { false };
 	bool keyW { false };
+	bool keyA { false };
 	bool keyS { false };
-
+	bool keyD { false };
+	bool keyMinus { false };
+	bool keyPlus { false };
 	float camRotationY { 0.0f };
+	float camRotationX { 0.0f };
 
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
@@ -47,13 +49,12 @@ public:
 	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
-public:
+
+	// overriden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
-
-	// override methods
 	void onChar(unsigned int key, int x, int y) override;
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;

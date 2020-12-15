@@ -99,6 +99,6 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	void reshape(int32_t width, int32_t height);
+	void reshape(int width, int height);
 
 };

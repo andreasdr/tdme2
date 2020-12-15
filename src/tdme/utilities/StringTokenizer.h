@@ -18,7 +18,7 @@ class tdme::utilities::StringTokenizer
 {
 
 private:
-	vector<string> elements;
+	vector<string> tokens;
 	int idx { 0 };
 
 public:
@@ -37,16 +37,29 @@ public:
 	/**
 	 * @return number of tokens
 	 */
-	int32_t countTokens();
+	inline int32_t countTokens() {
+		return tokens.size();
+	}
 
 	/**
 	 * @return has more tokens
 	 */
-	bool hasMoreTokens();
+	inline bool hasMoreTokens() {
+		return idx != tokens.size();
+	}
 
 	/**
 	 * @return next token
 	 */
-	const string& nextToken();
+	inline const string& nextToken() {
+		return tokens[idx++];
+	}
+
+	/**
+	 * @return tokens
+	 */
+	inline const vector<string>& getTokens() {
+		return tokens;
+	}
 
 };

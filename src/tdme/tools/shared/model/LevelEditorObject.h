@@ -26,6 +26,7 @@ private:
 	string description;
 	Transformations transformations;
 	LevelEditorEntity* entity { nullptr };
+	string reflectionEnvironmentMappingId;
 
 public:
 	/**
@@ -92,6 +93,20 @@ public:
 	 */
 	inline void setEntity(LevelEditorEntity* entity) {
 		this->entity = entity;
+	}
+
+	/**
+	 * @return reflection environment mapping id
+	 */
+	inline const string& getReflectionEnvironmentMappingId() {
+		return reflectionEnvironmentMappingId;
+	}
+
+	/**
+	 * @return reflection environment mapping id
+	 */
+	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
+		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
 	}
 
 	/**

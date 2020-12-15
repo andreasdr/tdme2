@@ -131,7 +131,7 @@ void TDMEParticleSystem::initialize()
 	setView(particleSystemView = new SharedParticleSystemView(popUps));
 }
 
-void TDMEParticleSystem::reshape(int32_t width, int32_t height)
+void TDMEParticleSystem::reshape(int width, int height)
 {
 	engine->reshape(width, height);
 }

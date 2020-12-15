@@ -35,12 +35,8 @@ using tdme::math::Quaternion;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::LinesObject3D final
-	: public LinesObject3DInternal
-	, public Entity
+class tdme::engine::LinesObject3D final: public LinesObject3DInternal, public Entity
 {
-
-public:
 
 private:
 	friend class Engine;
@@ -48,6 +44,7 @@ private:
 	Engine* engine { nullptr };
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
+	RenderPass renderPass { RENDERPASS_STANDARD };
 
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
@@ -219,6 +216,14 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	inline RenderPass getRenderPass() const override {
+		return renderPass;
+	}
+
+	inline void setRenderPass(RenderPass renderPass) override {
+		this->renderPass = renderPass;
 	}
 
 };

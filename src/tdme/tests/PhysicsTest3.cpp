@@ -25,10 +25,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utilities/Time.h>
-#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -59,10 +60,11 @@ using tdme::engine::primitives::TerrainMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utilities::Time;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Time;
 
 constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
 
@@ -347,7 +349,7 @@ void PhysicsTest3::onChar(unsigned int key, int x, int y) {
 }
 
 void PhysicsTest3::onKeyDown (unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = true;
 	if (keyChar == u'a') keyA = true;
 	if (keyChar == u's') keyS = true;
@@ -355,7 +357,7 @@ void PhysicsTest3::onKeyDown (unsigned char key, int x, int y) {
 }
 
 void PhysicsTest3::onKeyUp(unsigned char key, int x, int y) {
-	auto keyChar = tolower(key);
+	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == u'w') keyW = false;
 	if (keyChar == u'a') keyA = false;
 	if (keyChar == u's') keyS = false;

@@ -61,7 +61,7 @@ private:
 	void bindDepthBufferTexture(void* context);
 
 	/**
-	 * @return lightCamera
+	 * @return light camera
 	 */
 	Camera* getCamera();
 
