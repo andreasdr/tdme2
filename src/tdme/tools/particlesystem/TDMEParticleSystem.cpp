@@ -5,8 +5,8 @@
 
 #include <tdme/utilities/Time.h>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -20,8 +20,8 @@ using tdme::tools::particlesystem::TDMEParticleSystem;
 
 using tdme::utilities::Time;
 
-using tdme::engine::Engine;
 using tdme::engine::model::Color4;
+using tdme::engine::Engine;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;

@@ -2,35 +2,35 @@
 
 #include <stdint.h>
 
-#include <sstream>
-#include <string>
 #include <map>
 #include <set>
+#include <sstream>
+#include <string>
 
 #include <tdme/network/udpserver/fwd-tdme.h>
 
 #include <tdme/tdme.h>
-#include <tdme/os/threading/Thread.h>
-#include <tdme/os/threading/Barrier.h>
-#include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/network/udpserver/NetworkServerException.h>
-#include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
-#include <tdme/network/udpserver/UDPServerGroup.h>
 #include <tdme/network/udpserver/Server.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
+#include <tdme/network/udpserver/UDPServerClient.h>
+#include <tdme/network/udpserver/UDPServerGroup.h>
+#include <tdme/network/udpserver/UDPServerIOThread.h>
+#include <tdme/os/threading/Barrier.h>
+#include <tdme/os/threading/ReadWriteLock.h>
+#include <tdme/os/threading/Thread.h>
 
 using std::stringstream;
 
-using tdme::os::threading::Thread;
-using tdme::os::threading::Barrier;
-using tdme::os::threading::ReadWriteLock;
 using tdme::network::udpserver::NetworkServerException;
-using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::UDPServerClient;
-using tdme::network::udpserver::UDPServerGroup;
 using tdme::network::udpserver::Server;
 using tdme::network::udpserver::ServerWorkerThreadPool;
+using tdme::network::udpserver::UDPServerClient;
+using tdme::network::udpserver::UDPServerGroup;
+using tdme::network::udpserver::UDPServerIOThread;
+using tdme::os::threading::Barrier;
+using tdme::os::threading::ReadWriteLock;
+using tdme::os::threading::Thread;
 
 /**
  * Base class for network UDP servers

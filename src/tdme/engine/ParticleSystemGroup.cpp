@@ -1,8 +1,9 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Object3D.h>
@@ -11,21 +12,20 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/primitives/BoundingBox.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::ParticleSystemGroup;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Object3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
 
 ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems) :
 	id(id), autoEmit(autoEmit), contributesShadows(contributesShadows), receivesShadows(receivesShadows), particleSystems(particleSystems)

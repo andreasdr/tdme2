@@ -6,27 +6,27 @@
 
 #include <stdint.h>
 
-#include <queue>
 #include <map>
+#include <queue>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
 
-#include <tdme/os/threading/Thread.h>
-#include <tdme/os/threading/Mutex.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/UDPSocket.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 
-using std::string;
-using std::queue;
 using std::map;
+using std::queue;
+using std::string;
 
-using tdme::os::threading::Thread;
-using tdme::os::threading::Mutex;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
 
 using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClientMessage;

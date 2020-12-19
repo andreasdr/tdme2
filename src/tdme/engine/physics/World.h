@@ -9,9 +9,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -19,13 +19,13 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::Body;
+using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Engine;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

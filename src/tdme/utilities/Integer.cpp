@@ -7,10 +7,10 @@
 
 using tdme::utilities::Console;
 
-using std::isdigit;
 using std::find_if;
-using std::string;
+using std::isdigit;
 using std::stoi;
+using std::string;
 using std::to_string;
 
 using tdme::utilities::Integer;

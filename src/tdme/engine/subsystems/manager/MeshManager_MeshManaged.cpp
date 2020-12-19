@@ -7,8 +7,8 @@
 
 using std::string;
 
-using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::manager::MeshManager;
+using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 
 MeshManager_MeshManaged::MeshManager_MeshManaged(const string& id, Object3DNodeMesh* mesh)

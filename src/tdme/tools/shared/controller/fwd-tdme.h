@@ -5,12 +5,12 @@ namespace tdme {
 namespace tools {
 namespace shared {
 namespace controller {
-	class EntityBaseSubScreenController;
-	class EntityDisplaySubScreenController;
-	class EntityPhysicsSubScreenController;
-	class EntityPhysicsSubScreenController_BoundingVolumeType;
-	class EntityPhysicsSubScreenController_GenerateConvexMeshes;
-	class EntitySoundsSubScreenController;
+	class PrototypeBaseSubScreenController;
+	class PrototypeDisplaySubScreenController;
+	class PrototypePhysicsSubScreenController;
+	class PrototypePhysicsSubScreenController_BoundingVolumeType;
+	class PrototypePhysicsSubScreenController_GenerateConvexMeshes;
+	class PrototypeSoundsSubScreenController;
 	class FileDialogPath;
 	class FileDialogScreenController;
 	class InfoDialogScreenController;

@@ -12,8 +12,8 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
 /**

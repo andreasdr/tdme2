@@ -4,8 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
 
 using std::string;
 

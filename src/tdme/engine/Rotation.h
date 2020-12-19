@@ -3,8 +3,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector3.h>
 
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

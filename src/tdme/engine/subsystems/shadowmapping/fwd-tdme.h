@@ -7,19 +7,19 @@ namespace subsystems {
 namespace shadowmapping {
 	class ShadowMap;
 	class ShadowMapping;
-	class ShadowMappingShaderPre;
-	struct ShadowMappingShaderPreImplementation;
-	class ShadowMappingShaderPreBaseImplementation;
-	class ShadowMappingShaderPreDefaultImplementation;
-	class ShadowMappingShaderPreFoliageImplementation;
-	class ShadowMappingShaderPreTreeImplementation;
-	class ShadowMappingShaderRender;
-	struct ShadowMappingShaderRenderImplementation;
-	class ShadowMappingShaderRenderImplementation;
-	class ShadowMappingShaderRenderBaseImplementation;
-	class ShadowMappingShaderRenderDefaultImplementation;
-	class ShadowMappingShaderRenderFoliageImplementation;
-	class ShadowMappingShaderRenderTreeImplementation;
+	class ShadowMapCreationShader;
+	struct ShadowMapCreationShaderImplementation;
+	class ShadowMapCreationShaderBaseImplementation;
+	class ShadowMapCreationShaderDefaultImplementation;
+	class ShadowMapCreationShaderFoliageImplementation;
+	class ShadowMapCreationShaderTreeImplementation;
+	class ShadowMapRenderShader;
+	struct ShadowMapRenderShaderImplementation;
+	class ShadowMapRenderShaderImplementation;
+	class ShadowMapRenderShaderBaseImplementation;
+	class ShadowMapRenderShaderDefaultImplementation;
+	class ShadowMapRenderShaderFoliageImplementation;
+	class ShadowMapRenderShaderTreeImplementation;
 	class ShadowMapping_RunState;
 }  // namespace shadowmapping
 }  // namespace subsystems

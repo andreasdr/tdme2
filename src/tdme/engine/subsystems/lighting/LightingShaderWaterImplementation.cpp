@@ -5,9 +5,9 @@
 #include <array>
 #include <string>
 
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -16,11 +16,11 @@ using std::array;
 using std::string;
 using std::to_string;
 
-using tdme::engine::Engine;
-using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

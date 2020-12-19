@@ -4,11 +4,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::utilities::ByteBuffer;
 

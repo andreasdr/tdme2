@@ -16,8 +16,8 @@
 
 using std::string;
 
-using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::elements::GUIDropDownController;
+using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;

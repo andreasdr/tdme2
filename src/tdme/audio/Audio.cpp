@@ -19,8 +19,8 @@
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;

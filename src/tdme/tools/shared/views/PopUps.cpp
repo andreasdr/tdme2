@@ -1,19 +1,19 @@
 #include <tdme/tools/shared/views/PopUps.h>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ProgressBarScreenController.h>
 
-using tdme::tools::shared::views::PopUps;
 using tdme::engine::Engine;
-using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ProgressBarScreenController;
+using tdme::tools::shared::views::PopUps;
 
 PopUps::PopUps()
 {

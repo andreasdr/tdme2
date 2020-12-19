@@ -6,22 +6,20 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
+#include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
 using std::set;
 using std::string;
 using std::vector;
 
-using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -32,17 +30,19 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
 /**

@@ -2,25 +2,25 @@
 
 #include <string>
 
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
 
-using tdme::engine::Object3D;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
-using tdme::engine::model::ShaderModel;
 using tdme::math::Matrix4x4;
-using tdme::math::Vector3;
 using tdme::math::Quaternion;
+using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
 Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances)

@@ -3,51 +3,51 @@
 #include <map>
 #include <string>
 
-#include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/FloatBuffer.h>
-#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 
 using std::map;
 using std::string;
 
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
-using tdme::utilities::ByteBuffer;
-using tdme::utilities::FloatBuffer;
-using tdme::utilities::ShortBuffer;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::ShortBuffer;
 
 Object3DNodeMesh::Object3DNodeMesh(Object3DNodeRenderer* object3DNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
 {

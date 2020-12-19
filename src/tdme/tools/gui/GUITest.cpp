@@ -4,19 +4,20 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -26,7 +27,6 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/gui/events/GUIChangeListener.h>
 
 
 using tdme::tools::gui::GUITest;
@@ -36,10 +36,8 @@ using std::to_string;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::model::Color4;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using tdme::engine::Engine;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::Action;
@@ -50,6 +48,8 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController;

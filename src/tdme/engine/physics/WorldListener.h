@@ -3,14 +3,14 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Transformations;
 
 /**
  * World listener which is about notifying adding or removing bodies

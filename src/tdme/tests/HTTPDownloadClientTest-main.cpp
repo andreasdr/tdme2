@@ -1,8 +1,8 @@
+#include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/network/Network.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/network/httpclient/HTTPDownloadClient.h>
-#include <tdme/os/threading/Thread.h>
 
 using std::to_string;
 

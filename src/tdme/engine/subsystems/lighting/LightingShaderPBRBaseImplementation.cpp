@@ -2,27 +2,27 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 
-using std::to_string;
 using std::string;
+using std::to_string;
 
-using tdme::engine::Engine;
-using tdme::engine::Timing;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;

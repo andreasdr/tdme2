@@ -7,16 +7,16 @@
 #include "UDPServerTest_UDPServerClient.h"
 
 #include <tdme/os/network/Network.h>
-#include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Queue.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
 using std::stringstream;
 
 using tdme::os::network::Network;
-using tdme::os::threading::Thread;
 using tdme::os::threading::Queue;
+using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 
 class ServerBroadcaster : public Thread {

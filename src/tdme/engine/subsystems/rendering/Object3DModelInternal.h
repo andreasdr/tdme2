@@ -5,8 +5,8 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 
-using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::model::Model;
+using tdme::engine::subsystems::rendering::Object3DBase;
 
 /**
  * Object 3D model

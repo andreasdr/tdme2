@@ -8,9 +8,9 @@
 
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
-using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utilities::VectorIteratorMultiple;
 

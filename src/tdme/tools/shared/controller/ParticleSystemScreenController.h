@@ -1,38 +1,38 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
+#include <tdme/tools/shared/views/fwd-tdme.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::tools::shared::controller::ScreenController;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
+using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedParticleSystemView;
 
 /**
@@ -57,10 +57,10 @@ private:
 	static string EMITTER_CIRCLEPARTICLEEMITTER;
 	static string EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY;
 	static string EMITTER_SPHEREPARTICLEEMITTER;
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
-	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
-	EntitySoundsSubScreenController* entitySoundsSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
+	PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController { nullptr };
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
+	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController { nullptr };
 	SharedParticleSystemView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
@@ -178,18 +178,18 @@ public:
 	/**
 	 * @return entity display sub screen controller
 	 */
-	EntityDisplaySubScreenController* getEntityDisplaySubScreenController();
+	PrototypeDisplaySubScreenController* getPrototypeDisplaySubScreenController();
 
 	/**
 	 * @return entity physics sub screen controller
 	 */
-	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 
 	/**
 	 * @return entity sounds sub screen controller
 	 */
-	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
+	PrototypeSoundsSubScreenController* getPrototypeSoundsSubScreenController();
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;
@@ -213,29 +213,29 @@ public:
 	void setScreenCaption(const string& text);
 
 	/**
-	 * Set up general entity data
+	 * Set up prototype entity data
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(const string& name, const string& description);
+	void setPrototypeData(const string& name, const string& description);
 
 	/**
-	 * Unset entity data
+	 * Unset prototype data
 	 */
-	void unsetEntityData();
+	void unsetPrototypeData();
 
 	/**
-	 * Set up entity properties
+	 * Set up prototype properties
 	 * @param presetId preset id
 	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName);
 
 	/**
-	 * Unset entity properties
+	 * Unset prototype properties
 	 */
-	void unsetEntityProperties();
+	void unsetPrototypeProperties();
 
 	/**
 	 * Set up particle system types
@@ -291,11 +291,6 @@ public:
 	void setParticleSystemEmitters(const vector<string>& emittersCollection);
 
 	/**
-	 * On quit
-	 */
-	void onQuit();
-
-	/**
 	 * Unset particle system type
 	 */
 	void unsetParticleSystemType();
@@ -341,9 +336,9 @@ public:
 	void onParticleSystemLoad();
 
 	/**
-	 * On model save
+	 * On prototype save
 	 */
-	void onEntitySave();
+	void onPrototypeSave();
 
 	/**
 	 * Unset particle system list box
@@ -361,13 +356,10 @@ public:
 	 * On particle system reload
 	 */
 	void onParticleSystemReload();
-	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
-	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void saveParticleSystem(const string& pathName, const string& fileName);
+	void loadParticleSystem(const string& pathName, const string& fileName);
 
-	/**
-	 * Shows the error pop up
-	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
@@ -379,5 +371,17 @@ public:
 	 * @param height height
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
+
+	/**
+	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
+	 */
+	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On quit
+	 */
+	void onQuit();
 
 };

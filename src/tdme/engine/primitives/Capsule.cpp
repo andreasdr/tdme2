@@ -2,17 +2,17 @@
 
 #include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::Capsule;
 
-using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

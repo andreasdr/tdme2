@@ -3,14 +3,14 @@
 #include <array>
 #include <string>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utilities/Console.h>
@@ -21,7 +21,6 @@
 using std::array;
 using std::to_string;
 
-using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -29,6 +28,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::utilities::Console;

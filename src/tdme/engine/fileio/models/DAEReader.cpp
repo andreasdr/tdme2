@@ -5,56 +5,53 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
+#include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/engine/ModelUtilities.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/files/LevelFileExport.h>
-#include <tdme/utilities/Float.h>
-#include <tdme/utilities/Integer.h>
-#include <tdme/utilities/StringTokenizer.h>
-#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 using std::array;
-using std::vector;
 using std::map;
-using std::unordered_set;
-using std::to_string;
 using std::string;
+using std::to_string;
+using std::unordered_set;
+using std::vector;
 
 using tdme::engine::fileio::models::DAEReader;
-using tdme::math::Math;
-using tdme::engine::ModelUtilities;
-using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
@@ -62,33 +59,36 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
+using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::engine::ModelUtilities;
+using tdme::engine::Transformations;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Float;
-using tdme::utilities::Integer;
-using tdme::utilities::StringTokenizer;
-using tdme::utilities::StringTools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
+using tdme::utilities::Integer;
+using tdme::utilities::ModelTools;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
+using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
-using tinyxml::TiXmlAttribute;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 

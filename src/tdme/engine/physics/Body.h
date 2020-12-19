@@ -11,26 +11,26 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/CollisionResponse.h>
+#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::remove;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

@@ -1,30 +1,30 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/ParticleSystemEntity.h>
-#include <tdme/engine/Transformations.h>
-#include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/math/Math.h>
+#include <tdme/utilities/fwd-tdme.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Entity;
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
-using tdme::engine::ObjectParticleSystem;
-using tdme::engine::ParticleSystemEntity;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::Entity;
+using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
+using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

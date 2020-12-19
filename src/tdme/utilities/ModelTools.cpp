@@ -6,28 +6,28 @@
 #include <unordered_set>
 #include <vector>
 
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/files/ProgressCallback.h>
-#include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
@@ -39,31 +39,31 @@ using std::to_string;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
-using tdme::utilities::ModelTools;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::scene::SceneEntity;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ProgressCallback;
-using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
 ModelTools::VertexOrder ModelTools::determineVertexOrder(const vector<Vector3>& vertices)
@@ -363,7 +363,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 }
 
 void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix) {
-	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in LevelEditor if doing partitioning
+	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in SceneEditor if doing partitioning
 	Vector3 faceCenter;
 
 	Matrix4x4 transformationsMatrix;

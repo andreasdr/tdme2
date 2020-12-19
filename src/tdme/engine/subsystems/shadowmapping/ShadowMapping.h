@@ -4,8 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -13,10 +13,10 @@
 
 using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -31,10 +31,10 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 	friend class ShadowMap;
 
 private:
-	enum ShadowMapping_RunState {NONE, PRE, RENDER};
+	enum ShadowMapping_RunState {NONE, CREATE, RENDER};
 
 	Renderer* renderer { nullptr };
-	EntityRenderer* object3DRenderer { nullptr };
+	EntityRenderer* entityRenderer { nullptr };
 
 	Matrix4x4 shadowTransformationsMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
@@ -51,9 +51,9 @@ public:
 	 * Constructor
 	 * @param engine engine
 	 * @param renderer renderer
-	 * @param object3DRenderer object 3d renderer
+	 * @param entityRenderer entityRenderer
 	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer);
+	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* entityRenderer);
 
 	/**
 	 * Destructor
@@ -73,18 +73,19 @@ public:
 	void reshape(int32_t width, int32_t height);
 
 	/**
+	 * Get shadow map
+	 * @param idx index
+	 * @return shadow map
+	 */
+	ShadowMap* getShadowMap(int idx);
+
+	/**
 	 * Create shadow maps
 	 */
 	void createShadowMaps();
 
 	/**
-	 * @return shadow map
-	 * @param idx index
-	 */
-	ShadowMap* getShadowMap(int idx);
-
-	/**
-	 * Render shadow maps
+	 * Render shadow maps to world
 	 * @param visibleObjects visible objects
 	 */
 	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
@@ -107,7 +108,7 @@ public:
 	void endObjectTransformations();
 
 	/**
-	 * Update model view and projection matrix
+	 * Update matrices
 	 * @param context context
 	 */
 	void updateMatrices(void* context);
@@ -132,7 +133,7 @@ public:
 	void setShader(void* context, const string& id);
 
 	/**
-	 * Upload light
+	 * Update light
 	 * @param lightId light id
 	 */
 	void updateLight(void* context, int32_t lightId);

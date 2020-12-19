@@ -4,48 +4,49 @@
 
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/Sound.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_Emitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PartitionNone.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/gui/GUI.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ParticleSystemScreenController.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileExport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
-#include <tdme/tools/shared/views/EntityPhysicsView.h>
-#include <tdme/tools/shared/views/EntityDisplayView.h>
-#include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/tools/shared/views/PrototypeDisplayView.h>
+#include <tdme/tools/shared/views/PrototypePhysicsView.h>
+#include <tdme/tools/shared/views/PrototypeSoundsView.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
@@ -59,48 +60,49 @@ using tdme::tools::shared::views::SharedParticleSystemView;
 
 using tdme::audio::Audio;
 using tdme::audio::Sound;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
+using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
+using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PartitionNone;
-using tdme::engine::model::Model;
-using tdme::engine::primitives::BoundingBox;
-using tdme::gui::GUI;
-using tdme::gui::nodes::GUIScreenNode;
+using tdme::engine::SceneConnector;
+using tdme::engine::SceneConnector;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using tdme::tools::shared::files::ModelMetaDataFileExport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::PropertyModelClass;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::tools::shared::views::EntityDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeDisplayView;
+using tdme::tools::shared::views::PrototypePhysicsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
@@ -114,17 +116,17 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	engine = Engine::getInstance();
 	audio = Audio::getInstance();
 	particleSystemScreenController = nullptr;
-	entityDisplayView = nullptr;
-	entityPhysicsView = nullptr;
-	entitySoundsView = nullptr;
+	prototypeDisplayView = nullptr;
+	prototypePhysicsView = nullptr;
+	prototypeSoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
 	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	entity = new LevelEditorEntity(
+	prototype = new Prototype(
 		-1,
-		LevelEditorEntity_EntityType::PARTICLESYSTEM,
+		Prototype_Type::PARTICLESYSTEM,
 		"Untitled",
 		"",
 		"Untitled.tps",
@@ -133,7 +135,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 		nullptr,
 		Vector3()
 	);
-	entity->setDefaultBoundingVolumes();
+	prototype->setDefaultBoundingVolumes();
 }
 
 SharedParticleSystemView::~SharedParticleSystemView() {
@@ -145,9 +147,9 @@ PopUps* SharedParticleSystemView::getPopUpsViews()
 	return popUps;
 }
 
-LevelEditorEntity* SharedParticleSystemView::getEntity()
+Prototype* SharedParticleSystemView::getPrototype()
 {
-	return entity;
+	return prototype;
 }
 
 void SharedParticleSystemView::reset()
@@ -155,13 +157,13 @@ void SharedParticleSystemView::reset()
 	engine->reset();
 }
 
-void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
+void SharedParticleSystemView::setPrototype(Prototype* prototype)
 {
 	engine->reset();
-	this->entity = entity;
+	this->prototype = prototype;
 	this->particleSystemIdx = 0;
 	initParticleSystemRequested = true;
-	entity->setDefaultBoundingVolumes();
+	prototype->setDefaultBoundingVolumes();
 }
 
 void SharedParticleSystemView::initParticleSystemRequest()
@@ -175,12 +177,12 @@ void SharedParticleSystemView::updateParticleSystemRequest() {
 
 void SharedParticleSystemView::initParticleSystem()
 {
-	if (entity == nullptr)
+	if (prototype == nullptr)
 		return;
 
-	particleSystemFile = entity->getEntityFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
-	Tools::oseThumbnail(entity);
+	particleSystemFile = prototype->getFileName();
+	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::oseThumbnail(prototype);
 	updateGUIElements();
 }
 
@@ -198,7 +200,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
+	PrototypeWriter::write(pathName, fileName, prototype);
 }
 
 void SharedParticleSystemView::reloadFile()
@@ -208,15 +210,15 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
-	if (entityPhysicsView->isEditingBoundingVolume(entity) == false) {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == false) {
 		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 			auto& event = engine->getGUI()->getKeyboardEvents()[i];
 			if (event.isProcessed() == true) continue;
 			auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
-			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
-			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(entity); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(prototype); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(prototype); event.setProcessed(true); }
 		}
 		for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 			auto& event = engine->getGUI()->getMouseEvents()[i];
@@ -231,7 +233,7 @@ void SharedParticleSystemView::handleInputEvents()
 					if (getGizmoMode() != GIZMOMODE_NONE) {
 						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
 						setGizmoMode(GIZMOMODE_NONE);
-						updateGizmo(entity);
+						updateGizmo(prototype);
 					}
 					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
@@ -294,13 +296,13 @@ void SharedParticleSystemView::handleInputEvents()
 								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								localTransformations.update();
 								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
-								setGizmoRotation(entity, localTransformations);
+								setGizmoRotation(prototype, localTransformations);
 								applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), true);
 							}
 							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
-								updateGizmo(entity);
+								updateGizmo(prototype);
 							}
 						}
 						mouseDownLastX = event.getXUnscaled();
@@ -312,7 +314,7 @@ void SharedParticleSystemView::handleInputEvents()
 		}
 	} else {
 		removeGizmo();
-		entityPhysicsView->handleInputEvents(entity, objectScale);
+		prototypePhysicsView->handleInputEvents(prototype, objectScale);
 	}
 	cameraRotationInputHandler->handleInputEvents();
 }
@@ -363,32 +365,32 @@ void SharedParticleSystemView::display()
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
 
 	// rendering
-	entityDisplayView->display(entity);
-	entityPhysicsView->display(entity);
+	prototypeDisplayView->display(prototype);
+	prototypePhysicsView->display(prototype);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
 
 void SharedParticleSystemView::updateGUIElements()
 {
-	if (entity != nullptr && entity->getParticleSystemsCount() > 0) {
-		particleSystemScreenController->setScreenCaption("Particle System - " + (entity->getEntityFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()));
-		auto preset = entity->getProperty("preset");
-		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
-		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
-		entityPhysicsView->setBoundingVolumes(entity);
-		entityPhysicsView->setPhysics(entity);
-		entitySoundsView->setSounds(entity);
+	if (prototype != nullptr && prototype->getParticleSystemsCount() > 0) {
+		particleSystemScreenController->setScreenCaption("Particle System - " + (prototype->getFileName().length() > 0 ? FileSystem::getInstance()->getFileName(prototype->getFileName()) : prototype->getName()));
+		auto preset = prototype->getProperty("preset");
+		particleSystemScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		particleSystemScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
+		prototypePhysicsView->setBoundingVolumes(prototype);
+		prototypePhysicsView->setPhysics(prototype);
+		prototypeSoundsView->setSounds(prototype);
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
-		particleSystemScreenController->setParticleSystemListBox(entity->getParticleSystemsCount(), particleSystemIdx);
+		particleSystemScreenController->setParticleSystemListBox(prototype->getParticleSystemsCount(), particleSystemIdx);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no particle system");
-		particleSystemScreenController->unsetEntityProperties();
-		particleSystemScreenController->unsetEntityData();
-		entityPhysicsView->unsetBoundingVolumes();
-		entityPhysicsView->unsetPhysics();
-		entitySoundsView->unsetSounds();
+		particleSystemScreenController->unsetPrototypeProperties();
+		particleSystemScreenController->unsetPrototypeData();
+		prototypePhysicsView->unsetBoundingVolumes();
+		prototypePhysicsView->unsetPhysics();
+		prototypeSoundsView->unsetSounds();
 		particleSystemScreenController->unsetParticleSystemType();
 		particleSystemScreenController->unsetParticleSystemEmitter();
 		particleSystemScreenController->setParticleSystemListBox(0, particleSystemIdx);
@@ -405,9 +407,9 @@ void SharedParticleSystemView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "particlesystem.properties");
-		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
-		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
-		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
+		prototypePhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		prototypeDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
+		prototypeDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get("particlesystem.path", "."));
 		particleSystemScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
@@ -421,9 +423,9 @@ void SharedParticleSystemView::initialize()
 	try {
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
-		entityDisplayView = particleSystemScreenController->getEntityDisplaySubScreenController()->getView();
-		entityPhysicsView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
-		entitySoundsView = particleSystemScreenController->getEntitySoundsSubScreenController()->getView();
+		prototypeDisplayView = particleSystemScreenController->getPrototypeDisplaySubScreenController()->getView();
+		prototypePhysicsView = particleSystemScreenController->getPrototypePhysicsSubScreenController()->getView();
+		prototypeSoundsView = particleSystemScreenController->getPrototypeSoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -432,7 +434,7 @@ void SharedParticleSystemView::initialize()
 	}
 
 	loadSettings();
-	entityPhysicsView->initialize();
+	prototypePhysicsView->initialize();
 	vector<string> particleSystemTypes;
 	particleSystemTypes.push_back("None");
 	particleSystemTypes.push_back("Object Particle System");
@@ -447,7 +449,7 @@ void SharedParticleSystemView::initialize()
 	particleSystemEmitters.push_back("Circle Particle Emitter Plane Velocity");
 	particleSystemEmitters.push_back("Sphere Particle Emitter");
 	particleSystemScreenController->setParticleSystemEmitters(particleSystemEmitters);
-	particleSystemScreenController->getEntityDisplaySubScreenController()->setupDisplay();
+	particleSystemScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
 	updateGUIElements();
 	initParticleSystemRequested = true;
 }
@@ -468,9 +470,9 @@ void SharedParticleSystemView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
-		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
-		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", prototypePhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.groundplate", prototypeDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
+		settings.put("display.shadowing", prototypeDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());
 		settings.put("model.path", particleSystemScreenController->getModelPath()->getPath());
 		settings.store("settings", "particlesystem.properties");
@@ -492,7 +494,7 @@ void SharedParticleSystemView::deactivate()
 	audio->removeEntity("sound");
 }
 
-void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
+void SharedParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* entity)
 {
 	delete oldEntity;
 }
@@ -501,8 +503,8 @@ void SharedParticleSystemView::loadParticleSystem()
 {
 	Console::println(string("Particle system file: " + particleSystemFile));
 	try {
-		auto oldEntity = entity;
-		setEntity(
+		auto oldEntity = prototype;
+		setPrototype(
 			loadParticleSystem(
 				particleSystemFile,
 				"",
@@ -510,18 +512,18 @@ void SharedParticleSystemView::loadParticleSystem()
 				FileSystem::getInstance()->getFileName(particleSystemFile)
 			)
 		);
-		onLoadParticleSystem(oldEntity, entity);
+		onLoadParticleSystem(oldEntity, prototype);
 	} catch (Exception& exception) {
 		popUps->getInfoDialogScreenController()->show("Warning", (exception.what()));
 	}
 }
 
-LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
+Prototype* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(pathName, fileName);
-		levelEditorEntity->setDefaultBoundingVolumes();
-		return levelEditorEntity;
+		auto prototype = PrototypeReader::read(pathName, fileName);
+		prototype->setDefaultBoundingVolumes();
+		return prototype;
 	}
 	return nullptr;
 }
@@ -538,16 +540,16 @@ void SharedParticleSystemView::setParticleSystemIndex(int idx) {
 	Console::println("SharedParticleSystemView::setParticleSystemIndex(): " + to_string(idx));
 	this->particleSystemIdx = idx;
 	updateGUIElements();
-	updateGizmo(entity);
+	updateGizmo(prototype);
 	totalDeltaScale.set(0.0, 0.0f, 0.0f);
 }
 
 void SharedParticleSystemView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
-	auto soundDefinition = entity->getSound(soundId);
+	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
-		string pathName = ModelMetaDataFileImport::getResourcePathName(
-			Tools::getPath(entity->getEntityFileName()),
+		string pathName = PrototypeReader::getResourcePathName(
+			Tools::getPath(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());
@@ -571,7 +573,7 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 	}
 }
 
-void SharedParticleSystemView::updateGizmo(LevelEditorEntity* entity) {
+void SharedParticleSystemView::updateGizmo(Prototype* entity) {
 	auto selectedEntity = engine->getEntity("model");
 	auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 	if (psg != nullptr) {
@@ -591,7 +593,7 @@ void SharedParticleSystemView::updateGizmo(LevelEditorEntity* entity) {
 	}
 }
 
-void SharedParticleSystemView::setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations) {
+void SharedParticleSystemView::setGizmoRotation(Prototype* entity, const Transformations& transformations) {
 	Gizmo::setGizmoRotation(transformations);
 }
 
@@ -606,12 +608,12 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		);
 		transformations.setScale(objectScaleInverted);
 		transformations.update();
-		auto particleSystem = entity->getParticleSystemAt(particleSystemIdx);
+		auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 		auto emitterType = particleSystem->getEmitter();
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::NONE) {
+		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
 			// no op
 		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
 			auto position = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getPosition());
 			if (guiOnly == false) {
@@ -620,7 +622,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 				particleSystemScreenController->updatePointParticleSystemEmitter(position);
 			}
 		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getObbCenter());
 			auto axis0 = emitter->getObbAxis0().clone().scale(emitter->getObbHalfextension().getX() * 2.0f);
@@ -650,7 +652,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 				particleSystemScreenController->updateBoundingBoxParticleSystemEmitter(center, axis0, axis1, axis2, halfExtension);
 			}
 		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			Vector3 tmpVector3;
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
@@ -683,7 +685,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 				particleSystemScreenController->updateCircleParticleSystemEmitter(center, axis0, axis1, radius);
 			}
 		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();
@@ -715,7 +717,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 				particleSystemScreenController->updateCirclePlaneVelocityParticleSystemEmitter(center, axis0, axis1, radius);
 			}
 		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto scale = 1.0f;
@@ -755,7 +757,7 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		Transformations transformations;
 		transformations.setScale(objectScale);
 		transformations.update();
-		modelEntity = Level::createEntity(entity, "model", transformations);
+		modelEntity = SceneConnector::createEntity(prototype, "model", transformations);
 		if (modelEntity != nullptr) {
 			modelEntity->setPickable(true);
 			engine->addEntity(modelEntity);

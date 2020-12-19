@@ -10,15 +10,15 @@
 using std::find_if;
 using std::isspace;
 using std::not1;
-using std::replace;
+using std::regex;
 using std::regex_match;
 using std::regex_replace;
+using std::replace;
 using std::string;
-using std::transform;
+using std::string;
 using std::tolower;
 using std::toupper;
-using std::string;
-using std::regex;
+using std::transform;
 
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;

@@ -2,8 +2,8 @@
 
 #include <tdme/gui/nodes/GUINode.h>
 
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
 
 GUINodeController::GUINodeController(GUINode* node)
 {

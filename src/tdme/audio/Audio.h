@@ -10,8 +10,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/fwd-tdme.h>
+#include <tdme/audio/AudioBufferManager.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;

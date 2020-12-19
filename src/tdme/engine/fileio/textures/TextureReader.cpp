@@ -17,16 +17,16 @@
 
 #include <ext/libpng/png.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;

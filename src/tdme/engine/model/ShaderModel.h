@@ -7,9 +7,9 @@
 
 using std::string;
 
-using tdme::utilities::Enum;
 using tdme::engine::model::Model;
 using tdme::engine::model::ShaderModel;
+using tdme::utilities::Enum;
 
 /**
  * Shader model

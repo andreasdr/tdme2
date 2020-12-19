@@ -9,8 +9,6 @@
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/ParticleSystemEntity.h>
-#include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -20,16 +18,18 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
+#include <tdme/engine/Light.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -40,16 +40,39 @@
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
-using std::unordered_map;
 using std::to_string;
+using std::unordered_map;
+using std::vector;
 
+using tdme::engine::model::Color4;
+using tdme::engine::model::Material;
+using tdme::engine::model::Node;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
+using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
+using tdme::engine::subsystems::manager::MeshManager;
+using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::particlesystem::ParticlesShader;
+using tdme::engine::subsystems::postprocessing::PostProcessing;
+using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
+using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
+using tdme::engine::subsystems::skinning::SkinningShader;
+using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -63,38 +86,15 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Timing;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Node;
-using tdme::engine::model::Material;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
-using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
-using tdme::engine::subsystems::lighting::LightingShader;
-using tdme::engine::subsystems::lines::LinesShader;
-using tdme::engine::subsystems::manager::MeshManager;
-using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::rendering::EntityRenderer;
-using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
-using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
-using tdme::engine::subsystems::particlesystem::ParticlesShader;
-using tdme::engine::subsystems::postprocessing::PostProcessing;
-using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
-using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
-using tdme::engine::subsystems::skinning::SkinningShader;
-using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
-using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
+using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
+using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 
 /**
  * Engine main class
@@ -165,9 +165,9 @@ private:
 
 	static AnimationProcessingTarget animationProcessingTarget;
 
-	static EZRShaderPre* ezrShaderPre;
-	static ShadowMappingShaderPre* shadowMappingShaderPre;
-	static ShadowMappingShaderRender* shadowMappingShaderRender;
+	static EZRShader* ezrShader;
+	static ShadowMapCreationShader* shadowMappingShaderPre;
+	static ShadowMapRenderShader* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
 	static LinesShader* linesShader;
@@ -316,14 +316,14 @@ private:
 	/**
 	 * @return shadow mapping shader
 	 */
-	inline static ShadowMappingShaderPre* getShadowMappingShaderPre() {
+	inline static ShadowMapCreationShader* getShadowMapCreationShader() {
 		return shadowMappingShaderPre;
 	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
-	inline static ShadowMappingShaderRender* getShadowMappingShaderRender() {
+	inline static ShadowMapRenderShader* getShadowMapRenderShader() {
 		return shadowMappingShaderRender;
 	}
 

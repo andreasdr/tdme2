@@ -2,14 +2,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Frustum.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Frustum;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

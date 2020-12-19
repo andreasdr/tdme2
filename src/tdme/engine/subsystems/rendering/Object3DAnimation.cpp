@@ -4,38 +4,38 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
 using std::map;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::subsystems::rendering::Object3DAnimation;
-using tdme::engine::Engine;
-using tdme::engine::Timing;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::rendering::AnimationState;
-using tdme::utilities::Console;
+using tdme::engine::subsystems::rendering::Object3DAnimation;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 
 Object3DAnimation::Object3DAnimation(Model* model, Engine::AnimationProcessingTarget animationProcessingTarget)
 {

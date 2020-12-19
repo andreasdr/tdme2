@@ -14,13 +14,13 @@
 
 #include <array>
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -36,16 +36,16 @@
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::subsystems::renderer::GL3Renderer;
 
+using tdme::engine::fileio::textures::PNGTextureWriter;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;

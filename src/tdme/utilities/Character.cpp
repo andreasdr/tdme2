@@ -1,7 +1,7 @@
 #include <tdme/utilities/Character.h>
 
-#include <cwctype>
 #include <cctype>
+#include <cwctype>
 
 using tdme::utilities::Character;
 

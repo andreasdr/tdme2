@@ -1,33 +1,33 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;

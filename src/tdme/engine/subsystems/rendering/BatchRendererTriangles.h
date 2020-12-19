@@ -4,30 +4,30 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/FloatBuffer.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/FloatBuffer.h>
 
 using std::array;
 using std::vector;
 
-using tdme::utilities::ByteBuffer;
-using tdme::utilities::FloatBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::math::Matrix4x4;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
 
 /**
  * Batch renderer for transparent triangles

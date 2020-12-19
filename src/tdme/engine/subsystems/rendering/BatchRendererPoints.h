@@ -4,21 +4,21 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
-#include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::to_string;
 using std::vector;
 
 using tdme::engine::model::Color4;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
-using tdme::engine::subsystems::rendering::TransparentRenderPoint;
-using tdme::engine::subsystems::renderer::Renderer;
 
 /**
  * Batch renderer for points

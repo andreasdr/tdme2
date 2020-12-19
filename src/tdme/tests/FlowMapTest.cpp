@@ -5,29 +5,32 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/physics/Body.h>
+#include <tdme/engine/physics/World.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/World.h>
-#include <tdme/engine/physics/Body.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/FlowMapCell.h>
@@ -39,13 +42,9 @@ using std::to_string;
 using tdme::tests::FlowMapTest;
 
 using tdme::application::Application;
-using tdme::engine::Camera;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Rotation;
-using tdme::engine::Timing;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -53,15 +52,20 @@ using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::scene::Scene;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::Light;
+using tdme::engine::Object3D;
+using tdme::engine::Rotation;
+using tdme::engine::SceneConnector;
+using tdme::engine::SceneConnector;
+using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::utilities::Console;
 using tdme::utilities::FlowMap;
 using tdme::utilities::FlowMapCell;
@@ -80,7 +84,7 @@ FlowMapTest::~FlowMapTest() {
 	if (flowMap != nullptr) flowMap->releaseReference();
 	delete world;
 	delete emptyModel;
-	delete playerModelEntity;
+	delete playerModelPrototype;
 	delete pathFinding;
 }
 
@@ -124,46 +128,46 @@ void FlowMapTest::dispose()
 void FlowMapTest::initialize()
 {
 	engine->initialize();
-	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", level);
-	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false, false);
-	Level::addLevel(world, level);
+	SceneReader::read("resources/tests/levels/pathfinding", "test.tl", scene);
+	SceneConnector::setLights(engine, scene);
+	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
-	cam->setLookFrom(level.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
-	cam->setLookAt(level.getCenter());
+	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
+	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	emptyModel = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
-	playerModelEntity = ModelMetaDataFileImport::doImport("resources/tests/models/mementoman", "mementoman.dae.tmm");
-	playerModelEntity->getModel()->addAnimationSetup("walk", 0, 23, true);
-	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);
-	playerModelEntity->getModel()->addAnimationSetup("death", 109, 169, false);
-	startPlayerObject = new Object3D("startPlayerObject", playerModelEntity->getModel());
+	emptyModel = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
+	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
+	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
+	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
+	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
+	startPlayerObject = new Object3D("startPlayerObject", playerModelPrototype->getModel());
 	startPlayerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	startPlayerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	startPlayerObject->update();
 	startPlayerObject->setAnimation("still");
-	startPlayerObject->setContributesShadows(playerModelEntity->isContributesShadows());
-	startPlayerObject->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	startPlayerObject->setContributesShadows(playerModelPrototype->isContributesShadows());
+	startPlayerObject->setReceivesShadows(playerModelPrototype->isReceivesShadows());
 	engine->addEntity(startPlayerObject);
-	endPlayerObject1 = new Object3D("endPlayerObject1", playerModelEntity->getModel());
+	endPlayerObject1 = new Object3D("endPlayerObject1", playerModelPrototype->getModel());
 	endPlayerObject1->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	endPlayerObject1->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	endPlayerObject1->update();
 	endPlayerObject1->setAnimation("still");
-	endPlayerObject1->setContributesShadows(playerModelEntity->isContributesShadows());
-	endPlayerObject1->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	endPlayerObject1->setContributesShadows(playerModelPrototype->isContributesShadows());
+	endPlayerObject1->setReceivesShadows(playerModelPrototype->isReceivesShadows());
 	endPlayerObject1->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
 	endPlayerObject1->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	engine->addEntity(endPlayerObject1);
-	endPlayerObject2 = new Object3D("endPlayerObject2", playerModelEntity->getModel());
+	endPlayerObject2 = new Object3D("endPlayerObject2", playerModelPrototype->getModel());
 	endPlayerObject2->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	endPlayerObject2->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	endPlayerObject2->update();
 	endPlayerObject2->setAnimation("still");
-	endPlayerObject2->setContributesShadows(playerModelEntity->isContributesShadows());
-	endPlayerObject2->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	endPlayerObject2->setContributesShadows(playerModelPrototype->isContributesShadows());
+	endPlayerObject2->setReceivesShadows(playerModelPrototype->isReceivesShadows());
 	endPlayerObject2->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
 	endPlayerObject2->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	engine->addEntity(endPlayerObject2);
@@ -198,13 +202,13 @@ void FlowMapTest::doPathFinding() {
 	pathFinding->findPath(
 		startPlayerObject->getTransformations().getTranslation(),
 		endPlayerObject1->getTransformations().getTranslation(),
-		Level::RIGIDBODY_TYPEID_STATIC,
+		SceneConnector::RIGIDBODY_TYPEID_STATIC,
 		path
 	);
 	Console::println("Found a path: steps: " + to_string(path.size()));
-	auto center = level.getBoundingBox()->getCenter();
-	auto depth = Math::ceil(level.getBoundingBox()->getDimensions().getZ());
-	auto width = Math::ceil(level.getBoundingBox()->getDimensions().getX());
+	auto center = scene.getBoundingBox()->getCenter();
+	auto depth = Math::ceil(scene.getBoundingBox()->getDimensions().getZ());
+	auto width = Math::ceil(scene.getBoundingBox()->getDimensions().getX());
 	flowMap = pathFinding->createFlowMap(
 		{
 			endPlayerObject1->getTransformations().getTranslation(),
@@ -213,7 +217,7 @@ void FlowMapTest::doPathFinding() {
 		center,
 		width * 2.0f,
 		depth * 2.0f,
-		Level::RIGIDBODY_TYPEID_STATIC,
+		SceneConnector::RIGIDBODY_TYPEID_STATIC,
 		path
 	);
 	auto i = 0;

@@ -3,9 +3,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Reference.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
 
 using std::string;
 

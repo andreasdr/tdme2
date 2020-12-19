@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 
 #include <ext/vulkan/spirv/GlslangToSpv.h>
-#include <ext/vulkan/vma/src/VmaUsage.h>
 #include <ext/vulkan/svs/thsvs_simpler_vulkan_synchronization.h>
+#include <ext/vulkan/vma/src/VmaUsage.h>
 
 #include <array>
 #include <list>
@@ -16,8 +16,8 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/fwd-tdme.h>
@@ -34,19 +34,19 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::math::Matrix4x4;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix4x4;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::ReadWriteLock;
+using tdme::os::threading::SpinLock;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
-using tdme::os::threading::Mutex;
-using tdme::os::threading::ReadWriteLock;
-using tdme::os::threading::SpinLock;
 
 /**
  * Vulkan renderer

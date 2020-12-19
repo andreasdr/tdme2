@@ -11,9 +11,9 @@
 
 using std::string;
 
-using tdme::utilities::Enum;
-using tdme::math::Vector3;
 using tdme::engine::model::RotationOrder;
+using tdme::math::Vector3;
+using tdme::utilities::Enum;
 
 /**
  * Represents rotation orders of a model

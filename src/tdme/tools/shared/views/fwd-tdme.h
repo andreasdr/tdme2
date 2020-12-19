@@ -7,10 +7,10 @@ namespace shared {
 namespace views {
 	class CameraRotationInputHandler;
 	struct CameraRotationInputHandlerEventHandler;
-	class EntityBaseView;
-	class EntityPhysicsView;
-	class EntitySoundsView;
-	class EntityDisplayView;
+	class PrototypeBaseView;
+	class PrototypePhysicsView;
+	class PrototypeSoundsView;
+	class PrototypeDisplayView;
 	class Gizmo;
 	struct PlayableSoundView;
 	class PopUps;

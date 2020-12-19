@@ -4,13 +4,13 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/Transformations.h>
 
 using std::string;
 
-using tdme::engine::EntityHierarchy;
 using tdme::engine::Engine;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;

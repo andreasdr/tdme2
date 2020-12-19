@@ -15,11 +15,11 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-using tdme::utilities::Console;
-using tdme::os::network::Network;
-using tdme::os::threading::Thread;
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
+using tdme::os::network::Network;
+using tdme::os::threading::Thread;
+using tdme::utilities::Console;
 
 UDPClient* client = NULL;
 

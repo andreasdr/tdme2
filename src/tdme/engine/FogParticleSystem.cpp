@@ -2,20 +2,20 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
 
 using std::string;
 
-using tdme::engine::FogParticleSystem;
-using tdme::engine::Engine;
-using tdme::engine::Partition;
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Engine;
+using tdme::engine::FogParticleSystem;
+using tdme::engine::Partition;
+using tdme::engine::Transformations;
 
 FogParticleSystem::FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps):
 	FogParticleSystemInternal(id, emitter, maxPoints, pointSize, texture, textureHorizontalSprites, textureVerticalSprites, fps)

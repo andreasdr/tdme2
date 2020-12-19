@@ -1,16 +1,16 @@
 #include <tdme/utilities/Properties.h>
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::utilities::Properties;
 

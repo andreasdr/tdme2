@@ -22,8 +22,8 @@
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
 #include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 
@@ -32,8 +32,8 @@ using std::string;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
 using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 
 size_t VorbisDecoder::oggfiledata_read(void* buffer, size_t size, size_t count, VorbisDecoder::OGGFileData* oggFileData) {

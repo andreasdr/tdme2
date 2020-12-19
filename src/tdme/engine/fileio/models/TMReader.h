@@ -22,11 +22,11 @@ using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;

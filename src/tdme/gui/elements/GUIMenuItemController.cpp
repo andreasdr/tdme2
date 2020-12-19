@@ -18,8 +18,8 @@
 
 using std::string;
 
-using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::elements::GUIMenuHeaderItemController;
+using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;

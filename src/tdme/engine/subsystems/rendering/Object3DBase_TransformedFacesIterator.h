@@ -7,8 +7,8 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::array;
 

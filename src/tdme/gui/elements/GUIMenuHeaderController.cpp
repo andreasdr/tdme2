@@ -1,9 +1,8 @@
 #include <tdme/gui/elements/GUIMenuHeaderController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
-#include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/elements/GUITabsController.h>
+#include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -11,10 +10,10 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::gui::elements::GUIMenuHeaderController;
-using tdme::gui::GUI;
 using tdme::gui::elements::GUIMenuHeaderItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -23,6 +22,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::utilities::Console;
 
 GUIMenuHeaderController::GUIMenuHeaderController(GUINode* node)

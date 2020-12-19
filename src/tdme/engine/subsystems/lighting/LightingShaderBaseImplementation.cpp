@@ -2,23 +2,23 @@
 
 #include <string>
 
+#include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 
-using std::to_string;
 using std::string;
+using std::to_string;
 
+using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderConstants;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 

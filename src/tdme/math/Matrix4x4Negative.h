@@ -2,8 +2,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

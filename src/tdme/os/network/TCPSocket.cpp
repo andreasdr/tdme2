@@ -4,8 +4,8 @@
 
 #include <tdme/os/network/NetworkIOException.h>
 #include <tdme/os/network/NetworkSocket.h>
-#include <tdme/os/network/NetworkSocketException.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>
+#include <tdme/os/network/NetworkSocketException.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -33,8 +33,8 @@ using std::to_string;
 
 using tdme::os::network::NetworkIOException;
 using tdme::os::network::NetworkSocket;
-using tdme::os::network::NetworkSocketException;
 using tdme::os::network::NetworkSocketClosedException;
+using tdme::os::network::NetworkSocketException;
 
 /**
  * @brief public destructor

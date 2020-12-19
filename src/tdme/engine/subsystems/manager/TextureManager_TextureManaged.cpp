@@ -6,8 +6,8 @@
 
 using std::string;
 
-using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 
 TextureManager_TextureManaged::TextureManager_TextureManaged(const string& id, int32_t rendererId)
 {

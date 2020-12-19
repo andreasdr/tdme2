@@ -1,7 +1,7 @@
 <screen id="modeleditor" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
 		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
-			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Level Editor" width="100%" horizontal-align="center" height="auto" />
+			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Model Editor" width="100%" horizontal-align="center" height="auto" />
 		</panel>
 		<element id="viewport" width="100%" height="*" border="1" border-color="#000000" focusable="true" ignore-events="true" />
 		<panel width="100%" height="210">

@@ -12,8 +12,8 @@
 using std::map;
 using std::string;
 
-using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::threading::Mutex;

@@ -2,30 +2,30 @@
 
 #include <stdint.h>
 
-#include <queue>
 #include <map>
+#include <queue>
 #include <utility>
 
 #include <tdme/network/udpserver/fwd-tdme.h>
 
 #include <tdme/tdme.h>
-#include <tdme/os/threading/Thread.h>
-#include <tdme/os/threading/Mutex.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/UDPSocket.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 
-using std::queue;
 using std::map;
+using std::queue;
 
-using tdme::os::threading::Thread;
-using tdme::os::threading::Mutex;
-using tdme::os::network::KernelEventMechanism;
-using tdme::os::network::UDPSocket;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
+using tdme::os::network::KernelEventMechanism;
+using tdme::os::network::UDPSocket;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
 
 /**
  * UDP Network server IO thread

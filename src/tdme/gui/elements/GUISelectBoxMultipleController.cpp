@@ -1,6 +1,5 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleParentOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -11,10 +10,10 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUISelectBoxMultipleController;
-using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
 using tdme::gui::elements::GUISelectBoxMultipleParentOptionController;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -25,6 +24,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
 constexpr char GUISelectBoxMultipleController::VALUE_DELIMITER;

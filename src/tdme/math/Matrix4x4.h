@@ -10,8 +10,8 @@
 
 using std::array;
 
-using tdme::math::Matrix4x4;
 using tdme::math::Math;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 

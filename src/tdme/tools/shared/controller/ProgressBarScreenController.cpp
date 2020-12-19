@@ -4,28 +4,28 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utilities/MutableString.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::tools::shared::controller::ProgressBarScreenController;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
+using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;

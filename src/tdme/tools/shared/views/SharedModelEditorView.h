@@ -3,34 +3,34 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/tools/shared/views/View.h>
-#include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/tools/shared/views/PlayableSoundView.h>
+#include <tdme/tools/shared/views/View.h>
 
 using std::string;
 
 using tdme::audio::Audio;
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::tools::shared::views::EntityDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeDisplayView;
+using tdme::tools::shared::views::PrototypePhysicsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
 using tdme::tools::shared::views::View;
 
 /**
@@ -51,10 +51,10 @@ protected:
 private:
 	PopUps* popUps { nullptr };
 	ModelEditorScreenController* modelEditorScreenController { nullptr };
-	EntityDisplayView* entityDisplayView { nullptr };
-	EntityPhysicsView* entityPhysicsView { nullptr };
-	EntitySoundsView* entitySoundsView { nullptr };
-	LevelEditorEntity* entity { nullptr };
+	PrototypeDisplayView* prototypeDisplayView { nullptr };
+	PrototypePhysicsView* prototypePhysicsView { nullptr };
+	PrototypeSoundsView* prototypeSoundsView { nullptr };
+	Prototype* prototype { nullptr };
 	bool loadModelRequested;
 	bool initModelRequested;
 	bool initModelRequestedReset;
@@ -94,10 +94,10 @@ private:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param pivot pivot
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+	virtual Prototype* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * On rotation event to be overloaded
@@ -127,24 +127,25 @@ public:
 	PopUps* getPopUps();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getPrototype();
 
 	/**
-	 * Set entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setPrototype(Prototype* prototype);
 
 	/**
-	 * Reset entity
+	 * Reset prototype
 	 */
-	void resetEntity();
+	void resetPrototype();
 
 	/**
-	 * Reimport entity
+	 * Reimport prototype
 	 */
-	void reimportEntity();
+	void reimportPrototype();
 
 	/**
 	 * @return current model file name
@@ -206,20 +207,15 @@ public:
 	 */
 	void optimizeModel();
 
-	// overridden methods
-	void handleInputEvents() override;
-
-	/**
-	 * Renders the scene
-	 */
-	void display() override;
-
 	/**
 	 * Init GUI elements
 	 */
 	void updateGUIElements();
 
 	// overridden methods
+	// overridden methods
+	void handleInputEvents() override;
+	void display() override;
 	void initialize() override;
 	void activate() override;
 	void deactivate() override;
@@ -236,12 +232,12 @@ public:
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
-	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
+	virtual void onLoadModel(Prototype* oldEntity, Prototype* entity);
 
 	/**
-	 * On set entity data hook
+	 * On set prototype data hook
 	 */
-	virtual void onSetEntityData();
+	virtual void onSetPrototypeData();
 
 	/**
 	 * Play animation

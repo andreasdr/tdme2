@@ -5,10 +5,10 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
+using std::endl;
+using std::string;
 using std::string;
 using std::to_string;
-using std::string;
-using std::endl;
 
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

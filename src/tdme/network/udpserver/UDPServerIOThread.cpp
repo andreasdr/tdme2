@@ -5,36 +5,36 @@
 #include <string>
 #include <typeinfo>
 
+#include <tdme/network/udpserver/ServerRequest.h>
+#include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
-#include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
-#include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/ServerRequest.h>
 
-using std::pair;
 using std::ios_base;
 using std::map;
+using std::pair;
 using std::string;
 using std::to_string;
 
+using tdme::network::udpserver::ServerRequest;
+using tdme::network::udpserver::UDPServerIOThread;
 using tdme::os::network::KernelEventMechanism;
-using tdme::os::network::NIOInterest;
 using tdme::os::network::NIO_INTEREST_NONE;
 using tdme::os::network::NIO_INTEREST_READ;
 using tdme::os::network::NIO_INTEREST_WRITE;
+using tdme::os::network::NIOInterest;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::RTTI;
 using tdme::utilities::Time;
-using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::ServerRequest;
 
 const uint64_t UDPServerIOThread::MESSAGEACK_RESENDTIMES[UDPServerIOThread::MESSAGEACK_RESENDTIMES_TRIES] = {125L, 250L, 500L, 750L, 1000L, 2000L, 5000L};
 

@@ -8,8 +8,8 @@
 
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
-#include <tdme/os/network/TCPSocket.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>
+#include <tdme/os/network/TCPSocket.h>
 #include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>

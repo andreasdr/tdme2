@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 
 using std::string;
 using std::vector;

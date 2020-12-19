@@ -8,14 +8,14 @@
 #endif
 
 #include <tdme/os/network/fwd-tdme.h>
-#include <tdme/os/network/NIOInterest.h>
-#include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/platform/fallback/fwd-tdme.h>
 #include <tdme/os/network/platform/fallback/KernelEventMechanismPSD.h>
+#include <tdme/os/network/KernelEventMechanism.h>
+#include <tdme/os/network/NIOInterest.h>
 
+using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
-using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 
 KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
 	// allocate platform specific data

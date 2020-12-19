@@ -1,23 +1,23 @@
 #include <tdme/engine/ObjectParticleSystem.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/primitives/BoundingBox.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::ObjectParticleSystem;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
 
 ObjectParticleSystem::ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter) :
 	ObjectParticleSystemInternal(id, model, scale, autoEmit, contributesShadows, receivesShadows, maxCount, emitter)

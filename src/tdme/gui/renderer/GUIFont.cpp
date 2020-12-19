@@ -1,16 +1,16 @@
 #include <tdme/gui/renderer/GUIFont.h>
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Integer.h>
@@ -19,23 +19,23 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::gui::renderer::GUIFont;
-using tdme::math::Math;
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::Engine;
+using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
-using tdme::utilities::MutableString;
 
 MutableString GUIFont::LINEHEIGHT_STRING = MutableString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUV0123456789");
 

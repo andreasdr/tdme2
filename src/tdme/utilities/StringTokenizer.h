@@ -6,8 +6,8 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 /**
  * String tokenizer class

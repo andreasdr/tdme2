@@ -5,8 +5,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;

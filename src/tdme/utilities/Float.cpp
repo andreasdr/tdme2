@@ -2,10 +2,10 @@
 
 #include <string>
 
+using std::isnan;
+using std::stof;
 using std::string;
 using std::to_string;
-using std::stof;
-using std::isnan;
 
 using tdme::utilities::Float;
 

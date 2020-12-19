@@ -1,19 +1,19 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/application/Application.h>
-#include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
+#include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorLevel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
 using tdme::utilities::ObjectDeleter;
 
 /**
@@ -27,12 +27,12 @@ class tdme::tests::WaterTest final
 private:
 	Engine* engine { nullptr };
 
-	LevelEditorEntity* skySphereEntity { nullptr };
-	LevelEditorEntity* skyDomeEntity { nullptr };
-	LevelEditorEntity* skyPanoramaEntity { nullptr };
-	LevelEditorEntity* sphereEntity { nullptr };
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
+	Prototype* spherePrototype { nullptr };
 
-	LevelEditorLevel level;
+	Scene scene;
 
 	float skyDomeTranslation { 0.0f };
 

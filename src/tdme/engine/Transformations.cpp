@@ -2,18 +2,18 @@
 
 #include <string>
 
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 
 using std::to_string;
 
+using tdme::engine::model::RotationOrder;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
-using tdme::engine::model::RotationOrder;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;

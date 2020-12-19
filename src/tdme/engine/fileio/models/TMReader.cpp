@@ -10,12 +10,11 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
@@ -29,27 +28,27 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/ModelTools.h>
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
 using std::to_string;
 using std::to_string;
+using std::vector;
 
+using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
+using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
@@ -62,6 +61,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::ModelTools;
 
 Model* TMReader::read(const string& pathName, const string& fileName)
 {

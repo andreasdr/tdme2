@@ -8,31 +8,31 @@
 
 #include <string>
 
-#include <tdme/utilities/ByteBuffer.h>
-#include <tdme/audio/Audio.h>
-#include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
-#include <tdme/audio/AudioBufferManager.h>
 #include <tdme/audio/decoder/fwd-tdme.h>
-#include <tdme/audio/decoder/VorbisDecoder.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
+#include <tdme/audio/decoder/VorbisDecoder.h>
+#include <tdme/audio/Audio.h>
+#include <tdme/audio/AudioBufferManager.h>
+#include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
+using std::string;
+using std::string;
 using std::to_string;
-using std::string;
-using std::string;
 
-using tdme::audio::Sound;
-using tdme::utilities::ByteBuffer;
-using tdme::audio::Audio;
-using tdme::audio::AudioBufferManager_AudioBufferManaged;
-using tdme::audio::AudioBufferManager;
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
+using tdme::audio::Audio;
+using tdme::audio::AudioBufferManager;
+using tdme::audio::AudioBufferManager_AudioBufferManaged;
+using tdme::audio::Sound;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
 Sound::Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)

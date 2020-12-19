@@ -1,14 +1,14 @@
 #pragma once
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::unordered_map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;

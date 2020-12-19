@@ -5,6 +5,13 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -14,13 +21,6 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
-#include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
@@ -34,6 +34,13 @@ using tdme::tests::EntityHierarchyTest;
 using tdme::utilities::Time;
 
 using tdme::application::Application;
+using tdme::engine::model::Color4;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
@@ -43,13 +50,6 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
-using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;

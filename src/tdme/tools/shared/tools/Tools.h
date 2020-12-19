@@ -9,23 +9,23 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/tools/fwd-tdme.h>
 
 using std::array;
 using std::string;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
+using tdme::engine::Light;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::shared::model::LevelEditorEntity;
 
 /**
  * Thumbnail generator
@@ -143,7 +143,7 @@ public:
 	 * Make a thumbnail of given model with off screen engine
 	 * @param model model
 	 */
-	static void oseThumbnail(LevelEditorEntity* model);
+	static void oseThumbnail(Prototype* model);
 
 	/**
 	 * Compute max axis dimension for given bounding box
@@ -169,7 +169,7 @@ public:
 	 * @param camScale scale
 	 * @param lodLevel lod level
 	 */
-	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
+	static void setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
 
 	/**
 	 * Get relative resources file name

@@ -5,11 +5,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Camera.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
-#include <tdme/engine/Transformations.h>
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
@@ -17,35 +12,40 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
+#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/Timing.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector3.h>
 
 using std::map;
 using std::string;
 
-using tdme::engine::Camera;
-using tdme::engine::Entity;
-using tdme::engine::Engine;
-using tdme::engine::Timing;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
-using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::Entity;
+using tdme::engine::Timing;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
-using tdme::math::Vector3;
 using tdme::math::Quaternion;
+using tdme::math::Vector3;
 
 /**
  * Object 3D to be used with engine class

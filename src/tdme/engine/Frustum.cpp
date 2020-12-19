@@ -2,22 +2,22 @@
 
 #include <array>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Plane.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
 
-using tdme::engine::Frustum;
-using tdme::math::Math;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Frustum;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

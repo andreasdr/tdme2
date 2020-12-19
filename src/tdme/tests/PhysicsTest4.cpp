@@ -3,11 +3,6 @@
 #include <string>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Camera.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -18,12 +13,17 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Light.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DModel.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/utilities/Time.h>
-#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -31,11 +31,6 @@ using std::to_string;
 using tdme::tests::PhysicsTest4;
 
 using tdme::application::Application;
-using tdme::engine::Camera;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DModel;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -46,12 +41,17 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::TerrainMesh;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::Light;
+using tdme::engine::Object3D;
+using tdme::engine::Object3DModel;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::utilities::Time;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Time;
 
 constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
 

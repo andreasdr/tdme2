@@ -4,7 +4,6 @@
 #include <vector>
 
 
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -14,6 +13,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -22,11 +22,9 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::tools::shared::controller::FileDialogScreenController;
-using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -35,9 +33,11 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;

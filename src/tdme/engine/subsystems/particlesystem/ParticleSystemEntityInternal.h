@@ -3,15 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 
 using std::string;
 
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
+using tdme::engine::Transformations;
 
 /**
  * Particle system entity internal interface

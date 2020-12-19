@@ -1,15 +1,15 @@
 #include <tdme/gui/nodes/GUIPanelNode.h>
 
-#include <string>
 #include <set>
+#include <string>
 
 #include <tdme/gui/events/GUIMouseEvent.h>
 
 using std::set;
 using std::string;
 
-using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIPanelNode;
 
 GUIPanelNode::GUIPanelNode(
 	GUIScreenNode* screenNode,

@@ -3,9 +3,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/os/network/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ExceptionBase.h>
-#include <tdme/os/network/fwd-tdme.h>
 
 using tdme::utilities::ExceptionBase;
 

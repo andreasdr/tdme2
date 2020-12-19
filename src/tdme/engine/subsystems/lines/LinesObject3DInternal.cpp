@@ -3,16 +3,16 @@
 #include <string>
 #include <vector>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -22,17 +22,17 @@
 using std::string;
 using std::vector;
 
-using tdme::engine::subsystems::lines::LinesObject3DInternal;
-using tdme::math::Math;
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::lines::LinesObject3DInternal;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::Engine;
+using tdme::engine::Transformations;
+using tdme::math::Math;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

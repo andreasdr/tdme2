@@ -5,27 +5,27 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::math::Matrix4x4;
-using tdme::utilities::Key;
 using tdme::utilities::Console;
+using tdme::utilities::Key;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 {

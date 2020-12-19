@@ -17,12 +17,11 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
@@ -38,12 +37,13 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::map;
-using std::to_string;
 using std::set;
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
@@ -52,12 +52,11 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
+using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
@@ -73,6 +72,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
 Model* GLTFReader::read(const string& pathName, const string& fileName)

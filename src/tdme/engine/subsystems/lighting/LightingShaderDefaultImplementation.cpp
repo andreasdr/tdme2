@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::to_string;
 using std::string;
+using std::to_string;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 

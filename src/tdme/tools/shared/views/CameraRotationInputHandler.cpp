@@ -1,29 +1,29 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/utilities/Character.h>
 
-using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::GUI;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
+using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::utilities::Character;
 

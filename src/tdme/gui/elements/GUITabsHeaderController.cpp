@@ -1,8 +1,7 @@
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/elements/GUITabsController.h>
+#include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,11 +9,11 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 
-using tdme::gui::elements::GUITabsHeaderController;
-using tdme::gui::GUI;
-using tdme::gui::elements::GUITabController;
 using tdme::gui::elements::GUITabsController;
+using tdme::gui::elements::GUITabsHeaderController;
+using tdme::gui::elements::GUITabController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
@@ -22,6 +21,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 
 GUITabsHeaderController::GUITabsHeaderController(GUINode* node)
 	: GUINodeController(node)

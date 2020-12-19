@@ -8,10 +8,10 @@
 
 using std::string;
 
-using tdme::engine::model::PBRMaterialProperties;
-using tdme::engine::model::Color4;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::model::Color4;
+using tdme::engine::model::PBRMaterialProperties;
 
 PBRMaterialProperties::PBRMaterialProperties()
 {

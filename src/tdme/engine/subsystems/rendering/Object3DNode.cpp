@@ -4,49 +4,49 @@
 #include <string>
 #include <vector>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::map;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 

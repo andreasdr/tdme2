@@ -3,22 +3,20 @@
 #include <stdint.h>
 
 #include <exception>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udpserver/fwd-tdme.h>
+#include <tdme/network/udpserver/ServerRequest.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
-#include <tdme/network/udpserver/fwd-tdme.h>
-#include <tdme/network/udpserver/Server.h>
-#include <tdme/network/udpserver/ServerRequest.h>
 
 using std::string;
 using std::stringstream;
 
 using tdme::utilities::Exception;
 using tdme::utilities::Reference;
-using tdme::network::udpserver::Server;
 
 namespace tdme {
 namespace network {

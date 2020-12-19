@@ -6,8 +6,8 @@
 #include <tdme/engine/fileio/models/DAEReader.h>
 #include <tdme/engine/fileio/models/FBXReader.h>
 #include <tdme/engine/fileio/models/GLTFReader.h>
-#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -21,9 +21,9 @@ using std::vector;
 using tdme::engine::fileio::models::DAEReader;
 using tdme::engine::fileio::models::FBXReader;
 using tdme::engine::fileio::models::GLTFReader;
-using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::models::TMReader;
 using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;

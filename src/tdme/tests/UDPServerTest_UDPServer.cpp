@@ -8,8 +8,8 @@
 #include <tdme/utilities/Exception.h>
 
 using std::string;
-using std::to_string;
 using std::string;
+using std::to_string;
 
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

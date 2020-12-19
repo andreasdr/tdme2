@@ -1,12 +1,18 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using tdme::engine::FrameBuffer;
+using std::map;
+using std::string;
+
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::FrameBuffer;
 
 /**
  * Post processing shader

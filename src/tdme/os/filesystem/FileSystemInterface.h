@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
@@ -9,8 +9,8 @@
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystemException;

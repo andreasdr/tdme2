@@ -1,15 +1,15 @@
 #include <stdio.h>
 
 #include <map>
-#include <string>
 #include <sstream>
+#include <string>
 #include <typeinfo>
 
+#include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/IntEncDec.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
-#include <tdme/network/udpserver/UDPServerClient.h>
 
 using std::ios_base;
 using std::map;
@@ -17,11 +17,11 @@ using std::pair;
 using std::string;
 using std::stringstream;
 
+using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
 using tdme::utilities::IntEncDec;
 using tdme::utilities::RTTI;
 using tdme::utilities::Time;
-using tdme::network::udpserver::UDPServerClient;
 
 UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
 	server(NULL),

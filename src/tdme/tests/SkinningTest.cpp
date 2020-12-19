@@ -5,12 +5,6 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Camera.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Rotation.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -19,10 +13,16 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/Light.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -34,12 +34,6 @@ using std::to_string;
 using tdme::tests::SkinningTest;
 
 using tdme::application::Application;
-using tdme::engine::Camera;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
-using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Rotation;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -48,6 +42,12 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
+using tdme::engine::Light;
+using tdme::engine::Object3D;
+using tdme::engine::Rotation;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;

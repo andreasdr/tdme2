@@ -3,25 +3,25 @@
 #include <stdint.h>
 
 #include <exception>
-#include <string>
-#include <sstream>
 #include <map>
+#include <sstream>
+#include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Exception.h>
-#include <tdme/utilities/Reference.h>
-#include <tdme/os/threading/Mutex.h>
-#include <tdme/os/network/NetworkException.h>
-#include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/NetworkServerException.h>
+#include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
+#include <tdme/os/network/NetworkException.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Reference.h>
 
 using std::map;
 
-using tdme::utilities::Exception;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
+using tdme::utilities::Exception;
 
 /**
  * Base class for network UDP server clients

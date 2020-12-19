@@ -11,9 +11,9 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Skinning;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
+using tdme::engine::model::Skinning;
 
 Skinning::Skinning()
 {

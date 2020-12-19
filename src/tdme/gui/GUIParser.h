@@ -5,10 +5,10 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/fwd-tdme.h>
-#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -23,8 +23,8 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
-using tinyxml::TiXmlElement;
 using tdme::os::filesystem::FileSystemException;
+using tinyxml::TiXmlElement;
 
 /**
  * GUI parser

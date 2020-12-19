@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::vector;
 using std::find;
+using std::vector;
 
 namespace tdme {
 namespace utilities {

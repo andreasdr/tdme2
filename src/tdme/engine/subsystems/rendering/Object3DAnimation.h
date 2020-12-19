@@ -6,24 +6,24 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
 using tdme::engine::model::Animation;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::subsystems::rendering::AnimationState;
+using tdme::engine::Engine;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 
 /**

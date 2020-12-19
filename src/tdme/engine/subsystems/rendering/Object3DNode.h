@@ -6,29 +6,29 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::Object3D;
 using tdme::engine::model::Node;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
-using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
-using tdme::engine::subsystems::rendering::Object3DNode;
 
 /**
  * Object 3d node specifically for rendering

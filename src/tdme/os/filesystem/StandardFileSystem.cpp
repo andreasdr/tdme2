@@ -7,23 +7,23 @@
 #endif
 
 #include <algorithm>
+#include <dirent.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <sys/stat.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::getline;
 using std::ifstream;
@@ -32,16 +32,16 @@ using std::ofstream;
 using std::sort;
 using std::string;
 using std::stringstream;
-using std::vector;
 using std::to_string;
+using std::vector;
 
 using tdme::os::filesystem::StandardFileSystem;
 
 using tdme::os::filesystem::FileNameFilter;
-using tdme::utilities::StringTools;
-using tdme::utilities::StringTokenizer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 StandardFileSystem::StandardFileSystem()
 {
@@ -208,7 +208,7 @@ void StandardFileSystem::getContentAsStringArray(const string& pathName, const s
 
 void StandardFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content)
 {
-	ofstream ofs(getFileName(pathName, fileName).c_str());
+	ofstream ofs(getFileName(pathName, fileName).c_str(), ofstream::binary);
 	if(ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}

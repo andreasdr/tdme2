@@ -3,7 +3,6 @@
 #include <array>
 #include <string>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -12,21 +11,22 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/GUI.h>
 
 using std::array;
 using std::string;
 
-using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
+using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
+using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUI;
 
 GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(
 	GUIScreenNode* screenNode,

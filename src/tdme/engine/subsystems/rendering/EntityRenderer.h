@@ -10,8 +10,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
@@ -19,6 +17,8 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,26 +27,26 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Pool.h>
 
-using std::unordered_map;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
+using tdme::engine::model::Color4;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::BatchRendererPoints;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::engine::subsystems::rendering::BatchRendererPoints;
-using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
-using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;

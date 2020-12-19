@@ -1,35 +1,35 @@
 #include <tdme/tools/shared/views/Gizmo.h>
 
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::tools::shared::views::Gizmo;
 
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Object3D;
-using tdme::engine::model::Node;
-using tdme::engine::model::Model;
-using tdme::engine::primitives::LineSegment;
 using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
 using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;
@@ -83,17 +83,17 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				if ((gizmoTypeMask & GIZMOTYPE_TRANSLATE) == GIZMOTYPE_TRANSLATE &&
 					(gizmoTypeMask & GIZMOTYPE_ROTATE) == GIZMOTYPE_ROTATE &&
 					(gizmoTypeMask & GIZMOTYPE_SCALE) == GIZMOTYPE_SCALE) {
-					engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-					engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.all"));
-					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.all", Tools::getGizmoAll()));
+					engine->removeEntity(id + ".tdme.gizmo.translation");
+					engine->removeEntity(id + ".tdme.gizmo.scale");
+					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.all"));
+					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.all", Tools::getGizmoAll()));
 					gizmoEntity->setPickable(true);
 					gizmoEntity->setDisableDepthTest(true);
 					gizmoEntity->setTranslation(gizmoCenter);
 					gizmoEntity->setScale(Vector3(scale, scale, scale));
 					gizmoEntity->update();
-					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.rotations"));
-					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.rotations", Tools::getGizmoRotations()));
+					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
+					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.rotations", Tools::getGizmoRotations()));
 					gizmoEntity->setPickable(true);
 					gizmoEntity->setDisableDepthTest(true);
 					gizmoEntity->setTranslation(gizmoCenter);
@@ -102,11 +102,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				} else
 				if ((gizmoTypeMask & GIZMOTYPE_TRANSLATE) == GIZMOTYPE_TRANSLATE &&
 					(gizmoTypeMask & GIZMOTYPE_SCALE) == GIZMOTYPE_SCALE) {
-					engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-					engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
-					engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.all"));
-					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.all", Tools::getGizmoTranslationScale()));
+					engine->removeEntity(id + ".tdme.gizmo.translation");
+					engine->removeEntity(id + ".tdme.gizmo.rotations");
+					engine->removeEntity(id + ".tdme.gizmo.scale");
+					gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.all"));
+					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.all", Tools::getGizmoTranslationScale()));
 					gizmoEntity->setPickable(true);
 					gizmoEntity->setDisableDepthTest(true);
 					gizmoEntity->setTranslation(gizmoCenter);
@@ -114,11 +114,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 					gizmoEntity->update();
 				} else {
 					if ((gizmoTypeMask & GIZMOTYPE_TRANSLATE) == GIZMOTYPE_TRANSLATE) {
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.translation"));
-						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.translation", Tools::getGizmoTranslation()));
+						engine->removeEntity(id + ".tdme.gizmo.all");
+						engine->removeEntity(id + ".tdme.gizmo.rotations");
+						engine->removeEntity(id + ".tdme.gizmo.scale");
+						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.translation"));
+						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.translation", Tools::getGizmoTranslation()));
 						gizmoEntity->setPickable(true);
 						gizmoEntity->setDisableDepthTest(true);
 						gizmoEntity->setTranslation(gizmoCenter);
@@ -126,11 +126,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 						gizmoEntity->update();
 					}
 					if ((gizmoTypeMask & GIZMOTYPE_ROTATE) == GIZMOTYPE_ROTATE) {
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.rotations"));
-						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.rotations", Tools::getGizmoRotations()));
+						engine->removeEntity(id + ".tdme.gizmo.all");
+						engine->removeEntity(id + ".tdme.gizmo.translation");
+						engine->removeEntity(id + ".tdme.gizmo.scale");
+						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
+						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.rotations", Tools::getGizmoRotations()));
 						gizmoEntity->setPickable(true);
 						gizmoEntity->setDisableDepthTest(true);
 						gizmoEntity->setTranslation(gizmoCenter);
@@ -138,11 +138,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 						gizmoEntity->update();
 					}
 					if ((gizmoTypeMask & GIZMOTYPE_SCALE) == GIZMOTYPE_SCALE) {
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-						engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
-						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.scale"));
-						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.scale", Tools::getGizmoScale()));
+						engine->removeEntity(id + ".tdme.gizmo.all");
+						engine->removeEntity(id + ".tdme.gizmo.translation");
+						engine->removeEntity(id + ".tdme.gizmo.rotations");
+						gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.scale"));
+						if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.scale", Tools::getGizmoScale()));
 						gizmoEntity->setPickable(true);
 						gizmoEntity->setDisableDepthTest(true);
 						gizmoEntity->setTranslation(gizmoCenter);
@@ -154,11 +154,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 			}
 		case GIZMOTYPE_TRANSLATE:
 			{
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
-				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.translation"));
-				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.translation", Tools::getGizmoTranslation()));
+				engine->removeEntity(id + ".tdme.gizmo.all");
+				engine->removeEntity(id + ".tdme.gizmo.scale");
+				engine->removeEntity(id + ".tdme.gizmo.rotations");
+				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.translation"));
+				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.translation", Tools::getGizmoTranslation()));
 				gizmoEntity->setPickable(true);
 				gizmoEntity->setDisableDepthTest(true);
 				gizmoEntity->setTranslation(gizmoCenter);
@@ -168,11 +168,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 			}
 		case GIZMOTYPE_ROTATE:
 			{
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.rotations"));
-				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.rotations", Tools::getGizmoRotations()));
+				engine->removeEntity(id + ".tdme.gizmo.all");
+				engine->removeEntity(id + ".tdme.gizmo.translation");
+				engine->removeEntity(id + ".tdme.gizmo.scale");
+				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
+				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.rotations", Tools::getGizmoRotations()));
 				gizmoEntity->setPickable(true);
 				gizmoEntity->setDisableDepthTest(true);
 				gizmoEntity->setTranslation(gizmoCenter);
@@ -182,11 +182,11 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 			}
 		case GIZMOTYPE_SCALE:
 			{
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-				engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
-				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.scale"));
-				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.leveleditor.gizmo.scale", Tools::getGizmoScale()));
+				engine->removeEntity(id + ".tdme.gizmo.all");
+				engine->removeEntity(id + ".tdme.gizmo.translation");
+				engine->removeEntity(id + ".tdme.gizmo.rotations");
+				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.scale"));
+				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D(id + ".tdme.gizmo.scale", Tools::getGizmoScale()));
 				gizmoEntity->setPickable(true);
 				gizmoEntity->setDisableDepthTest(true);
 				gizmoEntity->setTranslation(gizmoCenter);
@@ -199,18 +199,18 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 }
 
 Object3D* Gizmo::getGizmoObject3D() {
-	auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.all"));
-	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.translation"));
-	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.rotations"));
-	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.scale"));
+	auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.all"));
+	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.translation"));
+	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
+	if (gizmoEntity == nullptr) gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.scale"));
 	return gizmoEntity;
 }
 
 void Gizmo::removeGizmo() {
-	engine->removeEntity(id + ".tdme.leveleditor.gizmo.all");
-	engine->removeEntity(id + ".tdme.leveleditor.gizmo.translation");
-	engine->removeEntity(id + ".tdme.leveleditor.gizmo.scale");
-	engine->removeEntity(id + ".tdme.leveleditor.gizmo.rotations");
+	engine->removeEntity(id + ".tdme.gizmo.all");
+	engine->removeEntity(id + ".tdme.gizmo.translation");
+	engine->removeEntity(id + ".tdme.gizmo.scale");
+	engine->removeEntity(id + ".tdme.gizmo.rotations");
 	setGizmoMode(GIZMOMODE_NONE);
 }
 
@@ -399,7 +399,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 
 bool Gizmo::determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode) {
 	if (selectedEntity != nullptr &&
-		StringTools::startsWith(selectedEntity->getId(), id + ".tdme.leveleditor.gizmo.") == true && selectedEntityNode != nullptr) {
+		StringTools::startsWith(selectedEntity->getId(), id + ".tdme.gizmo.") == true && selectedEntityNode != nullptr) {
 		auto selectedEntityNodeId = selectedEntityNode->getId();
 		if (StringTools::startsWith(selectedEntityNodeId, "all_") == true) selectedEntityNodeId = StringTools::substring(selectedEntityNodeId, 4);
 		if (selectedEntityNodeId == "translate_x") setGizmoMode(GIZMOMODE_TRANSLATE_X); else
@@ -427,7 +427,7 @@ void Gizmo::setGizmoRotation(const Transformations& transformations) {
 	Matrix4x4 rotationsMatrix;
 	transformations.getRotationsQuaternion().computeMatrix(rotationsMatrix);
 	{
-		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.scale"));
+		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.scale"));
 		if (gizmoEntity != nullptr) {
 			gizmoEntity->setNodeTransformationsMatrix("scale_x", gizmoEntity->getModel()->getNodeById("scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
 			gizmoEntity->setNodeTransformationsMatrix("scale_y", gizmoEntity->getModel()->getNodeById("scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
@@ -439,7 +439,7 @@ void Gizmo::setGizmoRotation(const Transformations& transformations) {
 		}
 	}
 	{
-		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.rotations"));
+		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
 		if (gizmoEntity != nullptr) {
 			gizmoEntity->setNodeTransformationsMatrix("rotate_x", gizmoEntity->getModel()->getNodeById("rotate_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
 			gizmoEntity->setNodeTransformationsMatrix("rotate_y", gizmoEntity->getModel()->getNodeById("rotate_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
@@ -448,7 +448,7 @@ void Gizmo::setGizmoRotation(const Transformations& transformations) {
 		}
 	}
 	{
-		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.leveleditor.gizmo.all"));
+		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.all"));
 		if (gizmoEntity != nullptr) {
 			if (gizmoEntity->getModel()->getNodeById("all_scale_x") != nullptr) gizmoEntity->setNodeTransformationsMatrix("all_scale_x", gizmoEntity->getModel()->getNodeById("all_scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
 			if (gizmoEntity->getModel()->getNodeById("all_scale_y") != nullptr) gizmoEntity->setNodeTransformationsMatrix("all_scale_y", gizmoEntity->getModel()->getNodeById("all_scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));

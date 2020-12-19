@@ -2,15 +2,15 @@
 
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringDefaultImplementation.h>
-#include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.h>
-#include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
@@ -18,13 +18,13 @@
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utilities::Console;
 using tdme::utilities::StringTools;

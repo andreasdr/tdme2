@@ -1,0 +1,60 @@
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
+
+- What is TDMESceneEditor?
+    - TDME based scene editor 
+
+- What is already working
+    - prototype library
+        - in general
+            - setting up prototype properties
+                - key, value map for what ever reason
+        - models
+            - see model editor
+        - particle systems
+            - see particle system editor
+        - empties
+        - trigger
+        - environment mappings
+    - scene editor
+        - setting up a grid where to place prototypes on
+        - setting up snapping where to align prototypes at
+        - load, save scenes, showing scene dimension
+        - import scenes from model files like FBX, DAE or TM
+        - setting up scene properties
+            - key, value map for what ever reason
+        - entities, which are instances from prototypes
+             - set up name, description
+             - see prototype name, center
+        - setting up entity transformations for a single or multiple entities
+             - translation
+             - scaling
+             - rotation
+             - color your entities
+             - center entities
+             - remove entities
+             - reflection using a environment mapping
+        - entities can be transformed by using a gizmo
+        - setting up entity properties
+             - key, value map for what ever reason
+        - set up up to 8 lights (for now)
+        - see and select entities(models, particle systems, empties and trigger) from prototype library to place them in the scene
+        - rotate, zoom and pan scene
+        - copy and paste
+    - other
+        - large models like terrain meshes can be partitioned in 64mx64mx64m objects
+
+- What is WIP
+    - set up arbitrary lights as entities
+    - audio support
+
+- Links
+	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
+    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
+    - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
+
+- Credits
+    - Dominik Hepp
+    - Kolja Gumpert
+    - others

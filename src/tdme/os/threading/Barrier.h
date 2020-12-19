@@ -5,13 +5,13 @@
 #include <pthread.h>
 #include <string>
 
-#include "Mutex.h"
 #include "Condition.h"
+#include "Mutex.h"
 
 using std::string;
 
-using tdme::os::threading::Mutex;
 using tdme::os::threading::Condition;
+using tdme::os::threading::Mutex;
 
 /**
  * Barrier implementation.

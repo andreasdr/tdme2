@@ -13,9 +13,9 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Interface to lighting shader program

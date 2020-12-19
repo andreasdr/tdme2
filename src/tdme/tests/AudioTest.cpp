@@ -1,18 +1,18 @@
 #include <tdme/tests/AudioTest.h>
 
-#include <tdme/os/threading/Thread.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioEntity.h>
 #include <tdme/audio/Sound.h>
 #include <tdme/audio/VorbisAudioStream.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::tests::AudioTest;
 using tdme::audio::Audio;
 using tdme::audio::AudioEntity;
 using tdme::audio::Sound;
 using tdme::audio::VorbisAudioStream;
 using tdme::os::threading::Thread;
+using tdme::tests::AudioTest;
 using tdme::utilities::Console;
 
 void AudioTest::main()

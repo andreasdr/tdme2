@@ -64,8 +64,8 @@
 #include <tdme/utilities/Time.h>
 
 using std::array;
-using std::string;
 using std::shared_ptr;
+using std::string;
 using std::to_string;
 
 using tdme::application::Application;

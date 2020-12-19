@@ -3,16 +3,16 @@
 #include <string>
 
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
 
-using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
-using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUISpaceNode;
 using tdme::utilities::StringTools;
 
 GUISpaceNode::GUISpaceNode(

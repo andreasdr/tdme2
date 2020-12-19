@@ -1,25 +1,25 @@
 #include <array>
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
 using std::string;
 using std::to_string;
 
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 

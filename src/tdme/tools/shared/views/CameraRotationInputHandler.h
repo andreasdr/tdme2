@@ -2,14 +2,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/tools/shared/views/fwd-tdme.h>
 
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 

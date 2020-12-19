@@ -4,9 +4,9 @@
 
 #include <tdme/os/network/NetworkException.h>
 
+using std::string;
 using tdme::os::network::NetworkException;
 using tdme::os::network::NetworkIOException;
-using std::string;
 
 NetworkIOException::NetworkIOException(const string &message) throw() : NetworkException(message) {
 }

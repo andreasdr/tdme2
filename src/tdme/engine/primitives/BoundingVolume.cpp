@@ -3,12 +3,12 @@
 #include <string>
 
 #include <ext/reactphysics3d/src/body/CollisionBody.h>
+#include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
+#include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>
+#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
 #include <ext/reactphysics3d/src/collision/CollisionCallback.h>
 #include <ext/reactphysics3d/src/collision/NarrowPhaseInfo.h>
 #include <ext/reactphysics3d/src/collision/ProxyShape.h>
-#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <ext/reactphysics3d/src/constraint/ContactPoint.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
 #include <ext/reactphysics3d/src/engine/OverlappingPair.h>
@@ -20,9 +20,9 @@
 
 using std::to_string;
 
-using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
 BoundingVolume::~BoundingVolume() {

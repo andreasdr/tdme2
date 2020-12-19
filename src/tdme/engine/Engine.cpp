@@ -28,6 +28,39 @@
 	#include <tdme/engine/EngineGL3Renderer.h>
 	#include <tdme/engine/EngineGLES2Renderer.h>
 #endif
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/physics/CollisionDetection.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
+#include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
+#include <tdme/engine/subsystems/manager/MeshManager.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/subsystems/manager/VBOManager.h>
+#include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
+#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
+#include <tdme/engine/subsystems/skinning/SkinningShader.h>
+#include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -46,43 +79,10 @@
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/physics/CollisionDetection.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/primitives/LineSegment.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
-#include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
-#include <tdme/engine/subsystems/lighting/LightingShader.h>
-#include <tdme/engine/subsystems/lines/LinesShader.h>
-#include <tdme/engine/subsystems/manager/MeshManager.h>
-#include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
-#include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
-#include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
-#include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
-#include <tdme/engine/subsystems/skinning/SkinningShader.h>
-#include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
@@ -91,9 +91,9 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
-#include <tdme/utilities/Float.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::map;
 using std::remove;
@@ -101,30 +101,6 @@ using std::string;
 using std::to_string;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
-using tdme::engine::Camera;
-using tdme::engine::EngineGL3Renderer;
-using tdme::engine::EngineGL2Renderer;
-using tdme::engine::EngineGLES2Renderer;
-using tdme::engine::EngineVKRenderer;
-using tdme::engine::Entity;
-using tdme::engine::EntityHierarchy;
-using tdme::engine::EntityPickingFilter;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
-using tdme::engine::FogParticleSystem;
-using tdme::engine::FrameBuffer;
-using tdme::engine::Light;
-using tdme::engine::LinesObject3D;
-using tdme::engine::Object3D;
-using tdme::engine::LODObject3D;
-using tdme::engine::Object3DRenderGroup;
-using tdme::engine::ObjectParticleSystem;
-using tdme::engine::ParticleSystemEntity;
-using tdme::engine::ParticleSystemGroup;
-using tdme::engine::Partition;
-using tdme::engine::PartitionOctTree;
-using tdme::engine::PointsParticleSystem;
-using tdme::engine::Timing;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -133,33 +109,55 @@ using tdme::engine::model::Node;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::rendering::EntityRenderer;
-using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
-using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::EngineGL2Renderer;
+using tdme::engine::EngineGL3Renderer;
+using tdme::engine::EngineGLES2Renderer;
+using tdme::engine::EngineVKRenderer;
+using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
+using tdme::engine::EntityPickingFilter;
+using tdme::engine::FogParticleSystem;
+using tdme::engine::FrameBuffer;
+using tdme::engine::Light;
+using tdme::engine::LinesObject3D;
+using tdme::engine::LODObject3D;
+using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
+using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystemGroup;
+using tdme::engine::Partition;
+using tdme::engine::PartitionOctTree;
+using tdme::engine::PointsParticleSystem;
+using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -168,8 +166,10 @@ using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
-using tdme::utilities::Float;
 using tdme::utilities::Console;
+using tdme::utilities::Float;
+using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
+using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
@@ -182,9 +182,9 @@ PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Texture2DRenderShader* Engine::texture2DRenderShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-EZRShaderPre* Engine::ezrShaderPre = nullptr;
-ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
-ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
+EZRShader* Engine::ezrShader = nullptr;
+ShadowMapCreationShader* Engine::shadowMappingShaderPre = nullptr;
+ShadowMapRenderShader* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
 LinesShader* Engine::linesShader = nullptr;
@@ -298,7 +298,7 @@ Engine::~Engine() {
 		delete postProcessingShader;
 		delete texture2DRenderShader;
 		delete guiShader;
-		delete ezrShaderPre;
+		delete ezrShader;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
@@ -733,15 +733,15 @@ void Engine::initialize()
 	}
 
 	// TODO: make this configurable
-	ezrShaderPre = new EZRShaderPre(renderer);
-	ezrShaderPre->initialize();
+	ezrShader = new EZRShader(renderer);
+	ezrShader->initialize();
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println(string("TDME::Using shadow mapping"));
-		shadowMappingShaderPre = new ShadowMappingShaderPre(renderer);
+		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
 		shadowMappingShaderPre->initialize();
-		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
+		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
@@ -759,8 +759,8 @@ void Engine::initialize()
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
 
-	CHECK_INITIALIZED("EZRShader", ezrShaderPre);
-	CHECK_INITIALIZED("ShadowMappingShaderPre", shadowMappingShaderPre);
+	CHECK_INITIALIZED("EZRShader", ezrShader);
+	CHECK_INITIALIZED("ShadowMapCreationShader", shadowMappingShaderPre);
 	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
 	CHECK_INITIALIZED("LightingShader", lightingShader);
 	CHECK_INITIALIZED("ParticlesShader", particlesShader);
@@ -772,7 +772,7 @@ void Engine::initialize()
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
-	initialized &= ezrShaderPre == nullptr ? true : ezrShaderPre->isInitialized();
+	initialized &= ezrShader == nullptr ? true : ezrShader->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -2018,11 +2018,11 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 	}
 
 	// do depth buffer writing aka early z rejection
-	if (useEZR == true && ezrShaderPre != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
+	if (useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
 		// disable color rendering, we only want to write to the Z-Buffer
 		renderer->setColorMask(false, false, false, false);
 		// render
-		ezrShaderPre->useProgram(this);
+		ezrShader->useProgram(this);
 		// only draw opaque face entities of objects marked as EZR objects
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
@@ -2037,7 +2037,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 			}
 		}
 		// done
-		ezrShaderPre->unUseProgram();
+		ezrShader->unUseProgram();
 		// restore disable color rendering
 		renderer->setColorMask(true, true, true, true);
 	}

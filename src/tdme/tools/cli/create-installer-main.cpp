@@ -6,8 +6,8 @@
 #include <ext/zlib/zlib.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
+#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -76,7 +76,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) return true;
 				// meta
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) return true;
-				// level
+				// scene
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tl") == true) return true;
 				// particle system
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) return true;

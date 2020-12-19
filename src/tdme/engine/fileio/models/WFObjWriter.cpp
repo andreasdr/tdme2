@@ -5,22 +5,22 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/utilities/ModelTools.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/ModelTools.h>
 
 using std::array;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::fileio::models::WFObjWriter;
 using tdme::engine::fileio::models::ModelFileIOException;
-using tdme::utilities::ModelTools;
+using tdme::engine::fileio::models::WFObjWriter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::ModelTools;
 
 WFObjWriter::WFObjWriter()
 {

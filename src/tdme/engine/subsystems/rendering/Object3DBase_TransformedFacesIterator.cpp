@@ -9,11 +9,11 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Node;
 using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::math::Matrix4x4;

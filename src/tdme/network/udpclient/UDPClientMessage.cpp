@@ -2,13 +2,13 @@
 
 #include <string.h>
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/Time.h>
 #include <tdme/utilities/IntEncDec.h>
+#include <tdme/utilities/Time.h>
 
 using tdme::network::udpclient::UDPClientMessage;
 
@@ -19,8 +19,8 @@ using std::to_string;
 
 using tdme::network::udpclient::UDPClient;
 using tdme::utilities::Console;
-using tdme::utilities::Time;
 using tdme::utilities::IntEncDec;
+using tdme::utilities::Time;
 
 UDPClientMessage* UDPClientMessage::parse(const char message[512], const size_t bytes) {
 	// decode header

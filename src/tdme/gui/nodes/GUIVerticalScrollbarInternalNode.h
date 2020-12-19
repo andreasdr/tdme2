@@ -5,14 +5,14 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINode.h>
 
 using std::string;
 
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;

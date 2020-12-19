@@ -4,34 +4,34 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::Transformations;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::engine::Engine;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

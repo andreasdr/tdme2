@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
@@ -11,8 +11,8 @@ using tdme::engine::subsystems::rendering::ObjectBuffer;
 
 using std::vector;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 

@@ -14,10 +14,10 @@
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Node;
 using tdme::engine::model::Model;
-using tdme::engine::model::UpVector;
+using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::UpVector;
 using tdme::os::filesystem::FileSystemException;
 
 /**

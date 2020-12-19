@@ -1,6 +1,5 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
@@ -9,10 +8,10 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 
-using tdme::gui::elements::GUISelectBoxMultipleOptionController;
-using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxMultipleController;
+using tdme::gui::elements::GUISelectBoxMultipleOptionController;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -20,6 +19,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 
 string GUISelectBoxMultipleOptionController::CONDITION_SELECTED = "selected";
 string GUISelectBoxMultipleOptionController::CONDITION_UNSELECTED = "unselected";

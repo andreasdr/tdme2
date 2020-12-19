@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -11,12 +10,12 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
 
 using tdme::gui::elements::GUIInputController;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
@@ -25,6 +24,7 @@ using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
 string GUIInputController::CONDITION_DISABLED = "disabled";

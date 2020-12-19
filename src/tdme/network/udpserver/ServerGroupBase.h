@@ -3,8 +3,8 @@
 #include <stdint.h>
 
 #include <exception>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Exception.h>

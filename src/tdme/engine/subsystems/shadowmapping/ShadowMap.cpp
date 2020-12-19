@@ -2,44 +2,44 @@
 
 #include <vector>
 
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
+using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
+using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
-using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
-using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::rendering::EntityRenderer;
-using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -107,7 +107,7 @@ Camera* ShadowMap::getCamera()
 	return lightCamera;
 }
 
-void ShadowMap::render(Light* light)
+void ShadowMap::createShadowMap(Light* light)
 {
 	// use default context
 	// TODO: object->preRender only uses default context, lets see how to make this multithreaded
@@ -264,7 +264,7 @@ void ShadowMap::render(Light* light)
 	// only draw opaque face entities as shadows will not be produced from transparent objects
 	for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 		auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-		shadowMapping->object3DRenderer->render(
+		shadowMapping->entityRenderer->render(
 			renderPass,
 			visibleObjects,
 			false,

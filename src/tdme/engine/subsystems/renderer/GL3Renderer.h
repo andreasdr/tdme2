@@ -6,23 +6,23 @@
 
 #include <array>
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::FrameBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
+using tdme::engine::FrameBuffer;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;

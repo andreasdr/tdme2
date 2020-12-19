@@ -3,18 +3,18 @@
 #include <vector>
 
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::vector;
 
+using tdme::engine::model::Node;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
-using tdme::engine::model::Node;
 using tdme::math::Vector3;
 
 /**

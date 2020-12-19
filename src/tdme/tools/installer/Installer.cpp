@@ -1,7 +1,7 @@
 #include <tdme/tools/installer/Installer.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <algorithm>
 #include <string>
@@ -11,10 +11,8 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/Action.h>
@@ -27,6 +25,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/network/httpclient/HTTPClient.h>
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
@@ -60,10 +60,8 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::model::Color4;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using tdme::engine::Engine;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::Action;
@@ -77,6 +75,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::network::httpclient::HTTPClient;
 using tdme::network::httpclient::HTTPDownloadClient;
 using tdme::os::filesystem::ArchiveFileSystem;

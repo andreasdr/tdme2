@@ -6,10 +6,10 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 
 #include <tdme/tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
@@ -53,7 +53,7 @@ private:
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
-		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
+		//	Note: there is no hurry as LE and ME do not use scale for prototype bounding volumes
 		auto vectorTransformed = boundingVolume->collisionShapeTransform * boundingVolume->collisionShapeLocalTransform * (vector * toRP3DVector3(boundingVolume->scale));
 		return Vector3(vectorTransformed.x, vectorTransformed.y, vectorTransformed.z);
 	}
@@ -65,7 +65,7 @@ private:
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3Normal(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& normal) {
-		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
+		//	Note: there is no hurry as LE and ME do not use scale for prototype bounding volumes
 		auto normalTransformed = boundingVolume->collisionShapeTransform.getOrientation() * boundingVolume->collisionShapeLocalTransform.getOrientation() * (normal * toRP3DVector3(boundingVolume->scale));
 		normalTransformed.normalize();
 		return Vector3(normalTransformed.x, normalTransformed.y, normalTransformed.z);

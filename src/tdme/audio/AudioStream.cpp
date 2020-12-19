@@ -10,22 +10,22 @@
 #include <string>
 #include <vector>
 
-#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/audio/Audio.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
 using std::array;
 using std::string;
-using std::vector;
-using std::to_string;
 using std::string;
+using std::to_string;
+using std::vector;
 
-using tdme::audio::AudioStream;
-using tdme::utilities::ByteBuffer;
 using tdme::audio::Audio;
+using tdme::audio::AudioStream;
 using tdme::math::Vector3;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
 AudioStream::AudioStream(const string& id) : AudioEntity(id)

@@ -4,30 +4,30 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
 
-using tdme::engine::Entity;
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
+using tdme::engine::Engine;
+using tdme::engine::Entity;
+using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
-using tdme::math::Vector3;
 using tdme::math::Quaternion;
+using tdme::math::Vector3;
+using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 /**
  * Environment mapping entity

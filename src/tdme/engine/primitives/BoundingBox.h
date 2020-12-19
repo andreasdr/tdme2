@@ -12,8 +12,8 @@
 using std::array;
 using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
 /**

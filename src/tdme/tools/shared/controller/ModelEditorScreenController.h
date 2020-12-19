@@ -5,37 +5,37 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/tools/shared/controller/ScreenController.h>
-#include <tdme/gui/events/GUIActionListener.h>
-#include <tdme/gui/events/GUIChangeListener.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::model::Material;
-using tdme::tools::shared::controller::ScreenController;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::gui::events::GUIActionListener;
-using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
+using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::utilities::MutableString;
 
@@ -51,10 +51,10 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 {
 
 private:
-	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
-	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
-	EntitySoundsSubScreenController* entitySoundsSubScreenController { nullptr };
+	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
+	PrototypeDisplaySubScreenController* prototypeDisplaySubScreenController { nullptr };
+	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
+	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController { nullptr };
 	SharedModelEditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
@@ -150,9 +150,9 @@ private:
 	FileDialogPath* audioPath { nullptr };
 
 	/**
-	 * @return level editor entity lod level or nullptr
+	 * @return prototype lod level or nullptr
 	 */
-	LevelEditorEntityLODLevel* getLODLevel(int level);
+	PrototypeLODLevel* getLODLevel(int level);
 
 	/**
 	 * @return current selected material
@@ -178,17 +178,17 @@ public:
 	/**
 	 * @return entity display sub screen controller
 	 */
-	EntityDisplaySubScreenController* getEntityDisplaySubScreenController();
+	PrototypeDisplaySubScreenController* getPrototypeDisplaySubScreenController();
 
 	/**
 	 * @return entity bounding volume sub screen controller
 	 */
-	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 	/**
 	 * @return entity sounds sub screen controller
 	 */
-	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
+	PrototypeSoundsSubScreenController* getPrototypeSoundsSubScreenController();
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;
@@ -214,29 +214,29 @@ public:
 	void setScreenCaption(const string& text);
 
 	/**
-	 * Set up general entity data
+	 * Set up general prototype data
 	 * @param name name
 	 * @param description description
 	 */
-	void setEntityData(const string& name, const string& description);
+	void setPrototypeData(const string& name, const string& description);
 
 	/**
-	 * Unset entity data
+	 * Unset prototype data
 	 */
-	void unsetEntityData();
+	void unsetPrototypeData();
 
 	/**
-	 * Set up entity properties
+	 * Set up prototype properties
 	 * @param presetId preset id
 	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName);
 
 	/**
-	 * Unset entity properties
+	 * Unset prototype properties
 	 */
-	void unsetEntityProperties();
+	void unsetPrototypeProperties();
 
 	/**
 	 * Set pivot tab
@@ -259,7 +259,7 @@ public:
 	 * Set renering options
 	 * @param entity entity
 	 */
-	void setRendering(LevelEditorEntity* entity);
+	void setRendering(Prototype* entity);
 
 	/**
 	 * Unset rendering
@@ -271,7 +271,7 @@ public:
 	 * @param entity entity
 	 * @param level lod level
 	 */
-	void setLODLevel(LevelEditorEntity* entity, int level);
+	void setLODLevel(Prototype* entity, int level);
 
 	/**
 	 * Unset LOD level
@@ -302,7 +302,7 @@ public:
 	 * Set materials
 	 * @param entity entity
 	 */
-	void setMaterials(LevelEditorEntity* entity);
+	void setMaterials(Prototype* entity);
 
 	/**
 	 * Unset materials
@@ -369,7 +369,7 @@ public:
 	/**
 	 * Set animations
 	 */
-	void setAnimations(LevelEditorEntity* entity);
+	void setAnimations(Prototype* entity);
 
 	/**
 	 * On animation drop down value changed
@@ -445,11 +445,6 @@ public:
 	void unsetTools();
 
 	/**
-	 * On quit
-	 */
-	void onQuit();
-
-	/**
 	 * On model load
 	 */
 	void onModelLoad();
@@ -504,11 +499,6 @@ public:
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/**
-	 * Shows the error pop up
-	 */
-	void showErrorPopUp(const string& caption, const string& message);
-
-	/**
 	 * On value changed
 	 * @param node node
 	 */
@@ -529,5 +519,17 @@ public:
 	 * @param height height
 	 */
 	void getViewPort(int& left, int& top, int& width, int& height);
+
+	/**
+	 * Shows the error pop up
+	 * @param caption caption
+	 * @param message message
+	 */
+	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On quit
+	 */
+	void onQuit();
 
 };

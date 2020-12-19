@@ -2,20 +2,20 @@
 
 #include <string>
 
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
 
 using std::string;
 
-using tdme::engine::PointsParticleSystem;
-using tdme::engine::Engine;
-using tdme::engine::Partition;
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::Engine;
+using tdme::engine::Partition;
+using tdme::engine::PointsParticleSystem;
+using tdme::engine::Transformations;
 
 PointsParticleSystem::PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps) :
 	PointsParticleSystemInternal(id, emitter, maxPoints, pointSize, autoEmit, texture, textureHorizontalSprites, textureVerticalSprites, fps)

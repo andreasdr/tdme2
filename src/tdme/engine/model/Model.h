@@ -17,9 +17,9 @@ using std::string;
 using std::string;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Node;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 

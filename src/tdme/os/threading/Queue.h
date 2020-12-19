@@ -4,12 +4,12 @@
 
 #include <queue>
 
-#include "Mutex.h"
 #include "Condition.h"
+#include "Mutex.h"
 
 using std::queue;
-using tdme::os::threading::Mutex;
 using tdme::os::threading::Condition;
+using tdme::os::threading::Mutex;
 
 namespace tdme {
 namespace os {

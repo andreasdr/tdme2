@@ -8,8 +8,8 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -19,11 +19,11 @@ using std::vector;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
+using tdme::engine::model::Model;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
-using tdme::engine::model::Model;
 using tdme::utilities::ObjectDeleter;
 
 /**

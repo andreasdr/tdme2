@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -14,19 +13,19 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::gui::nodes::GUIMultilineTextNode;
-using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::gui::nodes::GUINode_Border;
@@ -36,6 +35,7 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;

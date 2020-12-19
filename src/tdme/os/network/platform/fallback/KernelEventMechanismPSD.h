@@ -10,8 +10,8 @@
 #include <vector>
 
 #include <tdme/os/network/fwd-tdme.h>
-#include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/network/platform/fallback/fwd-tdme.h>
+#include <tdme/os/network/NIOInterest.h>
 
 #include <tdme/os/threading/Mutex.h>
 

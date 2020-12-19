@@ -1,20 +1,20 @@
 #include <tdme/engine/EngineVKRenderer.h>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/renderer/GUIShader.h>
 
-using tdme::engine::EngineVKRenderer;
-using tdme::engine::Engine;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::engine::Engine;
+using tdme::engine::EngineVKRenderer;
 using tdme::gui::renderer::GUIShader;
 
 EngineVKRenderer::EngineVKRenderer(Engine* engine) :
@@ -36,8 +36,8 @@ void EngineVKRenderer::onUpdateProjectionMatrix(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateMatrices(context);
 }
 
 void EngineVKRenderer::onUpdateCameraMatrix(void* context)
@@ -54,8 +54,8 @@ void EngineVKRenderer::onUpdateCameraMatrix(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateMatrices(context);
 }
 
 void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
@@ -72,8 +72,8 @@ void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateMatrices(context);
 }
 
 void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
@@ -87,8 +87,8 @@ void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(context, textureId);
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->bindTexture(context, textureId);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->bindTexture(context, textureId);
 }
 
 void EngineVKRenderer::onUpdateTextureMatrix(void* context)
@@ -102,8 +102,8 @@ void EngineVKRenderer::onUpdateTextureMatrix(void* context)
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateTextureMatrix();
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateTextureMatrix(context);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateTextureMatrix(context);
 }
 
 void EngineVKRenderer::onUpdateEffect(void* context)
@@ -139,8 +139,8 @@ void EngineVKRenderer::onUpdateMaterial(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMaterial(context);
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMaterial(context);
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateMaterial(context);
 }
 
 void EngineVKRenderer::onUpdateShader(void* context) {
@@ -150,8 +150,8 @@ void EngineVKRenderer::onUpdateShader(void* context) {
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->setShader(context, getShader(context));
 
-	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->setShader(context, getShader(context));
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->setShader(context, getShader(context));
 }
 
 void EngineVKRenderer::onUpdateShaderParameters(void* context) {

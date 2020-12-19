@@ -3,34 +3,34 @@
 #include <map>
 #include <string>
 
-#include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/ShaderModel.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
+#include <tdme/engine/ModelUtilities.h>
+#include <tdme/engine/Object3DModel.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::map;
 using std::string;
 
-using tdme::engine::model::Model;
-using tdme::engine::ModelUtilities;
-using tdme::engine::Object3DModel;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Node;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::engine::ModelUtilities;
+using tdme::engine::Object3DModel;
 using tdme::math::Matrix4x4;
 
 string Model::ANIMATIONSETUP_DEFAULT = "tdme.default";

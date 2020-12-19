@@ -4,8 +4,8 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::engine::model::Model;
+using tdme::engine::subsystems::rendering::Object3DModelInternal;
 
 /**
  * Object 3D model

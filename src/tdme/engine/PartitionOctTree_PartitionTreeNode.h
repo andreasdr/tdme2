@@ -11,8 +11,8 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using tdme::engine::PartitionOctTree;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::PartitionOctTree;
 
 using std::list;
 using std::string;

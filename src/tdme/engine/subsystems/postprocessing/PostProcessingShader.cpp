@@ -1,25 +1,27 @@
+#include <map>
 #include <string>
 
-#include <tdme/engine/Engine.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include "PostProcessingShaderDesaturationImplementation.h"
+#include <tdme/engine/Engine.h>
 
+using std::map;
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDesaturationImplementation;
+using tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;

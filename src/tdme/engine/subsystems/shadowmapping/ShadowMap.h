@@ -6,17 +6,17 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::vector;
 
+using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Camera;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
-using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -38,7 +38,7 @@ private:
 	Matrix4x4 depthBiasMVPMatrix;
 
 	/**
-	 * Init frame buffer
+	 * Initialize shadow map
 	 */
 	void initialize();
 
@@ -50,7 +50,7 @@ private:
 	void reshape(int32_t width, int32_t height);
 
 	/**
-	 * Disposes this shadow mapping
+	 * Disposes this shadow map
 	 */
 	void dispose();
 
@@ -66,10 +66,10 @@ private:
 	Camera* getCamera();
 
 	/**
-	 * Renders given objects to shadow map
+	 * Create shadow map
 	 * @param light light
 	 */
-	void render(Light* light);
+	void createShadowMap(Light* light);
 
 	/**
 	 * Computes shadow texture matrix and stores it

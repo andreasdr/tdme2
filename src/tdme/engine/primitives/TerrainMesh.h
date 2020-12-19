@@ -7,16 +7,16 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/engine/Transformations.h>
 
 using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
+using tdme::engine::Transformations;
 
 /**
  * Terrain mesh physics primitive

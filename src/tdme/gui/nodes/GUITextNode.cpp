@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -11,21 +10,22 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::renderer::GUIFont;
+using tdme::gui::GUI;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 

@@ -14,8 +14,8 @@
 #include <ext/libpng/png.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystemException;

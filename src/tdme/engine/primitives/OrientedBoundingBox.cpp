@@ -12,8 +12,8 @@
 using std::array;
 using std::vector;
 
-using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
 

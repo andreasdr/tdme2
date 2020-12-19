@@ -14,14 +14,14 @@
 #include <tdme/math/Vector3.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::model::Node;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;

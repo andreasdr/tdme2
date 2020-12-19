@@ -13,9 +13,9 @@
 using std::vector;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
-using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /**

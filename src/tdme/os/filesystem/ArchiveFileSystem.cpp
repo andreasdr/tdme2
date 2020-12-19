@@ -15,10 +15,10 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::ifstream;
 using std::ios;
@@ -30,10 +30,10 @@ using std::vector;
 using tdme::math::Math;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
-using tdme::utilities::StringTools;
-using tdme::utilities::StringTokenizer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName), ifsMutex("afs-ifs-mutex")
 {

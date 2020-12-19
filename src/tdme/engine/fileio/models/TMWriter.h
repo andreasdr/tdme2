@@ -17,18 +17,18 @@
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Vector3;

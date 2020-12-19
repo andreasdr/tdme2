@@ -10,8 +10,8 @@
 using std::map;
 using std::string;
 
-using tdme::audio::AudioBufferManager;
 using tdme::audio::Audio;
+using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::utilities::Console;
 

@@ -1,18 +1,18 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/application/InputEventHandler.h>
 #include <tdme/utilities/ObjectDeleter.h>
 
 using tdme::application::Application;
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Engine;
 using tdme::utilities::ObjectDeleter;
 
 /**

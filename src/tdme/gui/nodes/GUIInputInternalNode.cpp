@@ -1,6 +1,5 @@
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -14,17 +13,17 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utilities/MutableString.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
 
-using tdme::gui::nodes::GUIInputInternalNode;
-using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIInputInternalController;
+using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
@@ -34,10 +33,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utilities::MutableString;
+using tdme::gui::GUI;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
 
 GUIInputInternalNode::GUIInputInternalNode(
 	GUIScreenNode* screenNode,

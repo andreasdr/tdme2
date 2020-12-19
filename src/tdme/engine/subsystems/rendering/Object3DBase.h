@@ -6,29 +6,29 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Engine;
-using tdme::engine::Transformations;
-using tdme::engine::model::Node;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::Engine;
+using tdme::engine::Transformations;
 
 /**
  * Object3D base class

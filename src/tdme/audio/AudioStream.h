@@ -4,9 +4,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioEntity.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::string;

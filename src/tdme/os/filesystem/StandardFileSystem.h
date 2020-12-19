@@ -11,8 +11,8 @@
 using std::string;
 using std::vector;
 
-using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::FileNameFilter;
+using tdme::os::filesystem::FileSystemInterface;
 
 /**
  * Standard file system implementation

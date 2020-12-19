@@ -6,21 +6,21 @@
 #include <sys/time.h>
 
 #include <errno.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
-#include <tdme/os/network/NIOInterest.h>
-#include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/platform/bsd/fwd-tdme.h>
 #include <tdme/os/network/platform/bsd/KernelEventMechanismPSD.h>
+#include <tdme/os/network/KernelEventMechanism.h>
+#include <tdme/os/network/NIOInterest.h>
 
+using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
-using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 
 #if defined(__NetBSD__)
 	#define KEVENT_UDATA_DATATYPE __intptr_t

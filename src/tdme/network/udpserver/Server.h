@@ -4,9 +4,9 @@
 #include <set>
 #include <string>
 
+#include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
-#include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;

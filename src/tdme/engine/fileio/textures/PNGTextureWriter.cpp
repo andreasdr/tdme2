@@ -1,7 +1,7 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <string>
 

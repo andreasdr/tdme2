@@ -4,20 +4,20 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::array;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 /**

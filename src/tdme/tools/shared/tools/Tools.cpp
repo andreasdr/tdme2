@@ -4,6 +4,24 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Face.h>
+#include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -11,22 +29,9 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Face.h>
-#include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
-#include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/model/UpVector.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -34,18 +39,14 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Exception.h>
 
 using std::array;
 using std::string;
@@ -54,6 +55,23 @@ using std::to_string;
 using tdme::tools::shared::tools::Tools;
 
 using tdme::application::Application;
+using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::model::Color4;
+using tdme::engine::model::Face;
+using tdme::engine::model::FacesEntity;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
+using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -61,22 +79,9 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
+using tdme::engine::SceneConnector;
+using tdme::engine::SceneConnector;
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Face;
-using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
-using tdme::engine::model::RotationOrder;
-using tdme::engine::model::SpecularMaterialProperties;
-using tdme::engine::model::TextureCoordinate;
-using tdme::engine::model::UpVector;
-using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
-using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -84,14 +89,11 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
+using tdme::utilities::ModelTools;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -222,7 +224,7 @@ void Tools::oseDispose()
 	delete osEngine;
 }
 
-void Tools::oseThumbnail(LevelEditorEntity* model)
+void Tools::oseThumbnail(Prototype* model)
 {
 	Vector3 objectScale;
 	Transformations oseLookFromRotations;
@@ -257,7 +259,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
+	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
@@ -290,7 +292,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
+void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
 {
 	if (entity == nullptr) return;
 
@@ -303,11 +305,11 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// bounding volumes
-	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
+	auto entityBoundingVolumesHierarchy = new EntityHierarchy(Prototype::MODEL_BOUNDINGVOLUMES_ID);
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = entity->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+			auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);
 			entityBoundingVolumesHierarchy->addEntity(bvObject);
 		}
@@ -316,12 +318,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER ||
-		entity->getType() == LevelEditorEntity_EntityType::ENVIRONMENTMAPPING) {
+	if (entity->getType() == Prototype_Type::TRIGGER ||
+		entity->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
-	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		modelEntity = Level::createEntity(entity, "model", Transformations());
+	if (entity->getType() == Prototype_Type::PARTICLESYSTEM) {
+		modelEntity = SceneConnector::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else
 	if (entity->getModel() != nullptr) {
@@ -390,8 +392,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	engine->addEntity(groundObject);
 
 	//
-	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
-	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->update();
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);

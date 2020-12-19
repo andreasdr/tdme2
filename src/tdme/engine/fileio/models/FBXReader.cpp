@@ -10,19 +10,18 @@
 
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
-#include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Vector2.h>
@@ -31,6 +30,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/ModelTools.h>
 
 using std::map;
 using std::string;
@@ -40,17 +40,16 @@ using std::vector;
 using tdme::engine::fileio::models::FBXReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
-using tdme::engine::model::UpVector;
+using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
@@ -59,6 +58,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
+using tdme::utilities::ModelTools;
 
 const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 

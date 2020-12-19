@@ -2,8 +2,8 @@
 
 #include <tdme/engine/physics/fwd-tdme.h>
 
-using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::Body;
+using tdme::engine::physics::CollisionResponse;
 
 /**
  * Collision listener

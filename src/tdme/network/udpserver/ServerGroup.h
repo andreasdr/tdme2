@@ -3,8 +3,8 @@
 #include <stdint.h>
 
 #include <exception>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <tdme/tdme.h>
 
@@ -15,8 +15,8 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
-using std::string;
 using std::ostringstream;;
+using std::string;
 
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Exception;

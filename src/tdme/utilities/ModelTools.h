@@ -6,29 +6,29 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Node.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
+using std::vector;
 
-using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::model::Node;
+using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
-using tdme::tools::shared::files::ProgressCallback;
 
 /**
  * Model tools functions class

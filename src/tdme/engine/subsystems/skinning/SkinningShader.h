@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Mutex.h>
 

@@ -6,12 +6,14 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -20,43 +22,43 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
-#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
+#include <tdme/tools/modeleditor/TDMEModelEditor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
+#include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypePhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/PrototypeSoundsSubScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
-#include <tdme/tools/modeleditor/TDMEModelEditor.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Exception.h>
-#include <tdme/utilities/ExceptionBase.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::tools::shared::controller::ModelEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::model::Node;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
-using tdme::gui::GUIParser;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -64,28 +66,26 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityDisplaySubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
-using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityAudio;
-using tdme::tools::shared::model::LevelEditorEntityLODLevel;
+using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
+using tdme::tools::shared::controller::PrototypeDisplaySubScreenController;
+using tdme::tools::shared::controller::PrototypePhysicsSubScreenController;
+using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::viewer::TDMEModelEditor;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
-using tdme::utilities::Console;
-using tdme::utilities::Exception;
-using tdme::utilities::ExceptionBase;
 
 ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* view)
 {
@@ -94,7 +94,7 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	public:
 		void performAction() override {
 			finalView->updateGUIElements();
-			finalView->onSetEntityData();
+			finalView->onSetPrototypeData();
 		}
 
 		/**
@@ -117,36 +117,36 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->audioPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUps(), modelPath, true);
-	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUps(), audioPath);
-	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), modelPath, true);
+	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUps(), audioPath);
+	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->prototypePhysicsSubScreenController->getView());
 }
 
 ModelEditorScreenController::~ModelEditorScreenController() {
 	delete modelPath;
-	delete entityBaseSubScreenController;
-	delete entityDisplaySubScreenController;
-	delete entityPhysicsSubScreenController;
+	delete prototypeBaseSubScreenController;
+	delete prototypeDisplaySubScreenController;
+	delete prototypePhysicsSubScreenController;
 }
 
 SharedModelEditorView* ModelEditorScreenController::getView() {
 	return view;
 }
 
-EntityDisplaySubScreenController* ModelEditorScreenController::getEntityDisplaySubScreenController()
+PrototypeDisplaySubScreenController* ModelEditorScreenController::getPrototypeDisplaySubScreenController()
 {
-	return entityDisplaySubScreenController;
+	return prototypeDisplaySubScreenController;
 }
 
-EntityPhysicsSubScreenController* ModelEditorScreenController::getEntityPhysicsSubScreenController()
+PrototypePhysicsSubScreenController* ModelEditorScreenController::getPrototypePhysicsSubScreenController()
 {
-	return entityPhysicsSubScreenController;
+	return prototypePhysicsSubScreenController;
 }
 
-EntitySoundsSubScreenController* ModelEditorScreenController::getEntitySoundsSubScreenController()
+PrototypeSoundsSubScreenController* ModelEditorScreenController::getPrototypeSoundsSubScreenController()
 {
-	return entitySoundsSubScreenController;
+	return prototypeSoundsSubScreenController;
 }
 
 GUIScreenNode* ModelEditorScreenController::getScreenNode()
@@ -265,10 +265,10 @@ void ModelEditorScreenController::initialize()
 		Console::print(string("ModelEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	entityBaseSubScreenController->initialize(screenNode);
-	entityDisplaySubScreenController->initialize(screenNode);
-	entityPhysicsSubScreenController->initialize(screenNode);
-	entitySoundsSubScreenController->initialize(screenNode);
+	prototypeBaseSubScreenController->initialize(screenNode);
+	prototypeDisplaySubScreenController->initialize(screenNode);
+	prototypePhysicsSubScreenController->initialize(screenNode);
+	prototypeSoundsSubScreenController->initialize(screenNode);
 }
 
 void ModelEditorScreenController::dispose()
@@ -280,30 +280,30 @@ void ModelEditorScreenController::setScreenCaption(const string& text)
 	screenCaption->setText(text);
 }
 
-void ModelEditorScreenController::setEntityData(const string& name, const string& description)
+void ModelEditorScreenController::setPrototypeData(const string& name, const string& description)
 {
-	entityBaseSubScreenController->setEntityData(name, description);
+	prototypeBaseSubScreenController->setPrototypeData(name, description);
 	modelReload->getController()->setDisabled(false);
 	modelReimport->getController()->setDisabled(false);
 	modelSave->getController()->setDisabled(false);
 }
 
-void ModelEditorScreenController::unsetEntityData()
+void ModelEditorScreenController::unsetPrototypeData()
 {
-	entityBaseSubScreenController->unsetEntityData();
+	prototypeBaseSubScreenController->unsetPrototypeData();
 	modelReload->getController()->setDisabled(true);
 	modelReimport->getController()->setDisabled(true);
 	modelSave->getController()->setDisabled(true);
 }
 
-void ModelEditorScreenController::setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName)
+void ModelEditorScreenController::setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName)
 {
-	entityBaseSubScreenController->setEntityProperties(view->getEntity(), presetId, selectedName);
+	prototypeBaseSubScreenController->setPrototypeProperties(view->getPrototype(), presetId, selectedName);
 }
 
-void ModelEditorScreenController::unsetEntityProperties()
+void ModelEditorScreenController::unsetPrototypeProperties()
 {
-	entityBaseSubScreenController->unsetEntityProperties();
+	prototypeBaseSubScreenController->unsetPrototypeProperties();
 }
 
 void ModelEditorScreenController::setPivot(const Vector3& pivot)
@@ -365,7 +365,7 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 }
 
-void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
+void ModelEditorScreenController::setRendering(Prototype* entity)
 {
 	renderingContributesShadows->getController()->setDisabled(false);
 	renderingContributesShadows->getController()->setValue(MutableString(entity->isContributesShadows() == true?"1":""));
@@ -399,14 +399,14 @@ void ModelEditorScreenController::unsetRendering()
 	renderingApply->getController()->setDisabled(true);
 }
 
-LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
-	auto entity = view->getEntity();
+PrototypeLODLevel* ModelEditorScreenController::getLODLevel(int level) {
+	auto entity = view->getPrototype();
 	switch(level) {
 		case 2:
 			{
 				auto entityLodLevel = entity->getLODLevel2();
 				if (entityLodLevel == nullptr) {
-					entityLodLevel = new LevelEditorEntityLODLevel(
+					entityLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
@@ -420,7 +420,7 @@ LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 			{
 				auto entityLodLevel = entity->getLODLevel3();
 				if (entityLodLevel == nullptr) {
-					entityLodLevel = new LevelEditorEntityLODLevel(
+					entityLodLevel = new PrototypeLODLevel(
 						LODObject3D::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
@@ -437,7 +437,7 @@ LevelEditorEntityLODLevel* ModelEditorScreenController::getLODLevel(int level) {
 	}
 }
 
-void ModelEditorScreenController::setLODLevel(LevelEditorEntity* entity, int level) {
+void ModelEditorScreenController::setLODLevel(Prototype* entity, int level) {
 	auto entityLodLevel = getLODLevel(level);
 	if (entityLodLevel == nullptr) {
 		lodLevel->getController()->setValue(MutableString(to_string(level)));
@@ -445,7 +445,7 @@ void ModelEditorScreenController::setLODLevel(LevelEditorEntity* entity, int lev
 		lodLevelApply->getController()->setDisabled(false);
 		lodType->getController()->setValue(MutableString("1"));
 		lodType->getController()->setDisabled(true);
-		lodModelFile->getController()->setValue(MutableString(entity->getFileName()));
+		lodModelFile->getController()->setValue(MutableString(entity->getModelFileName()));
 		lodModelFile->getController()->setDisabled(true);
 		lodModelFileLoad->getController()->setDisabled(true);
 		lodModelFileClear->getController()->setDisabled(true);
@@ -497,7 +497,7 @@ void ModelEditorScreenController::unsetLODLevel() {
 }
 
 void ModelEditorScreenController::onLODLevelApply() {
-	auto entity = view->getEntity();
+	auto entity = view->getPrototype();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
 	setLODLevel(entity, lodLevelInt);
 }
@@ -550,9 +550,9 @@ void ModelEditorScreenController::onLODLevelClearModel() {
 }
 
 void ModelEditorScreenController::onLODLevelApplySettings() {
-	view->resetEntity();
+	view->resetPrototype();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
-	LevelEditorEntityLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
+	PrototypeLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
 	try {
 		entityLodLevel->setType(static_cast<LODObject3D::LODLevelType>(Tools::convertToIntSilent(lodType->getController()->getValue().getString())));
 		entityLodLevel->setFileName(
@@ -576,7 +576,7 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 	}
 }
 
-void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
+void ModelEditorScreenController::setMaterials(Prototype* entity) {
 	Model* model = view->getLodLevel() == 1?entity->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetMaterials();
@@ -815,7 +815,7 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 }
 
 Material* ModelEditorScreenController::getSelectedMaterial() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return nullptr;
 	auto materialIt = model->getMaterials().find(materialsDropdown->getController()->getValue().getString());
 	return materialIt != model->getMaterials().end()?materialIt->second:nullptr;
@@ -835,7 +835,7 @@ void ModelEditorScreenController::onMaterialApply() {
 			nullptr;
 	material->setPBRMaterialProperties(pbrMaterialProperties);
 	try {
-		view->resetEntity();
+		view->resetPrototype();
 		// specular
 		specularMaterialProperties->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
@@ -1250,8 +1250,8 @@ void ModelEditorScreenController::onMaterialClearTexture(GUIElementNode* guiElem
 	guiElementNode->getController()->setValue(MutableString(""));
 }
 
-void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+void ModelEditorScreenController::setAnimations(Prototype* entity) {
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetAnimations();
 		return;
@@ -1336,7 +1336,7 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 }
 
 void ModelEditorScreenController::onAnimationDropDownValueChanged() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
 	auto animationSetup = model->getAnimationSetup(animationsDropDown->getController()->getValue().getString());
@@ -1345,7 +1345,7 @@ void ModelEditorScreenController::onAnimationDropDownValueChanged() {
 }
 
 void ModelEditorScreenController::onAnimationDropDownApply() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
 	auto animationName = animationsDropDown->getController()->getValue().getString();
@@ -1382,7 +1382,7 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 }
 
 void ModelEditorScreenController::onAnimationDropDownDelete() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
 	auto animationName = animationsDropDown->getController()->getValue().getString();
@@ -1391,13 +1391,13 @@ void ModelEditorScreenController::onAnimationDropDownDelete() {
 	it = model->getAnimationSetups().erase(it);
 	delete animationSetup;
 
-	setAnimations(view->getEntity());
+	setAnimations(view->getPrototype());
 	animationsDropDown->getController()->setValue(MutableString(it->second->getId()));
 	onAnimationDropDownApply();
 }
 
 void ModelEditorScreenController::onAnimationApply() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
 	auto animationName = animationsDropDown->getController()->getValue().getString();
@@ -1431,7 +1431,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setOverlayFromNodeId(animationsAnimationOverlayFromNodeIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		animationSetup->setSpeed(Float::parseFloat(animationsAnimationSpeed->getController()->getValue().getString()));
-		setAnimations(view->getEntity());
+		setAnimations(view->getPrototype());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
 		setPreview();
@@ -1474,7 +1474,7 @@ void ModelEditorScreenController::setPreview() {
 	previewAnimationsAttachment1ModelClear->getController()->setDisabled(false);
 	buttonPreviewApply->getController()->setDisabled(false);
 
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) {
 		unsetPreview();
 		return;
@@ -1641,7 +1641,7 @@ void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelClear() {
 }
 
 void ModelEditorScreenController::onPreviewApply() {
-	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
+	Model* model = view->getLodLevel() == 1?view->getPrototype()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return;
 
 	auto baseAnimationName = previewAnimationsBaseDropDown->getController()->getValue().getString();
@@ -1736,7 +1736,7 @@ void ModelEditorScreenController::onModelLoad()
 		ModelEditorScreenController *modelEditorScreenController;
 	};
 
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 	}
@@ -1784,7 +1784,7 @@ void ModelEditorScreenController::onModelSave()
 		ModelEditorScreenController* modelEditorScreenController;
 	};
 
-	auto fileName = view->getEntity() != nullptr?view->getEntity()->getEntityFileName():"";
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == false) {
@@ -1863,14 +1863,14 @@ void ModelEditorScreenController::onPivotApply()
 
 void ModelEditorScreenController::onRenderingApply()
 {
-	if (view->getEntity() == nullptr) return;
+	if (view->getPrototype() == nullptr) return;
 	try {
-		view->getEntity()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
-		view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
-		view->getEntity()->setShader(renderingShader->getController()->getValue().getString());
-		view->getEntity()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
-		view->getEntity()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));
+		view->getPrototype()->setContributesShadows(renderingContributesShadows->getController()->getValue().equals("1"));
+		view->getPrototype()->setReceivesShadows(renderingReceivesShadows->getController()->getValue().equals("1"));
+		view->getPrototype()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
+		view->getPrototype()->setShader(renderingShader->getController()->getValue().getString());
+		view->getPrototype()->setDistanceShader(renderingDistanceShader->getController()->getValue().getString());
+		view->getPrototype()->setDistanceShaderDistance(Float::parseFloat(renderingDistanceShaderDistance->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -1931,18 +1931,18 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "materials_material_pbr_enabled") {
 		onMaterialPBREnabledValueChanged();
 	} else {
-		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
-		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
-		entitySoundsSubScreenController->onValueChanged(node, view->getEntity());
+		prototypeBaseSubScreenController->onValueChanged(node, view->getPrototype());
+		prototypePhysicsSubScreenController->onValueChanged(node, view->getPrototype());
+		prototypeSoundsSubScreenController->onValueChanged(node, view->getPrototype());
 	}
 }
 
 void ModelEditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
-	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
-	entityDisplaySubScreenController->onActionPerformed(type, node);
-	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
-	entitySoundsSubScreenController->onActionPerformed(type, node, view->getEntity());
+	prototypeBaseSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeDisplaySubScreenController->onActionPerformed(type, node);
+	prototypePhysicsSubScreenController->onActionPerformed(type, node, view->getPrototype());
+	prototypeSoundsSubScreenController->onActionPerformed(type, node, view->getPrototype());
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("button_model_load") == 0) {
 			onModelLoad();

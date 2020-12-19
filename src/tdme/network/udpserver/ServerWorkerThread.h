@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#include <tdme/os/threading/Thread.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
+#include <tdme/os/threading/Thread.h>
 
 using tdme::os::threading::Thread;
 

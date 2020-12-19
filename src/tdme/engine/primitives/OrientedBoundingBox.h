@@ -9,8 +9,8 @@
 
 using std::array;
 
-using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
 /**

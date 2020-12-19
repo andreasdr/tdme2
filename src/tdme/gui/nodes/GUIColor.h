@@ -6,16 +6,16 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/engine/model/Color4Base.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 
 using std::array;
 using std::string;
 using std::vector;
 
-using tdme::engine::model::Color4Base;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Color4Base;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 

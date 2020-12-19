@@ -1,7 +1,6 @@
 // Forward declarations for tdme.engine.fileio.models
 #pragma once
 
-
 namespace tdme {
 namespace engine {
 namespace fileio {

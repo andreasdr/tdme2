@@ -1,38 +1,38 @@
 #pragma once
 
 #include <map>
-#include <unordered_set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Frustum.h>
-#include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/Frustum.h>
+#include <tdme/engine/Partition.h>
+#include <tdme/engine/PartitionOctTree_PartitionTreeNode.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/Partition.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::map;
-using std::vector;
-using std::unordered_set;
 using std::string;
 using std::to_string;
+using std::unordered_set;
+using std::vector;
 
-using tdme::engine::Partition;
-using tdme::engine::Entity;
-using tdme::engine::Frustum;
-using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::Entity;
+using tdme::engine::Frustum;
+using tdme::engine::Partition;
+using tdme::engine::PartitionOctTree_PartitionTreeNode;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;

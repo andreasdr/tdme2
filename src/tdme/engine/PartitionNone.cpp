@@ -7,8 +7,8 @@
 
 using std::vector;
 
-using tdme::engine::PartitionNone;
 using tdme::engine::Entity;
+using tdme::engine::PartitionNone;
 using tdme::utilities::VectorIteratorMultiple;
 
 PartitionNone::PartitionNone()

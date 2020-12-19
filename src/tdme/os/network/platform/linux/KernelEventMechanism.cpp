@@ -9,14 +9,14 @@
 #include <unistd.h>
 
 #include <tdme/os/network/fwd-tdme.h>
-#include <tdme/os/network/NIOInterest.h>
-#include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/platform/linux/fwd-tdme.h>
 #include <tdme/os/network/platform/linux/KernelEventMechanismPSD.h>
+#include <tdme/os/network/KernelEventMechanism.h>
+#include <tdme/os/network/NIOInterest.h>
 
+using tdme::os::network::platform::_linux::KernelEventMechanismPSD;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
-using tdme::os::network::platform::_linux::KernelEventMechanismPSD;
 
 KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
 	// allocate platform specific data

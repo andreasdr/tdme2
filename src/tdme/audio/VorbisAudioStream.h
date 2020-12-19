@@ -4,15 +4,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/decoder/VorbisDecoder.h>
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioStream.h>
 
 using std::array;
 using std::string;
 
-using tdme::audio::AudioStream;
 using tdme::audio::decoder::VorbisDecoder;
+using tdme::audio::AudioStream;
 using tdme::utilities::ByteBuffer;
 
 /**

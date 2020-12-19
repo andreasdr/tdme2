@@ -3,18 +3,18 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/subsystems/environmentmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::vector;
 
-using tdme::engine::Engine;
 using tdme::engine::Camera;
+using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;

@@ -5,32 +5,32 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/Gizmo.h>
-#include <tdme/tools/shared/views/View.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
-#include <tdme/gui/events/GUIInputEventHandler.h>
+#include <tdme/tools/shared/views/View.h>
 
 using std::string;
 
 using tdme::audio::Audio;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::ParticleSystemEntity;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
-using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityPhysicsView;
-using tdme::tools::shared::views::EntityDisplayView;
-using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::Gizmo;
-using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::PrototypeDisplayView;
+using tdme::tools::shared::views::PrototypePhysicsView;
+using tdme::tools::shared::views::PrototypeSoundsView;
+using tdme::tools::shared::views::View;
 
 /**
  * TDME particle system view
@@ -50,10 +50,10 @@ protected:
 private:
 	PopUps* popUps { nullptr };
 	ParticleSystemScreenController* particleSystemScreenController { nullptr };
-	EntityDisplayView* entityDisplayView { nullptr };
-	EntityPhysicsView* entityPhysicsView { nullptr };
-	EntitySoundsView* entitySoundsView { nullptr };
-	LevelEditorEntity* entity { nullptr };
+	PrototypeDisplayView* prototypeDisplayView { nullptr };
+	PrototypePhysicsView* prototypePhysicsView { nullptr };
+	PrototypeSoundsView* prototypeSoundsView { nullptr };
+	Prototype* prototype { nullptr };
 	bool loadParticleSystemRequested;
 	bool initParticleSystemRequested;
 	bool updateParticleSystemRequested;
@@ -88,10 +88,10 @@ private:
 	 * @param description description
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return level editor entity
+	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual LevelEditorEntity* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
+	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
 
 public:
 	/**
@@ -121,9 +121,9 @@ public:
 	PopUps* getPopUpsViews();
 
 	/**
-	 * @return entity
+	 * @return prototype
 	 */
-	LevelEditorEntity* getEntity();
+	Prototype* getPrototype();
 
 	/**
 	 * Reset view
@@ -131,9 +131,10 @@ public:
 	void reset();
 
 	/**
-	 * Set entity
+	 * Set prototype
+	 * @param prototype prototype
 	 */
-	void setEntity(LevelEditorEntity* entity);
+	void setPrototype(Prototype* prototype);
 
 	/**
 	 * @return particle system index
@@ -199,7 +200,7 @@ public:
 	 * @param oldEntity old entity
 	 * @param entity entity
 	 */
-	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
+	virtual void onLoadParticleSystem(Prototype* oldEntity, Prototype* entity);
 
 	/**
 	 * On set entity data hook
@@ -208,16 +209,16 @@ public:
 
 	/**
 	 * Update GIZMO
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 */
-	void updateGizmo(LevelEditorEntity* entity);
+	void updateGizmo(Prototype* entity);
 
 	/**
 	 * Set GIZMO rotation
-	 * @param entity level editor entity
+	 * @param entity prototype
 	 * @param transformations transformations
 	 */
-	void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+	void setGizmoRotation(Prototype* entity, const Transformations& transformations);
 
 	/**
 	 * Apply particle system transformations

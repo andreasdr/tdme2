@@ -3,16 +3,16 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController_State;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**

@@ -14,13 +14,13 @@
 
 using std::string;
 
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::FrameBuffer;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
+using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::FrameBuffer;
+using tdme::engine::Transformations;
 using tdme::math::Matrix2D3x3;
 
 /**

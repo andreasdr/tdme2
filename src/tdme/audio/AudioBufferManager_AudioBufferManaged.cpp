@@ -6,8 +6,8 @@
 
 using std::string;
 
-using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::audio::AudioBufferManager;
+using tdme::audio::AudioBufferManager_AudioBufferManaged;
 
 AudioBufferManager_AudioBufferManaged::AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId)
 {

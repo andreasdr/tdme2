@@ -1,10 +1,10 @@
 #pragma once
 
-#include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 
-using tdme::os::threading::Thread;
 using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
 
 class SharedData {
 public:

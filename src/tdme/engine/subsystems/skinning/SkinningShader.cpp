@@ -2,38 +2,37 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
 
-using std::copy;
 using std::begin;
+using std::copy;
 using std::end;
-using std::to_string;
 using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::skinning::SkinningShader;
 
-using tdme::engine::Engine;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -42,10 +41,11 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::Engine;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
-using tdme::utilities::IntBuffer;
 using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
 
 SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex")
 {

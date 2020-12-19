@@ -1,14 +1,14 @@
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
 
-using tdme::engine::subsystems::lines::LinesShader;
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
 
 LinesShader::LinesShader(Engine* engine, Renderer* renderer)

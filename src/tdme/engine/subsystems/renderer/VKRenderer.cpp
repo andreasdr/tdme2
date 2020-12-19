@@ -14,9 +14,9 @@
 #include <GLFW/glfw3.h>
 
 #include <ext/vulkan/glslang/Public/ShaderLang.h>
-#include <ext/vulkan/OGLCompilersDLL/InitializeDll.h>
 #include <ext/vulkan/spirv/GlslangToSpv.h>
 #include <ext/vulkan/vma/src/VmaUsage.h>
+#include <ext/vulkan/OGLCompilersDLL/InitializeDll.h>
 
 #define THSVS_SIMPLER_VULKAN_SYNCHRONIZATION_IMPLEMENTATION
 #include <ext/vulkan/svs/thsvs_simpler_vulkan_synchronization.h>
@@ -35,16 +35,16 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/Timing.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -62,10 +62,10 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
-using std::to_string;
 using std::floor;
 using std::log2;
 using std::max;
+using std::to_string;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define ERR_EXIT(err_msg, err_class)                                           \
@@ -104,21 +104,21 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
-using tdme::engine::Timing;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
+using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::AtomicOperations;
-using tdme::os::threading::ReadWriteLock;
 using tdme::os::threading::Mutex;
-using tdme::utilities::ByteBuffer;
+using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::Integer;

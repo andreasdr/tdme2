@@ -6,15 +6,15 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 
-using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::Particle;
+using tdme::engine::subsystems::particlesystem::ParticleEmitter;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
 /**

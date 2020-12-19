@@ -2,27 +2,27 @@
 
 #include <string>
 
-#include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/utilities/MutableString.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::string;
 
-using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUIParser;
+using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;

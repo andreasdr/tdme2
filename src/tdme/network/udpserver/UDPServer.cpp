@@ -3,17 +3,17 @@
  */
 #include <math.h>
 
+#include <exception>
 #include <sstream>
 #include <string>
 #include <typeinfo>
-#include <exception>
 
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
 #include <tdme/os/threading/AtomicOperations.h>
-#include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/IntEncDec.h>
 #include <tdme/utilities/RTTI.h>
@@ -27,9 +27,9 @@ using std::to_string;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
 using tdme::os::threading::AtomicOperations;
-using tdme::os::threading::Thread;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
+using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::IntEncDec;
 using tdme::utilities::RTTI;

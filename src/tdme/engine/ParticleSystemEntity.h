@@ -3,15 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 
 using std::string;
 
+using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;
-using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 
 /**
  * Particle system entity interface

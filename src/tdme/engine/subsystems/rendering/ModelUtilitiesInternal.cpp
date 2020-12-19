@@ -3,41 +3,41 @@
 #include <map>
 #include <string>
 
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::map;
 using std::string;
 
-using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
-using tdme::engine::Timing;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
-using tdme::engine::model::Node;
+using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::FacesEntity;
+using tdme::engine::model::Node;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::ModelStatistics;
+using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
+using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 

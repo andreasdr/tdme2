@@ -1,12 +1,12 @@
 #pragma once
 
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/utilities/Pool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
+#include <tdme/utilities/Pool.h>
 
-using tdme::utilities::Pool;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
+using tdme::utilities::Pool;
 
 /**
  * Entity renderer transparent render faces node pool

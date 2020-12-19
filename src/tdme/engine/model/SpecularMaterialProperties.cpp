@@ -10,10 +10,10 @@
 
 using std::string;
 
-using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 

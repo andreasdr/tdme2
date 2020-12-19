@@ -6,9 +6,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
-using tdme::engine::Light;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Light;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;

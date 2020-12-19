@@ -5,26 +5,26 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/PathFinding.h>
 
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::Engine;
-using tdme::engine::Object3D;
 using tdme::engine::model::Model;
 using tdme::engine::physics::World;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::math::Vector3;
-using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utilities::FlowMap;
 using tdme::utilities::PathFinding;
 
@@ -39,8 +39,8 @@ class tdme::tests::FlowMapTest final
 private:
 	World* world { nullptr };
 	Engine* engine { nullptr };
-	LevelEditorLevel level;
-	LevelEditorEntity* playerModelEntity { nullptr };
+	Scene scene;
+	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
 	Object3D* startPlayerObject { nullptr };
 	Vector3 startPlayerCellDirection;

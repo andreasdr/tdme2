@@ -8,8 +8,8 @@
 using std::string;
 using std::to_string;
 
-using tdme::utilities::MutableString;
 using tdme::math::Math;
+using tdme::utilities::MutableString;
 using tdme::utilities::Time;
 
 MutableString::MutableString()

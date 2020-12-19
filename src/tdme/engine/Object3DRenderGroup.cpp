@@ -3,48 +3,48 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/model/Face.h>
+#include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/model/Face.h>
-#include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/utilities/ModelTools.h>
-#include <tdme/engine/model/RotationOrder.h>
-#include <tdme/engine/model/UpVector.h>
-#include <tdme/engine/model/TextureCoordinate.h>
-#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/utilities/ModelTools.h>
 
 using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::model::Face;
+using tdme::engine::model::FacesEntity;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::model::RotationOrder;
+using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::Partition;
-using tdme::engine::model::Face;
-using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::utilities::ModelTools;
-using tdme::engine::model::RotationOrder;
-using tdme::engine::model::UpVector;
-using tdme::engine::model::TextureCoordinate;
 using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
 using tdme::math::Math;
-using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
+using tdme::utilities::ModelTools;
 
 Object3DRenderGroup::Object3DRenderGroup(
 	const string& id,

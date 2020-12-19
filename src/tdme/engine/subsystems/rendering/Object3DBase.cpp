@@ -4,16 +4,13 @@
 #include <string>
 #include <vector>
 
-#include <tdme/math/Math.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
@@ -24,39 +21,42 @@
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
 using std::map;
-using std::vector;
 using std::string;
 using std::to_string;
+using std::vector;
 
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::math::Math;
-using tdme::engine::Engine;
-using tdme::engine::Timing;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
+using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
-using tdme::utilities::Console;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utilities::Console;
 
 Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, int instances)
 {

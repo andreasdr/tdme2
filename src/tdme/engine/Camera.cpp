@@ -1,16 +1,16 @@
 #include <tdme/engine/Camera.h>
 
-#include <tdme/engine/Frustum.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Frustum.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::engine::Camera;
-using tdme::math::Math;
-using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Camera;
+using tdme::engine::Frustum;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;

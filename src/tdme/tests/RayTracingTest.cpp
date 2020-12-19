@@ -5,12 +5,7 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Camera.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/Light.h>
-#include <tdme/engine/LinesObject3D.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Rotation.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -20,20 +15,26 @@
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Light.h>
+#include <tdme/engine/LinesObject3D.h>
+#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Rotation.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
@@ -46,12 +47,7 @@ using std::to_string;
 using tdme::tests::RayTracingTest;
 
 using tdme::application::Application;
-using tdme::engine::Camera;
-using tdme::engine::Engine;
-using tdme::engine::Light;
-using tdme::engine::LinesObject3D;
-using tdme::engine::Object3D;
-using tdme::engine::Rotation;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
@@ -61,20 +57,26 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::Camera;
+using tdme::engine::Engine;
+using tdme::engine::Light;
+using tdme::engine::LinesObject3D;
+using tdme::engine::Object3D;
+using tdme::engine::Rotation;
+using tdme::engine::SceneConnector;
+using tdme::engine::SceneConnector;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::math::Math;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
-using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MutableString;
@@ -177,7 +179,7 @@ void RayTracingTest::display()
 		//rayStart = camLookFrom;
 		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
-			Level::RIGIDBODY_TYPEID_STATIC | Level::RIGIDBODY_TYPEID_DYNAMIC,
+			SceneConnector::RIGIDBODY_TYPEID_STATIC | SceneConnector::RIGIDBODY_TYPEID_DYNAMIC,
 			camLookFrom,
 			traceEnd,
 			hitPoint,
@@ -255,7 +257,7 @@ void RayTracingTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
-	auto interactionTable = levelEditorEntityDeleter.add(ModelMetaDataFileImport::doImport("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
+	auto interactionTable = prototypeDeleter.add(PrototypeReader::read("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
 	entityBoundingVolumeModel = modelDeleter.add(PrimitiveModel::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
@@ -273,12 +275,12 @@ void RayTracingTest::initialize()
 		engine->addEntity(entity);
 
 		// physics
-		Level::createBody(
+		SceneConnector::createBody(
 			world,
 			interactionTable,
 			id,
 			entity->getTransformations(),
-			Level::RIGIDBODY_TYPEID_STATIC
+			SceneConnector::RIGIDBODY_TYPEID_STATIC
 		);
 
 		//
@@ -297,7 +299,7 @@ void RayTracingTest::initialize()
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("player", true, SceneConnector::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/tests/screens", "crosshair.xml"));

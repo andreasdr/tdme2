@@ -7,9 +7,9 @@
 	#include <unistd.h>
 #endif
 
+#include <iostream>
 #include <string>
 #include <thread>
-#include <iostream>
 
 #include <tdme/utilities/Console.h>
 

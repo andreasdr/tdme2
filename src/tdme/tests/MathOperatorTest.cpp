@@ -8,13 +8,13 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::tests::MathOperatorTest;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::tests::MathOperatorTest;
 using tdme::utilities::Console;
 
 MathOperatorTest::MathOperatorTest()

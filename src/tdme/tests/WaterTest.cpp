@@ -3,22 +3,23 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/scenes/SceneReader.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/scene/Scene.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/shared/files/LevelFileImport.h>
-#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
-#include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
@@ -32,22 +33,23 @@ using tdme::tests::WaterTest;
 
 using tdme::utilities::Time;
 
+using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::scenes::SceneReader;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
-using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::model::Material;
-using tdme::engine::model::Model;
-using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::SceneConnector;
+using tdme::engine::SceneConnector;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
-using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::shared::files::LevelFileImport;
-using tdme::tools::shared::files::ModelMetaDataFileImport;
-using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
@@ -141,20 +143,20 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	LevelFileImport::doImport("resources/tests/levels/water", "Level_WaterShader.tl", level);
-	Level::setLight(engine, level);
-	Level::addLevel(engine, level, false, false, false, false);
+	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tl", scene);
+	SceneConnector::setLights(engine, scene);
+	SceneConnector::addScene(engine, scene, false, false, false, false);
 
 	// load sky
-	skySphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
-	skyDomeEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
-	skyPanoramaEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
-	sphereEntity = ModelMetaDataFileImport::doImport("resources/tests/levels/water", "CM_Sphere.tmm");
+	skySpherePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Sphere.fbx.tmm");
+	skyDomePrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Dome.fbx.tmm");
+	skyPanoramaPrototype = PrototypeReader::read("resources/tests/levels/water", "Mesh_Environment_Sky_Panorama.fbx.tmm");
+	spherePrototype = PrototypeReader::read("resources/tests/levels/water", "CM_Sphere.tmm");
 
 	// add sky
 	{
 		// sky sphere
-		auto skySphere = new Object3D("sky_sphere", skySphereEntity->getModel());
+		auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
 		skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skySphere->setShader("sky");
 		skySphere->setFrustumCulling(false);
@@ -167,7 +169,7 @@ void WaterTest::initialize()
 		engine->addEntity(skySphere);
 
 		// sky dome
-		auto skyDome = new Object3D("sky_dome", skyDomeEntity->getModel());
+		auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
 		skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyDome->setShader("sky");
 		skyDome->setFrustumCulling(false);
@@ -182,7 +184,7 @@ void WaterTest::initialize()
 		engine->addEntity(skyDome);
 
 		// sky panorama
-		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaEntity->getModel());
+		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
 		skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyPanorama->setShader("sky");
 		skyPanorama->setFrustumCulling(false);

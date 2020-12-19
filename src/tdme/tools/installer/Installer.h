@@ -4,15 +4,15 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/utilities/Properties.h>
 
 using std::string;

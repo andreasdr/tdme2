@@ -4,19 +4,19 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/fwd-tdme.h>
+#include <tdme/tools/modeleditor/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
-#include <tdme/tools/modeleditor/fwd-tdme.h>
 
 using std::string;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::SharedModelEditorView;
+using tdme::tools::shared::views::View;
 
 /**
  * TDME model editor
@@ -48,7 +48,7 @@ public:
 public:
 
 	/**
-	 * @return level editor instance
+	 * @return scene editor instance
 	 */
 	static TDMEModelEditor* getInstance();
 
@@ -89,12 +89,12 @@ public:
 	void dispose();
 
 	/**
-	 * Initialize tdme level editor
+	 * Initialize tdme scene editor
 	 */
 	void initialize();
 
 	/**
-	 * Reshape tdme level editor
+	 * Reshape tdme scene editor
 	 * @param width width
 	 * @param height height
 	 */

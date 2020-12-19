@@ -2,33 +2,33 @@
 
 #include <string>
 
-#include <tdme/engine/Engine.h>
-#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
-#include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
 
-using tdme::engine::subsystems::rendering::Object3DInternal;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
-using tdme::engine::model::Node;
 using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::subsystems::rendering::Object3DNode;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
+using tdme::engine::subsystems::rendering::Object3DInternal;
+using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::math::Vector3;
 
 Object3DInternal::Object3DInternal(const string& id, Model* model, int instances) :

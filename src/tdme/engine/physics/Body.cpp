@@ -2,14 +2,14 @@
 #include <vector>
 
 #include <ext/reactphysics3d/src/body/Body.h>
-#include <ext/reactphysics3d/src/body/CollisionBody.h>
 #include <ext/reactphysics3d/src/body/Body.h>
+#include <ext/reactphysics3d/src/body/CollisionBody.h>
+#include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
+#include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>
+#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
 #include <ext/reactphysics3d/src/collision/CollisionCallback.h>
 #include <ext/reactphysics3d/src/collision/NarrowPhaseInfo.h>
 #include <ext/reactphysics3d/src/collision/ProxyShape.h>
-#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.h>
-#include <ext/reactphysics3d/src/collision/narrowphase/NarrowPhaseAlgorithm.h>
 #include <ext/reactphysics3d/src/constraint/ContactPoint.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
 #include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
@@ -17,30 +17,28 @@
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
 #include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
 
-#include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include "Body.h"
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
-#include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/primitives/TerrainMesh.h>
+#include <tdme/engine/Rotation.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
-#include "Body.h"
 
 using std::string;
 using std::to_string;
 using std::vector;
 
 using tdme::engine::physics::Body;
-using tdme::engine::Rotation;
-using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
@@ -49,6 +47,8 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::TerrainMesh;
+using tdme::engine::Rotation;
+using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;

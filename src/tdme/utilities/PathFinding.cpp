@@ -1,16 +1,16 @@
 #include <tdme/utilities/PathFinding.h>
 
 #include <algorithm>
-#include <string>
 #include <map>
 #include <stack>
+#include <string>
 #include <vector>
 
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -25,11 +25,11 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::Transformations;
-using tdme::engine::physics::World;
 using tdme::engine::physics::Body;
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;

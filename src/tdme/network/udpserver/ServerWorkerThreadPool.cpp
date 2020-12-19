@@ -2,9 +2,9 @@
 
 #include <tdme/utilities/Console.h>
 
+using tdme::network::udpserver::ServerWorkerThreadPool;
 using tdme::os::threading::Queue;
 using tdme::utilities::Console;
-using tdme::network::udpserver::ServerWorkerThreadPool;
 
 ServerWorkerThreadPool::ServerWorkerThreadPool(Barrier* startUpBarrier, const unsigned int workerCount, const unsigned int maxElements) :
 	Queue<ServerRequest>(maxElements),

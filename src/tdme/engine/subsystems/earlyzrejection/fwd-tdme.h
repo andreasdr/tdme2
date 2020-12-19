@@ -5,11 +5,11 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace earlyzrejection {
-	class EZRShaderPre;
-	struct EZRShaderPreImplementation;
-	class EZRShaderPreBaseImplementation;
-	class EZRShaderPreDefaultImplementation;
-	struct EZRShaderPreImplementation;
+	class EZRShader;
+	struct EZRShaderImplementation;
+	class EZRShaderBaseImplementation;
+	class EZRShaderDefaultImplementation;
+	struct EZRShaderImplementation;
 }  // namespace earlyzrejection
 }  // namespace subsystems
 }  // namespace engine

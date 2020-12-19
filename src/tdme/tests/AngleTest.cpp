@@ -11,9 +11,9 @@ using std::array;
 using std::string;
 using std::to_string;
 
-using tdme::tests::AngleTest;
 using tdme::engine::primitives::LineSegment;
 using tdme::math::Vector3;
+using tdme::tests::AngleTest;
 using tdme::utilities::Console;
 
 void AngleTest::main()

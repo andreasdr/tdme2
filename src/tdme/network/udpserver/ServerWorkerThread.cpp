@@ -1,27 +1,27 @@
 #include <exception>
-#include <typeinfo>
 #include <string>
+#include <typeinfo>
 
-#include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Exception.h>
-#include <tdme/utilities/RTTI.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/ServerGroup.h>
 #include <tdme/network/udpserver/ServerWorkerThread.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/RTTI.h>
 
 using std::string;
 using std::to_string;
 
-using tdme::utilities::Console;
-using tdme::utilities::Exception;
-using tdme::utilities::RTTI;
 using tdme::network::udpserver::ServerClient;
 using tdme::network::udpserver::ServerGroup;
 using tdme::network::udpserver::ServerWorkerThread;
 using tdme::network::udpserver::ServerWorkerThreadPool;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::RTTI;
 
 ServerWorkerThread::ServerWorkerThread(const unsigned int id, ServerWorkerThreadPool* threadPool) :
 	Thread("nioworkerthread"),
