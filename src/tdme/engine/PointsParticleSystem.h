@@ -74,6 +74,9 @@ public:
 	PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 
 	// overridden methods
+	inline EntityType getEntityType() override {
+		return ENTITY_POINTSPARTICLESYSTEM;
+	}
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void initialize() override;

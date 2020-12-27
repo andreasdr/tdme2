@@ -87,6 +87,10 @@ public:
 	EnvironmentMapping(const string& id, int width, int height, BoundingBox boundingBox);
 
 	// overridden methods
+	inline EntityType getEntityType() override {
+		return ENTITY_ENVIRONMENTMAPPING;
+	}
+
 	void setEngine(Engine* engine) override;
 
 	inline void setRenderer(Renderer* renderer) override {

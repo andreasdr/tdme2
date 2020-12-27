@@ -389,6 +389,13 @@ private:
 	Engine();
 
 	/**
+	 * Determine entity type
+	 * @param entity entity to investigate
+	 * @param decomposedEntities decomposed entities
+	 */
+	void determineEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
+
+	/**
 	 * Determine entity types
 	 * @param entities given entities to investigate
 	 * @param decomposedEntities decomposed entities

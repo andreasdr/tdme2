@@ -134,6 +134,11 @@ public:
 	 */
 	virtual ~EntityHierarchy();
 
+	// overridden method
+	inline EntityType getEntityType() override {
+		return ENTITY_ENTITYHIERARCHY;
+	}
+
 	/**
 	 * @return entity from hierarchy by given unique id
 	 */

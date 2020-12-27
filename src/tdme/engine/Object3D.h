@@ -163,7 +163,11 @@ public:
 	 */
 	Object3D(const string& id, Model* model);
 
-	// overridden methds
+	// overridden methods
+	inline EntityType getEntityType() override {
+		return ENTITY_OBJECT3D;
+	}
+
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void initialize() override;

@@ -144,6 +144,11 @@ public:
 	 */
 	~Object3DRenderGroup();
 
+	// overridden methods
+	inline EntityType getEntityType() override {
+		return ENTITY_OBJECT3DRENDERGROUP;
+	}
+
 	/**
 	 * Update render group model and bounding box
 	 */

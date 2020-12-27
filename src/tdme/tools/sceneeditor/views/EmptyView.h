@@ -33,7 +33,7 @@ private:
 	PopUps* popUps { nullptr };
 	EmptyScreenController* emptyScreenController { nullptr };
 	Prototype* prototype { nullptr };
-	bool initModelRequested { nullptr };
+	bool initModelRequested { false };
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	Vector3 objectScale;
 

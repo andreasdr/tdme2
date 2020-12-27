@@ -74,6 +74,11 @@ public:
 	 */
 	ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
 
+	// overridden method
+	inline EntityType getEntityType() override {
+		return ENTITY_OBJECTPARTICLESYSTEM;
+	}
+
 	/**
 	 * @return enabled objects
 	 */

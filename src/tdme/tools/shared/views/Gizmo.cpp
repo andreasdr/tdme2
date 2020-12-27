@@ -194,6 +194,8 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				gizmoEntity->update();
 				break;
 			}
+		case GIZMOTYPE_NONE:
+			break;
 	}
 	setGizmoRotation(transformations);
 }

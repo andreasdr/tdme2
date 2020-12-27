@@ -117,22 +117,50 @@ void ShadowMap::createShadowMap(Light* light)
 	visibleObjects.clear();
 
 	// determine visible objects and objects that should generate a shadow
-	Entity* orgEntity = nullptr;
-	Object3D* object = nullptr;
-	LODObject3D* lodObject = nullptr;
-	Object3DRenderGroup* org = nullptr;
-	ObjectParticleSystem* opse = nullptr;
-	ParticleSystemGroup* psg = nullptr;
-	EntityHierarchy* eh = nullptr;
 	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(shadowMapping->engine->getCamera()->getFrustum())) {
-		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
-			if ((orgEntity = org->getEntity()) != nullptr) {
-				if (orgEntity->isContributesShadows() == false) continue;
-				if ((object = dynamic_cast<Object3D*>(orgEntity)) != nullptr) {
+		switch (entity->getEntityType()) {
+			case Entity::ENTITY_OBJECT3DRENDERGROUP:
+				{
+					auto org = static_cast<Object3DRenderGroup*>(entity);
+					auto orgEntity = org->getEntity();
+					if (orgEntity != nullptr) {
+						if (orgEntity->isContributesShadows() == false) continue;
+						switch(orgEntity->getEntityType()) {
+							case Entity::ENTITY_OBJECT3D:
+								{
+									auto object = static_cast<Object3D*>(orgEntity);
+									object->preRender(context);
+									visibleObjects.push_back(object);
+								}
+								break;
+							case Entity::ENTITY_LODOBJECT3D:
+								{
+									auto lodObject = static_cast<LODObject3D*>(orgEntity);
+									if (lodObject->isContributesShadows() == false) continue;
+									auto object = lodObject->getLODObject();
+									if (object != nullptr) {
+										object->preRender(context);
+										visibleObjects.push_back(object);
+									}
+								}
+								break;
+							default:
+								break;
+						}
+					}
+				}
+				break;
+			case Entity::ENTITY_OBJECT3D:
+				{
+					auto object = static_cast<Object3D*>(entity);
+					if (object->isContributesShadows() == false) continue;
 					object->preRender(context);
 					visibleObjects.push_back(object);
-				} else
-				if ((lodObject = dynamic_cast<LODObject3D*>(orgEntity)) != nullptr) {
+				}
+				break;
+			case Entity::ENTITY_LODOBJECT3D:
+				{
+					auto lodObject = static_cast<LODObject3D*>(entity);
 					if (lodObject->isContributesShadows() == false) continue;
 					auto object = lodObject->getLODObject();
 					if (object != nullptr) {
@@ -140,47 +168,46 @@ void ShadowMap::createShadowMap(Light* light)
 						visibleObjects.push_back(object);
 					}
 				}
-			}
-		} else
-		if ((object = dynamic_cast<Object3D*>(entity)) != nullptr) {
-			if (object->isContributesShadows() == false) continue;
-			object->preRender(context);
-			visibleObjects.push_back(object);
-		} else
-		if ((lodObject = dynamic_cast<LODObject3D*>(entity)) != nullptr) {
-			if (lodObject->isContributesShadows() == false) continue;
-			auto object = lodObject->getLODObject();
-			if (object != nullptr) {
-				object->preRender(context);
-				visibleObjects.push_back(object);
-			}
-		} else
-		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
-			if (opse->isContributesShadows() == false) continue;
-			for (auto object: opse->getEnabledObjects()) {
-				object->preRender(context);
-				visibleObjects.push_back(object);
-			}
-		} else
-		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
-			for (auto ps: psg->getParticleSystems()) {
-				opse = dynamic_cast<ObjectParticleSystem*>(ps);
-				if (opse == nullptr) continue;
-				if (opse->isContributesShadows() == false) continue;
-				for (auto object: opse->getEnabledObjects()) {
-					object->preRender(context);
-					visibleObjects.push_back(object);
+				break;
+			case Entity::ENTITY_OBJECTPARTICLESYSTEM:
+				{
+					auto opse = static_cast<ObjectParticleSystem*>(entity);
+					if (opse->isContributesShadows() == false) continue;
+					for (auto object: opse->getEnabledObjects()) {
+						object->preRender(context);
+						visibleObjects.push_back(object);
+					}
 				}
-			}
-		} else
-		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
-			if (eh->isContributesShadows() == false) continue;
-			for (auto entity: eh->getEntities()) {
-				auto object = dynamic_cast<Object3D*>(entity);
-				if (object == nullptr || object->isEnabled() == false) continue;
-				object->preRender(context);
-				visibleObjects.push_back(object);
-			}
+				break;
+			case Entity::ENTITY_PARTICLESYSTEMGROUP:
+				{
+					auto psg = static_cast<ParticleSystemGroup*>(entity);
+					for (auto ps: psg->getParticleSystems()) {
+						if (ps->getEntityType() != Entity::ENTITY_OBJECTPARTICLESYSTEM) continue;
+						auto opse = static_cast<ObjectParticleSystem*>(ps);
+						if (opse->isContributesShadows() == false) continue;
+						for (auto object: opse->getEnabledObjects()) {
+							object->preRender(context);
+							visibleObjects.push_back(object);
+						}
+					}
+				}
+				break;
+			case Entity::ENTITY_ENTITYHIERARCHY:
+				{
+					auto eh = static_cast<EntityHierarchy*>(entity);
+					if (eh->isContributesShadows() == false) continue;
+					for (auto entity: eh->getEntities()) {
+						if (entity->getEntityType() != Entity::ENTITY_OBJECT3D) continue;
+						auto object = static_cast<Object3D*>(entity);
+						if (object->isEnabled() == false) continue;
+						object->preRender(context);
+						visibleObjects.push_back(object);
+					}
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
