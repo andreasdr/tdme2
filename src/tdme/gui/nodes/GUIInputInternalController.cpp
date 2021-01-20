@@ -77,12 +77,12 @@ void GUIInputInternalController::postLayout()
 {
 }
 
-int32_t GUIInputInternalController::getIndex()
+int GUIInputInternalController::getIndex()
 {
 	return index;
 }
 
-int32_t GUIInputInternalController::getOffset()
+int GUIInputInternalController::getOffset()
 {
 	return offset;
 }

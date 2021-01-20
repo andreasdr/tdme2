@@ -146,7 +146,7 @@ protected:
 	GUINode_ComputedConstraints computedConstraints;
 	GUIColor backgroundColor;
 	Texture* backgroundTexture { nullptr };
-	int32_t backgroundTextureId;
+	int backgroundTextureId;
 	GUINode_Scale9Grid backgroundImageScale9Grid;
 	GUIColor backgroundImageEffectColorMul;
 	GUIColor backgroundImageEffectColorAdd;
@@ -156,8 +156,8 @@ protected:
 	GUINodeConditions hideOn;
 	GUINodeController* controller { nullptr };
 	map<string, GUIEffect*> effects;
-	int32_t guiEffectOffsetX;
-	int32_t guiEffectOffsetY;
+	int guiEffectOffsetX;
+	int guiEffectOffsetY;
 	bool conditionsMet;
 	bool layouted;
 	bool haveOutEffect;
@@ -216,13 +216,13 @@ protected:
 	 * Set computed left
 	 * @param left left
 	 */
-	virtual void setLeft(int32_t left);
+	virtual void setLeft(int left);
 
 	/**
 	 * Set computed top
 	 * @param top top
 	 */
-	virtual void setTop(int32_t top);
+	virtual void setTop(int top);
 
 	/**
 	 * Layout
@@ -242,7 +242,7 @@ protected:
 	 * @param value value
 	 * @return pixel
 	 */
-	virtual int32_t layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value);
+	virtual int layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value);
 
 	/**
 	 * Get requested constraints type
@@ -258,7 +258,7 @@ protected:
 	 * @param defaultConstraintsValue default constraints value
 	 * @return requested constraints value
 	 */
-	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
+	static int getRequestedConstraintsValue(const string& constraint, int defaultConstraintsValue);
 
 	/**
 	 * Get requested pixel value
@@ -266,7 +266,7 @@ protected:
 	 * @param defaultValue default value
 	 * @return value
 	 */
-	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
+	static int getRequestedPixelValue(const string& value, int defaultValue);
 
 	/**
 	 * Check if conditions are met
@@ -322,22 +322,22 @@ public:
 	/**
 	 * @return content width including border, margin
 	 */
-	virtual int32_t getContentWidth() = 0;
+	virtual int getContentWidth() = 0;
 
 	/**
 	 * @return content height including border, margin
 	 */
-	virtual int32_t getContentHeight() = 0;
+	virtual int getContentHeight() = 0;
 
 	/**
 	 * @return auto width if auto width requested or content width
 	 */
-	virtual int32_t getAutoWidth();
+	virtual int getAutoWidth();
 
 	/**
 	 * @return auto height if auto height requested or content height
 	 */
-	virtual int32_t getAutoHeight();
+	virtual int getAutoHeight();
 
 	/**
 	 * @return border
@@ -563,24 +563,24 @@ public:
 	/**
 	 * @return GUI effect offset X
 	 */
-	int32_t getGUIEffectOffsetX();
+	int getGUIEffectOffsetX();
 
 	/**
 	 * Set GUI effect offset X
 	 * @param guiEffectOffsetX gui effect offset X
 	 */
-	void setGUIEffectOffsetX(int32_t guiEffectOffsetX);
+	void setGUIEffectOffsetX(int guiEffectOffsetX);
 
 	/**
 	 * @return GUI effect offset Y
 	 */
-	int32_t getGUIEffectOffsetY();
+	int getGUIEffectOffsetY();
 
 	/**
 	 * Set GUI effect offset Y
 	 * @param guiEffectOffsetY gui effect offset Y
 	 */
-	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
+	void setGUIEffectOffsetY(int guiEffectOffsetY);
 
 	/**
 	 * Add effect, effect already registered with the is will be removed

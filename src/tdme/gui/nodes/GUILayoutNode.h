@@ -78,12 +78,12 @@ protected:
 	const string getNodeType() override;
 	bool isContentNode() override;
 	void layoutSubNodes() override;
-	void setTop(int32_t top) override;
-	void setLeft(int32_t left) override;
+	void setTop(int top) override;
+	void setLeft(int left) override;
 
 public:
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
+	int getContentWidth() override;
+	int getContentHeight() override;
 
 	/**
 	 * Create alignment

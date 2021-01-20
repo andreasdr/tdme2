@@ -46,12 +46,12 @@ bool GUISpaceNode::isContentNode()
 	return false;
 }
 
-int32_t GUISpaceNode::getContentWidth()
+int GUISpaceNode::getContentWidth()
 {
 	return computedConstraints.width;
 }
 
-int32_t GUISpaceNode::getContentHeight()
+int GUISpaceNode::getContentHeight()
 {
 	return computedConstraints.height;
 }

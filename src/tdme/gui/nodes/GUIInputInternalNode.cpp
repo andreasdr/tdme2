@@ -59,7 +59,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const string& color,
 	const string& colorDisabled,
 	const MutableString& text,
-	int32_t maxLength
+	int maxLength
 	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
@@ -73,7 +73,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	this->controller->initialize();
 }
 
-int32_t GUIInputInternalNode::createMaxLength(const string& s)
+int GUIInputInternalNode::createMaxLength(const string& s)
 {
 	try {
 		auto maxLength = Integer::parseInt(s);
@@ -95,12 +95,12 @@ bool GUIInputInternalNode::isContentNode()
 	return true;
 }
 
-int32_t GUIInputInternalNode::getContentWidth()
+int GUIInputInternalNode::getContentWidth()
 {
 	return font == nullptr?0:font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
 }
 
-int32_t GUIInputInternalNode::getContentHeight()
+int GUIInputInternalNode::getContentHeight()
 {
 	return font == nullptr?0:font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
@@ -115,7 +115,7 @@ MutableString& GUIInputInternalNode::getText()
 	return text;
 }
 
-int32_t GUIInputInternalNode::getMaxLength()
+int GUIInputInternalNode::getMaxLength()
 {
 	return maxLength;
 }

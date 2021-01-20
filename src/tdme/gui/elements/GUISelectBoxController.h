@@ -77,7 +77,7 @@ private:
 	/**
 	 * Get focussed option idx
 	 */
-	int32_t getFocussedOptionIdx();
+	int getFocussedOptionIdx();
 
 	/**
 	 * Select current options

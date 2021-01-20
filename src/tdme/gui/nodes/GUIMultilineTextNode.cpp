@@ -90,7 +90,7 @@ bool GUIMultilineTextNode::isContentNode()
 	return true;
 }
 
-int32_t GUIMultilineTextNode::getContentWidth()
+int GUIMultilineTextNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
@@ -99,7 +99,7 @@ int32_t GUIMultilineTextNode::getContentWidth()
 	}
 }
 
-int32_t GUIMultilineTextNode::getContentHeight()
+int GUIMultilineTextNode::getContentHeight()
 {	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return font != nullptr?autoHeight + border.top + border.bottom + padding.top + padding.bottom:0;
 	} else {

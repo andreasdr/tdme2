@@ -68,7 +68,7 @@ bool GUILayerNode::isContentNode()
 	return false;
 }
 
-int32_t GUILayerNode::getContentWidth()
+int GUILayerNode::getContentWidth()
 {
 	auto width = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -84,7 +84,7 @@ int32_t GUILayerNode::getContentWidth()
 	return width;
 }
 
-int32_t GUILayerNode::getContentHeight()
+int GUILayerNode::getContentHeight()
 {
 	auto height = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -100,7 +100,7 @@ int32_t GUILayerNode::getContentHeight()
 	return height;
 }
 
-void GUILayerNode::setTop(int32_t top)
+void GUILayerNode::setTop(int top)
 {
 	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	GUIParentNode::setTop(top);
@@ -112,7 +112,7 @@ void GUILayerNode::setTop(int32_t top)
 	}
 }
 
-void GUILayerNode::setLeft(int32_t left)
+void GUILayerNode::setLeft(int left)
 {
 	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	GUIParentNode::setLeft(left);

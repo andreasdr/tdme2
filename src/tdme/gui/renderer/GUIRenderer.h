@@ -44,12 +44,12 @@ public:
 	static constexpr float SCREEN_BOTTOM { -1.0f };
 
 private:
-	static constexpr int32_t QUAD_COUNT { 1024 };
+	static constexpr int QUAD_COUNT { 1024 };
 
 	GUI* gui { nullptr };
 	Renderer* renderer { nullptr };
 	vector<int32_t>* vboIds { nullptr };
-	int32_t quadCount { 0 };
+	int quadCount { 0 };
 	ByteBuffer* sbIndicesByteBuffer { nullptr };
 	ByteBuffer* fbVerticesByteBuffer { nullptr };
 	FloatBuffer fbVertices;

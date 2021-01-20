@@ -128,7 +128,7 @@ void GUIMenuHeaderItemController::determineMenuItemControllers()
 	}
 }
 
-int32_t GUIMenuHeaderItemController::getSelectedMenuItemControllerIdx()
+int GUIMenuHeaderItemController::getSelectedMenuItemControllerIdx()
 {
 	auto selectedMenuItemControllerIdx = 0;
 	for (auto i = 0; i < menuItemControllers.size(); i++) {

@@ -133,12 +133,12 @@ bool GUIScreenNode::isContentNode()
 	return false;
 }
 
-int32_t GUIScreenNode::getContentWidth()
+int GUIScreenNode::getContentWidth()
 {
 	return -1;
 }
 
-int32_t GUIScreenNode::getContentHeight()
+int GUIScreenNode::getContentHeight()
 {
 	return -1;
 }
@@ -261,7 +261,7 @@ void GUIScreenNode::forceLayout(GUINode* node)
 	}
 }
 
-void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
+void GUIScreenNode::setScreenSize(int width, int height)
 {
 	this->screenWidth = width;
 	this->screenHeight = height;

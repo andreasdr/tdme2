@@ -71,7 +71,7 @@ bool GUILayoutNode::isContentNode()
 	return false;
 }
 
-int32_t GUILayoutNode::getContentWidth()
+int GUILayoutNode::getContentWidth()
 {
 	auto width = 0;
 	if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
@@ -101,7 +101,7 @@ int32_t GUILayoutNode::getContentWidth()
 	return width;
 }
 
-int32_t GUILayoutNode::getContentHeight()
+int GUILayoutNode::getContentHeight()
 {
 	auto height = 0;
 	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
@@ -164,11 +164,11 @@ void GUILayoutNode::layoutSubNodes()
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 					auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
-					auto nodeStarHeightInt = static_cast<int32_t>(nodeStarHeight);
+					auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
 					verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
-					if (static_cast<int32_t>(verticalStarPixelRest) > 0) {
-						nodeStarHeightInt += static_cast<int32_t>(verticalStarPixelRest);
-						verticalStarPixelRest -= static_cast<int32_t>(verticalStarPixelRest);
+					if (static_cast<int>(verticalStarPixelRest) > 0) {
+						nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
+						verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
 					}
 					guiSubNode->requestedConstraints.height = nodeStarHeightInt;
 					guiSubNode->computedConstraints.height = nodeStarHeightInt;
@@ -230,11 +230,11 @@ void GUILayoutNode::layoutSubNodes()
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 					auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
-					auto nodeStarWidthInt = static_cast<int32_t>(nodeStarWidth);
+					auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
 					horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
-					if (static_cast<int32_t>(horizontalStarPixelRest) > 0) {
-						nodeStarWidthInt += static_cast<int32_t>(horizontalStarPixelRest);
-						horizontalStarPixelRest -= static_cast<int32_t>(horizontalStarPixelRest);
+					if (static_cast<int>(horizontalStarPixelRest) > 0) {
+						nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
+						horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
 					}
 					guiSubNode->requestedConstraints.width = nodeStarWidthInt;
 					guiSubNode->computedConstraints.width = nodeStarWidthInt;
@@ -286,7 +286,7 @@ void GUILayoutNode::layoutSubNodes()
 	setLeft(computedConstraints.left);
 }
 
-void GUILayoutNode::setTop(int32_t top)
+void GUILayoutNode::setTop(int top)
 {
 	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	GUIParentNode::setTop(top);
@@ -302,7 +302,7 @@ void GUILayoutNode::setTop(int32_t top)
 	}
 }
 
-void GUILayoutNode::setLeft(int32_t left)
+void GUILayoutNode::setLeft(int left)
 {
 	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	GUIParentNode::setLeft(left);

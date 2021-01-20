@@ -58,6 +58,10 @@ private:
 	bool processed;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GUIKeyboardEvent();
 
 	/**
 	 * Destructor
@@ -204,11 +208,6 @@ public:
 	inline void setProcessed(bool processed) {
 		this->processed = processed;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	GUIKeyboardEvent();
 
 private:
 	friend class GUIKeyboardEvent_Type;

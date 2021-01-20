@@ -47,14 +47,14 @@ public:
 	 * @param s s
 	 * @return max length
 	 */
-	static int32_t createMaxLength(const string& s);
+	static int createMaxLength(const string& s);
 
 private:
 	GUIFont* font { nullptr };
 	GUIColor color;
 	GUIColor colorDisabled;
 	MutableString text;
-	int32_t maxLength;
+	int maxLength;
 
 protected:
 	/**
@@ -100,7 +100,7 @@ protected:
 		const string& color,
 		const string& colorDisabled,
 		const MutableString& text,
-		int32_t maxLength
+		int maxLength
 	);
 
 	// overridden methods
@@ -109,8 +109,8 @@ protected:
 
 public:
 	// overridden methods
-	int32_t getContentWidth() override;
-	int32_t getContentHeight() override;
+	int getContentWidth() override;
+	int getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 
@@ -127,6 +127,6 @@ public:
 	/**
 	 * @return max length
 	 */
-	int32_t getMaxLength();
+	int getMaxLength();
 
 };

@@ -21,11 +21,11 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 struct tdme::gui::nodes::GUINode_RequestedConstraints
 {
 	GUINode_RequestedConstraints_RequestedConstraintsType* leftType { nullptr };
-	int32_t left { 0 };
+	int left { 0 };
 	GUINode_RequestedConstraints_RequestedConstraintsType* topType { nullptr };
-	int32_t top { 0 };
+	int top { 0 };
 	GUINode_RequestedConstraints_RequestedConstraintsType* widthType { nullptr };
-	int32_t width { 0 };
+	int width { 0 };
 	GUINode_RequestedConstraints_RequestedConstraintsType* heightType { nullptr };
-	int32_t height { 0 };
+	int height { 0 };
 };

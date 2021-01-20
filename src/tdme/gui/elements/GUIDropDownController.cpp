@@ -127,7 +127,7 @@ void GUIDropDownController::determineDropDownOptionControllers()
 	}
 }
 
-int32_t GUIDropDownController::getSelectedOptionIdx()
+int GUIDropDownController::getSelectedOptionIdx()
 {
 	auto selectedDropDownOptionControlerIdx = -1;
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {

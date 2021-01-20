@@ -85,12 +85,12 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 GUI::~GUI() {
 }
 
-int32_t GUI::getWidth()
+int GUI::getWidth()
 {
 	return width;
 }
 
-int32_t GUI::getHeight()
+int GUI::getHeight()
 {
 	return height;
 }
@@ -99,7 +99,7 @@ void GUI::initialize()
 {
 }
 
-void GUI::reshape(int32_t width, int32_t height)
+void GUI::reshape(int width, int height)
 {
 	this->width = width;
 	this->height = height;
@@ -314,7 +314,7 @@ void GUI::determineFocussedNodes()
 {
 	focusableNodes.clear();
 	focusableScreenNodes.clear();
-	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		if (screen->isVisible() == false)
 			continue;
@@ -324,7 +324,7 @@ void GUI::determineFocussedNodes()
 			break;
 
 	}
-	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
+	for (int i = focusableScreenNodes.size() - 1; i >= 0; i--) {
 		auto screen = focusableScreenNodes[i];
 		screen->determineFocussedNodes(screen, focusableNodes);
 	}
@@ -419,7 +419,7 @@ void GUI::focusPreviousNode()
 				focussedNodeIdx = i;
 			}
 		}
-		int32_t focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
+		int focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
 		if (focussedPreviousNodeIdx < 0) focussedPreviousNodeIdx += focusableNodes.size();
 		auto newFocussedNode = focusableNodes[focussedPreviousNodeIdx];
 		setFoccussedNode(newFocussedNode);
@@ -595,7 +595,7 @@ void GUI::handleEvents()
 
 		// handle mouse dragged event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				if (mouseIsDragging[screen->getId()] == false) {
 					mouseIsDragging[screen->getId()] = true;
@@ -605,7 +605,7 @@ void GUI::handleEvents()
 		}
 
 		// handle floating nodes first
-		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+		for (int i = renderScreens.size() - 1; i >= 0; i--) {
 			auto screen = renderScreens[i];
 
 			// skip on invisible
@@ -630,7 +630,7 @@ void GUI::handleEvents()
 		// handle normal screen nodes if not processed already by floating node
 		// 	Note: Different screens should not have UI elements that overlap and process events
 		if (event.isProcessed() == false) {
-			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				if (screen->isVisible() == false) continue;
 				handleMouseEvent(screen, &event, _mouseOutCandidateEventNodeIds[screen->getId()], _mouseOutClickCandidateEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()], false);
@@ -640,7 +640,7 @@ void GUI::handleEvents()
 
 		// handle mouse released event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				mouseIsDragging[screen->getId()] = false;
 				mouseDraggingEventNodeIds.erase(screen->getId());
@@ -655,7 +655,7 @@ void GUI::handleEvents()
 	}
 
 	// call tick and input event handler at very last
-	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		if (screen->isVisible() == false) continue;
 		screen->tick();
@@ -671,7 +671,7 @@ void GUI::handleEvents()
 	unlockEvents();
 
 	// invalidate layouts
-	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		screen->invalidateLayouts();
 	}

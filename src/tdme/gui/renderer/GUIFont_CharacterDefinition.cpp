@@ -21,7 +21,7 @@ GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont* font)
 {
 }
 
-void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int32_t x, int32_t y)
+void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int x, int y)
 {
 	auto screenWidth = guiRenderer->screenNode->getScreenWidth();
 	auto screenHeight = guiRenderer->screenNode->getScreenHeight();

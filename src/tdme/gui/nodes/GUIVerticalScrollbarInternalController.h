@@ -30,7 +30,7 @@ private:
 	GUILayoutNode* contentNode { nullptr };
 	float contentHeight;
 	State state;
-	int32_t mouseYOffset;
+	int mouseYOffset;
 	MutableString value;
 
 	/**

@@ -85,9 +85,9 @@ private:
 	vector<GUIMouseEvent> mouseEvents;
 	vector<GUIKeyboardEvent> keyboardEvents;
 	vector<GUIScreenNode*> renderScreens;
-	int32_t width;
-	int32_t height;
-	int32_t mouseButtonLast;
+	int width;
+	int height;
+	int mouseButtonLast;
 	map<string, set<string>> mouseOutCandidateEventNodeIds;
 	map<string, set<string>> mouseOutClickCandidateEventNodeIds;
 	map<string, set<string>> mousePressedEventNodeIds;
@@ -160,12 +160,12 @@ public:
 	/**
 	 * @return width
 	 */
-	int32_t getWidth();
+	int getWidth();
 
 	/**
 	 * @return height
 	 */
-	int32_t getHeight();
+	int getHeight();
 
 	/**
 	 * Init
@@ -177,7 +177,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	void reshape(int32_t width, int32_t height);
+	void reshape(int width, int height);
 
 	/**
 	 * Dispose

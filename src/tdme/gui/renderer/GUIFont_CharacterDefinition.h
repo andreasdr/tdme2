@@ -26,42 +26,42 @@ private:
 	/**
 	 * The id of the character
 	 */
-	int32_t id;
+	int id;
 
 	/**
 	 * The x location on the sprite sheet
 	 */
-	int32_t x;
+	int x;
 
 	/**
 	 * The y location on the sprite sheet
 	 */
-	int32_t y;
+	int y;
 
 	/**
 	 * The width of the character image
 	 */
-	int32_t width;
+	int width;
 
 	/**
 	 * The height of the character image
 	 */
-	int32_t height;
+	int height;
 
 	/**
 	 * The amount the x position should be offset when drawing the image
 	 */
-	int32_t xOffset;
+	int xOffset;
 
 	/**
 	 * The amount the y position should be offset when drawing the image
 	 */
-	int32_t yOffset;
+	int yOffset;
 
 	/**
 	 * The amount to move the current position after drawing the character
 	 */
-	int32_t xAdvance;
+	int xAdvance;
 
 	/**
 	 * Draw character
@@ -69,6 +69,6 @@ private:
 	 * @param x x
 	 * @param y y
 	 */
-	void draw(GUIRenderer* guiRenderer, int32_t x, int32_t y);
+	void draw(GUIRenderer* guiRenderer, int x, int y);
 
 };

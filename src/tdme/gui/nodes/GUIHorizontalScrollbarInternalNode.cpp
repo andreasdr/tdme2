@@ -66,12 +66,12 @@ bool GUIHorizontalScrollbarInternalNode::isContentNode()
 	return false;
 }
 
-int32_t GUIHorizontalScrollbarInternalNode::getContentWidth()
+int GUIHorizontalScrollbarInternalNode::getContentWidth()
 {
 	return computedConstraints.width;
 }
 
-int32_t GUIHorizontalScrollbarInternalNode::getContentHeight()
+int GUIHorizontalScrollbarInternalNode::getContentHeight()
 {
 	return computedConstraints.height;
 }
