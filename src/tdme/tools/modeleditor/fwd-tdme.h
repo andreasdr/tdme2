@@ -4,8 +4,8 @@
 
 namespace tdme {
 namespace tools {
-namespace viewer {
-			class TDMEModelEditor;
-}  // namespace viewer
+namespace modeleditor {
+	class TDMEModelEditor;
+}  // namespace modeleditor
 }  // namespace tools
 }  // namespace tdme

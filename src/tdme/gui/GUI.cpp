@@ -10,28 +10,28 @@
 #include <string>
 #include <vector>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/Engine.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Time.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
-#include <tdme/utilities/Time.h>
 
 using std::map;
 using std::remove;
@@ -40,29 +40,29 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::gui::GUI;
+using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::Engine;
+using tdme::gui::GUIParserException;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Border;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
-using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Time;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
-using tdme::utilities::Time;
 
 map<string, GUIFont*>* GUI::fontCache = new map<string, GUIFont*>();
 map<string, Texture*>* GUI::imageCache = new map<string, Texture*>();
@@ -75,7 +75,7 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->width = 0;
 	this->height = 0;
 	try {
-		this->foccussedBorderColor = GUIColor("#8080FF");
+		this->foccussedBorderColor = GUIColor("#5680C2");
 	} catch (Exception& exception) {
 		Console::print(string("GUI(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -85,12 +85,12 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 GUI::~GUI() {
 }
 
-int GUI::getWidth()
+int32_t GUI::getWidth()
 {
 	return width;
 }
 
-int GUI::getHeight()
+int32_t GUI::getHeight()
 {
 	return height;
 }
@@ -99,7 +99,7 @@ void GUI::initialize()
 {
 }
 
-void GUI::reshape(int width, int height)
+void GUI::reshape(int32_t width, int32_t height)
 {
 	this->width = width;
 	this->height = height;
@@ -314,7 +314,7 @@ void GUI::determineFocussedNodes()
 {
 	focusableNodes.clear();
 	focusableScreenNodes.clear();
-	for (int i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		if (screen->isVisible() == false)
 			continue;
@@ -324,7 +324,7 @@ void GUI::determineFocussedNodes()
 			break;
 
 	}
-	for (int i = focusableScreenNodes.size() - 1; i >= 0; i--) {
+	for (int32_t i = focusableScreenNodes.size() - 1; i >= 0; i--) {
 		auto screen = focusableScreenNodes[i];
 		screen->determineFocussedNodes(screen, focusableNodes);
 	}
@@ -419,7 +419,7 @@ void GUI::focusPreviousNode()
 				focussedNodeIdx = i;
 			}
 		}
-		int focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
+		int32_t focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
 		if (focussedPreviousNodeIdx < 0) focussedPreviousNodeIdx += focusableNodes.size();
 		auto newFocussedNode = focusableNodes[focussedPreviousNodeIdx];
 		setFoccussedNode(newFocussedNode);
@@ -595,7 +595,7 @@ void GUI::handleEvents()
 
 		// handle mouse dragged event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				if (mouseIsDragging[screen->getId()] == false) {
 					mouseIsDragging[screen->getId()] = true;
@@ -605,7 +605,7 @@ void GUI::handleEvents()
 		}
 
 		// handle floating nodes first
-		for (int i = renderScreens.size() - 1; i >= 0; i--) {
+		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 			auto screen = renderScreens[i];
 
 			// skip on invisible
@@ -630,7 +630,7 @@ void GUI::handleEvents()
 		// handle normal screen nodes if not processed already by floating node
 		// 	Note: Different screens should not have UI elements that overlap and process events
 		if (event.isProcessed() == false) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				if (screen->isVisible() == false) continue;
 				handleMouseEvent(screen, &event, _mouseOutCandidateEventNodeIds[screen->getId()], _mouseOutClickCandidateEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()], false);
@@ -640,7 +640,7 @@ void GUI::handleEvents()
 
 		// handle mouse released event
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			for (int i = renderScreens.size() - 1; i >= 0; i--) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 				auto screen = renderScreens[i];
 				mouseIsDragging[screen->getId()] = false;
 				mouseDraggingEventNodeIds.erase(screen->getId());
@@ -655,7 +655,7 @@ void GUI::handleEvents()
 	}
 
 	// call tick and input event handler at very last
-	for (int i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		if (screen->isVisible() == false) continue;
 		screen->tick();
@@ -671,7 +671,7 @@ void GUI::handleEvents()
 	unlockEvents();
 
 	// invalidate layouts
-	for (int i = renderScreens.size() - 1; i >= 0; i--) {
+	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 		screen->invalidateLayouts();
 	}

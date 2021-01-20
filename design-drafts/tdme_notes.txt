@@ -1,18 +1,12 @@
 screen_main
-screen_progressbar
-screen_import
-screen_infodialog
+popup_progressbar
+popup_import
+popup_infodialog
 
 template_files_thumbnail
+template_files_text
 
 template_outliner_object
-
-template_viewport_map
-template_viewport_mesh
-template_viewport_script
-template_viewport_screen
-template_viewport_material
-template_viewport_particle
 
 template_details_transform
 template_details_mesh
@@ -34,34 +28,61 @@ definition_selectbox
 definition_slider
 definition_tab
 definition_table
-definition_hirarchy
+definition_parentoption
 definition_contextmenu
+definition_tooltip
 
 
 
 resources
-	maps
+	scenes
+	prototypes
 	meshes
 	music
-	objects
 	particles
 	scripts
 	sounds
 	textures
-	ui
-		definitions
-		fonts
-		images
-		screens
-		templates
+	screens
+	fonts
+	images
 
 
-object   = tmm
-texture  = png
-script 	 = wss
-sound  	 = ogg
-screen 	 = xml
-mesh   	 = tm
-map    	 = tl
-particle = tps
+prototype 	= prt
+texture  	= png
+script 	 	= tsr
+sound  	 	= ogg
+gui 	 	= xml
+mesh   	 	= tme
+(animation	= tan)
+scene  	 	= tsc
+particle 	= tps
+
+
+icons
+
+folder
+add folder
+search
+edit
+object
+texture
+script
+sound
+screen
+mesh
+map
+particle
+add
+delete
+save
+quit
+options
+link
+filter
+visible
+not visible
+checkbox
+list view
+grid view
  

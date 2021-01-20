@@ -23,12 +23,11 @@ using tdme::tools::shared::views::View;
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tools::viewer::TDMEModelEditor final
+class tdme::tools::modeleditor::TDMEModelEditor final
 	: public Application
 {
 
 private:
-	static string VERSION;
 	static TDMEModelEditor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };

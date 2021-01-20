@@ -2,26 +2,26 @@
 
 
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 
+using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::engine::fileio::textures::Texture;
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
-using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 
 GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont* font)
 	: font(font)
 {
 }
 
-void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int x, int y)
+void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int32_t x, int32_t y)
 {
 	auto screenWidth = guiRenderer->screenNode->getScreenWidth();
 	auto screenHeight = guiRenderer->screenNode->getScreenHeight();

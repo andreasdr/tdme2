@@ -16,7 +16,6 @@
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
@@ -35,6 +34,7 @@
 #include <tdme/utilities/FlowMap.h>
 #include <tdme/utilities/FlowMapCell.h>
 #include <tdme/utilities/PathFinding.h>
+#include <tdme/utilities/Primitives.h>
 
 using std::string;
 using std::to_string;
@@ -51,7 +51,6 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
@@ -70,6 +69,7 @@ using tdme::utilities::Console;
 using tdme::utilities::FlowMap;
 using tdme::utilities::FlowMapCell;
 using tdme::utilities::PathFinding;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 FlowMapTest::FlowMapTest()
@@ -138,7 +138,7 @@ void FlowMapTest::initialize()
 	cam->setLookFrom(scene.getCenter() + Vector3(0.0f, 10.0f, 0.0f));
 	cam->setLookAt(scene.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	emptyModel = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
+	emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	playerModelPrototype = PrototypeReader::read("resources/tests/models/mementoman", "mementoman.dae.tmm");
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);

@@ -7,17 +7,17 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
-#include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
+using tdme::gui::nodes::GUINode;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;
@@ -43,13 +43,13 @@ class tdme::gui::nodes::GUIImageNode final
 
 private:
 	Texture* texture { nullptr };
-	int textureId { 0 };
+	int32_t textureId { 0 };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
 	Texture* maskTexture { nullptr };
 	float maskMaxValue;
-	int maskTextureId { 0 };
+	int32_t maskTextureId { 0 };
 
 	string source;
 	Matrix2D3x3 textureMatrix;
@@ -116,8 +116,8 @@ protected:
 
 public:
 	// overridden methods
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 

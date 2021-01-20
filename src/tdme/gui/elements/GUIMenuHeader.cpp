@@ -32,7 +32,7 @@ const string& GUIMenuHeader::getName()
 
 const string GUIMenuHeader::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"menu-header.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"menu-header.xml":fileName);
 }
 
 unordered_map<string, string> GUIMenuHeader::getAttributes(GUIScreenNode* screenNode)

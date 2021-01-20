@@ -1,0 +1,15 @@
+<element id="{$id}" width="100%" height="auto" focusable="true" on-initialize="{$id}.condition+={$scrollable}">
+
+	<layout alignment="horizontal" width="100%" height="auto">
+		{__InnerXML__}
+		<space width="*" height="100%" alignment="horizontal" horizontal-align="right" vertical-align="center" border-bottom="1" border-color-bottom="{$color.element_frame}"/>
+	</layout>
+
+	<layout show-on="true" width="100%" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
+		<layout width="auto" height="25" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="center" vertical-align="center" border-bottom="1" border-color-bottom="{$color.element_frame}" background-color="{$color.element_background}">
+			<button id="{$id}_scroll_left" width="18" height="18" image="resources/engine/images/arrow_left.png" />
+			<space width="2"/>
+			<button id="{$id}_scroll_right" width="18" height="18" image="resources/engine/images/arrow_right.png" />
+		</layout>
+	</layout>
+</element>

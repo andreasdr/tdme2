@@ -21,7 +21,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -74,6 +73,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::map;
@@ -95,7 +95,6 @@ using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::prototype::Prototype;
@@ -147,6 +146,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
 using tdme::utilities::MutableString;
+using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
 Model* SceneConnector::emptyModel = nullptr;
@@ -288,7 +288,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 
 Entity* SceneConnector::createEmpty(const string& id, const Transformations& transformations) {
 	if (emptyModel == nullptr) {
-		emptyModel = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
+		emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	}
 	auto entity = new Object3D(
 		id,
@@ -736,7 +736,7 @@ void SceneConnector::addSounds(Audio* audio, Prototype* prototype, const string&
 		if (soundDefinition->getFileName().length() > 0) {
 			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
 				string pathName = PrototypeReader::getResourcePathName(
-					Tools::getPath(prototype->getFileName()),
+					Tools::getPathName(prototype->getFileName()),
 					soundDefinition->getFileName()
 				);
 				string fileName = Tools::getFileName(soundDefinition->getFileName());

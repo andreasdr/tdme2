@@ -1,5 +1,0 @@
-<element width="100%" height="auto" focusable="true" border="1" border-color="#FFFFFF">
-	<layout alignment="horizontal" width="100%" height="auto" background-color="#ffffff" border-bottom="1" border-color="#000000">
-		{__InnerXML__}
-	</layout>
-</element>

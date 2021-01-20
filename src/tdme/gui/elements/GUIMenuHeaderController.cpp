@@ -1,8 +1,9 @@
 #include <tdme/gui/elements/GUIMenuHeaderController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
-#include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/elements/GUITabController.h>
+#include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -10,10 +11,10 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::gui::elements::GUIMenuHeaderController;
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIMenuHeaderItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -22,7 +23,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
 using tdme::utilities::Console;
 
 GUIMenuHeaderController::GUIMenuHeaderController(GUINode* node)
@@ -60,12 +60,12 @@ bool GUIMenuHeaderController::hasFocus()
 void GUIMenuHeaderController::determineMenuHeaderItemControllers()
 {
 	menuHeaderItemControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
 		if (dynamic_cast<GUIMenuHeaderItemController*>(childController) != nullptr) {
-			auto menuHeaderItemController = dynamic_cast< GUIMenuHeaderItemController* >(childController);
+			auto menuHeaderItemController = required_dynamic_cast< GUIMenuHeaderItemController* >(childController);
 			if (menuHeaderItemController->isDisabled() == true)
 				continue;
 			menuHeaderItemControllers.push_back(menuHeaderItemController);
@@ -84,6 +84,22 @@ int GUIMenuHeaderController::getSelectedHeaderItemIdx()
 		}
 	}
 	return menuHeaderItemControllerIdx;
+}
+
+bool GUIMenuHeaderController::isOpen() {
+	determineMenuHeaderItemControllers();
+	for (auto menuHeaderItemController: menuHeaderItemControllers) {
+		if (menuHeaderItemController->isOpen() == true) return true;
+	}
+	return false;
+}
+
+void GUIMenuHeaderController::unselect() {
+	determineMenuHeaderItemControllers();
+	for (auto menuHeaderItemController: menuHeaderItemControllers) {
+		menuHeaderItemController->unselect();
+		if (menuHeaderItemController->isOpen() == true) menuHeaderItemController->toggleOpenState();
+	}
 }
 
 void GUIMenuHeaderController::selectNext()
@@ -125,7 +141,7 @@ void GUIMenuHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }

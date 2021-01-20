@@ -7,6 +7,7 @@
 
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -16,20 +17,19 @@
 
 using std::string;
 
-using tdme::tools::viewer::TDMEModelEditor;
+using tdme::tools::modeleditor::TDMEModelEditor;
 
 using tdme::utilities::Time;
 
 using tdme::engine::model::Color4;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
-
-string TDMEModelEditor::VERSION = "1.9.9";
 
 TDMEModelEditor* TDMEModelEditor::instance = nullptr;
 
@@ -53,8 +53,8 @@ TDMEModelEditor::~TDMEModelEditor() {
 
 void TDMEModelEditor::main(int argc, char** argv)
 {
-	Console::println(string("TDMEModelEditor "+ VERSION));
-	Console::println(string("Programmed 2014,...,2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("TDMEModelEditor ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 
 	auto tdmeModelEditor = new TDMEModelEditor();

@@ -1,0 +1,10 @@
+<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" border="2" name="{$name}" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<!-- normal -->
+	<image src="{$src-normal}" width="{$width}" height="{$height}" hide-on="disabled,mouseover,click" />
+	<!-- mouse over -->
+	<image src="{$src-over}" width="{$width}" height="{$height}" hide-on="disabled" show-on="mouseover" />
+	<!-- clicked -->
+	<image src="{$src-clicked}" width="{$width}" height="{$height}" hide-on="disabled" show-on="click" />
+	<!-- disabled -->
+	<image src="{$src-disabled}" width="{$width}" height="{$height}" show-on="disabled" />
+</element>

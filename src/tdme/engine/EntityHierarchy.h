@@ -52,10 +52,10 @@ class tdme::engine::EntityHierarchy final:
 {
 private:
 	struct EntityHierarchyLevel {
-		typedef map<string, EntityHierarchyLevel> EntityHierachyLevelMap;
 		string id;
 		EntityHierarchyLevel* parent { nullptr };
 		Entity* entity { nullptr };
+		// TODO: change to unordered_map and pointers to EntityHierarchyLevel
 		map<string, EntityHierarchyLevel> children;
 	};
 	Engine* engine { nullptr };

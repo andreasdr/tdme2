@@ -11,6 +11,7 @@ namespace views {
 	class SceneEditorView_EntityColor;
 	class ModelEditorView;
 	class ParticleSystemView;
+	class TerrainEditorView;
 	class TriggerView;
 }  // namespace views
 }  // namespace sceneeditor

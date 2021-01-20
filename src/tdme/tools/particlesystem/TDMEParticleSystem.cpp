@@ -6,7 +6,10 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -21,15 +24,16 @@ using tdme::tools::particlesystem::TDMEParticleSystem;
 using tdme::utilities::Time;
 
 using tdme::engine::model::Color4;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
 using tdme::tools::shared::views::View;
 using tdme::utilities::Console;
-
-string TDMEParticleSystem::VERSION = "1.9.9";
 
 TDMEParticleSystem* TDMEParticleSystem::instance = nullptr;
 
@@ -53,9 +57,10 @@ TDMEParticleSystem::~TDMEParticleSystem() {
 
 void TDMEParticleSystem::main(int argc, char** argv)
 {
-	Console::println(string("TDMEParticleSystem " + VERSION));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("TDMEParticleSystem ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
+
 	auto tdmeParticleSystem = new TDMEParticleSystem();
 	tdmeParticleSystem->run(argc, argv, "TDMEParticleSystem");
 }
@@ -115,6 +120,7 @@ void TDMEParticleSystem::dispose()
 	if (view != nullptr && viewInitialized == true) {
 		view->deactivate();
 		view->dispose();
+		delete particleSystemView->getPrototype();
 		view = nullptr;
 	}
 	engine->dispose();
@@ -129,6 +135,19 @@ void TDMEParticleSystem::initialize()
 	Tools::oseInit();
 	popUps->initialize();
 	setView(particleSystemView = new SharedParticleSystemView(popUps));
+	particleSystemView->setPrototype(
+		new Prototype(
+			-1,
+			Prototype_Type::PARTICLESYSTEM,
+			"Untitled",
+			"",
+			"Untitled.tps",
+			"",
+			"",
+			nullptr,
+			Vector3()
+		)
+	);
 }
 
 void TDMEParticleSystem::reshape(int width, int height)

@@ -73,7 +73,7 @@ GUIScreenNode* EmptyScreenController::getScreenNode()
 void EmptyScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/sceneeditor/gui", "screen_empty.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_empty.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

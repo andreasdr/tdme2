@@ -1,7 +1,7 @@
 <layout height="auto" width="auto" vertical-align="center" horizontal-align="center" alignment="vertical">
-	<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
-	<text font="resources/gui-system/fonts/Roboto_20.fnt" text="consetetur sadipscing elitr," color="#000000" />
-	<text font="resources/gui-system/fonts/Roboto_20.fnt" text="{$my-text}" color="#FF0000" />
-	<text font="resources/gui-system/fonts/Roboto_20.fnt" text="ut labore et dolore magna aliquyam erat!" color="#000000" />
+	<text font="resources/engine/fonts/Roboto_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
+	<text font="resources/engine/fonts/Roboto_20.fnt" text="consetetur sadipscing elitr," color="#000000" />
+	<text font="resources/engine/fonts/Roboto_20.fnt" text="{$my-text}" color="#FF0000" />
+	<text font="resources/engine/fonts/Roboto_20.fnt" text="ut labore et dolore magna aliquyam erat!" color="#000000" />
 	{__InnerXML__}
 </layout>

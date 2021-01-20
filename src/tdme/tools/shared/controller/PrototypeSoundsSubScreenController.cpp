@@ -105,7 +105,7 @@ void PrototypeSoundsSubScreenController::setSoundAnimationDropDown(int soundIdx,
 	string animationsDropDownInnerNodeSubNodesXML = "";
 	animationsDropDownInnerNodeSubNodesXML =
 		animationsDropDownInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		soundsSoundAnimationDropDown[soundIdx]->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" selected=\"true\" />";
@@ -121,7 +121,7 @@ void PrototypeSoundsSubScreenController::setSoundAnimationDropDown(int soundIdx,
 			idx++;
 		}
 	}
-	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 	try {
 		animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -242,7 +242,7 @@ void PrototypeSoundsSubScreenController::onSoundLoad(int soundIdx) {
 
 	vector<string> extensions = {{"ogg"}};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPath(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
+		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPathName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
 		"Load from: ",
 		extensions,
 		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getFileName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):"",

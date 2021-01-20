@@ -4,18 +4,18 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
 using std::set;
 using std::string;
 
+using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
@@ -24,8 +24,8 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 /**

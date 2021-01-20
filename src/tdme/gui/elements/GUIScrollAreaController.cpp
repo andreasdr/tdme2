@@ -1,11 +1,13 @@
 #include <tdme/gui/elements/GUIScrollAreaController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIScrollAreaController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -48,7 +50,8 @@ void GUIScrollAreaController::initialize()
 					childrenRenderOffsetY = 0.0f;
 
 				contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
-			} else if (node == downArrowNode) {
+			} else
+			if (node == downArrowNode) {
 				float elementHeight = contentNode->getComputedConstraints().height;
 				float contentHeight = contentNode->getContentHeight();
 				auto scrollableHeight = contentHeight - elementHeight;
@@ -60,7 +63,8 @@ void GUIScrollAreaController::initialize()
 					childrenRenderOffsetY = contentHeight - contentNode->getComputedConstraints().height;
 				}
 				contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
-			} else if (node == leftArrowNode) {
+			} else
+			if (node == leftArrowNode) {
 				float elementWidth = contentNode->getComputedConstraints().width;
 				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
@@ -72,7 +76,8 @@ void GUIScrollAreaController::initialize()
 					childrenRenderOffsetX = 0.0f;
 
 				contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
-			} else if (node == rightArrowNode) {
+			} else
+			if (node == rightArrowNode) {
 				float elementWidth = contentNode->getComputedConstraints().width;
 				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;
@@ -90,16 +95,16 @@ void GUIScrollAreaController::initialize()
 		/**
 		 * Public constructor
 		 * @param guiScrollAreaController gui scroll area controller
-		 * @param upArrowNode up arrow node
 		 * @param contentNode content node
+		 * @param upArrowNode up arrow node
 		 * @param downArrowNode down arrow node
 		 * @param leftArrowNode left arrow node
 		 * @param rightArrowNode right arrow node
 		 */
-		GUIScrollAreaControllerActionListener(GUIScrollAreaController* guiScrollAreaController, GUIElementNode* upArrowNode, GUIParentNode* contentNode, GUIElementNode* downArrowNode, GUIElementNode* leftArrowNode, GUIElementNode* rightArrowNode)
+		GUIScrollAreaControllerActionListener(GUIScrollAreaController* guiScrollAreaController, GUIParentNode* contentNode, GUIElementNode* upArrowNode, GUIElementNode* downArrowNode, GUIElementNode* leftArrowNode, GUIElementNode* rightArrowNode)
 			: guiScrollAreaController(guiScrollAreaController)
-			, upArrowNode(upArrowNode)
 			, contentNode(contentNode)
+			, upArrowNode(upArrowNode)
 			, downArrowNode(downArrowNode)
 			, leftArrowNode(leftArrowNode)
 			, rightArrowNode(rightArrowNode) {
@@ -115,12 +120,12 @@ void GUIScrollAreaController::initialize()
 	};
 
 
-	auto const contentNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
-	auto const upArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_up"));
-	auto const downArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_down"));
-	auto const leftArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_left"));
-	auto const rightArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_right"));
-	node->getScreenNode()->addActionListener(actionListener = new GUIScrollAreaControllerActionListener(this, upArrowNode, contentNode, downArrowNode, leftArrowNode, rightArrowNode));
+	auto const contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+	auto const upArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_up"));
+	auto const downArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_down"));
+	auto const leftArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_left"));
+	auto const rightArrowNode = dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_right"));
+	node->getScreenNode()->addActionListener(actionListener = new GUIScrollAreaControllerActionListener(this, contentNode, upArrowNode, downArrowNode, leftArrowNode, rightArrowNode));
 }
 
 void GUIScrollAreaController::dispose()
@@ -134,6 +139,30 @@ void GUIScrollAreaController::dispose()
 
 void GUIScrollAreaController::postLayout()
 {
+	{
+		auto const contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+		float elementHeight = contentNode->getComputedConstraints().height;
+		float contentHeight = contentNode->getContentHeight();
+		auto scrollableHeight = contentHeight - elementHeight;
+		if (contentHeight > elementHeight) {
+			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("vertical-scrollbar");
+		} else {
+			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("vertical-scrollbar");
+			contentNode->setChildrenRenderOffsetY(0.0f);
+		}
+	}
+	{
+		auto const contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
+		float elementWidth = contentNode->getComputedConstraints().width;
+		float contentWidth = contentNode->getContentWidth();
+		auto scrollableWidth = contentWidth - elementWidth;
+		if (contentWidth > elementWidth) {
+			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("horizontal-scrollbar");
+		} else {
+			contentNode->setChildrenRenderOffsetX(0.0f);
+			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("horizontal-scrollbar");
+		}
+	}
 }
 
 void GUIScrollAreaController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

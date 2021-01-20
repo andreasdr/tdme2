@@ -4,26 +4,26 @@
 #include <string>
 #include <vector>
 
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
+#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
-#include <tdme/gui/GUIParser.h>
-#include <tdme/gui/GUIParserException.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::set;
@@ -31,27 +31,27 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::GUI;
+using tdme::gui::GUIParser;
+using tdme::gui::GUIParserException;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
+using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
-using tdme::gui::GUIParser;
-using tdme::gui::GUIParserException;
 using tdme::utilities::StringTools;
 
 GUIParentNode::GUIParentNode(
@@ -216,7 +216,7 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 	this->childrenRenderOffsetY = childrenRenderOffsetY;
 }
 
-GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
+GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor)
 {
 	GUINode_RequestedConstraints constraints;
 	constraints.leftType = getRequestedConstraintsType(StringTools::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
@@ -227,6 +227,10 @@ GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const str
 	constraints.width = getRequestedConstraintsValue(StringTools::trim(width), -1);
 	constraints.heightType = getRequestedConstraintsType(StringTools::trim(height), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
 	constraints.height = getRequestedConstraintsValue(StringTools::trim(height), -1);
+	if (constraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.left*= factor;
+	if (constraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.top*= factor;
+	if (constraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.width*= factor;
+	if (constraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) constraints.height*= factor;
 	return constraints;
 }
 
@@ -315,8 +319,8 @@ void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childContr
 		if (node->controller != nullptr) {
 			childControllerNodes.push_back(node);
 		}
-		if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-			(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
+		if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+			(required_dynamic_cast<GUIParentNode*>(node))->getChildControllerNodesInternal(childControllerNodes);
 		}
 	}
 }

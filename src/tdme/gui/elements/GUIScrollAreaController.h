@@ -8,10 +8,10 @@
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::events::GUIActionListener;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**

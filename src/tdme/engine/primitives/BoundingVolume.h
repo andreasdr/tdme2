@@ -11,6 +11,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Transformations;
@@ -23,14 +24,14 @@ using tdme::math::Vector3;
  */
 class tdme::engine::primitives::BoundingVolume
 {
-	friend class tdme::engine::physics::Body;
-	friend class tdme::engine::physics::World;
 	friend class BoundingBox;
 	friend class Capsule;
 	friend class ConvexMesh;
 	friend class OrientedBoundingBox;
 	friend class Sphere;
-	friend class PrimitiveModel;
+	friend class tdme::engine::physics::Body;
+	friend class tdme::engine::physics::World;
+	friend class tdme::utilities::Primitives;
 
 protected:
 	Vector3 scale;

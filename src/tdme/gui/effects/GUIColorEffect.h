@@ -1,10 +1,10 @@
 #pragma once
 
 #include <tdme/gui/effects/fwd-tdme.h>
-#include <tdme/gui/effects/GUIEffect.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/gui/effects/GUIEffect.h>
 
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::nodes::GUIColor;

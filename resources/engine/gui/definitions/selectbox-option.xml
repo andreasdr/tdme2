@@ -1,0 +1,78 @@
+<element id="{$id}" parent-id="{$parent-id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layer width="100%" >
+		
+		<!-- normal -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover,focussed" >
+			<space show-on="child" width="15" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>			
+			<text
+				text="{$text}"
+				font="{$font.default}"
+				color="{$color.font_normal}"
+				
+				width="auto" 
+				height="25" 
+				vertical-align="center" 
+			/>			
+		</layout>
+	
+		<!-- mouse over / focussed -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,focussed" background-color="{$color.focus}" >
+			<space show-on="child" width="15" factor="{__TreeDepth__}" />
+			<space width="15"/>			
+			<layout width="25" height="25" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text
+				text="{$text}"
+				font="{$font.default}"
+				color="{$color.font_highlight}"
+				
+				width="auto" 
+				height="25" 
+				vertical-align="center"				 
+			/>
+		</layout>
+		
+		<!-- selected -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover,focussed" background-color="{$color.selected}" >
+			<space show-on="child" width="15" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text 
+				text="{$text}"			
+				font="{$font.default}" 
+				color="{$color.font_normal}"
+				
+				width="auto" 
+				eight="25"
+				vertical-align="center"	
+			/>
+		</layout>
+	
+		<!-- disabled -->
+		<layout width="100%" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
+			<space show-on="child" width="15" factor="{__TreeDepth__}" />
+			<space width="15"/>
+			<layout width="25" height="25" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text
+				text="{$text}"
+				font="{$font.default}"
+				color="{$color.font_disabled}"
+				
+				width="auto"
+				height="25"
+				vertical-align="center"
+			/>
+		</layout>
+	
+	</layer>
+		
+</element>

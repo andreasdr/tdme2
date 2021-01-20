@@ -124,18 +124,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine
 	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
-	prototype = new Prototype(
-		-1,
-		Prototype_Type::PARTICLESYSTEM,
-		"Untitled",
-		"",
-		"Untitled.tps",
-		"",
-		"",
-		nullptr,
-		Vector3()
-	);
-	prototype->setDefaultBoundingVolumes();
+	prototype = nullptr;
 }
 
 SharedParticleSystemView::~SharedParticleSystemView() {
@@ -549,7 +538,7 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(prototype->getFileName()),
+			Tools::getPathName(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());

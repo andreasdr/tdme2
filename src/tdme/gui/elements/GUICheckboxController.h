@@ -11,11 +11,11 @@
 
 using std::string;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**

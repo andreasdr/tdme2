@@ -5,15 +5,15 @@
 #include <tdme/gui/nodes/GUIColor.h>
 
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
+using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode;
 
 /**
  * GUI node border entity
@@ -27,8 +27,8 @@ struct tdme::gui::nodes::GUINode_Border
 	GUIColor topColor;
 	GUIColor rightColor;
 	GUIColor bottomColor;
-	int left { 0 };
-	int top { 0 };
-	int right { 0 };
-	int bottom { 0 };
+	int32_t left { 0 };
+	int32_t top { 0 };
+	int32_t right { 0 };
+	int32_t bottom { 0 };
 };

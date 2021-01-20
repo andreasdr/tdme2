@@ -31,7 +31,7 @@ class tdme::gui::elements::GUIInputController final
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	GUIInputInternalNode* textInputNode { nullptr };
+	GUIInputInternalNode* inputNode { nullptr };
 	bool disabled;
 
 	/**
@@ -41,6 +41,12 @@ private:
 	GUIInputController(GUINode* node);
 
 public:
+
+	/**
+	 * On value change
+	 */
+	void onValueChange();
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;

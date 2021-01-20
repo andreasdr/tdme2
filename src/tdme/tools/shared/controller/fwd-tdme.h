@@ -18,6 +18,7 @@ namespace controller {
 	class ParticleSystemScreenController;
 	class ProgressBarScreenController;
 	class ScreenController;
+	class TerrainEditorScreenController;
 }  // namespace controller
 }  // namespace shared
 }  // namespace tools

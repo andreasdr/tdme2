@@ -1,3 +1,0 @@
-<element id="{$id}" width="{$width}" height="{$height}" border="1" border-color="#000000" name="{$name}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
-	<input-internal id="{$id}_text-input" padding="5" width="100%" height="auto" font="resources/gui-system/fonts/Roboto_20.fnt" color="#000000" color-disabled="#808080" text="{$text}" maxlength="{$maxlength}"/>
-</element>

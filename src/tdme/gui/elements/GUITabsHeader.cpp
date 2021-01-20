@@ -32,7 +32,7 @@ const string& GUITabsHeader::getName()
 
 const string GUITabsHeader::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"tabs-header.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"tabs-header.xml":fileName);
 }
 
 unordered_map<string, string> GUITabsHeader::getAttributes(GUIScreenNode* screenNode)

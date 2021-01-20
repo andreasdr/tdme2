@@ -6,16 +6,16 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/gui/nodes/GUINode.h>
 
 using std::string;
 
-using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
@@ -47,14 +47,14 @@ public:
 	 * @param s s
 	 * @return max length
 	 */
-	static int createMaxLength(const string& s);
+	static int32_t createMaxLength(const string& s);
 
 private:
 	GUIFont* font { nullptr };
 	GUIColor color;
 	GUIColor colorDisabled;
 	MutableString text;
-	int maxLength;
+	int32_t maxLength;
 
 protected:
 	/**
@@ -100,7 +100,7 @@ protected:
 		const string& color,
 		const string& colorDisabled,
 		const MutableString& text,
-		int maxLength
+		int32_t maxLength
 	);
 
 	// overridden methods
@@ -109,8 +109,8 @@ protected:
 
 public:
 	// overridden methods
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
 
@@ -127,6 +127,6 @@ public:
 	/**
 	 * @return max length
 	 */
-	int getMaxLength();
+	int32_t getMaxLength();
 
 };

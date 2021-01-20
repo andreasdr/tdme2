@@ -32,7 +32,7 @@ const string& GUICheckbox::getName()
 
 const string GUICheckbox::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"checkbox.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"checkbox.xml":fileName);
 }
 
 unordered_map<string, string> GUICheckbox::getAttributes(GUIScreenNode* screenNode)

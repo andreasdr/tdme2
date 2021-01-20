@@ -1,0 +1,17 @@
+<element id="{$id}" width="auto" height="auto" name="{$name}" disabled="{$disabled}" focusable="false" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layout alignment="vertical" width="auto">
+		<layer width="auto" height="auto">
+			<!-- normal -->
+			<text padding-top="5" padding-bottom="5" padding-left="10" padding-right="10" width="auto" height="auto" hide-on="disabled,selected,mouseover" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+			<!-- mouse over / focussed -->
+			<text padding-top="5" padding-bottom="5" padding-left="10"padding-right="10" width="auto" height="auto" hide-on="disabled" show-on="mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="{$color.focus}" />
+			<!-- selected -->
+			<text padding-top="5" padding-bottom="5" padding-left="10" padding-right="10" width="auto" height="auto" hide-on="disabled,unselected, mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" background-color="{$color.selected}"/>
+			<!-- disabled -->
+			<text padding-top="5" padding-bottom="5" padding-left="10" padding-right="10" width="auto" height="auto" show-on="disabled" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		</layer>
+		<layout id="{$id}_inner" border="1" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_foreground}">
+			{__InnerXML__}
+		</layout>
+	</layout>
+</element>

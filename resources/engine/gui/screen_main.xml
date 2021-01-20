@@ -1,0 +1,221 @@
+<screen id="screen_main" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" width="100%" height="100%">
+	
+		<layout padding="5" alignment="horizontal" width="100%" height="40">
+			<space width="5"/>
+			<menu-header>
+				<menu-header-item text="File">
+					<menu-item text="New Project" id="menu_file_new" />
+					<menu-item text="Open Project" id="menu_file_open" />
+					<menu-separator />
+					<menu-item text="Save all" id="menu_file_saveall" />
+					<menu-separator />
+					<menu-item text="Quit" id="menu_file_quit" />
+				</menu-header-item>
+				<menu-header-item text="Edit">
+					<menu-item text="Undo" id="menu_edit_undo" />
+					<menu-item text="Redo" id="menu_edit_redo" />
+					<menu-separator />
+					<menu-item text="Cut" id="menu_edit_cut" />
+					<menu-item text="Copy" id="menu_edit_copy" />
+					<menu-item text="Paste" id="menu_edit_paste" />
+					<menu-separator />
+					<menu-item text="Delete" id="menu_edit_delete" />
+				</menu-header-item>
+				<menu-header-item text="Help">
+					<menu-item text="Documentation" id="menu_help_documentation" />
+					<menu-item text="Community" id="menu_help_community" />
+					<menu-item text="Bug Tracker" id="menu_help_bugtracker" />
+					<menu-separator />
+					<menu-item text="About" id="menu_help_about" />
+				</menu-header-item>
+			</menu-header>
+		</layout>
+		
+		<layout alignment="horizontal" width="100%" height="*">
+		
+			<space width="5"/>
+		
+			<!-- project library -------------------------------------------------->
+			<tabs alignment="vertical" width="256" height="100%">
+				<tabs-header>
+					<tab id="tab_projectlibrary" text="Files" />
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="tab_projectlibrary" alignment="vertical">
+					
+						<layout padding="5" alignment="vertical" width="100%" height="100%">
+						
+							<input border="1" width="100%" height="auto" text="resources/textures" />
+							
+							<space height="10"/>
+							
+							<selectbox id="selectbox_projectlibrary" boder="0">
+								<scrollarea width="100%" height="200" focusable="true">
+								
+									<selectbox-parent-option text="resources" value="1">
+										<selectbox-option text="textures" value="1.1" />
+										<selectbox-option text="models" value="1.2" />
+										<selectbox-option text="scenes" value="1.3" />
+										<selectbox-option text="particles" value="1.4" />
+										<selectbox-parent-option text="gui" value="1.5">
+											<selectbox-option text="definitions" value="1.5.1" />
+										</selectbox-parent-option>
+									</selectbox-parent-option>
+					
+								</scrollarea>
+							</selectbox>
+							
+							<space height="20"/>
+							
+							<input border="1" width="100%" height="auto" text="Search" />
+							
+							<space height="10"/>
+							
+							<scrollarea background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+							
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+								
+								<layout padding="10" alignment="vertical" horizontal-align="center">
+									<image width="100" height="100" src="resources/engine/textures/terrain_dirt.png" />
+									<space height="5"/>
+									<text font="{$font.default}" text="terrain_dirt.png" color="#C0C0C0"/>
+								</layout>
+							
+							</scrollarea>
+							
+						</layout>
+			
+					</tab-content>
+				</tabs-content>
+			</tabs>
+			<!-------------------------------------------------------------------->
+			
+			
+			<space width="5"/>
+			
+			
+			<!-- viewport -------------------------------------------------------->
+			<tabs alignment="vertical" width="*" height="100%">
+				<tabs-header>
+					<tab id="tab_viewport_1" text="Viewport" />
+					<tab id="tab_viewport_2" text="Model" />
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="tab_viewport_1">
+						<layout padding="5" width="100%" height="100%" alignment="vertical" vertical-align="center" horizontal-align="center">
+					
+							<layout alignment="horizontal" width="100%" height="24">
+							</layout>
+						
+							<element border="1" id="viewport" width="100%" height="*" background-color="{$color.element_midground}" focusable="true">
+							</element>
+							
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_viewport_2" vertical-align="center">
+					</tab-content>						
+				</tabs-content>
+			</tabs>
+			<!------------------------------------------------------------------->
+			
+			
+			<space width="5"/>
+			
+			
+			<layout alignment="vertical" width="256" height="100%">
+
+
+				<!-- outliner --------------------------------------------------->
+				<tabs alignment="vertical" width="100%" height="50%">
+					<tabs-header>
+						<tab id="tab_outliner" text="Outliner" />
+					</tabs-header>
+					<tabs-content>
+						<tab-content tab-id="tab_outliner" vertical-align="center">
+							<layout padding="5" alignment="vertical" width="100%" height="100%">
+	
+								<input border="1" width="100%" height="auto" text="Filter" />
+								
+								<space height="10"/>
+							
+								<scrollarea border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+								
+								</scrollarea>
+								
+							</layout>
+						</tab-content>	
+					</tabs-content>
+				</tabs>
+				<!------------------------------------------------------------------->
+				
+				
+				<space height="5"/>
+				
+				<!-- details panel -->
+				<tabs alignment="vertical" width="100%" height="*">
+					<tabs-header>
+						<tab id="tab_details" text="Details" />
+					</tabs-header>
+					<tabs-content>
+						<tab-content tab-id="tab_details" vertical-align="center">
+						</tab-content>	
+					</tabs-content>
+				</tabs>
+			
+			</layout>
+			
+			<space width="5"/>
+		
+		</layout>
+		
+		<space height="5"/>
+	
+	</layout>	
+</screen>

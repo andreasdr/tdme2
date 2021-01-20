@@ -71,7 +71,7 @@ public:
 	Prototype* addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
-	 * Add a empty
+	 * Add a particle system
 	 * @param id id
 	 * @param name name
 	 * @param description description
@@ -115,6 +115,16 @@ public:
 	 * @throws tdme::utilities::Exception
 	 */
 	Prototype* addEmpty(int id, const string& name, const string& description);
+
+	/**
+	 * Add a terrain
+	 * @param id id
+	 * @param name name
+	 * @param description description
+	 * @return prototype
+	 * @throws tdme::utilities::Exception
+	 */
+	Prototype* addTerrain(int id, const string& name, const string& description);
 
 	/**
 	 * Add a prototype

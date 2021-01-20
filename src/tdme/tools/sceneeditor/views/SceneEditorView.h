@@ -18,6 +18,7 @@
 #include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -44,6 +45,8 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::sceneeditor::controller::SceneEditorScreenController;
 using tdme::tools::sceneeditor::views::SceneEditorView_EntityColor;
+using tdme::tools::shared::views::CameraInputHandler;
+using tdme::tools::shared::views::CameraInputHandlerEventHandler;
 using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -57,6 +60,7 @@ class tdme::tools::sceneeditor::views::SceneEditorView final
 	: public View
 	, public GUIInputEventHandler
 	, protected Gizmo
+	, protected CameraInputHandlerEventHandler
 {
 private:
 	static vector<string> ENTITYCOLOR_NAMES;
@@ -71,36 +75,17 @@ private:
 	Prototype* selectedPrototype { nullptr };
 	bool reloadEntityLibrary;
 	map<string, SceneEditorView_EntityColor*> entityColors;
-	Rotation* camLookRotationX { nullptr };
-	Rotation* camLookRotationY { nullptr };
-	float camScale;
-	float camScaleMax;
-	float camScaleMin;
+	CameraInputHandler* cameraInputHandler { nullptr };
 	int placeEntityMouseX;
 	int placeEntityMouseY;
 	int mouseDownLastX;
 	int mouseDownLastY;
 	bool mouseDragging;
 	Entity* mouseDraggingLastEntity;
-	int mousePanningSide;
-	int mousePanningForward;
-	int mouseRotationX;
-	int mouseRotationY;
 	Vector3 camLookAt;
 	Vector3 gridCenter;
 	bool gridEnabled;
 	float gridY;
-	bool keyLeft;
-	bool keyRight;
-	bool keyUp;
-	bool keyDown;
-	bool keyA;
-	bool keyD;
-	bool keyW;
-	bool keyS;
-	bool keyPlus;
-	bool keyMinus;
-	bool keyR;
 	bool keyControl;
 	bool keyShift;
 	bool keyEscape;
@@ -494,5 +479,10 @@ private:
 	 * Update gizmo
 	 */
 	void updateGizmo();
+
+	// overriden camera methods
+	void onCameraTranslation() override;
+	void onCameraRotation() override;
+	void onCameraScale() override;
 
 };

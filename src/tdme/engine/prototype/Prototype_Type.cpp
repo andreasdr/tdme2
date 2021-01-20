@@ -23,6 +23,7 @@ Prototype_Type* tdme::engine::prototype::Prototype_Type::MODEL = new Prototype_T
 Prototype_Type* tdme::engine::prototype::Prototype_Type::PARTICLESYSTEM = new Prototype_Type("PARTICLESYSTEM", 2, -1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_ROTATE | Gizmo::GIZMOTYPE_SCALE, false, Vector3());
 Prototype_Type* tdme::engine::prototype::Prototype_Type::TRIGGER = new Prototype_Type("TRIGGER", 3, -1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_ROTATE | Gizmo::GIZMOTYPE_SCALE, true, Vector3(1.0f, 1.0f, 1.0f));
 Prototype_Type* tdme::engine::prototype::Prototype_Type::ENVIRONMENTMAPPING = new Prototype_Type("ENVIRONMENTMAPPING", 4, 1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_SCALE, true, Vector3(1.0f, 1.0f, 1.0f));
+Prototype_Type* tdme::engine::prototype::Prototype_Type::TERRAIN = new Prototype_Type("TERRAIN", 0, 0, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_ROTATE | Gizmo::GIZMOTYPE_SCALE, false, Vector3());
 
 Prototype_Type* Prototype_Type::valueOf(const string& name)
 {
@@ -31,5 +32,6 @@ Prototype_Type* Prototype_Type::valueOf(const string& name)
 	if (PARTICLESYSTEM->getName() == name) return PARTICLESYSTEM;
 	if (TRIGGER->getName() == name) return TRIGGER;
 	if (ENVIRONMENTMAPPING->getName() == name) return ENVIRONMENTMAPPING;
+	if (TERRAIN->getName() == name) return TERRAIN;
 	return nullptr;
 }

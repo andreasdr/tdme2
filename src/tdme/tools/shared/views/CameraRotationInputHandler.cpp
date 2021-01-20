@@ -222,7 +222,7 @@ void CameraRotationInputHandler::handleInputEvents()
 	cam->setLookAt(lookAt);
 	cam->setUpVector(upVector);
 
-	if (scaling == true && eventHandler != nullptr) eventHandler->onScale();
+	if (scaling == true && eventHandler != nullptr) eventHandler->onCameraScale();
 	if ((keyLeft == true ||
 		keyRight == true ||
 		keyUp == true ||
@@ -232,6 +232,6 @@ void CameraRotationInputHandler::handleInputEvents()
 		keyR == true ||
 		resetRequested == true) &&
 		eventHandler != nullptr) {
-		if (eventHandler != nullptr) eventHandler->onRotation();
+		if (eventHandler != nullptr) eventHandler->onCameraRotation();
 	}
 }

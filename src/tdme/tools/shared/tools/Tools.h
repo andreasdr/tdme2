@@ -1,8 +1,8 @@
-
 #pragma once
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
@@ -15,6 +15,7 @@
 
 using std::array;
 using std::string;
+using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::model::Color4;
@@ -72,49 +73,49 @@ public:
 	 * @param text text
 	 * @param array array
 	 */
-	static void convertToArray(const string& text, array<float, 3>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 3>& array);
 
 	/**
 	 * Convert string to array
 	 * @param text text
 	 * @param array array
 	 */
-	static void convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */;
+	static void convertToArray(const string& text, array<float, 4>& array);
 
 	/**
 	 * Convert to vector 3
 	 * @param text text
 	 * @return vector3
 	 */
-	static Vector3 convertToVector3(const string& text) /* throws(NumberFormatException) */;
+	static Vector3 convertToVector3(const string& text);
 
 	/**
 	 * Convert to vector 4
 	 * @param text text
 	 * @return vector4
 	 */
-	static Vector4 convertToVector4(const string& text) /* throws(NumberFormatException) */;
+	static Vector4 convertToVector4(const string& text);
 
 	/**
 	 * Convert to color 4
 	 * @param text text
 	 * @return color4
 	 */
-	static Color4 convertToColor4(const string& text) /* throws(NumberFormatException) */;
+	static Color4 convertToColor4(const string& text);
 
 	/**
 	 * Convert string to float
 	 * @param text text
 	 * @return float
 	 */
-	static float convertToFloat(const string& text) /* throws(NumberFormatException) */;
+	static float convertToFloat(const string& text);
 
 	/**
 	 * Convert string to int
 	 * @param text text
 	 * @return int
 	 */
-	static int convertToInt(const string& text) /* throws(NumberFormatException) */;
+	static int convertToInt(const string& text);
 
 	/**
 	 * Convert string to int
@@ -187,14 +188,14 @@ public:
 	static const string getApplicationRootPath(const string& fileName);
 
 	/**
-	 * Get path
+	 * Get path of given file name
 	 * @param fileName file name
 	 * @return path
 	 */
-	static const string getPath(const string& fileName);
+	static const string getPathName(const string& fileName);
 
 	/**
-	 * Get file name of given path
+	 * Get file name of given file name
 	 * @param fileName file name
 	 * @return file name
 	 */

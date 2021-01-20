@@ -21,7 +21,7 @@ using tdme::math::Vector2;
 class tdme::math::Matrix2D3x3 final
 {
 private:
-	array<float, 9> data {  };
+	array<float, 9> data;
 
 public:
 	/**

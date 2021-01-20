@@ -85,11 +85,11 @@ public:
 	/**
 	 * On rotation event to be overloaded
 	 */
-	void onRotation() override;
+	void onCameraRotation() override;
 
 	/**
 	 * On scale event to be overloaded
 	 */
-	void onScale() override;
+	void onCameraScale() override;
 
 };

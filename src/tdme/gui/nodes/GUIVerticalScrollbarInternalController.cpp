@@ -1,30 +1,30 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
+using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUILayoutNode;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
-using tdme::gui::GUI;
 
 GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node)
 	: GUINodeController(node)
 {
-	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
+	this->contentNode = required_dynamic_cast<GUILayoutNode*>(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
 	state = STATE_NONE;
 	mouseYOffset = -1;
 	contentHeight = 0;
@@ -119,7 +119,7 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 				setDraggedY(+elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 			} else
 			if (event->getY() + barOffsetY >= barTop && event->getY() + barOffsetY < barTop + barHeight) {
-				mouseYOffset = static_cast< int >((event->getY() - barTop));
+				mouseYOffset = static_cast< int32_t >((event->getY() - barTop));
 				state = STATE_DRAGGING;
 			}
 			event->setProcessed(true);

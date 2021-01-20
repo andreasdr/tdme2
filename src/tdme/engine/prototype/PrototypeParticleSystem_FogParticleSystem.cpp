@@ -25,14 +25,14 @@ void PrototypeParticleSystem_FogParticleSystem::setTextureFileName(const string&
 	this->transparencyTextureFileName = transparencyTextureFileName;
 	if (this->transparencyTextureFileName.size() > 0) {
 		texture = TextureReader::read(
-			Tools::getPath(this->textureFileName),
+			Tools::getPathName(this->textureFileName),
 			Tools::getFileName(this->textureFileName),
-			Tools::getPath(this->transparencyTextureFileName),
+			Tools::getPathName(this->transparencyTextureFileName),
 			Tools::getFileName(this->transparencyTextureFileName)
 		);
 	} else {
 		texture = TextureReader::read(
-			Tools::getPath(this->textureFileName),
+			Tools::getPathName(this->textureFileName),
 			Tools::getFileName(this->textureFileName)
 		);
 	}

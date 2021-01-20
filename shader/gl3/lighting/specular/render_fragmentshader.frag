@@ -293,7 +293,7 @@ void main(void) {
 		computeLights(normal, vsPosition);
 	#endif
 
-		// take effect colors into account
+	// take effect colors into account
 	fragColor*= vsEffectColorMul;
 	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
 

@@ -1,34 +1,37 @@
 #include <tdme/gui/nodes/GUILayoutNode.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUILayoutNode_Alignment.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
+#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUILayoutNode;
+
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
+using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::StringTools;
@@ -68,7 +71,7 @@ bool GUILayoutNode::isContentNode()
 	return false;
 }
 
-int GUILayoutNode::getContentWidth()
+int32_t GUILayoutNode::getContentWidth()
 {
 	auto width = 0;
 	if (alignment == GUILayoutNode_Alignment::HORIZONTAL) {
@@ -98,7 +101,7 @@ int GUILayoutNode::getContentWidth()
 	return width;
 }
 
-int GUILayoutNode::getContentHeight()
+int32_t GUILayoutNode::getContentHeight()
 {
 	auto height = 0;
 	if (alignment == GUILayoutNode_Alignment::VERTICAL) {
@@ -161,11 +164,11 @@ void GUILayoutNode::layoutSubNodes()
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 					auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
-					auto nodeStarHeightInt = static_cast<int>(nodeStarHeight);
+					auto nodeStarHeightInt = static_cast<int32_t>(nodeStarHeight);
 					verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
-					if (static_cast<int>(verticalStarPixelRest) > 0) {
-						nodeStarHeightInt += static_cast<int>(verticalStarPixelRest);
-						verticalStarPixelRest -= static_cast<int>(verticalStarPixelRest);
+					if (static_cast<int32_t>(verticalStarPixelRest) > 0) {
+						nodeStarHeightInt += static_cast<int32_t>(verticalStarPixelRest);
+						verticalStarPixelRest -= static_cast<int32_t>(verticalStarPixelRest);
 					}
 					guiSubNode->requestedConstraints.height = nodeStarHeightInt;
 					guiSubNode->computedConstraints.height = nodeStarHeightInt;
@@ -173,8 +176,8 @@ void GUILayoutNode::layoutSubNodes()
 						guiSubNode->computedConstraints.height = 0;
 					}
 					finalNodesHeight += guiSubNode->computedConstraints.height;
-					if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-						(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
 					}
 				}
 			}
@@ -227,11 +230,11 @@ void GUILayoutNode::layoutSubNodes()
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 					auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
-					auto nodeStarWidthInt = static_cast<int>(nodeStarWidth);
+					auto nodeStarWidthInt = static_cast<int32_t>(nodeStarWidth);
 					horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
-					if (static_cast<int>(horizontalStarPixelRest) > 0) {
-						nodeStarWidthInt += static_cast<int>(horizontalStarPixelRest);
-						horizontalStarPixelRest -= static_cast<int>(horizontalStarPixelRest);
+					if (static_cast<int32_t>(horizontalStarPixelRest) > 0) {
+						nodeStarWidthInt += static_cast<int32_t>(horizontalStarPixelRest);
+						horizontalStarPixelRest -= static_cast<int32_t>(horizontalStarPixelRest);
 					}
 					guiSubNode->requestedConstraints.width = nodeStarWidthInt;
 					guiSubNode->computedConstraints.width = nodeStarWidthInt;
@@ -239,8 +242,8 @@ void GUILayoutNode::layoutSubNodes()
 						guiSubNode->computedConstraints.width = 0;
 					}
 					finalNodesWidth += guiSubNode->computedConstraints.width;
-					if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr) {
-						(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+					if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr) {
+						required_dynamic_cast<GUIParentNode*>(guiSubNode)->layoutSubNodes();
 					}
 				}
 			}
@@ -283,7 +286,7 @@ void GUILayoutNode::layoutSubNodes()
 	setLeft(computedConstraints.left);
 }
 
-void GUILayoutNode::setTop(int top)
+void GUILayoutNode::setTop(int32_t top)
 {
 	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	GUIParentNode::setTop(top);
@@ -299,7 +302,7 @@ void GUILayoutNode::setTop(int top)
 	}
 }
 
-void GUILayoutNode::setLeft(int left)
+void GUILayoutNode::setLeft(int32_t left)
 {
 	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	GUIParentNode::setLeft(left);

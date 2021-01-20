@@ -4,12 +4,12 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUILayerNode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
+#include <tdme/gui/nodes/GUILayerNode.h>
 
 using std::set;
 using std::string;
@@ -17,7 +17,6 @@ using std::string;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUILayerNode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
@@ -25,8 +24,9 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
+using tdme::gui::nodes::GUILayerNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 /**
@@ -60,6 +60,8 @@ private:
 	string onMouseOverExpression;
 	string onMouseOutExpression;
 	string onChangeExpression;
+	string parentElementId;
+	vector<string> options;
 
 protected:
 	/**
@@ -99,6 +101,8 @@ protected:
 	 * @param onMouseOver on mouse over expression
 	 * @param onMouseOut on mouse out expression
 	 * @param onChangeExpression on change expression
+	 * @param parentElementId parent element id
+	 * @param options options
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,
@@ -129,7 +133,9 @@ protected:
 		const string& onMouseDoubleClickExpression,
 		const string& onMouseOver,
 		const string& onMouseOut,
-		const string& onChangeExpression
+		const string& onChangeExpression,
+		const string& parentElementId,
+		const string& options
 	);
 
 public:
@@ -200,6 +206,16 @@ public:
 	 * @param expression expression
 	 */
 	static void executeExpression(GUIScreenNode* screenNode, const string& expression);
+
+	/**
+	 * @return parent element id
+	 */
+	const string& getParentElementNodeId();
+
+	/**
+	 * @returns if option is among given options
+	 */
+	bool hasOption(const string& option);
 
 	/**
 	 * @return active conditions

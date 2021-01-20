@@ -29,6 +29,7 @@ public:
 	static Prototype_Type* PARTICLESYSTEM;
 	static Prototype_Type* TRIGGER;
 	static Prototype_Type* ENVIRONMENTMAPPING;
+	static Prototype_Type* TERRAIN;
 
 	/**
 	 * Public constructor

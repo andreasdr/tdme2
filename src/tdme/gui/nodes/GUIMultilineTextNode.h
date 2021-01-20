@@ -7,18 +7,18 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 
-using std::string;
 using std::vector;
+using std::string;
 
-using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
@@ -110,8 +110,8 @@ protected:
 
 public:
 	// overridden methods
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 	void computeContentAlignment() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;

@@ -25,6 +25,7 @@ using tdme::tools::sceneeditor::views::EnvironmentMappingView;
 using tdme::tools::sceneeditor::views::ModelEditorView;
 using tdme::tools::sceneeditor::views::ParticleSystemView;
 using tdme::tools::sceneeditor::views::SceneEditorView;
+using tdme::tools::sceneeditor::views::TerrainEditorView;
 using tdme::tools::sceneeditor::views::TriggerView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
@@ -38,7 +39,6 @@ class tdme::tools::sceneeditor::TDMESceneEditor final
 	: public virtual Application
 {
 private:
-	static string VERSION;
 	static TDMESceneEditor* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };
@@ -51,6 +51,7 @@ private:
 	EnvironmentMappingView* environmentMappingView { nullptr };
 	EmptyView* emptyView { nullptr };
 	ParticleSystemView* particleSystemView { nullptr };
+	TerrainEditorView* terrainEditorView { nullptr };
 
 public:
 
@@ -157,5 +158,10 @@ public:
 	 * Switch to particle system view
 	 */
 	void switchToParticleSystemView();
+
+	/**
+	 * Switch to terrain editor view
+	 */
+	void switchToTerrainEditorView();
 
 };

@@ -1,56 +1,43 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 
-#include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/Engine.h>
-#include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/renderer/GUIShader.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/utilities/Time.h>
 #include <tdme/utilities/ByteBuffer.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
-#include <tdme/utilities/Time.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
+#include <tdme/engine/subsystems/manager/VBOManager.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/gui/GUI.h>
+#include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/utilities/Console.h>
 
-using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::Engine;
-using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::renderer::GUIShader;
-using tdme::gui::GUI;
 using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
+using tdme::utilities::Time;
 using tdme::utilities::ByteBuffer;
-using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
-using tdme::utilities::Time;
+using tdme::engine::Engine;
+using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
+using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::gui::GUI;
+using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::renderer::GUIShader;
+using tdme::math::Matrix2D3x3;
+using tdme::utilities::Console;
 
 GUIRenderer::GUIRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
-	init();
-}
-
-GUIRenderer::~GUIRenderer() {
-	delete sbIndicesByteBuffer;
-	delete fbVerticesByteBuffer;
-	delete fbColorsByteBuffer;
-	delete fbTextureCoordinatesByteBuffer;
-}
-
-
-void GUIRenderer::init()
-{
 	sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t)));
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
@@ -64,6 +51,14 @@ void GUIRenderer::init()
 	guiEffectOffsetX = 0.0f;
 	guiEffectOffsetY = 0.0f;
 }
+
+GUIRenderer::~GUIRenderer() {
+	delete sbIndicesByteBuffer;
+	delete fbVerticesByteBuffer;
+	delete fbColorsByteBuffer;
+	delete fbTextureCoordinatesByteBuffer;
+}
+
 
 constexpr int32_t GUIRenderer::QUAD_COUNT;
 

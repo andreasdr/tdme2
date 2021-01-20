@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/Node.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
@@ -50,7 +51,7 @@ public:
 	 * @return if preRender call is required
 	 */
 	inline bool needsPreRender() {
-		return haveVBOs == false || object3DNode->mesh->hasRecreatedBuffers() == true;
+		return haveVBOs == false || object3DNode->mesh->hasRecreatedBuffers() == true || object3DNode->mesh->node->hasUpdate();
 	}
 
 	/**

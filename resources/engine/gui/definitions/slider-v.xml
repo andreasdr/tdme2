@@ -1,0 +1,4 @@
+<element id="{$id}" name="{$name}" disabled="{$disabled}" focusable="true" width="auto" height="250" value="{$value}" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" horizontal-align="center">
+	<panel width="4" height="100%" background-color="{$color.element_midground}" />
+	<image effect-color-mul="{$color.button_normal}" id="{$id}_slider" src="resources/engine/images/slider_vertical.png" />
+</element>

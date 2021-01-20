@@ -1,0 +1,9 @@
+<screen id="screen_progressbar" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+		<layout padding="20" alignment="vertical" horizontal-align="left" vertical-align="center" width="500" height="auto" border="1" background-color="{$color.element_foreground}">
+			<progress-bar id="progressbar" width="100%" text-on="true" value="0.5" />
+			<space height="5"/>
+			<text id="progress_message" height="25" font="{$font.default}" text="Loading Scene Files.." color="{$color.font_normal}" />
+		</layout>
+	</layout>
+</screen>

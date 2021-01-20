@@ -49,7 +49,7 @@ class tdme::engine::subsystems::rendering::Object3DNodeMesh final
 private:
 	int instances;
 	Object3DNodeRenderer* object3DNodeRenderer { nullptr };
-	Node* node;
+	Node* node { nullptr };
 	int32_t faceCount;
 	const vector<Vector3>* vertices { nullptr };
 	const vector<Vector3>* normals { nullptr };
@@ -69,7 +69,7 @@ private:
 	int32_t cSkinningMaxVertexWeights;
 	vector<vector<float>> cSkinningJointWeight;
 
-	Matrix4x4* cNodeTransformationsMatrix;
+	Matrix4x4* cNodeTransformationsMatrix { nullptr };
 
 	vector<vector<vector<Matrix4x4*>>> cSkinningJointTransformationsMatrices;
 

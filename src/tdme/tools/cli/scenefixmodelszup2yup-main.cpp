@@ -12,6 +12,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/Version.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -29,6 +30,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Transformations;
+using tdme::engine::Version;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -38,9 +40,10 @@ using tdme::utilities::Exception;
 
 int main(int argc, char** argv)
 {
-	Console::println(string("scenefixmodelszup2yup 1.9.9"));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("scenefixmodelszup2yup ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
+
 	if (argc != 2) {
 		Console::println("Usage: scenefixmodelszup2yup scene.tl");
 		Application::exit(1);

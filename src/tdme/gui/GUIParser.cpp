@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>
@@ -16,24 +17,20 @@
 #include <tdme/gui/elements/GUIMenuHeader.h>
 #include <tdme/gui/elements/GUIMenuHeaderItem.h>
 #include <tdme/gui/elements/GUIMenuItem.h>
+#include <tdme/gui/elements/GUIMenuSeparator.h>
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
-#include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
-#include <tdme/gui/elements/GUIScrollAreaVertical.h>
 #include <tdme/gui/elements/GUISelectBox.h>
-#include <tdme/gui/elements/GUISelectBoxMultiple.h>
-#include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
-#include <tdme/gui/elements/GUISelectBoxMultipleParentOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
 #include <tdme/gui/elements/GUISelectBoxParentOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
 #include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
+#include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/elements/GUITabs.h>
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
-#include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -53,23 +50,26 @@
 #include <tdme/gui/nodes/GUISpaceNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
-#include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Properties.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
 using std::string;
+using std::to_string;
 using std::unordered_map;
 
+using tdme::gui::GUIParser;
+using tdme::gui::GUIParserException;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::elements::GUIButton;
@@ -83,24 +83,20 @@ using tdme::gui::elements::GUIKnob;
 using tdme::gui::elements::GUIMenuHeader;
 using tdme::gui::elements::GUIMenuHeaderItem;
 using tdme::gui::elements::GUIMenuItem;
+using tdme::gui::elements::GUIMenuSeparator;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
-using tdme::gui::elements::GUIScrollAreaHorizontal;
-using tdme::gui::elements::GUIScrollAreaVertical;
 using tdme::gui::elements::GUISelectBox;
-using tdme::gui::elements::GUISelectBoxMultiple;
-using tdme::gui::elements::GUISelectBoxMultipleOption;
-using tdme::gui::elements::GUISelectBoxMultipleParentOption;
 using tdme::gui::elements::GUISelectBoxOption;
 using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
+using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
-using tdme::gui::elements::GUITabContent;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -118,26 +114,26 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
-using tdme::gui::GUIParser;
-using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
-using tdme::utilities::Console;
-using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Properties;
 
-using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
+using tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 map<string, GUIElement*>* GUIParser::elements = new map<string, GUIElement*>();
+Properties* GUIParser::themeProperties = new Properties();
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
@@ -146,10 +142,14 @@ GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, 
 
 GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName)
 {
-	// replace attributes from element
+	// replace with parameters
 	auto newXML = xml;
-	for (auto parametersIt: parameters) {
-		newXML = StringTools::replace(newXML, "{$" + parametersIt.first + "}", escapeQuotes(parametersIt.second));
+	for (auto& parameterIt: parameters) {
+		newXML = StringTools::replace(newXML, "{$" + parameterIt.first + "}", escapeQuotes(parameterIt.second));
+	}
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
 	}
 
 	//
@@ -181,7 +181,8 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("left"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("top"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("width"))),
-			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("height")))
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("height"))),
+			parseFactor(nullptr, StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("factor")))))
 		),
 		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 		"",
@@ -227,7 +228,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
 	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time
 	guiScreenNode->setBackgroundImage(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))));
-	parseGUINode(guiScreenNode, xmlRoot, nullptr);
+	parseGUINode(guiScreenNode, string(), xmlRoot, nullptr);
 	guiScreenNode->setConditionsMet();
 	return guiScreenNode;
 }
@@ -240,18 +241,25 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& pathName, const s
 
 void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 {
+	// replace with parameters
+	auto newXML = xml;
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newXML = StringTools::replace(newXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+	}
+
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse((string("<gui-element>") + xml + string("</gui-element>")).c_str());
+	xmlDocument.Parse((string("<gui-element>") + newXML + string("</gui-element>")).c_str());
 	if (xmlDocument.Error() == true) {
 		throw GUIParserException(
 			"GUIParser::parse():: Could not parse XML. Error='" + string(xmlDocument.ErrorDesc()) + "': \n\n" + xml
 		);
 	}
 	TiXmlElement* xmlNode = xmlDocument.RootElement();
-	parseGUINode(parentNode, xmlNode, nullptr);
+	parseGUINode(parentNode, string(), xmlNode, nullptr);
 }
 
-void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement)
+void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* xmlParentNode, GUIElement* guiElement)
 {
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
@@ -359,9 +367,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor("#F0F0F0")),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor(themeProperties->get("color.panel", "#F0F0F0"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
 					GUINode::createScale9Grid(
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
@@ -403,7 +412,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiPanelNode, node, nullptr);
+				parseGUINode(guiPanelNode, parentElementId, node, nullptr);
 			} else
 			if (nodeTagName == "layer") {
 				auto guiLayerNode = new GUILayerNode(
@@ -421,7 +430,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -464,7 +474,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiLayerNode, node, nullptr);
+				parseGUINode(guiLayerNode, parentElementId, node, nullptr);
 			} else
 			if (nodeTagName == "layout") {
 				auto guiLayoutNode = new GUILayoutNode(
@@ -482,7 +492,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -526,7 +537,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiLayoutNode, node, nullptr);
+				parseGUINode(guiLayoutNode, parentElementId, node, nullptr);
 			} else
 			if (nodeTagName == "space") {
 				auto guiSpaceNode = new GUISpaceNode(
@@ -542,7 +553,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -602,7 +614,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -647,7 +660,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-doubleclick"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-over"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-out"))),
-					string(AVOID_NULLPTR_STRING(node->Attribute("on-change")))
+					string(AVOID_NULLPTR_STRING(node->Attribute("on-change"))),
+					parentElementId,
+					string(AVOID_NULLPTR_STRING(node->Attribute("options")))
 				);
 				guiParentNode->addSubNode(guiElementNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -657,7 +672,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
-				parseGUINode(guiElementNode, node, nullptr);
+				parseGUINode(guiElementNode, guiElementNode->getId(), node, nullptr);
 			} else
 			if (nodeTagName == "image") {
 				auto guiImageNode = new GUIImageNode(
@@ -673,7 +688,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -750,7 +766,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -811,7 +828,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -872,7 +890,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -935,7 +954,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -996,7 +1016,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("height"))),
+						parseFactor(guiParentNode, StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("factor")))))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
@@ -1043,11 +1064,23 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					guiElementControllerInstalled = true;
 				}
 			} else
+			if (nodeTagName == "inner-xml") {
+				unordered_map<string, string> attributes;
+				parseInnerXML(
+					guiParentNode,
+					parentElementId,
+					node,
+					node->GetText(),
+					attributes,
+					nullptr
+				);
+			} else
 			if (nodeTagName == "template") {
 				auto src = string(AVOID_NULLPTR_STRING(node->Attribute("src")));
 				unordered_map<string, string> attributes;
 				parseTemplate(
 					guiParentNode,
+					parentElementId,
 					node,
 					FileSystem::getInstance()->getContentAsString(
 						guiParentNode->getScreenNode()->getApplicationRootPath() + "/" +
@@ -1069,6 +1102,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 				}
 				parseTemplate(
 					guiParentNode,
+					parentElementId,
 					node,
 					guiElementIt->second->getTemplate(guiParentNode->getScreenNode()->getApplicationRootPath(),
 					AVOID_NULLPTR_STRING(node->Attribute("template"))),
@@ -1083,8 +1117,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 	}
 }
 
-void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
+void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
 	auto newGuiElementTemplateXML = templateXML;
+
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+	}
 
 	// replace attributes given
 	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
@@ -1106,17 +1145,88 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, con
 	newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
 
 	// add root tag
-	newGuiElementTemplateXML =  "<gui-element>\n" + newGuiElementTemplateXML + "</gui-element>\n";
+	if (guiElement != nullptr) {
+		newGuiElementTemplateXML =  "<" + guiElement->getName() + ">\n" + newGuiElementTemplateXML + "</" + guiElement->getName() + ">\n";
+	} else {
+		newGuiElementTemplateXML =  "<template>\n" + newGuiElementTemplateXML + "</template>\n";
+	}
 
 	// parse
 	TiXmlDocument newGuiElementDocument;
 	newGuiElementDocument.Parse(newGuiElementTemplateXML.c_str());
 	if (newGuiElementDocument.Error() == true) {
 		throw GUIParserException(
-			"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
+			"GUIParser::parseTemplate():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
 		);
 	}
-	parseGUINode(parentNode, newGuiElementDocument.RootElement(), guiElement);
+	parseGUINode(parentNode, parentElementId, newGuiElementDocument.RootElement(), guiElement);
+}
+
+void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& innerXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
+	auto newInnerXML = innerXML;
+	auto newParentElementId = parentElementId;
+
+	// replace with theme properties
+	for (auto& themePropertyIt: themeProperties->getProperties()) {
+		newInnerXML = StringTools::replace(newInnerXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+	}
+
+	// replace attributes given
+	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
+		auto attributeKey = string(attribute->Name());
+		auto attributeValue = string(attribute->Value());
+		newInnerXML = StringTools::replace(newInnerXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+		// also store parent-id as such if given
+		if (attributeKey == "parent-id") newParentElementId = attributeValue;
+	}
+
+	// replace attributes from element
+	for (auto newGuiElementAttributesIt: attributes) {
+		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
+		newInnerXML = StringTools::replace(newInnerXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+	}
+
+	// replace remaining unset parameters with empty spaces
+	newInnerXML = StringTools::regexReplace(newInnerXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
+
+	// replace inner XML
+	newInnerXML = StringTools::replace(newInnerXML, "{__InnerXML__}", getInnerXml(node));
+
+	// add root tag
+	newInnerXML =  "<inner-xml>\n" + newInnerXML + "</inner-xml>\n";
+
+	// parse
+	TiXmlDocument newGuiElementDocument;
+	newGuiElementDocument.Parse(newInnerXML.c_str());
+	if (newGuiElementDocument.Error() == true) {
+		throw GUIParserException(
+			"GUIParser::parseInnerXML():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
+		);
+	}
+	parseGUINode(parentNode, newParentElementId, newGuiElementDocument.RootElement(), guiElement);
+}
+
+int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
+	if (factor.empty() == true) {
+		return 1;
+	} else
+	if (factor == "{__TreeDepth__}") {
+		GUIElementNode* parentElementNode = nullptr;
+		auto _guiParentNode = guiParentNode;
+		while (_guiParentNode != nullptr) {
+			parentElementNode = dynamic_cast<GUIElementNode*>(_guiParentNode);
+			if (parentElementNode != nullptr) break;
+			_guiParentNode = _guiParentNode->getParentNode();
+		}
+		auto childIdx = 0;
+		while (parentElementNode != nullptr) {
+			parentElementNode = dynamic_cast<GUIElementNode*>(guiParentNode->getScreenNode()->getNodeById(parentElementNode->getParentElementNodeId()));
+			if (parentElementNode != nullptr) childIdx++;
+		}
+		return Math::clamp(childIdx - 3, 1, Integer::MAX_VALUE); // TODO: check me!
+	} else {
+		return Integer::parseInt(factor);
+	}
 }
 
 const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent, const char* name)
@@ -1168,6 +1278,12 @@ void GUIParser::addElement(GUIElement* guiElement)
 void GUIParser::initialize()
 {
 	try {
+		themeProperties->load("./resources/engine/gui/themes", "theme_default.properties");
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
 		GUIElement* guiElement = new GUICheckbox();
 		addElement(guiElement);
 	} catch (Exception& exception) {
@@ -1196,14 +1312,7 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBoxMultiple();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUISelectBoxMultipleOption();
+		GUIElement* guiElement = new GUISelectBoxParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
@@ -1273,20 +1382,6 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIScrollAreaVertical();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUIScrollAreaHorizontal();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
 		GUIElement* guiElement = new GUIScrollArea();
 		addElement(guiElement);
 	} catch (Exception& exception) {
@@ -1350,14 +1445,7 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBoxParentOption();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
-		GUIElement* guiElement = new GUISelectBoxMultipleParentOption();
+		GUIElement* guiElement = new GUIMenuSeparator();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

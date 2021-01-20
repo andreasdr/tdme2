@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -13,17 +14,17 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
+#include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
-#include <tdme/utilities/MutableString.h>
 
+using tdme::gui::nodes::GUIInputInternalNode;
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIInputInternalController;
-using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
@@ -33,11 +34,10 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
+using tdme::utilities::MutableString;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
-using tdme::utilities::MutableString;
 
 GUIInputInternalNode::GUIInputInternalNode(
 	GUIScreenNode* screenNode,
@@ -59,7 +59,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const string& color,
 	const string& colorDisabled,
 	const MutableString& text,
-	int maxLength
+	int32_t maxLength
 	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
@@ -73,7 +73,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	this->controller->initialize();
 }
 
-int GUIInputInternalNode::createMaxLength(const string& s)
+int32_t GUIInputInternalNode::createMaxLength(const string& s)
 {
 	try {
 		auto maxLength = Integer::parseInt(s);
@@ -95,12 +95,12 @@ bool GUIInputInternalNode::isContentNode()
 	return true;
 }
 
-int GUIInputInternalNode::getContentWidth()
+int32_t GUIInputInternalNode::getContentWidth()
 {
 	return font == nullptr?0:font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
 }
 
-int GUIInputInternalNode::getContentHeight()
+int32_t GUIInputInternalNode::getContentHeight()
 {
 	return font == nullptr?0:font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
@@ -115,7 +115,7 @@ MutableString& GUIInputInternalNode::getText()
 	return text;
 }
 
-int GUIInputInternalNode::getMaxLength()
+int32_t GUIInputInternalNode::getMaxLength()
 {
 	return maxLength;
 }
@@ -132,8 +132,8 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
-	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
-	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
+	auto controller = required_dynamic_cast<GUIInputInternalController*>(this->controller);
+	auto inputController = dynamic_cast<GUIInputController*>(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
 	if (font != nullptr) font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (screenNode->getGUI() != nullptr && static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {

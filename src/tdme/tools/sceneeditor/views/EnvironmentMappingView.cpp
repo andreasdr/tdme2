@@ -178,10 +178,10 @@ void EnvironmentMappingView::dispose()
 	Engine::getInstance()->reset();
 }
 
-void EnvironmentMappingView::onRotation() {
+void EnvironmentMappingView::onCameraRotation() {
 	prototypePhysicsView->updateGizmo(prototype);
 }
 
-void EnvironmentMappingView::onScale() {
+void EnvironmentMappingView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
 }

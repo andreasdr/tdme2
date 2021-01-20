@@ -5,17 +5,17 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 
 using std::array;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**
@@ -36,8 +36,8 @@ private:
 	GUIElementNode* inputNode { nullptr };
 	int64_t cursorModeStarted;
 	CursorMode cursorMode;
-	int index;
-	int offset;
+	int32_t index;
+	int32_t offset;
 	bool isDragging;
 	array<float, 2> dragPosition;
 	int64_t draggingTickLast;
@@ -52,12 +52,12 @@ private:
 	/**
 	 * @return index
 	 */
-	int getIndex();
+	int32_t getIndex();
 
 	/**
 	 * @return offset
 	 */
-	int getOffset();
+	int32_t getOffset();
 
 	/**
 	 * Reset cursor mode

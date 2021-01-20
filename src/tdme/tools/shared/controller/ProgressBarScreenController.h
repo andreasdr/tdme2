@@ -27,8 +27,8 @@ class tdme::tools::shared::controller::ProgressBarScreenController final
 {
 
 private:
-	GUIScreenNode* screenNode {  };
-	GUIElementNode* progressBarNode {  };
+	GUIScreenNode* screenNode { nullptr };
+	GUIElementNode* progressBarNode { nullptr };
 
 public:
 	/**

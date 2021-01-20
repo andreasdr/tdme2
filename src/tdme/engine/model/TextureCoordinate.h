@@ -18,7 +18,7 @@ using tdme::math::Math;
 class tdme::engine::model::TextureCoordinate final
 {
 private:
-	array<float, 2> data {  };
+	array<float, 2> data;
 public:
 	/**
 	 * Public constructor

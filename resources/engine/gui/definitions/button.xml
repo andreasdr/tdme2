@@ -1,0 +1,26 @@
+<element id="{$id}" width="{$width}" height="{$height}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}">
+	<!-- normal -->
+	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.button_normal}">
+		<image src="{$image}" />
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_unselected" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
+	</layout>
+	<!-- mouse over -->
+	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="mouseover" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.focus}">
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_mouseover" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
+	</layout>
+	<!-- clicked -->
+	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled" show-on="click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.selected}" >
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_click" font="{$font.default}" text="{$text}" color="{$color.font_highlight}"/>
+	</layout>
+	<!-- disabled -->
+	<layout width="{$width}" height="{$height}" padding="5" show-on="disabled" alignment="horizontal" horizontal-align="center" vertical-align="center" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.button_disabled}" >
+		<image src="{$image}"/>
+		<space hide-on="empty('{$image}'),empty('{$text}')" width="10"/>
+		<text id="{$id}_text_disabled" font="{$font.default}" text="{$text}" color="{$color.font_disabled}"/>
+	</layout>
+</element>

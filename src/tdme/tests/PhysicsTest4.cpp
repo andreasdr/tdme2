@@ -11,7 +11,6 @@
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
@@ -23,6 +22,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -39,7 +39,6 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
@@ -51,6 +50,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
@@ -125,9 +125,9 @@ void PhysicsTest4::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.1f, 0.1f, 0.1f)));
-	auto boxModel = modelDeleter.add(PrimitiveModel::createModel(box, "box_model"));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("box", boxModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);

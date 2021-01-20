@@ -2,8 +2,9 @@
 
 #include <algorithm>
 #include <list>
-#include <map>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -18,10 +19,11 @@
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::list;
-using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
+using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::physics::CollisionDetection;

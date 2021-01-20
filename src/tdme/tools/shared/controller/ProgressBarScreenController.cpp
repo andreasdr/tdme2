@@ -45,7 +45,7 @@ GUIScreenNode* ProgressBarScreenController::getScreenNode()
 void ProgressBarScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/shared/gui", "progressbar.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "popup_progressbar.xml");
 		screenNode->setVisible(false);
 		progressBarNode = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("progressbar"));
 	} catch (Exception& exception) {

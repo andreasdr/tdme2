@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -15,6 +16,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::application::Application;
+using tdme::engine::Version;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -73,8 +75,8 @@ void processFile(const string& indent, const string& fileName) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("generate licenses 1.9.9"));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("generatelicenses ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 
 	auto pathToHeaders = "."; // we do search in pwd

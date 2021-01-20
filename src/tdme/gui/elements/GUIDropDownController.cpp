@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -12,7 +13,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -20,6 +20,7 @@ using std::string;
 using std::to_string;
 
 using tdme::gui::elements::GUIDropDownController;
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -30,7 +31,6 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
@@ -43,7 +43,7 @@ GUIDropDownController::GUIDropDownController(GUINode* node)
 	: GUIElementController(node)
 {
 	open = false;
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 }
 
 bool GUIDropDownController::isDisabled()
@@ -53,13 +53,13 @@ bool GUIDropDownController::isDisabled()
 
 void GUIDropDownController::setDisabled(bool disabled)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	auto& nodeConditionsTextElement = textElementNode->getActiveConditions();
-	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
+	nodeConditionsTextElement.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
-	nodeConditionsTextElement.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
+	nodeConditionsTextElement.add(this->disabled == true ?CONDITION_DISABLED:CONDITION_ENABLED);
 	if (disabled == true && isOpen() == true) {
 		toggleOpenState();
 	}
@@ -67,11 +67,11 @@ void GUIDropDownController::setDisabled(bool disabled)
 
 void GUIDropDownController::initialize()
 {
-	dropDownNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
-	arrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
-	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	dropDownNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal"));
+	arrowNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_arrow"));
+	textElementNode = required_dynamic_cast<GUIElementNode*>(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
+	required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 
 	//
 	GUIElementController::initialize();
@@ -93,23 +93,23 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
-			(dynamic_cast< GUIDropDownOptionController* >(childController))->unselect();
+		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
+			required_dynamic_cast<GUIDropDownOptionController*>(childController)->unselect();
 		}
 	}
 }
 
 void GUIDropDownController::toggleOpenState()
 {
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().remove(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().remove(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	open = open == true ? false : true;
-	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	arrowNode->getActiveConditions().add(open == true ? CONDITION_OPENED : CONDITION_CLOSED);
+	required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	open = open == true?false:true;
+	required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
+	arrowNode->getActiveConditions().add(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	search.clear();
 	doSearch();
 }
@@ -117,17 +117,17 @@ void GUIDropDownController::toggleOpenState()
 void GUIDropDownController::determineDropDownOptionControllers()
 {
 	dropDownOptionControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
+	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
-		if (dynamic_cast< GUIDropDownOptionController* >(childController) != nullptr) {
-			dropDownOptionControllers.push_back(dynamic_cast< GUIDropDownOptionController* >(childController));
+		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
+			dropDownOptionControllers.push_back(required_dynamic_cast<GUIDropDownOptionController*>(childController));
 		}
 	}
 }
 
-int GUIDropDownController::getSelectedOptionIdx()
+int32_t GUIDropDownController::getSelectedOptionIdx()
 {
 	auto selectedDropDownOptionControlerIdx = -1;
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
@@ -179,12 +179,11 @@ void GUIDropDownController::doSearch() {
 	string selectedDropDownOptionText;
 	auto selectedDropDownOptionControllerIdx = getSelectedOptionIdx();
 	if (selectedDropDownOptionControllerIdx != -1) {
-		selectedDropDownOptionText = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->getId() + "_unselected"))->getText().getString();
+		selectedDropDownOptionText = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(dropDownOptionControllers[selectedDropDownOptionControllerIdx]->getNode()->getId() + "_unselected"))->getText().getString();
 	}
-	auto dropDownTextNode = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_unselected"));
-	auto dropDownTextNodeEnabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_text_enabled"));
+	auto dropDownTextNodeEnabled = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text_enabled"));
 	dropDownTextNodeEnabled->setText(search.empty() == false?MutableString(search):MutableString(selectedDropDownOptionText));
-	auto dropDownTextNodeDisabled = dynamic_cast< GUITextNode* >(node->getScreenNode()->getNodeById(node->getId() + "_text_disabled"));
+	auto dropDownTextNodeDisabled = required_dynamic_cast<GUITextNode*>(node->getScreenNode()->getNodeById(node->getId() + "_text_disabled"));
 	dropDownTextNodeDisabled->setText(search.empty() == false?MutableString(search):MutableString(selectedDropDownOptionText));
 	if (dropDownOptionControllers.size() > 0) {
 		auto firstVisibleDropDown = -1;
@@ -206,7 +205,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 {
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == true) return;
-	auto elementNode  = dynamic_cast< GUIElementNode* >(this->node);
+	auto elementNode  = required_dynamic_cast<GUIElementNode*>(this->node);
 	if (event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node == this->node && node->isEventBelongingToNode(event) == true) {
 			if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
@@ -276,7 +275,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 							toggleOpenState();
 						}
 						if (open == false) {
-							node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
+							node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 						}
 					}
 					break;
@@ -291,7 +290,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 void GUIDropDownController::tick()
 {
 	GUIElementController::tick();
-	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast< GUIElementNode* >(this->node));
+	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(required_dynamic_cast<GUIElementNode*>(this->node));
 }
 
 void GUIDropDownController::onFocusGained()
@@ -314,7 +313,7 @@ const MutableString& GUIDropDownController::getValue()
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers[i];
 		if (dropDownOptionController->isSelected() == true) {
-			value.append((dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()))->getValue());
+			value.append(required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode())->getValue());
 		}
 	}
 	return value;
@@ -326,7 +325,7 @@ void GUIDropDownController::setValue(const MutableString& value)
 	unselect();
 	for (auto i = 0; i < dropDownOptionControllers.size(); i++) {
 		auto dropDownOptionController = dropDownOptionControllers[i];
-		auto dropDownOptionNode = (dynamic_cast< GUIElementNode* >(dropDownOptionController->getNode()));
+		auto dropDownOptionNode = required_dynamic_cast<GUIElementNode*>(dropDownOptionController->getNode());
 		if (value.equals(dropDownOptionNode->getValue())) {
 			dropDownOptionController->select();
 			dropDownOptionNode->scrollToNodeX(dropDownNode);

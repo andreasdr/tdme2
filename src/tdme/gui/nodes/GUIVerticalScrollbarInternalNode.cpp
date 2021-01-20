@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -11,22 +12,21 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 
 using std::array;
 using std::string;
 
+using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
-using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
+using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 
 GUIVerticalScrollbarInternalNode::GUIVerticalScrollbarInternalNode(
 	GUIScreenNode* screenNode,
@@ -66,12 +66,12 @@ bool GUIVerticalScrollbarInternalNode::isContentNode()
 	return false;
 }
 
-int GUIVerticalScrollbarInternalNode::getContentWidth()
+int32_t GUIVerticalScrollbarInternalNode::getContentWidth()
 {
 	return computedConstraints.width;
 }
 
-int GUIVerticalScrollbarInternalNode::getContentHeight()
+int32_t GUIVerticalScrollbarInternalNode::getContentHeight()
 {
 	return computedConstraints.height;
 }
@@ -83,7 +83,7 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = dynamic_cast< GUIVerticalScrollbarInternalController* >(this->controller);
+	auto controller = required_dynamic_cast<GUIVerticalScrollbarInternalController*>(this->controller);
 	auto barHeight = controller->getBarHeight();
 	auto barTop = controller->getBarTop();
 	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;

@@ -32,13 +32,14 @@ const string& GUITab::getName()
 
 const string GUITab::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"tab.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"tab.xml":fileName);
 }
 
 unordered_map<string, string> GUITab::getAttributes(GUIScreenNode* screenNode)
 {
 	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
+	attributes["type-color"] = "transparent";
 	return attributes;
 }
 

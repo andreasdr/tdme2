@@ -15,8 +15,9 @@
    - Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating games! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
 
 - Links
-	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
     - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)

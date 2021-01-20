@@ -37,6 +37,8 @@ Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
 	this->animation = nullptr;
 	this->skinning = nullptr;
 	this->joint = false;
+	this->verticesUpdated = false;
+	this->normalsUpdated = false;
 }
 
 Node::~Node() {
@@ -51,6 +53,7 @@ void Node::setVertices(const vector<Vector3>& vertices)
 	for (auto& vertex: vertices) {
 		this->vertices[i++] = vertex;
 	}
+	this->verticesUpdated = true;
 }
 
 void Node::setNormals(const vector<Vector3>& normals)
@@ -60,6 +63,7 @@ void Node::setNormals(const vector<Vector3>& normals)
 	for (auto& normal: normals) {
 		this->normals[i++] = normal;
 	}
+	this->normalsUpdated = true;
 }
 
 void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)

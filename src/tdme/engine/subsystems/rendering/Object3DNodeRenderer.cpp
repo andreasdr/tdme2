@@ -75,6 +75,10 @@ void Object3DNodeRenderer::preRender(void* context)
 	//
 	haveVBOs = true;
 
+	// model node updates
+	auto verticesUpdate = object3DNode->node->hasVerticesUpdate();
+	auto normalsUpdate = object3DNode->node->hasNormalsUpdate();
+
 	// check if to upload new mesh
 	if (object3DNode->mesh->getRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
@@ -101,6 +105,12 @@ void Object3DNodeRenderer::preRender(void* context)
 			vboManagedNormalMapping->setUploaded(true);
 		}
 		vboManagedBase->setUploaded(true);
+	} else
+	if (verticesUpdate == true || normalsUpdate == true) {
+		// upload vertices
+		if (verticesUpdate == true) object3DNode->mesh->setupVerticesBuffer(Engine::renderer, context, (*vboBaseIds)[1]);
+		// upload normals
+		if (normalsUpdate == true) object3DNode->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
 	}
 }
 

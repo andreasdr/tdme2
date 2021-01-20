@@ -39,7 +39,7 @@ GUIScreenNode* InfoDialogScreenController::getScreenNode()
 void InfoDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/shared/gui", "infodialog.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "popup_infodialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_caption"));
@@ -71,7 +71,7 @@ void InfoDialogScreenController::close()
 void InfoDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
-		if (node->getId().compare("infodialog_ok") == 0) {
+		if (node->getId().compare("infodialog_button1") == 0) {
 			close();
 		}
 	}

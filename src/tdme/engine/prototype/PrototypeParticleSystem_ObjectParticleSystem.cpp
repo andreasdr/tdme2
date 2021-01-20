@@ -23,7 +23,7 @@ void PrototypeParticleSystem_ObjectParticleSystem::setModelFile(const string& mo
 {
 	this->modelFileName = modelFileName;
 	model = ModelReader::read(
-		Tools::getPath(modelFileName),
+		Tools::getPathName(modelFileName),
 		Tools::getFileName(modelFileName)
 	);
 }

@@ -25,7 +25,7 @@ class tdme::math::Vector3 final
 	friend class Vector4;
 
 private:
-	array<float, 3> data {  };
+	array<float, 3> data;
 
 public:
 	/**

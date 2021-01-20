@@ -5,6 +5,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -14,7 +15,6 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 
@@ -78,12 +78,12 @@ protected:
 	const string getNodeType() override;
 	bool isContentNode() override;
 	void layoutSubNodes() override;
-	void setTop(int top) override;
-	void setLeft(int left) override;
+	void setTop(int32_t top) override;
+	void setLeft(int32_t left) override;
 
 public:
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 
 	/**
 	 * Create alignment

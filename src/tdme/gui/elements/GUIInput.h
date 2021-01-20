@@ -1,17 +1,17 @@
 #pragma once
 
-#include <string>
 #include <unordered_map>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
-#include <tdme/gui/elements/GUIElement.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/gui/elements/GUIElement.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
-using std::string;
 using std::unordered_map;
+using std::string;
 
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;

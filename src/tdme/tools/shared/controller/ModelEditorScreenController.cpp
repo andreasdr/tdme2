@@ -68,6 +68,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Vector3;
+using tdme::tools::modeleditor::TDMEModelEditor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -78,7 +79,6 @@ using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedModelEditorView;
-using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
@@ -167,7 +167,7 @@ FileDialogPath* ModelEditorScreenController::getAudioPath()
 void ModelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/modeleditor/gui", "screen_modeleditor.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_modeleditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
@@ -344,19 +344,19 @@ void ModelEditorScreenController::setRenderingShaders(const vector<string>& shad
 	}
 	try {
 		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingShader->getId() + "_inner")))->replaceSubNodes(
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 				renderingShader->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
 				renderingShadersDropDownSubNodesXML +
-				"</scrollarea-vertical>\n",
+				"</scrollarea>\n",
 			false
 		);
 		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingDistanceShader->getId() + "_inner")))->replaceSubNodes(
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 				renderingDistanceShader->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
 				renderingShadersDropDownSubNodesXML +
-				"</scrollarea-vertical>\n",
+				"</scrollarea>\n",
 			false
 		);
 	} catch (Exception& exception) {
@@ -536,7 +536,7 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 	if (entityLodLevel == nullptr) return;
 	auto extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
+		entityLodLevel->getFileName() != ""?Tools::getPathName(entityLodLevel->getFileName()):modelPath->getPath(),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(entityLodLevel->getFileName()),
@@ -566,7 +566,7 @@ void ModelEditorScreenController::onLODLevelApplySettings() {
 		entityLodLevel->setModel(
 			entityLodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
 				ModelReader::read(
-					Tools::getPath(entityLodLevel->getFileName()),
+					Tools::getPathName(entityLodLevel->getFileName()),
 					Tools::getFileName(entityLodLevel->getFileName())
 				):
 				nullptr
@@ -589,7 +589,7 @@ void ModelEditorScreenController::setMaterials(Prototype* entity) {
 		string materialsDropDownInnerNodeSubNodesXML = "";
 		materialsDropDownInnerNodeSubNodesXML =
 				materialsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			materialsDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		// materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
@@ -605,7 +605,7 @@ void ModelEditorScreenController::setMaterials(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -647,11 +647,11 @@ void ModelEditorScreenController::unsetMaterials() {
 		string materialsDropDownInnerNodeSubNodesXML = "";
 		materialsDropDownInnerNodeSubNodesXML =
 				materialsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			materialsDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" />";
-		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			materialsDropDownInnerNode->replaceSubNodes(materialsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -843,17 +843,17 @@ void ModelEditorScreenController::onMaterialApply() {
 		specularMaterialProperties->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
 		specularMaterialProperties->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseTexture(
-			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
-			Tools::getPath(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setNormalTexture(
-			Tools::getPath(materialsMaterialNormalTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialNormalTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialNormalTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setSpecularTexture(
-			Tools::getPath(materialsMaterialSpecularTexture->getController()->getValue().getString()),
+			Tools::getPathName(materialsMaterialSpecularTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue().getString())
 		);
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
@@ -862,18 +862,18 @@ void ModelEditorScreenController::onMaterialApply() {
 		if (pbrMaterialProperties != nullptr) {
 			pbrMaterialProperties->setBaseColorFactor(Tools::convertToColor4(materialsMaterialPBRBaseColorFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setBaseColorTexture(
-				Tools::getPath(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setMetallicFactor(Tools::convertToFloat(materialsMaterialPBRMetallicFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setRoughnessFactor(Tools::convertToFloat(materialsMaterialPBRRoughnessFactor->getController()->getValue().getString()));
 			pbrMaterialProperties->setMetallicRoughnessTexture(
-				Tools::getPath(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setNormalScale(Tools::convertToFloat(materialsMaterialPBRNormalScale->getController()->getValue().getString()));
 			pbrMaterialProperties->setNormalTexture(
-				Tools::getPath(materialsMaterialPBRNormalTexture->getController()->getValue().getString()),
+				Tools::getPathName(materialsMaterialPBRNormalTexture->getController()->getValue().getString()),
 				Tools::getFileName(materialsMaterialPBRNormalTexture->getController()->getValue().getString())
 			);
 			pbrMaterialProperties->setExposure(Tools::convertToFloat(materialsMaterialPBRExposure->getController()->getValue().getString()));
@@ -1263,7 +1263,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 		string animationsDropDownInnerNodeSubNodesXML = "";
 		animationsDropDownInnerNodeSubNodesXML =
 			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			animationsDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
@@ -1279,7 +1279,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1296,7 +1296,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 		string animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = "";
 		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
 			animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			animationsAnimationOverlayFromNodeIdDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"70\">\n";
 		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML =
@@ -1317,7 +1317,7 @@ void ModelEditorScreenController::setAnimations(Prototype* entity) {
 				" />\n";
 			idx++;
 		}
-		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML = animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsAnimationOverlayFromNodeIdDropDownInnerNode->replaceSubNodes(animationsAnimationOverlayFromNodeIdDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1485,7 +1485,7 @@ void ModelEditorScreenController::setPreview() {
 		string animationsDropDownInnerNodeSubNodesXML = "";
 		animationsDropDownInnerNodeSubNodesXML =
 			animationsDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			previewAnimationsBaseDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
@@ -1500,7 +1500,7 @@ void ModelEditorScreenController::setPreview() {
 				"\" " +
 				" />\n";
 		}
-		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsDropDownInnerNode->replaceSubNodes(animationsDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1528,11 +1528,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode1->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay1DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1541,11 +1541,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode2->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay2DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1554,11 +1554,11 @@ void ModelEditorScreenController::setPreview() {
 		}
 		try {
 			animationsDropDownInnerNode3->replaceSubNodes(
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				previewAnimationsOverlay3DropDown->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100\">\n" +
 				animationsDropDownInnerNodeSubNodesXML +
-				"</scrollarea-vertical>",
+				"</scrollarea>",
 				true
 			);
 		} catch (Exception& exception) {
@@ -1572,7 +1572,7 @@ void ModelEditorScreenController::setPreview() {
 		string animationsAttachment1BoneDropDownInnerNodeSubNodesXML = "";
 		animationsAttachment1BoneDropDownInnerNodeSubNodesXML =
 			animationsAttachment1BoneDropDownInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			previewAnimationsAttachment1BoneDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<No bone>\" value=\"\" selected=\"true\" />";
@@ -1586,7 +1586,7 @@ void ModelEditorScreenController::setPreview() {
 				"\" " +
 				" />\n";
 		}
-		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea-vertical>";
+		animationsAttachment1BoneDropDownInnerNodeSubNodesXML = animationsAttachment1BoneDropDownInnerNodeSubNodesXML + "</scrollarea>";
 		try {
 			animationsAttachment1BoneDropDownInnerNode->replaceSubNodes(animationsAttachment1BoneDropDownInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1627,7 +1627,7 @@ void ModelEditorScreenController::onPreviewAnimationsAttachment1ModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
+		previewAnimationsAttachment1ModelModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPathName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(previewAnimationsAttachment1ModelModel->getController()->getValue().getString()),

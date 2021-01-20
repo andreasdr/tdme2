@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -10,22 +11,21 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::string;
 using std::vector;
+using std::string;
 
+using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextNode;
 using tdme::gui::renderer::GUIFont;
-using tdme::gui::GUI;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
@@ -67,12 +67,12 @@ bool GUITextNode::isContentNode()
 	return true;
 }
 
-int GUITextNode::getContentWidth()
+int32_t GUITextNode::getContentWidth()
 {
 	return font != nullptr?font->getTextWidth(text) + border.left + border.right + padding.left + padding.right:0;
 }
 
-int GUITextNode::getContentHeight()
+int32_t GUITextNode::getContentHeight()
 {
 	return font != nullptr?font->getTextHeight(text) + border.top + border.bottom + padding.top + padding.bottom:0;
 }

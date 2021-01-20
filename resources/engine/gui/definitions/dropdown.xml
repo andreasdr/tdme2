@@ -1,0 +1,20 @@
+<element id="{$id}" width="{$width}" border="1" border-color="{$color.element_frame}" height="{$height}" background-color="{$color.element_midground}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layout id="{$id}_layout_vertical" alignment="vertical" vertical-align="center" horizontal-align="center" width="100%" height="auto">
+		<layout id="{$id}_layout_horizontal" width="100%" padding="5" alignment="horizontal">
+			<element id="{$id}_layout_horizontal_element" width="*" height="auto"> 
+				<text show-on="enabled" id="{$id}_text_enabled" width="100%" height="auto" font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+				<text show-on="disabled" id="{$id}_text_disabled" width="100%" height="auto" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+			</element>
+			<element show-on="enabled" id="{$id}_arrow" width="auto" height="100%" vertical-align="center">
+				<!-- Image needs transparency and white arrow so that I can do effects on it -->
+				<image effect-color-mul="{$color.font_highlight}" hide-on="opened,mouseover" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_normal}" hide-on="opened" src="resources/engine/images/arrow_down.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_highlight}" hide-on="closed,mouseover" src="resources/engine/images/arrow_up.png" vertical-align="center" />
+				<image effect-color-mul="{$color.font_normal}" hide-on="closed" src="resources/engine/images/arrow_up.png" vertical-align="center" />
+			</element>
+		</layout>
+		<layout id="{$id}_inner" padding="{$padding}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.focus}" width="100%" height="auto" alignment="vertical" show-on="opened" flow="floating" background-color="{$color.element_midground}">
+			{__InnerXML__}
+		</layout>
+	</layout>
+</element>

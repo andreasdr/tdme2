@@ -7,9 +7,9 @@
 
 using std::string;
 
+using tdme::utilities::Enum;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
-using tdme::utilities::Enum;
 
 /**
  * GUI parent node overflow enum

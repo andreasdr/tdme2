@@ -935,7 +935,7 @@ void Engine::computeTransformationsFunction(DecomposedEntities& decomposedEntite
 	}
 }
 
-inline void Engine::determineEntityType(Entity* entity, DecomposedEntities& decomposedEntities) {
+inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities) {
 	switch (entity->getEntityType()) {
 		case Entity::ENTITY_OBJECT3D:
 			{
@@ -1018,7 +1018,7 @@ inline void Engine::determineEntityType(Entity* entity, DecomposedEntities& deco
 	}
 }
 
-inline void Engine::determineEntityTypes(const vector<Entity*>& entities, DecomposedEntities& decomposedEntities) {
+inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, DecomposedEntities& decomposedEntities) {
 	// add visible entities to related lists by querying frustum
 	for (auto entity: entities) {
 		switch (entity->getEntityType()) {
@@ -1027,14 +1027,14 @@ inline void Engine::determineEntityTypes(const vector<Entity*>& entities, Decomp
 					auto org = static_cast<Object3DRenderGroup*>(entity);
 					decomposedEntities.objectRenderGroups.push_back(org);
 					auto subEntity = org->getEntity();
-					if (subEntity != nullptr) determineEntityType(subEntity, decomposedEntities);
+					if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
 				}
 				break;
 			case Entity::ENTITY_PARTICLESYSTEMGROUP:
 				{
 					auto psg = static_cast<ParticleSystemGroup*>(entity);
 					decomposedEntities.psgs.push_back(psg); \
-					for (auto ps: psg->getParticleSystems()) determineEntityType(ps, decomposedEntities);
+					for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities);
 				}
 				break;
 			case Entity::ENTITY_ENTITYHIERARCHY:
@@ -1050,24 +1050,24 @@ inline void Engine::determineEntityTypes(const vector<Entity*>& entities, Decomp
 									auto org = static_cast<Object3DRenderGroup*>(entityEh);
 									decomposedEntities.objectRenderGroups.push_back(org);
 									auto subEntity = org->getEntity();
-									if (subEntity != nullptr) determineEntityType(subEntity, decomposedEntities);
+									if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
 								}
 								break;
 							case Entity::ENTITY_PARTICLESYSTEMGROUP:
 								{
 									auto psg = static_cast<ParticleSystemGroup*>(entityEh);
 									decomposedEntities.psgs.push_back(psg);
-									for (auto ps: psg->getParticleSystems()) determineEntityType(ps, decomposedEntities);
+									for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities);
 								}
 								break;
 							default:
-								determineEntityType(entityEh, decomposedEntities);
+								decomposeEntityType(entityEh, decomposedEntities);
 						}
 					}
 				}
 				break;
 			default:
-				determineEntityType(entity, decomposedEntities);
+				decomposeEntityType(entity, decomposedEntities);
 		}
 	}
 }
@@ -1089,7 +1089,7 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 	}
 
 	// determine entity types and store them
-	determineEntityTypes(
+	decomposeEntityTypes(
 		partition->getVisibleEntities(frustum),
 		decomposedEntities
 	);
@@ -1106,7 +1106,7 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 	}
 
 	// determine additional entity types for objects without frustum culling
-	determineEntityTypes(
+	decomposeEntityTypes(
 		decomposedEntities.noFrustumCullingEntities,
 		decomposedEntities
 	);
@@ -1590,7 +1590,7 @@ Entity* Engine::getEntityByMousePosition(
 			DecomposedEntities decomposedEntitiesEH;
 			Node* object3DNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
-			determineEntityTypes(
+			decomposeEntityTypes(
 				entity->getEntities(),
 				decomposedEntitiesEH
 			);
@@ -1764,7 +1764,7 @@ Entity* Engine::doRayCasting(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
 			DecomposedEntities decomposedEntitiesEH;
-			determineEntityTypes(
+			decomposeEntityTypes(
 				entity->getEntities(),
 				decomposedEntitiesEH
 			);

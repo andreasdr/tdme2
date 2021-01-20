@@ -32,7 +32,7 @@ const string& GUIRadioButton::getName()
 
 const string GUIRadioButton::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"radiobutton.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"radiobutton.xml":fileName);
 }
 
 unordered_map<string, string> GUIRadioButton::getAttributes(GUIScreenNode* screenNode)

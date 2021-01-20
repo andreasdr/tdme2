@@ -25,7 +25,7 @@ class tdme::tests::SkinningTest final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
-	Engine* engine {  };
+	Engine* engine { nullptr };
 
 	bool keyLeft { false };
 	bool keyRight { false };

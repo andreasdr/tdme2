@@ -104,7 +104,7 @@ GUIScreenNode* EnvironmentMappingScreenController::getScreenNode()
 void EnvironmentMappingScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/sceneeditor/gui", "screen_environmentmapping.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_environmentmapping.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast<GUITextNode*>(screenNode->getNodeById("screen_caption"));

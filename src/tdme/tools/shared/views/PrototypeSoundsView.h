@@ -27,9 +27,9 @@ using tdme::tools::shared::views::PopUps;
 class tdme::tools::shared::views::PrototypeSoundsView final
 {
 private:
-	Engine* engine {  };
-	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController {  };
-	PopUps* popUps {  };
+	Engine* engine { nullptr };
+	PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController { nullptr };
+	PopUps* popUps { nullptr };
 
 public:
 	/**

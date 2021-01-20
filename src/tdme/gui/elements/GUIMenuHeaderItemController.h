@@ -10,15 +10,15 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::string;
 using std::vector;
+using std::string;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
@@ -40,6 +40,7 @@ private:
 	static string CONDITION_CLOSED;
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
+	GUIElementNode* menuHeaderNode { nullptr };
 	vector<GUINode*> childControllerNodes;
 	vector<GUIMenuItemController*> menuItemControllers;
 	bool open;
@@ -54,12 +55,7 @@ private:
 	GUIMenuHeaderItemController(GUINode* node);
 
 	/**
-	 * Initialize
-	 */
-	void init();
-
-	/**
-	 * @return drop down open state
+	 * @return menu open state
 	 */
 	bool isOpen();
 

@@ -6,6 +6,7 @@
 #include <ext/zlib/zlib.h>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -23,6 +24,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::application::Application;
+using tdme::engine::Version;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
@@ -383,8 +385,8 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 
 int main(int argc, char** argv)
 {
-	Console::println(string("create-installer 1.9.9"));
-	Console::println(string("Programmed 2019 by Andreas Drewke, drewke.net."));
+	Console::println(string("create-installer ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 
 	//

@@ -59,6 +59,8 @@
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/ProgressBarScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/shared/views/CameraInputHandler.h>
+#include <tdme/tools/shared/views/CameraInputHandlerEventHandler.h>
 #include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utilities/Character.h>
@@ -156,29 +158,11 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	snappingX = 1.0f;
 	snappingZ = 1.0f;
 	snappingEnabled = false;
-	camLookRotationX = new Rotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
-	camLookRotationY = new Rotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
-	camScaleMax = 15.0f;
-	camScaleMin = 0.05f;
+	cameraInputHandler = new CameraInputHandler(engine, this);
 	mouseDownLastX = SceneEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = SceneEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
-	mousePanningSide = SceneEditorView::MOUSE_PANNING_NONE;
-	mousePanningForward = SceneEditorView::MOUSE_PANNING_NONE;
-	mouseRotationX = SceneEditorView::MOUSE_ROTATION_NONE;
-	mouseRotationY = SceneEditorView::MOUSE_ROTATION_NONE;
 	reloadEntityLibrary = false;
 	selectedPrototype = nullptr;
-	keyLeft = false;
-	keyRight = false;
-	keyUp = false;
-	keyDown = false;
-	keyA = false;
-	keyD = false;
-	keyW = false;
-	keyS = false;
-	keyPlus = false;
-	keyMinus = false;
-	keyR = false;
 	keyControl = false;
 	keyEscape = false;
 	placeEntityMode = false;
@@ -199,9 +183,6 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 	entityColors["magenta"] = new SceneEditorView_EntityColor(this, 1.5f, 0.8f, 1.5f, 0.5f, 0.0f, 0.5f);
 	entityColors["cyan"] = new SceneEditorView_EntityColor(this, 0.8f, 1.5f, 1.5f, 0.0f, 0.5f, 0.5f);
 	entityColors["none"] = new SceneEditorView_EntityColor(this, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-	camScale = 1.0f;
-	camLookRotationX->update();
-	camLookRotationY->update();
 	levelEditorGround = createSceneEditorGroundPlateModel();
 	engine = Engine::getInstance();
 
@@ -251,11 +232,10 @@ SceneEditorView::SceneEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 		};
 		entityPickingFilterPlacing = new PrototypePickingFilterPlacing(this);
 	}
+	this->cameraInputHandler = new CameraInputHandler(engine, this);
 }
 
 SceneEditorView::~SceneEditorView() {
-	delete camLookRotationX;
-	delete camLookRotationY;
 	delete entityColors["red"];
 	delete entityColors["green"];
 	delete entityColors["blue"];
@@ -355,45 +335,84 @@ void SceneEditorView::handleInputEvents()
 	auto keyControlC = false;
 	auto keyControlV = false;
 	auto keyDelete = false;
-	mousePanningSide = MOUSE_PANNING_NONE;
-	mousePanningForward = MOUSE_PANNING_NONE;
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		#if defined(GLFW3) || defined(VUKAN)
-			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) keyShift = isKeyDown;
-			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
+			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) {
+				keyShift = isKeyDown;
+				event.setProcessed(true);
+			}
+			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) {
+				keyControl = isKeyDown;
+				event.setProcessed(true);
+			}
 		#else
 			keyControl = event.isControlDown();
 			keyShift = event.isShiftDown();
 		#endif
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) keyEscape = isKeyDown;
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT) keyLeft = isKeyDown;
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT) keyRight = isKeyDown;
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP) keyUp = isKeyDown;
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN) keyDown = isKeyDown;
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE) keyDelete = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 24) keyControlX = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 3) keyControlC = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 22) keyControlV = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) keyControlX = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) keyControlC = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) keyControlV = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'a') keyA = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'd') keyD = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'w') keyW = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 's') keyS = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == '+') keyPlus = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == '-') keyMinus = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'r') keyR = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == '.' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 1) % 4;
-		if (Character::toLowerCase(event.getKeyChar()) == ',' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 3) % 4;
-		if (Character::toLowerCase(event.getKeyChar()) == '1' && isKeyDown == true) { setGizmoType(GIZMOTYPE_ALL); updateGizmo(); }
-		if (Character::toLowerCase(event.getKeyChar()) == '2' && isKeyDown == true) { setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(); }
-		if (Character::toLowerCase(event.getKeyChar()) == '3' && isKeyDown == true) { setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(); }
-		if (Character::toLowerCase(event.getKeyChar()) == '4' && isKeyDown == true) { setGizmoType(GIZMOTYPE_SCALE); updateGizmo(); }
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
+			keyEscape = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE) {
+			keyDelete = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 24) {
+			keyControlX = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 3) {
+			keyControlC = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 22) {
+			keyControlV = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) {
+			keyControlX = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) {
+			keyControlC = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) {
+			keyControlV = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == '.' && !isKeyDown == false) {
+			placeEntityYRotation = (placeEntityYRotation + 1) % 4;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == ',' && !isKeyDown == false) {
+			placeEntityYRotation = (placeEntityYRotation + 3) % 4;
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == '1' && isKeyDown == true) {
+			setGizmoType(GIZMOTYPE_ALL);
+			updateGizmo();
+			event.setProcessed(true);
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == '2' && isKeyDown == true) {
+			setGizmoType(GIZMOTYPE_TRANSLATE);
+			event.setProcessed(true);
+			updateGizmo();
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == '3' && isKeyDown == true) {
+			setGizmoType(GIZMOTYPE_ROTATE);
+			event.setProcessed(true);
+			updateGizmo();
+		}
+		if (Character::toLowerCase(event.getKeyChar()) == '4' && isKeyDown == true) {
+			setGizmoType(GIZMOTYPE_SCALE);
+			event.setProcessed(true);
+			updateGizmo();
+		}
 	}
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
@@ -408,19 +427,23 @@ void SceneEditorView::handleInputEvents()
 
 		if (event.isProcessed() == true) continue;
 
-		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
-			if (mouseDragging == false) {
-				mouseDragging = true;
-				mouseDownLastX = event.getXUnscaled();
-				mouseDownLastY = event.getYUnscaled();
-				mouseDraggingLastEntity = nullptr;
-			}
-		} else {
-			if (mouseDragging == true) {
-				mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
-				mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
-				mouseDragging = false;
-				mouseDraggingLastEntity = nullptr;
+		if (event.getButton() == MOUSE_BUTTON_LEFT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				if (mouseDragging == false) {
+					mouseDragging = true;
+					mouseDownLastX = event.getXUnscaled();
+					mouseDownLastY = event.getYUnscaled();
+					mouseDraggingLastEntity = nullptr;
+					event.setProcessed(true);
+				}
+			} else {
+				if (mouseDragging == true) {
+					mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
+					mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
+					mouseDragging = false;
+					mouseDraggingLastEntity = nullptr;
+					event.setProcessed(true);
+				}
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
@@ -435,6 +458,7 @@ void SceneEditorView::handleInputEvents()
 				} else {
 					setGizmoMode(GIZMOMODE_NONE);
 				}
+				event.setProcessed(true);
 			} else {
 				Node* selectedEntityNode = nullptr;
 				Entity* selectedEntity = nullptr;
@@ -567,31 +591,12 @@ void SceneEditorView::handleInputEvents()
 					updateGizmo();
 					updateGUIElements();
 				}
-			}
-		} else
-		if (event.getButton() == MOUSE_BUTTON_RIGHT && mouseDragging == true) {
-			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mousePanningSide = event.getXUnscaled() - mouseDownLastX;
-				mousePanningForward = event.getYUnscaled() - mouseDownLastY;
-			}
-		} else
-		if (event.getButton() == MOUSE_BUTTON_MIDDLE) {
-			centerEntity();
-			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mouseRotationX = event.getXUnscaled() - mouseDownLastX;
-				mouseRotationY = event.getYUnscaled() - mouseDownLastY;
+				event.setProcessed(true);
 			}
 		}
 		if (event.getButton() != MOUSE_BUTTON_NONE) {
 			mouseDownLastX = event.getXUnscaled();
 			mouseDownLastY = event.getYUnscaled();
-		}
-		auto mouseWheel = event.getWheelY();
-		if (mouseWheel != 0) {
-			camScale += -mouseWheel * 0.1f;
-			if (camScale < camScaleMin) camScale = camScaleMin;
-			if (camScale > camScaleMax) camScale = camScaleMax;
-			needGizmoUpdate = true;
 		}
 	}
 	if (keyDelete == true) {
@@ -614,6 +619,8 @@ void SceneEditorView::handleInputEvents()
 		removeGizmo();
 		setPasteMode();
 	}
+	//
+	cameraInputHandler->handleInputEvents();
 }
 
 void SceneEditorView::display()
@@ -623,7 +630,6 @@ void SceneEditorView::display()
 		needGizmoUpdate = false;
 	}
 
-	auto cam = engine->getCamera();
 	if (reloadEntityLibrary == true) {
 		auto sceneLibrary = TDMESceneEditor::getInstance()->getSceneLibrary();
 		for (auto i = 0; i < sceneLibrary->getPrototypeCount(); i++) {
@@ -691,83 +697,7 @@ void SceneEditorView::display()
 		}
 	}
 
-	if (mouseRotationX != MOUSE_ROTATION_NONE) {
-		camLookRotationY->setAngle(camLookRotationY->getAngle() + mouseRotationX);
-		camLookRotationY->update();
-		mouseRotationX = 0;
-		needGizmoUpdate = true;
-	}
-	if (mouseRotationY != MOUSE_ROTATION_NONE) {
-		camLookRotationX->setAngle(camLookRotationX->getAngle() + mouseRotationY);
-		camLookRotationX->update();
-		mouseRotationY = 0;
-		needGizmoUpdate = true;
-	}
-	if (keyA == true) camLookRotationY->setAngle(camLookRotationY->getAngle() + 1.0f);
-	if (keyD == true) camLookRotationY->setAngle(camLookRotationY->getAngle() - 1.0f);
-	if (keyW == true) camLookRotationX->setAngle(camLookRotationX->getAngle() + 1.0f);
-	if (keyS == true) camLookRotationX->setAngle(camLookRotationX->getAngle() - 1.0f);
-	if (keyMinus == true || keyPlus == true) {
-		if (keyMinus == true) camScale += 0.05f;
-		if (keyPlus == true) camScale -= 0.05f;
-		if (camScale < camScaleMin) camScale = camScaleMin;
-		if (camScale > camScaleMax) camScale = camScaleMax;
-		needGizmoUpdate = true;
-	}
-
-	if (keyR == true) {
-		camLookRotationX->setAngle(-45.0f);
-		camLookRotationX->update();
-		camLookRotationY->setAngle(0.0f);
-		camLookRotationY->update();
-		cam->setLookAt(scene.getCenter());
-		camScale = 1.0f;
-		needGizmoUpdate = true;
-	}
-	if (keyA == true|| keyD == true) {
-		camLookRotationY->update();
-		needGizmoUpdate = true;
-	}
-
-	if (keyW == true || keyS == true) {
-		if (camLookRotationX->getAngle() > 89.99f) camLookRotationX->setAngle(89.99f);
-		if (camLookRotationX->getAngle() < -89.99f) camLookRotationX->setAngle(-89.99f);
-		camLookRotationX->update();
-		needGizmoUpdate = true;
-	}
-
-	Vector3 tmpVector3;
-	Vector3 FORWARD_VECTOR(0.0f, 0.0f, 1.0f);
-	Vector3 SIDE_VECTOR(1.0f, 0.0f, 0.0f);
-	Vector3 camLookAtToFromVector;
-	Vector3 camForwardVector;
-	Vector3 camSideVector;
-	camLookRotationX->getQuaternion().multiply(FORWARD_VECTOR, tmpVector3);
-	camLookRotationY->getQuaternion().multiply(tmpVector3, tmpVector3);
-	camLookAtToFromVector.set(tmpVector3).scale(camScale * 10.0f);
-	auto timing = engine->getTiming();
-	camLookRotationY->getQuaternion().multiply(FORWARD_VECTOR, camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
-	camLookRotationY->getQuaternion().multiply(SIDE_VECTOR, camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
-
-	auto camLookAt = cam->getLookAt();
-	if (keyUp == true) camLookAt.sub(tmpVector3.set(camForwardVector).scale(0.1f));
-	if (keyDown == true) camLookAt.add(tmpVector3.set(camForwardVector).scale(0.1f));
-	if (keyLeft == true) camLookAt.sub(tmpVector3.set(camSideVector).scale(0.1f));
-	if (keyRight == true) camLookAt.add(tmpVector3.set(camSideVector).scale(0.1f));
-	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		camLookAt.sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
-		mousePanningForward = MOUSE_PANNING_NONE;
-		needGizmoUpdate = true;
-	}
-	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		camLookAt.sub(tmpVector3.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
-		mousePanningSide = MOUSE_PANNING_NONE;
-		needGizmoUpdate = true;
-	}
-	cam->setLookAt(camLookAt);
-	cam->setLookFrom(cam->getLookAt().clone().add(camLookAtToFromVector));
-	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
-	gridCenter.set(cam->getLookAt());
+	//
 	updateGrid();
 
 	// viewport
@@ -938,6 +868,7 @@ void SceneEditorView::initialize()
 	sceneEditorScreenController->setEntityPresetIds(ScenePropertyPresets::getInstance()->getEntityPropertiesPresets());
 	sceneEditorScreenController->setLightPresetsIds(ScenePropertyPresets::getInstance()->getLightPresets());
 	updateGUIElements();
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
@@ -970,6 +901,7 @@ void SceneEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->setPrototypeLibrary();
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
@@ -1129,7 +1061,7 @@ Model* SceneEditorView::createSceneEditorGroundPlateModel()
 			0.75f
 		)
 	);
-	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
 	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
 	auto groundNode = new Node(groundPlate, nullptr, "ground", "ground");
@@ -1240,6 +1172,7 @@ void SceneEditorView::placeEntity()
 	}
 	sceneEditorScreenController->setEntityListbox(scene);
 	scene.update();
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 	updateGUIElements();
 }
 
@@ -1263,6 +1196,7 @@ void SceneEditorView::removeEntities()
 		}
 	}
 	scene.update();
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 	sceneEditorScreenController->setEntityListbox(scene);
 	updateGUIElements();
 }
@@ -1357,6 +1291,7 @@ void SceneEditorView::entityTranslationApply(float x, float y, float z)
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	scene.update();
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
@@ -1390,6 +1325,7 @@ void SceneEditorView::entityScaleApply(float x, float y, float z)
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	scene.update();
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
@@ -1427,6 +1363,7 @@ void SceneEditorView::entityRotationsApply(float x, float y, float z)
 		sceneEditorScreenController->setEntityTransformations(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f, false);
 	}
 	scene.update();
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 	updateGizmo();
 	updateGUIElements();
 }
@@ -1580,12 +1517,9 @@ void SceneEditorView::loadScene(const string& path, const string& file)
 		sceneEditorScreenController->unsetEntityProperties();
 		sceneEditorScreenController->unsetEntityTransformations();
 		loadScene();
+		cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
 		engine->getCamera()->setLookAt(scene.getCenter());
-		camLookRotationX->setAngle(-45.0f);
-		camLookRotationX->update();
-		camLookRotationY->setAngle(0.0f);
-		camLookRotationY->update();
-		camScale = 1.0f;
+		cameraInputHandler->reset();
 		gridCenter.set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
@@ -1826,4 +1760,16 @@ void SceneEditorView::updateGizmo() {
 
 	//
 	Gizmo::updateGizmo(gizmoCenter, transformations);
+}
+
+void SceneEditorView::onCameraTranslation() {
+	needGizmoUpdate = true;
+}
+
+void SceneEditorView::onCameraRotation() {
+	needGizmoUpdate = true;
+}
+
+void SceneEditorView::onCameraScale() {
+	needGizmoUpdate = true;
 }

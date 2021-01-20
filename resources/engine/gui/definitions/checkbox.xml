@@ -1,0 +1,48 @@
+<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+
+	<!-- unchecked -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked,mouseover" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+	</layout>
+	<!-- unchecked, mouse over -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	</layout>
+	<!-- unchecked, disabled -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/checkbox_unchecked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+	</layout>
+
+	
+	<!-- checked -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked,mouseover" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+	</layout>
+	<!-- checked, mouse over -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	</layout>
+	<!-- checked, disabled -->
+	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/checkbox_checked.png" />
+		</layout>
+		<text font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+	</layout>
+
+</element>

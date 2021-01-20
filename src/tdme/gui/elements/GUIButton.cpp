@@ -32,7 +32,7 @@ const string& GUIButton::getName()
 
 const string GUIButton::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"button.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"button.xml":fileName);
 }
 
 unordered_map<string, string> GUIButton::getAttributes(GUIScreenNode* screenNode)

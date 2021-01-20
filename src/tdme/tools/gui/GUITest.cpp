@@ -6,6 +6,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/events/Action.h>
@@ -38,6 +39,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::model::Color4;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::events::Action;
@@ -177,8 +179,8 @@ void GUITest::display()
 
 void GUITest::main(int argc, char** argv)
 {
-	Console::println(string("GUITest 1.9.9"));
-	Console::println(string("Programmed 2017-2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("GUITest ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc > 2) {
 		Console::println("Usage: GUITest [screen.xml]");

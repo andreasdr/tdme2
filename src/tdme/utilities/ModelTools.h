@@ -53,7 +53,7 @@ public:
 	 * @param normal face normal
 	 * @return computed face normal
 	 */
-	static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal) {
+	inline static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal) {
 		// face normal
 		Vector3::computeCrossProduct(
 			(vertices)[1].clone().sub((vertices)[0]),

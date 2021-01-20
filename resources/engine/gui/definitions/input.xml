@@ -1,0 +1,4 @@
+<element id="{$id}" width="{$width}" height="{$height}" padding="5" border="1" border-color="{$color.element_frame}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" background-color="{$color.element_midground}">
+	<text show-on="hint" id="{$id}_text-hint" width="100%" height="100%" font="{$font.default}" text="{$hint}" color="{$color.font_hint}" horizontal-align="left" vertical-align="center" />
+	<input-internal id="{$id}_text-input" width="100%" height="auto" font="{$font.default}" color="{$color.font_normal}" color-disabled="{$color.font_disabled}" text="{$text}" maxlength="{$maxlength}"/>
+</element>

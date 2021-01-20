@@ -3,13 +3,13 @@
 #include <array>
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
@@ -18,13 +18,13 @@
 using std::array;
 using std::to_string;
 
+using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
@@ -47,7 +47,7 @@ void GUISliderVController::setDisabled(bool disabled) {
 
 void GUISliderVController::initialize() {
 	sliderNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_slider");
-	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+	setValue(MutableString(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 
 	//
 	GUIElementController::initialize();
@@ -66,14 +66,14 @@ void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	array<float, 2> nodeMousePosition;
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		this->node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(this->node));
+		this->node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(this->node));
 		event->setProcessed(true);
 	} else
-	if (node == this->node && node->isEventBelongingToNode(event, nodeMousePosition) == true &&
-		(event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true ||
-		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true) &&
-		event->getButton() == MOUSE_BUTTON_LEFT) {
+	if (event->getButton() == MOUSE_BUTTON_LEFT &&
+		((node == this->node && event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true && node->isEventBelongingToNode(event) == true) ||
+		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true)) {
 		event->setProcessed(true);
+		node->getEventNodePosition(event, nodeMousePosition);
 		auto sliderPosition = Math::clamp(
 			static_cast<int>(nodeMousePosition[1]) - sliderNode->getContentHeight() / 2 - this->node->getPadding().top,
 			0,
@@ -81,7 +81,7 @@ void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		);
 		valueFloat = 1.0f - static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight());
 		updateSlider();
-		node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+		node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 	}
 }
 
@@ -94,7 +94,7 @@ void GUISliderVController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
 						updateSlider();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 					}
 				}
 				break;
@@ -103,7 +103,7 @@ void GUISliderVController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
 						updateSlider();
-						node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
+						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 					}
 				}
 				break;

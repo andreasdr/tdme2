@@ -13,31 +13,31 @@ class tdme::gui::events::GUIKeyboardEvent final
 {
 public:
 
-	static constexpr int KEYCODE_TAB { KEYBOARD_KEYCODE_TAB };
-	static constexpr int KEYCODE_TAB_SHIFT { KEYBOARD_KEYCODE_TAB_SHIFT };
-	static constexpr int KEYCODE_BACKSPACE { KEYBOARD_KEYCODE_BACKSPACE };
-	static constexpr int KEYCODE_RETURN { KEYBOARD_KEYCODE_RETURN };
-	static constexpr int KEYCODE_DELETE { KEYBOARD_KEYCODE_DELETE };
-	static constexpr int KEYCODE_SPACE { KEYBOARD_KEYCODE_SPACE };
-	static constexpr int KEYCODE_LEFT { KEYBOARD_KEYCODE_LEFT };
-	static constexpr int KEYCODE_UP { KEYBOARD_KEYCODE_UP };
-	static constexpr int KEYCODE_RIGHT { KEYBOARD_KEYCODE_RIGHT };
-	static constexpr int KEYCODE_DOWN { KEYBOARD_KEYCODE_DOWN };
-	static constexpr int KEYCODE_POS1 { KEYBOARD_KEYCODE_POS1 };
-	static constexpr int KEYCODE_END { KEYBOARD_KEYCODE_END };
-	static constexpr int KEYCODE_ESCAPE { KEYBOARD_KEYCODE_ESCAPE };
-	static constexpr int KEYCODE_F1 { KEYBOARD_KEYCODE_F1 };
-	static constexpr int KEYCODE_F2 { KEYBOARD_KEYCODE_F2 };
-	static constexpr int KEYCODE_F3 { KEYBOARD_KEYCODE_F3 };
-	static constexpr int KEYCODE_F4 { KEYBOARD_KEYCODE_F4 };
-	static constexpr int KEYCODE_F5 { KEYBOARD_KEYCODE_F5 };
-	static constexpr int KEYCODE_F6 { KEYBOARD_KEYCODE_F6 };
-	static constexpr int KEYCODE_F7 { KEYBOARD_KEYCODE_F7 };
-	static constexpr int KEYCODE_F8 { KEYBOARD_KEYCODE_F8 };
-	static constexpr int KEYCODE_F9 { KEYBOARD_KEYCODE_F9 };
-	static constexpr int KEYCODE_F10 { KEYBOARD_KEYCODE_F10 };
-	static constexpr int KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
-	static constexpr int KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
+	static constexpr int32_t KEYCODE_TAB { KEYBOARD_KEYCODE_TAB };
+	static constexpr int32_t KEYCODE_TAB_SHIFT { KEYBOARD_KEYCODE_TAB_SHIFT };
+	static constexpr int32_t KEYCODE_BACKSPACE { KEYBOARD_KEYCODE_BACKSPACE };
+	static constexpr int32_t KEYCODE_RETURN { KEYBOARD_KEYCODE_RETURN };
+	static constexpr int32_t KEYCODE_DELETE { KEYBOARD_KEYCODE_DELETE };
+	static constexpr int32_t KEYCODE_SPACE { KEYBOARD_KEYCODE_SPACE };
+	static constexpr int32_t KEYCODE_LEFT { KEYBOARD_KEYCODE_LEFT };
+	static constexpr int32_t KEYCODE_UP { KEYBOARD_KEYCODE_UP };
+	static constexpr int32_t KEYCODE_RIGHT { KEYBOARD_KEYCODE_RIGHT };
+	static constexpr int32_t KEYCODE_DOWN { KEYBOARD_KEYCODE_DOWN };
+	static constexpr int32_t KEYCODE_POS1 { KEYBOARD_KEYCODE_POS1 };
+	static constexpr int32_t KEYCODE_END { KEYBOARD_KEYCODE_END };
+	static constexpr int32_t KEYCODE_ESCAPE { KEYBOARD_KEYCODE_ESCAPE };
+	static constexpr int32_t KEYCODE_F1 { KEYBOARD_KEYCODE_F1 };
+	static constexpr int32_t KEYCODE_F2 { KEYBOARD_KEYCODE_F2 };
+	static constexpr int32_t KEYCODE_F3 { KEYBOARD_KEYCODE_F3 };
+	static constexpr int32_t KEYCODE_F4 { KEYBOARD_KEYCODE_F4 };
+	static constexpr int32_t KEYCODE_F5 { KEYBOARD_KEYCODE_F5 };
+	static constexpr int32_t KEYCODE_F6 { KEYBOARD_KEYCODE_F6 };
+	static constexpr int32_t KEYCODE_F7 { KEYBOARD_KEYCODE_F7 };
+	static constexpr int32_t KEYCODE_F8 { KEYBOARD_KEYCODE_F8 };
+	static constexpr int32_t KEYCODE_F9 { KEYBOARD_KEYCODE_F9 };
+	static constexpr int32_t KEYCODE_F10 { KEYBOARD_KEYCODE_F10 };
+	static constexpr int32_t KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
+	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
 	enum GUIKeyboardEventType {
 		KEYBOARDEVENT_NONE,
@@ -49,7 +49,7 @@ public:
 private:
 	int64_t time;
 	GUIKeyboardEventType type { KEYBOARDEVENT_NONE };
-	int keyCode;
+	int32_t keyCode;
 	char keyChar;
 	bool metaDown;
 	bool controlDown;
@@ -68,7 +68,7 @@ public:
 	 * Get key code from char
 	 * @param key key char
 	 */
-	static int getKeyCodeFromChar(char key);
+	static int32_t getKeyCodeFromChar(char key);
 
 	/**
 	 * @return time in milliseconds
@@ -103,7 +103,7 @@ public:
 	/**
 	 * @return key code
 	 */
-	inline int getKeyCode() {
+	inline int32_t getKeyCode() {
 		return keyCode;
 	}
 
@@ -111,7 +111,7 @@ public:
 	 * Set key code
 	 * @param code code
 	 */
-	inline void setKeyCode(int code) {
+	inline void setKeyCode(int32_t code) {
 		this->keyCode = code;
 	}
 

@@ -1,0 +1,156 @@
+<screen id="screen_terraineditor" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" width="100%" height="100%">
+		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
+			<text id="screen_caption" font="resources/engine/fonts/Roboto_20.fnt" text="Empty Editor" width="100%" horizontal-align="center" height="auto" />
+		</panel>
+		<element id="viewport" width="100%" height="*" border="1" border-color="#000000" focusable="true" ignore-events="true" />
+		<panel width="100%" height="200">
+			<tabs alignment="vertical" width="100%" height="100%">
+				<tabs-header>
+					<tab id="tab_properties_terrain" text="Terrain" />
+					<tab id="tab_properties_entity_properties" text="Properties" />
+					<tab id="tab_properties_dimension" text="Dimension" />
+					<tab id="tab_properties_brush" text="Brush" />
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="tab_properties_terrain" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Name" width="200" height="auto"/>
+								<space width="5" />
+								<input id="entity_name" name="entity_name" width="200" height="auto" text="Name" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Description" width="200" height="auto"/>
+								<space width="5" />
+								<input id="entity_description" name="entity_description" width="200" height="auto" text="Description" />
+							</layout>
+							<space height="20" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_entity_apply" name="button_entity_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_entity_properties" vertical-align="center">
+						<layout width="auto" height="auto" alignment="horizontal">
+							<layout width="auto" height="auto" alignment="vertical">
+								<layout width="auto" height="auto" alignment="horizontal">
+									<dropdown id="entity_properties_presets" name="entity_properties_presets" width="510" height="auto" text="Test">
+										<dropdown-option text="Test 1" value="1" />										
+									</dropdown>
+									<space width="10" />
+									<button id="button_entity_properties_presetapply" name="button_entity_properties_presetapply" text="Apply" width="80" />
+								</layout>
+								<space height="10" />
+								<selectbox id="entity_properties_listbox" name="entity_properties_listbox" height="70">
+								</selectbox>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Name" width="45" height="auto"/>
+									<space width="*" />
+									<input id="entity_property_name" name="entity_property_name" width="240" height="auto" text="Name" />
+									<space width="*" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Value" width="45" height="auto"/>
+									<space width="*" />
+									<input id="entity_property_value" name="entity_property_value" width="240" height="auto" text="Value" />
+								</layout>
+							</layout>
+							<space width="20" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="button_entity_properties_add" name="button_entity_properties_add" text="Add" width="80" />
+								<space height="5" />
+								<button id="button_entity_properties_remove" name="button_entity_properties_remove" text="Remove" width="80" />
+								<space height="5" />
+								<button id="button_entity_properties_save" name="button_entity_properties_save" text="Save" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_dimension" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Width" width="200" height="auto"/>
+								<space width="5" />
+								<input id="terrain_dimension_width" name="terrain_dimension_width" width="200" height="auto" text="Width" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Depth" width="200" height="auto"/>
+								<space width="5" />
+								<input id="terrain_dimension_depth" name="terrain_dimension_depth" width="200" height="auto" text="Depth" />
+							</layout>
+							<space height="20" />
+							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+								<button id="button_terrain_dimension_apply" name="button_terrain_dimension_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_brush" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Operation" width="145" height="auto"/>
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_add" name="brush_operation" value="add" width="20" height="auto" selected="true" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Add" width="70" height="auto"/>
+								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_subtract" name="brush_operation" value="subtract" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Subtract" width="70" height="auto"/>
+								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_flatten" name="brush_operation" value="flatten" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Flatten" width="70" height="auto"/>
+								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_delete" name="brush_operation" value="delete" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Delete" width="70" height="auto"/>
+								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_smooth" name="brush_operation" value="smooth" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Smooth" width="70" height="auto"/>
+								</layout>
+							</layout>
+							<space height="10" />
+							<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center">
+								<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="brush_scale" name="brush_scale" width="*" height="auto" text="1.0" />
+								</layout>
+								<space width="10" />
+								<layout width="295" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Strength" width="140" height="auto" horizontal-align="left" />
+									<space width="5" />
+									<input id="brush_strength" name="brush_strength" width="*" height="auto" text="1.0" />
+								</layout>
+							</layout>
+							<space height="10" />
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="brush_file" name="brush_file" width="*" height="auto" text="./resources/engine/textures/terrain_brush_soft.png" />
+								<space width="10" />
+								<button id="brush_file_load" name="brush_file_load" text="Load" width="60" height="auto" />
+								<space width="10" />
+								<button id="brush_file_clear" name="brush_file_clear" text="Clear" width="60" height="auto" />
+							</layout>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+								<button id="button_brush_apply" name="button_brush_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</panel>
+	</layout>
+</screen>

@@ -13,7 +13,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -21,6 +20,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Primitives.h>
 
 using std::string;
 using std::to_string;
@@ -37,7 +37,6 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -45,6 +44,7 @@ using tdme::engine::Object3D;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Primitives;
 
 constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
 
@@ -122,9 +122,9 @@ void PhysicsTest2::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(30.0f, 1.0f, 30.0f)));
-	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
@@ -132,9 +132,9 @@ void PhysicsTest2::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f)));
-	auto boxModel = modelDeleter.add(PrimitiveModel::createModel(box, "box_model"));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setContributesShadows(true);

@@ -84,6 +84,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::tools::modeleditor::TDMEModelEditor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -95,7 +96,6 @@ using tdme::tools::shared::controller::PrototypeSoundsSubScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::SharedParticleSystemView;
-using tdme::tools::viewer::TDMEModelEditor;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
@@ -189,7 +189,7 @@ FileDialogPath* ParticleSystemScreenController::getModelPath()
 void ParticleSystemScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/particlesystem/gui", "screen_particlesystem.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_particlesystem.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
@@ -337,7 +337,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>
 	string particleSystemTypesInnerNodeSubNodesXML = "";
 	particleSystemTypesInnerNodeSubNodesXML =
 		particleSystemTypesInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		particleSystemTypes->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystem: particleSystemTypesCollection) {
@@ -354,7 +354,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>
 	}
 	particleSystemTypesInnerNodeSubNodesXML =
 		particleSystemTypesInnerNodeSubNodesXML +
-		"</scrollarea-vertical>";
+		"</scrollarea>";
 	try {
 		particleSystemTypesInnerNode->replaceSubNodes(particleSystemTypesInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -370,7 +370,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<stri
 	string particleSystemEmittersInnerNodeSubNodesXML = "";
 	particleSystemEmittersInnerNodeSubNodesXML =
 		particleSystemEmittersInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		particleSystemEmitters->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto particleSystemEmitter: emittersCollection) {
@@ -387,7 +387,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<stri
 	}
 	particleSystemEmittersInnerNodeSubNodesXML =
 		particleSystemEmittersInnerNodeSubNodesXML +
-		"</scrollarea-vertical>";
+		"</scrollarea>";
 	try {
 		particleSystemEmittersInnerNode->replaceSubNodes(particleSystemEmittersInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -909,7 +909,7 @@ void ParticleSystemScreenController::setParticleSystemListBox(int count, int sel
 	string particleSystemListBoxInnerNodeSubNodesXML = "";
 	particleSystemListBoxInnerNodeSubNodesXML =
 		particleSystemListBoxInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		particleSystemsListbox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < count; i++) {
@@ -926,7 +926,7 @@ void ParticleSystemScreenController::setParticleSystemListBox(int count, int sel
 	}
 	particleSystemListBoxInnerNodeSubNodesXML =
 		particleSystemListBoxInnerNodeSubNodesXML +
-		"</scrollarea-vertical>";
+		"</scrollarea>";
 	try {
 		particleSystemListBoxInnerNode->replaceSubNodes(particleSystemListBoxInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {

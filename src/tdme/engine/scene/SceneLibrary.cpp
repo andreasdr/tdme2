@@ -7,7 +7,6 @@
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -16,6 +15,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
@@ -28,7 +28,6 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -36,6 +35,7 @@ using tdme::engine::scene::Scene;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
 constexpr int SceneLibrary::ID_ALLOCATE;
@@ -164,6 +164,23 @@ Prototype* SceneLibrary::addParticleSystem(int id, const string& name, const str
 	auto prototype = new Prototype(
 		id == ID_ALLOCATE?allocatePrototypeId():id,
 		Prototype_Type::PARTICLESYSTEM,
+		name,
+		description,
+		"",
+		"",
+		"",
+		nullptr,
+		Vector3()
+	);
+	addPrototype(prototype);
+	return prototype;
+}
+
+Prototype* SceneLibrary::addTerrain(int id, const string& name, const string& description)
+{
+	auto prototype = new Prototype(
+		id == ID_ALLOCATE?allocatePrototypeId():id,
+		Prototype_Type::TERRAIN,
 		name,
 		description,
 		"",

@@ -23,7 +23,7 @@ using tdme::math::Vector4;
 class tdme::math::Matrix4x4 final
 {
 private:
-	array<float, 16> data {  };
+	array<float, 16> data;
 
 public:
 	/**

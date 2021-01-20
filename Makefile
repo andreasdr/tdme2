@@ -287,6 +287,10 @@ SRCS = \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
 	src/tdme/engine/fileio/models/WFObjWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
+	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
+	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
+	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
@@ -314,14 +318,9 @@ SRCS = \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
 	src/tdme/engine/primitives/LineSegment.cpp \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
-	src/tdme/engine/primitives/PrimitiveModel.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
-	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
-	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
-	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
@@ -453,24 +452,15 @@ SRCS = \
 	src/tdme/gui/elements/GUIMenuHeaderItemController.cpp \
 	src/tdme/gui/elements/GUIMenuItem.cpp \
 	src/tdme/gui/elements/GUIMenuItemController.cpp \
+	src/tdme/gui/elements/GUIMenuSeparator.cpp \
 	src/tdme/gui/elements/GUIProgressBar.cpp \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \
 	src/tdme/gui/elements/GUIRadioButtonController.cpp \
 	src/tdme/gui/elements/GUIScrollArea.cpp \
 	src/tdme/gui/elements/GUIScrollAreaController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaHorizontal.cpp \
-	src/tdme/gui/elements/GUIScrollAreaHorizontalController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaVertical.cpp \
-	src/tdme/gui/elements/GUIScrollAreaVerticalController.cpp \
 	src/tdme/gui/elements/GUISelectBox.cpp \
 	src/tdme/gui/elements/GUISelectBoxController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultiple.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleOption.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleOptionController.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleParentOption.cpp \
-	src/tdme/gui/elements/GUISelectBoxMultipleParentOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxOption.cpp \
 	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
 	src/tdme/gui/elements/GUISelectBoxParentOption.cpp \
@@ -583,6 +573,7 @@ SRCS = \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/installer/Installer.cpp \
+	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/sceneeditor/TDMESceneEditor.cpp \
 	src/tdme/tools/sceneeditor/controller/EmptyScreenController.cpp \
@@ -596,6 +587,7 @@ SRCS = \
 	src/tdme/tools/sceneeditor/views/ParticleSystemView.cpp \
 	src/tdme/tools/sceneeditor/views/SceneEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/SceneEditorView_EntityColor.cpp \
+	src/tdme/tools/sceneeditor/views/TerrainEditorView.cpp \
 	src/tdme/tools/sceneeditor/views/TriggerView.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
@@ -609,7 +601,9 @@ SRCS = \
 	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_BoundingVolumeType.cpp \
 	src/tdme/tools/shared/controller/PrototypePhysicsSubScreenController_GenerateConvexMeshes.cpp \
 	src/tdme/tools/shared/controller/PrototypeSoundsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/TerrainEditorScreenController.cpp \
 	src/tdme/tools/shared/tools/Tools.cpp \
+	src/tdme/tools/shared/views/CameraInputHandler.cpp \
 	src/tdme/tools/shared/views/CameraRotationInputHandler.cpp \
 	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
@@ -619,9 +613,12 @@ SRCS = \
 	src/tdme/tools/shared/views/PrototypeSoundsView.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
-	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
+	src/tdme/tools/shared/views/SharedTerrainEditorView.cpp \
+	src/tdme/tools/terraineditor/TDMETerrainEditor.cpp \
 	src/tdme/utilities/Base64EncDec.cpp \
 	src/tdme/utilities/Character.cpp \
+	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
 	src/tdme/utilities/HashLink.cpp \
@@ -631,13 +628,13 @@ SRCS = \
 	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
+	src/tdme/utilities/Primitives.cpp \
 	src/tdme/utilities/Properties.cpp \
 	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
-	src/tdme/utilities/ExceptionBase.cpp \
-	src/tdme/utilities/Console.cpp \
+	src/tdme/utilities/Terrain.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \
@@ -878,6 +875,7 @@ MAIN_SRCS = \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/sceneeditor/TDMESceneEditor-main.cpp \
+	src/tdme/tools/terraineditor/TDMETerrainEditor-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \

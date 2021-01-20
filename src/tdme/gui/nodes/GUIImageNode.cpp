@@ -1,35 +1,35 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/Engine.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
-#include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using tdme::gui::nodes::GUIImageNode;
 
+using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::Engine;
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
-using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
 
 GUIImageNode::GUIImageNode(
@@ -77,7 +77,7 @@ bool GUIImageNode::isContentNode()
 	return true;
 }
 
-int GUIImageNode::getContentWidth()
+int32_t GUIImageNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return texture != nullptr?texture->getWidth() + border.left + border.right + padding.left + padding.right:0;
@@ -86,7 +86,7 @@ int GUIImageNode::getContentWidth()
 	}
 }
 
-int GUIImageNode::getContentHeight()
+int32_t GUIImageNode::getContentHeight()
 {
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return texture != nullptr?texture->getHeight() + border.top + border.bottom + padding.top + padding.bottom:0;

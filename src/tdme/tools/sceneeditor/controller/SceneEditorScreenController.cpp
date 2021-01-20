@@ -103,7 +103,7 @@ FileDialogPath* SceneEditorScreenController::getMapPath()
 void SceneEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/engine/tools/sceneeditor/gui", "screen_sceneeditor.xml");
+		screenNode = GUIParser::parse("resources/engine/gui", "screen_sceneeditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
@@ -274,14 +274,14 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 	string entitiesListBoxSubNodesXML = "";
 	entitiesListBoxSubNodesXML =
 		entitiesListBoxSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		entitiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto entityIdx = 0;
 	for (int i = 0; i < scene.getEntityCount(); i++) {
 		if (entityIdx > 25000) {
 			entitiesListBoxSubNodesXML =
-				"<scrollarea-vertical id=\"" +
+				"<scrollarea id=\"" +
 				entitiesListBox->getId() +
 				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 			break;
@@ -291,7 +291,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 		auto entityId = entity->getId();
 		entitiesListBoxSubNodesXML =
 			entitiesListBoxSubNodesXML +
-			"<selectbox-multiple-option text=\"" +
+			"<selectbox-option text=\"" +
 			GUIParser::escapeQuotes(entityId) +
 			"\" value=\"" +
 			GUIParser::escapeQuotes(entityId) +
@@ -301,7 +301,7 @@ void SceneEditorScreenController::setEntityListbox(Scene& scene)
 	}
 	entitiesListBoxSubNodesXML =
 		entitiesListBoxSubNodesXML +
-		"</scrollarea-vertical>\n";
+		"</scrollarea>\n";
 	try {
 		entitiesListBoxInnerNode->replaceSubNodes(entitiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
@@ -437,7 +437,7 @@ void SceneEditorScreenController::setSceneProperties(Scene& scene, const string&
 	string mapPropertiesListBoxSubNodesXML = "";
 	mapPropertiesListBoxSubNodesXML =
 		mapPropertiesListBoxSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		scenePropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < scene.getPropertyCount(); i++) {
@@ -456,7 +456,7 @@ void SceneEditorScreenController::setSceneProperties(Scene& scene, const string&
 	}
 	mapPropertiesListBoxSubNodesXML =
 		mapPropertiesListBoxSubNodesXML +
-		"</scrollarea-vertical>\n";
+		"</scrollarea>\n";
 	try {
 		mapPropertiesListBoxInnerNode->replaceSubNodes(mapPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
@@ -497,7 +497,7 @@ void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<Pr
 	string entityPropertiesPresetsInnerNodeSubNodesXML = "";
 	entityPropertiesPresetsInnerNodeSubNodesXML =
 		entityPropertiesPresetsInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		entityPropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: entityPresetIds) {
@@ -515,7 +515,7 @@ void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<Pr
 	}
 	entityPropertiesPresetsInnerNodeSubNodesXML =
 		entityPropertiesPresetsInnerNodeSubNodesXML +
-		"</scrollarea-vertical>\n";
+		"</scrollarea>\n";
 	try {
 		entitityPropertiesPresetsInnerNode->replaceSubNodes(entityPropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -563,7 +563,7 @@ void SceneEditorScreenController::setEntityProperties(const string& presetId, Sc
 	string entityPropertiesListBoxSubNodesXML = "";
 	entityPropertiesListBoxSubNodesXML =
 		entityPropertiesListBoxSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		entityPropertiesListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
@@ -582,7 +582,7 @@ void SceneEditorScreenController::setEntityProperties(const string& presetId, Sc
 	}
 	entityPropertiesListBoxSubNodesXML =
 		entityPropertiesListBoxSubNodesXML +
-		"</scrollarea-vertical>\n";
+		"</scrollarea>\n";
 	try {
 		entityPropertiesListBoxInnerNode->replaceSubNodes(entityPropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {
@@ -799,7 +799,7 @@ void SceneEditorScreenController::setLightPresetsIds(const map<string, SceneLigh
 		string lightPresetsInnerNodeSubNodesXML = "";
 		lightPresetsInnerNodeSubNodesXML =
 			lightPresetsInnerNodeSubNodesXML +
-			"<scrollarea-vertical id=\"" +
+			"<scrollarea id=\"" +
 			lightsPresets[i]->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 		for (auto it: lightPresetIds) {
@@ -817,7 +817,7 @@ void SceneEditorScreenController::setLightPresetsIds(const map<string, SceneLigh
 		}
 		lightPresetsInnerNodeSubNodesXML =
 			lightPresetsInnerNodeSubNodesXML +
-			"</scrollarea-vertical>\n";
+			"</scrollarea>\n";
 		try {
 			lightPresetsInnerNode->replaceSubNodes(lightPresetsInnerNodeSubNodesXML, true);
 		} catch (Exception& exception) {
@@ -1024,7 +1024,7 @@ void SceneEditorScreenController::onMapSkyModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
+		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(sceneSkyModel->getController()->getValue().getString()),
@@ -1055,7 +1055,7 @@ void SceneEditorScreenController::onMapSkyApply() {
 			sceneSkyModel->getController()->getValue().getString().empty() == true?
 				nullptr:
 				ModelReader::read(
-					Tools::getPath(sceneSkyModel->getController()->getValue().getString()),
+					Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
 					Tools::getFileName(sceneSkyModel->getController()->getValue().getString())
 				);
 		view->getScene()->setSkyModel(model);
@@ -1074,7 +1074,7 @@ void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene&
 	string environmentMappingIdsInnerNodeSubNodesXML = "";
 	environmentMappingIdsInnerNodeSubNodesXML =
 		environmentMappingIdsInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		entityReflectionsEnvironmentmappingDropDown->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
 	environmentMappingIdsInnerNodeSubNodesXML =
@@ -1097,7 +1097,7 @@ void SceneEditorScreenController::setEntityReflectionsEnvironmentMappings(Scene&
 	}
 	environmentMappingIdsInnerNodeSubNodesXML =
 		environmentMappingIdsInnerNodeSubNodesXML +
-		"</scrollarea-vertical>\n";
+		"</scrollarea>\n";
 	try {
 		environmentMappingIdsDropDownInnerNode->replaceSubNodes(environmentMappingIdsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {

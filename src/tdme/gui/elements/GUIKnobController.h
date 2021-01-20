@@ -26,7 +26,7 @@ private:
 	bool disabled { false };
 	float valueFloat { 0.0f };
 	MutableString value;
-	int mouseLastX;
+	int mouseLastX { -1 };
 
 	/**
 	 * Private constructor

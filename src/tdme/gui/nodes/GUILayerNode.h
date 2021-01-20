@@ -4,18 +4,19 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
+#include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using std::set;
 using std::string;
 
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
@@ -24,7 +25,6 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 
@@ -50,13 +50,13 @@ protected:
 	 * Set computed top
 	 * @param top top
 	 */
-	void setTop(int top) override;
+	void setTop(int32_t top) override;
 
 	/**
 	 * Set computed left
 	 * @param left left
 	 */
-	void setLeft(int left) override;
+	void setLeft(int32_t left) override;
 	void layoutSubNodes() override;
 	void layout() override;
 
@@ -101,9 +101,7 @@ protected:
 	);
 
 public:
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 
-private:
-	void init();
 };

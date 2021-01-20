@@ -46,6 +46,9 @@ private:
 	vector<FacesEntity> facesEntities;
 	vector<Vector3> origins;
 	map<string, Node*> subNodes;
+
+	bool verticesUpdated;
+	bool normalsUpdated;
 public:
 	/**
 	 * Public constructor
@@ -120,6 +123,22 @@ public:
 	}
 
 	/**
+	 * @return if vertices or normals have been changed
+	 */
+	inline bool hasUpdate() {
+		return verticesUpdated == true || normalsUpdated == true;
+	}
+
+	/**
+	 * @return if vertices have been updated
+	 */
+	inline bool hasVerticesUpdate() {
+		auto updated = verticesUpdated;
+		verticesUpdated = false;
+		return updated;
+	}
+
+	/**
 	 * @return vertices
 	 */
 	inline const vector<Vector3>& getVertices() const {
@@ -131,6 +150,15 @@ public:
 	 * @param vertices vertices
 	 */
 	void setVertices(const vector<Vector3>& vertices);
+
+	/**
+	 * @return if normals have been updated
+	 */
+	inline bool hasNormalsUpdate() {
+		auto updated = normalsUpdated;
+		normalsUpdated = false;
+		return updated;
+	}
 
 	/**
 	 * @return normals

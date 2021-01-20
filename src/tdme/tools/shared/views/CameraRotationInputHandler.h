@@ -14,7 +14,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 
 /**
- * Camera Rotation View
+ * Camera Rotation Input Handler
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -40,7 +40,7 @@ private:
 	float scale;
 	bool resetRequested;
 	BoundingBox boundingBoxTransformed;
-	CameraRotationInputHandlerEventHandler* eventHandler;
+	CameraRotationInputHandlerEventHandler* eventHandler { nullptr };
 
 public:
 	/**
@@ -86,6 +86,8 @@ public:
 	 * Reset
 	 */
 	void reset();
+
+	// overriden methods
 	void handleInputEvents() override;
 
 };

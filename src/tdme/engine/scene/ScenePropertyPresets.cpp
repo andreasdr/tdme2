@@ -47,6 +47,7 @@ ScenePropertyPresets* ScenePropertyPresets::instance = nullptr;
 
 ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string& fileName)
 {
+	/*
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(xmlContent.c_str());
@@ -87,7 +88,6 @@ ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string&
 			}
 		}
 	}
-
 	auto lightId = 0;
 	for (auto xmlLights: getChildrenByTagName(xmlRoot, "lights")) {
 		for (auto xmlType: getChildrenByTagName(xmlLights, "type")) {
@@ -110,6 +110,7 @@ ScenePropertyPresets::ScenePropertyPresets(const string& pathName, const string&
 			}
 		}
 	}
+	*/
 }
 
 ScenePropertyPresets::~ScenePropertyPresets() {

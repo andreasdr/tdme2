@@ -1,0 +1,23 @@
+<screen id="popup_infodialog_copy" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+		<layout padding="20" padding-top="10" alignment="vertical" width="500" height="auto" horizontal-align="center" vertical-align="center" border="1" background-color="{$color.element_foreground}">
+			<text id="infodialog_caption" font="{$font.default}" text="Info" height="25" color="{$color.font_normal}" />
+			<space height="10" />
+			<scrollarea width="100%" height="100">
+				<multiline-text id="infodialog_message" font="{$font.default}" color="{$color.font_normal}" width="auto" height="auto">
+					An message should be displayed here!
+				</multiline-text>
+			</scrollarea>
+			<space height="20" />
+			<element id="button_panel" width="100%" height="auto" horizontal-align="center" vertical-align="center">
+				<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+					<button width="*" id="infodialog_button1" text="Okay" />
+					<space show-on="button2" width="10" />
+					<button show-on="button2" width="*" id="infodialog_button2" text="Okay" />
+					<space show-on="button3" width="10" />
+					<button show-on="button3" width="*" id="infodialog_button3" text="Okay" />
+				</layout>
+			</element>
+		</layout>
+	</layout>
+</screen>

@@ -1,0 +1,5 @@
+<element border="1" border-color="{$color.element_frame}" on-initialize="{$id}.condition={$text-on}" id="{$id}" name="{$name}" disabled="{$disabled}" width="{$width}" height="25" value="{$value}">
+	<image width="100%" height="100%" scale9="8" id="{$id}_background" src="resources/engine/images/progressbar.png" effect-color-mul="{$color.element_midground}"/>
+    <image width="100%" height="100%" scale9="8" id="{$id}_bar" src="resources/engine/images/progressbar.png" effect-color-mul="{$color.focus}"/>
+    <text show-on="true" width="100%" height="100%" font="{$font.default}" text="{$text}" color="{$color.font_normal}" horizontal-align="center" vertical-align="center" id="{$id}_text" />
+</element>

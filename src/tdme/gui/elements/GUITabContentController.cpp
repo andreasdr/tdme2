@@ -1,11 +1,13 @@
 #include <tdme/gui/elements/GUITabContentController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 
 using tdme::gui::elements::GUITabContentController;
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
@@ -35,10 +37,10 @@ bool GUITabContentController::isSelected()
 
 void GUITabContentController::setSelected(bool selected)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(this->node->getParentNode()))->getActiveConditions();
-	nodeConditions.remove(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(this->node->getParentNode())->getActiveConditions();
+	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = selected;
-	nodeConditions.add(this->selected == true ? CONDITION_SELECTED : CONDITION_UNSELECTED);
+	nodeConditions.add(this->selected == true ?CONDITION_SELECTED:CONDITION_UNSELECTED);
 }
 
 void GUITabContentController::initialize()

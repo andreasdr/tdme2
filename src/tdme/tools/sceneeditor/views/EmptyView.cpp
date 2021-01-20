@@ -141,11 +141,8 @@ void EmptyView::updateGUIElements()
 		auto preset = prototype->getProperty("preset");
 		emptyScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		emptyScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
-		Vector3 dimension;
-		dimension.set(prototype->getModel()->getBoundingBox()->getMax());
-		dimension.sub(prototype->getModel()->getBoundingBox()->getMin());
 	} else {
-		emptyScreenController->setScreenCaption("Empty - no trigger loaded");
+		emptyScreenController->setScreenCaption("Empty - no empty loaded");
 		emptyScreenController->unsetPrototypeProperties();
 		emptyScreenController->unsetPrototypeData();
 	}

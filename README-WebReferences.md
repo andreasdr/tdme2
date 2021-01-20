@@ -60,8 +60,9 @@
   - https://www.zlib.net/zpipe.c
 
 - Links
-	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
     - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)

@@ -1,0 +1,393 @@
+<screen id="screen_leveleditor" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" width="100%" height="100%">
+		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
+			<text id="screen_caption" font="resources/engine/fonts/Roboto_20.fnt" text="Scene Editor" width="100%" horizontal-align="center" height="auto" />
+		</panel>
+		<layout width="100%" height="*" alignment="horizontal">
+			<element id="viewport" width="100%" height="100%" ignore-events="true">
+				<element width="100%" height="100%" border="1" border-color="#000000" focusable="true" ignore-events="true" />
+				<layout width="100%" height="100%" alignment="vertical">
+					<space height="*" />
+					<layout width="100%" height="80%" alignment="horizontal">
+						<panel alignment="vertical" width="180" height="100%">
+							<selectbox id="objects_listbox" name="objects_listbox" width="100%" height="*">
+								<scrollarea id="objects_listbox_scrollarea" width="100%" height="100%">
+									<selectbox-option text="Option A" value="1" />
+									<selectbox-option text="Option B" value="2" selected="true" />
+									<selectbox-option text="Option C" value="3" />
+									<selectbox-option text="Option D" value="4"  selected="true"/>
+									<selectbox-option text="Option E" value="5" />
+									<selectbox-option text="Option F" value="6" selected="true" />
+									<selectbox-option text="Option G" value="7" />
+									<selectbox-option text="Option H" value="8" />
+									<selectbox-option text="Option I" value="9" />
+									<selectbox-option text="Option J" value="10" />
+									<selectbox-option text="Option K" value="11" />
+									<selectbox-option text="Option L" value="12" />
+									<selectbox-option text="Option M" value="13" />
+									<selectbox-option text="Option N" value="14" />
+									<selectbox-option text="Option O" value="15" />
+									<selectbox-option text="Option P" value="16" />
+									<selectbox-option text="Option Q" value="17" />
+									<selectbox-option text="Option R" value="18" />
+									<selectbox-option text="Option S" value="19" />
+									<selectbox-option text="Option T" value="20" selected="true" />
+									<selectbox-option text="Option U" value="21" />
+									<selectbox-option text="Option V" value="22" selected="true" />
+									<selectbox-option text="Option W" value="23" />
+									<selectbox-option text="Option X" value="24" selected="true" />
+									<selectbox-option text="Option Y" value="25" />
+									<selectbox-option text="Option Z" value="26" />
+								</scrollarea>
+							</selectbox>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="horizontal">
+								<space width="*" />
+								<button id="button_objects_select" name="button_objects_select" text="Select" />
+								<space width="*" />
+								<button id="button_objects_unselect" name="button_objects_unselect" text="Unselect" />
+								<space width="*" />
+							</layout>
+							<space height="10" />
+						</panel>
+						<space width="*" />
+					</layout>
+					<space height="*" />
+				</layout>
+			</element>
+		</layout>
+		<panel width="100%" height="200">
+			<tabs alignment="vertical" width="100%" height="100%">
+				<tabs-header>
+					<tab id="tab_properties_grid" text="Grid" />
+					<tab id="tab_properties_snapping" text="Snapping" />
+					<tab id="tab_properties_map" text="Map" />
+					<tab id="tab_properties_map_properties" text="Map Properties" />
+					<tab id="tab_properties_map_sky" text="Sky" />
+					<tab id="tab_properties_object" text="Object" />
+					<tab id="tab_properties_object_transformations" text="Object Transformations" />
+					<tab id="tab_properties_object_properties" text="Object Properties" />
+					<tab id="tab_properties_reflections" text="Object Reflections" />
+					<tab id="tab_properties_lights" text="Lights" />
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="tab_properties_grid" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Y position" width="200" height="auto"/>
+								<space width="5" />
+								<input id="grid_y_position" name="grid_y_position" width="200" height="auto" text="Y position" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Enable" width="200" height="auto"/>
+								<space width="5" />
+								<checkbox id="grid_enabled" name="grid_enabled" width="auto" height="auto" value="1" />
+							</layout>
+							<space height="20" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_grid_apply" name="button_grid_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_snapping" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Snapping on X" width="200" height="auto"/>
+								<space width="5" />
+								<input id="snapping_x" name="snapping_x" width="200" height="auto" text="1.0" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Snapping on Z" width="200" height="auto"/>
+								<space width="5" />
+								<input id="snapping_z" name="snapping_z" width="200" height="auto" text="1.0" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Enable" width="200" height="auto"/>
+								<space width="5" />
+								<checkbox id="snapping_enabled" name="snapping_enabled" width="auto" height="auto" value="1" />
+							</layout>
+							<space height="20" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_snapping_apply" name="button_snapping_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_map" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Width" width="200" height="auto"/>
+								<space width="5" />
+								<input id="map_width" name="map_width" width="200" height="auto" text="Width" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Height" width="200" height="auto"/>
+								<space width="5" />
+								<input id="map_height" name="map_height" width="200" height="auto" text="Height" />
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Depth" width="200" height="auto"/>
+								<space width="5" />
+								<input id="map_depth" name="map_depth" width="200" height="auto" text="Depth" />
+							</layout>
+							<space height="20" />
+							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+								<button id="button_map_load" name="button_map_load" text="Load" />
+								<space width="20" />
+								<button id="button_map_save" name="button_map_save" text="Save" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_map_properties" vertical-align="center">
+						<layout width="auto" height="auto" alignment="horizontal">
+							<layout width="605" height="auto" alignment="vertical">
+								<selectbox id="map_properties_listbox" name="map_properties_listbox" height="115">
+								</selectbox>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Name" width="45" height="auto"/>
+									<space width="*" />
+									<input id="map_property_name" name="map_property_name" width="240" height="auto" text="Name" />
+									<space width="*" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Value" width="45" height="auto"/>
+									<space width="*" />
+									<input id="map_property_value" name="map_property_value" width="240" height="auto" text="Value" />
+								</layout>
+							</layout>
+							<space width="20" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="button_map_properties_add" name="button_map_properties_add" text="Add" width="80" />
+								<space height="5" />
+								<button id="button_map_properties_remove" name="button_map_properties_remove" text="Remove" width="80" />
+								<space height="5" />
+								<button id="button_map_properties_save" name="button_map_properties_save" text="Save" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_map_sky" vertical-align="center">
+						<layout width="100%" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center">
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Model" width="150" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="map_sky_model" name="map_sky_model" width="*" height="auto" text="./model.tm" />
+								<space width="10" />
+								<button id="button_map_sky_model_load" name="button_map_sky_model_load" text="Load" width="60" height="auto" />
+								<space width="10" />
+								<button id="button_map_sky_model_clear" name="button_map_sky_model_clear" text="Clear" width="60" height="auto" />
+							</layout>
+							<space height="5" />
+							<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Scale" width="150" height="auto" horizontal-align="left" />
+								<space width="5" />
+								<input id="map_sky_model_scale" name="map_sky_model_scale" width="*" height="auto" text="1.0, 1.0, 1.0" />
+							</layout>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_map_sky_apply" name="button_map_sky_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_object" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal">
+								<layout width="auto" height="auto" alignment="vertical">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Name" width="145" height="auto"/>
+										<space width="5" />
+										<input id="object_name" name="object_name" width="150" height="auto" text="Name" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Description" width="145" height="auto"/>
+										<space width="5" />
+										<input id="object_description" name="object_description" width="150" height="auto" text="Description" />
+									</layout>
+								</layout>
+								<space width="20" />
+								<layout width="auto" height="auto" alignment="vertical">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Model" width="145" height="auto"/>
+										<space width="5" />
+										<input id="object_model" name="object_model" width="150" height="auto" text="Model" disabled="true" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Center" width="145" height="auto"/>
+										<space width="5" />
+										<input id="object_center" name="object_center" width="150" height="auto" text="Center" disabled="true" />
+									</layout>
+								</layout>
+							</layout>
+							<space height="20" />					
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_objectdata_apply" name="button_objectdata_apply" text="Apply" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_object_transformations" vertical-align="center">
+						<layout width="auto" height="auto" alignment="vertical">
+							<layout width="auto" height="auto" alignment="horizontal">
+								<layout width="auto" height="auto" alignment="vertical">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_translation_x" name="object_translation_x" width="150" height="auto" text="X" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_translation_y" name="object_translation_y" width="150" height="auto" text="Y" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_translation_z" name="object_translation_z" width="150" height="auto" text="Z" />
+									</layout>
+									<space height="20" />
+									<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+										<button id="button_translation_apply" name="button_translation_apply" text="Translate" />
+									</layout>
+								</layout>
+								<space width="25" />
+								<layout width="auto" height="auto" alignment="vertical">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_scale_x" name="object_scale_x" width="150" height="auto" text="X" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_scale_y" name="object_scale_y" width="150" height="auto" text="Y" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_scale_z" name="object_scale_z" width="150" height="auto" text="Z" />
+									</layout>
+									<space height="20" />
+									<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+										<button id="button_scale_apply" name="button_scale_apply" text="Scale" />
+									</layout>
+								</layout>
+								<space width="25" />
+								<layout width="auto" height="auto" alignment="vertical">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_rotation_x" name="object_rotation_x" width="150" height="auto" text="X" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_rotation_y" name="object_rotation_y" width="150" height="auto" text="Y" />
+									</layout>
+									<space height="5" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/engine/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
+										<space width="5" />
+										<input id="object_rotation_z" name="object_rotation_z" width="150" height="auto" text="Z" />
+									</layout>
+									<space height="20" />
+									<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+										<button id="button_rotation_apply" name="button_rotation_apply" text="Rotate" />
+									</layout>
+								</layout>
+								<space width="25" />
+								<layout width="auto" height="auto" alignment="vertical">
+									<button id="button_object_color" name="button_object_color" text="Color" width="80" />
+									<space height="5" />
+									<button id="button_object_center" name="button_object_center" text="Center" width="80" />
+									<space height="5" />
+									<button id="button_object_remove" name="button_object_remove" text="Remove" width="80" />
+								</layout>
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_object_properties" vertical-align="center">
+						<layout width="auto" height="auto" alignment="horizontal">
+							<layout width="auto" height="auto" alignment="vertical">
+								<layout width="auto" height="auto" alignment="horizontal">
+									<dropdown id="object_properties_presets" name="object_properties_presets" width="510" height="auto" text="Test">
+										<dropdown-option text="Test 1" value="1" />										
+									</dropdown>
+									<space width="10" />
+									<button id="button_object_properties_presetapply" name="button_object_properties_presetapply" text="Apply" width="80" />
+								</layout>
+								<space height="10" />
+								<selectbox id="object_properties_listbox" name="object_properties_listbox" height="70">
+								</selectbox>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Name" width="45" height="auto"/>
+									<space width="*" />
+									<input id="object_property_name" name="object_property_name" width="240" height="auto" text="Name" />
+									<space width="*" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Value" width="45" height="auto"/>
+									<space width="*" />
+									<input id="object_property_value" name="object_property_value" width="240" height="auto" text="Value" />
+								</layout>
+							</layout>
+							<space width="20" />
+							<layout width="auto" height="auto" alignment="vertical">
+								<button id="button_object_properties_add" name="button_object_properties_add" text="Add" width="80" />
+								<space height="5" />
+								<button id="button_object_properties_remove" name="button_object_properties_remove" text="Remove" width="80" />
+								<space height="5" />
+								<button id="button_object_properties_save" name="button_object_properties_save" text="Save" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_reflections" vertical-align="center">
+						<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+							<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center">
+								<text font="resources/engine/fonts/Roboto_20.fnt" text="Choose a environment map to reflect on this object" width="auto" height="auto"/>
+							</layout>
+							<space height="5" />
+							<layout width="auto" height="auto" alignment="horizontal">
+								<dropdown id="object_reflections_environmentmapping" name="object_reflections_environmentmapping" width="530" height="auto" text="<None>">
+									<dropdown-option text="<None>" value="1" />
+								</dropdown>
+								<space width="10" />
+								<button id="button_object_reflections_environmentmapping_apply" name="button_object_reflections_environmentmapping_apply" text="Apply" width="80" />
+							</layout>
+						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_lights" vertical-align="center">
+						<tabs alignment="vertical" width="100%" height="100%">
+							<tabs-header>
+								<tab id="tab_properties_light0" text="Light 0" />
+								<tab id="tab_properties_light1" text="Light 1" />
+								<tab id="tab_properties_light2" text="Light 2" />
+								<tab id="tab_properties_light3" text="Light 3" />
+							</tabs-header>
+							<tabs-content>
+								<tab-content tab-id="tab_properties_light0">
+									<template src="resources/engine/gui/template_light.xml" light-id="0" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_light1" vertical-align="center">
+									<template src="resources/engine/gui/template_light.xml" light-id="1" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_light2" vertical-align="center">
+									<template src="resources/engine/gui/template_light.xml" light-id="2" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_light3" vertical-align="center">
+									<template src="resources/engine/gui/template_light.xml" light-id="3" />
+								</tab-content>
+							</tabs-content>
+						</tabs>
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</panel>
+	</layout>
+</screen>

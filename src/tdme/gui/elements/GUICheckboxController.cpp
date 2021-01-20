@@ -1,25 +1,25 @@
 #include <tdme/gui/elements/GUICheckboxController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUICheckboxController;
+using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
 using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 
@@ -31,8 +31,8 @@ string GUICheckboxController::CONDITION_ENABLED = "enabled";
 GUICheckboxController::GUICheckboxController(GUINode* node)
 	: GUIElementController(node)
 {
-	this->checked = (dynamic_cast< GUIElementNode* >(node))->isSelected();
-	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
+	this->checked = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
+	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 }
 
 bool GUICheckboxController::isChecked()
@@ -42,10 +42,10 @@ bool GUICheckboxController::isChecked()
 
 void GUICheckboxController::setChecked(bool checked)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->checked == true ? CONDITION_CHECKED : CONDITION_UNCHECKED);
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+	nodeConditions.remove(this->checked == true?CONDITION_CHECKED:CONDITION_UNCHECKED);
 	this->checked = checked;
-	nodeConditions.add(this->checked == true ? CONDITION_CHECKED : CONDITION_UNCHECKED);
+	nodeConditions.add(this->checked == true?CONDITION_CHECKED:CONDITION_UNCHECKED);
 }
 
 bool GUICheckboxController::isDisabled()
@@ -55,10 +55,10 @@ bool GUICheckboxController::isDisabled()
 
 void GUICheckboxController::setDisabled(bool disabled)
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
-	nodeConditions.remove(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
+	nodeConditions.remove(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 	this->disabled = disabled;
-	nodeConditions.add(this->disabled == true ? CONDITION_DISABLED : CONDITION_ENABLED);
+	nodeConditions.add(this->disabled == true?CONDITION_DISABLED:CONDITION_ENABLED);
 }
 
 void GUICheckboxController::initialize()
@@ -86,8 +86,8 @@ void GUICheckboxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			setChecked(checked == true ? false : true);
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
-			node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
+			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
+			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }
@@ -101,7 +101,7 @@ void GUICheckboxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					setChecked(checked == true ? false : true);
-					node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(node));
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;
@@ -135,12 +135,12 @@ const MutableString& GUICheckboxController::getValue()
 {
 	value.reset();
 	if (checked == true) {
-		value.append((dynamic_cast< GUIElementNode* >(node))->getValue());
+		value.append(required_dynamic_cast<GUIElementNode*>(node)->getValue());
 	}
 	return value;
 }
 
 void GUICheckboxController::setValue(const MutableString& value)
 {
-	setChecked(value.equals((dynamic_cast< GUIElementNode* >(node))->getValue()));
+	setChecked(value.equals(required_dynamic_cast<GUIElementNode*>(node)->getValue()));
 }

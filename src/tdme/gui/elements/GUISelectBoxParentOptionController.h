@@ -4,8 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/GUISelectBoxOptionController.h>
-#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 using std::string;
@@ -20,8 +20,7 @@ using tdme::utilities::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxParentOptionController final
-	: public GUISelectBoxOptionController
+class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUISelectBoxOptionController
 {
 	friend class GUISelectBoxController;
 	friend class GUISelectBoxOptionController;

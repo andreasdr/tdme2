@@ -4,6 +4,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -11,22 +14,19 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
-#include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/FloatBuffer.h>
-#include <tdme/utilities/ShortBuffer.h>
 
 using std::array;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::Renderer;
-using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
-using tdme::math::Math;
-using tdme::math::Matrix2D3x3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::gui::GUI;
+using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::math::Math;
+using tdme::math::Matrix2D3x3;
 
 /**
  * GUI renderer
@@ -73,11 +73,6 @@ private:
 	array<float, 4> effectColorAddFinal;
 	float guiEffectOffsetX;
 	float guiEffectOffsetY;
-
-	/**
-	 * Initialize
-	 */
-	void init();
 
 public:
 	/**

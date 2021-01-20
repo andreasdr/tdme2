@@ -20,7 +20,7 @@ class tdme::math::Vector2 final
 	friend class Matrix2D3x3;
 
 private:
-	array<float, 2> data {  };
+	array<float, 2> data;
 
 public:
 	/**

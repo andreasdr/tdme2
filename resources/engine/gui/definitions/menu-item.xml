@@ -1,0 +1,75 @@
+<element id="{$id}" width="auto" height="auto" value="{$value}" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	
+	<layer width="auto" >
+	
+		<!-- normal -->
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+			<space width="5" />
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text
+				text="{$text}"
+				font="{$font.default}" 
+				color="{$color.font_normal}"
+				
+				width="auto" 
+				height="25"				
+				padding-left="5" 
+				vertical-align="center"
+			/>
+		</layout>
+	
+		<!-- mouse over / focussed -->
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled" show-on="mouseover,selected" background-color="{$color.focus}" >
+			<space width="5" />
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text
+				text="{$text}"
+				font="{$font.default}"
+				color="{$color.font_highlight}"
+				
+				width="auto"
+				height="25"
+				padding-left="5"
+				vertical-align="center"
+			/>
+		</layout>
+	
+		<!-- disabled -->
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" show-on="disabled" >
+			<space width="5" />
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<image src="{$image}" />
+			</layout>
+			<text
+				text="{$text}"
+				font="{$font.default}"
+				color="{$color.font_disabled}"
+				
+				width="auto"
+				height="25"
+				padding-left="5"
+				vertical-align="center"
+			/>
+		</layout>
+			
+		<!-- shortcut and child -->
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
+			<space width="*" />
+			<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+				<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
+			</layout>
+		</layout>
+		
+		<!-- additional elements -->
+		<layout width="250" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" >
+			{__InnerXML__}
+		</layout>
+
+	</layer>
+
+</element>

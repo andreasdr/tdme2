@@ -4,9 +4,9 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/Action.h>
 
+using tdme::gui::effects::GUIEffect;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::gui::effects::GUIEffect;
 using tdme::gui::events::Action;
 
 GUIEffect::GUIEffect()

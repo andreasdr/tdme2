@@ -12,7 +12,6 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -26,6 +25,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -41,7 +41,6 @@ using tdme::engine::model::Model;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -54,6 +53,7 @@ using tdme::math::Vector4;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 LODTest::LODTest()
@@ -152,9 +152,9 @@ void LODTest::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
-	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);

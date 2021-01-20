@@ -1,0 +1,35 @@
+<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" focusable="true" >
+	<!-- normal -->
+	<text
+		id="{$id}_unselected"
+		text="{$text}"	
+		font="{$font.default}"
+		color="{$color.font_highlight}"
+		
+		width="100%"
+		height="auto"
+		padding-left="5"
+		padding-top="2"
+		padding-bottom="2"		
+
+		hide-on="mouseover,selected,hidden"
+	/>
+	
+	<!-- mouse over / focussed -->
+	<text 
+		id="{$id}_unselected,mouseover"
+		text="{$text}"
+		font="{$font.default}" 
+		color="{$color.font_highlight}"
+		 
+		width="100%"
+		height="auto"
+		padding-left="5"
+		padding-top="2"
+		padding-bottom="2"
+		background-color="{$color.focus}"
+
+		show-on="mouseover,selected"
+		hide-on="hidden"
+	/>
+</element>

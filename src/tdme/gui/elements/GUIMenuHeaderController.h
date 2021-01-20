@@ -6,15 +6,15 @@
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**
@@ -26,6 +26,7 @@ class tdme::gui::elements::GUIMenuHeaderController final
 	: public GUINodeController
 {
 	friend class GUIMenuHeader;
+	friend class GUIMenuHeaderItemController;
 
 private:
 	vector<GUINode*> childControllerNodes;
@@ -54,6 +55,16 @@ private:
 	 * @return selected header item index
 	 */
 	int getSelectedHeaderItemIdx();
+
+	/**
+	 * @return if menu is open
+	 */
+	bool isOpen();
+
+	/**
+	 * Unselect
+	 */
+	void unselect();
 
 	/**
 	 * Select next node

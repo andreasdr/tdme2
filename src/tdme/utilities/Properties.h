@@ -64,4 +64,11 @@ public:
 	 */
 	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr);
 
+	/**
+	 * @return properties map
+	 */
+	inline const map<string, string>& getProperties() {
+		return properties;
+	}
+
 };

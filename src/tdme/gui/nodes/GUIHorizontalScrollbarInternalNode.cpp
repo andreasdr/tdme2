@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
@@ -11,22 +12,21 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 
 using std::array;
 using std::vector;
 
-using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
-using tdme::gui::nodes::GUIHorizontalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
+using tdme::gui::GUI;
+using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIHorizontalScrollbarInternalController_State;
+using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 
 GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
 	GUIScreenNode* screenNode,
@@ -66,12 +66,12 @@ bool GUIHorizontalScrollbarInternalNode::isContentNode()
 	return false;
 }
 
-int GUIHorizontalScrollbarInternalNode::getContentWidth()
+int32_t GUIHorizontalScrollbarInternalNode::getContentWidth()
 {
 	return computedConstraints.width;
 }
 
-int GUIHorizontalScrollbarInternalNode::getContentHeight()
+int32_t GUIHorizontalScrollbarInternalNode::getContentHeight()
 {
 	return computedConstraints.height;
 }
@@ -83,7 +83,7 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
-	auto controller = dynamic_cast< GUIHorizontalScrollbarInternalController* >(this->controller);
+	auto controller = required_dynamic_cast<GUIHorizontalScrollbarInternalController*>(this->controller);
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();
 	auto left = barLeft;

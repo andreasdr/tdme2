@@ -1,27 +1,27 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
-#include <map>
 #include <set>
+#include <map>
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
-#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -32,23 +32,23 @@ using std::set;
 using std::string;
 using std::to_string;
 
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIMouseOverListener;
-using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
-using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
@@ -133,12 +133,12 @@ bool GUIScreenNode::isContentNode()
 	return false;
 }
 
-int GUIScreenNode::getContentWidth()
+int32_t GUIScreenNode::getContentWidth()
 {
 	return -1;
 }
 
-int GUIScreenNode::getContentHeight()
+int32_t GUIScreenNode::getContentHeight()
 {
 	return -1;
 }
@@ -241,8 +241,8 @@ void GUIScreenNode::layout(GUINode* node)
 void GUIScreenNode::forceLayout(GUINode* node)
 {
 	// do the magic
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-		auto parentNode = dynamic_cast<GUIParentNode*>(node);
+	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		parentNode->layouted = true;
 		parentNode->layoutSubNodes();
 		parentNode->layoutSubNodes();
@@ -261,7 +261,7 @@ void GUIScreenNode::forceLayout(GUINode* node)
 	}
 }
 
-void GUIScreenNode::setScreenSize(int width, int height)
+void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 {
 	this->screenWidth = width;
 	this->screenHeight = height;
@@ -324,8 +324,8 @@ bool GUIScreenNode::removeNode(GUINode* node)
 			elementNodeToNodeMappingIt.second.erase(node->getId());
 		}
 	}
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-		auto parentNode = dynamic_cast< GUIParentNode* >(node);
+	if (dynamic_cast<GUIParentNode*>(node) != nullptr) {
+		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 			removeNode(parentNode->subNodes[i]);
 		}
@@ -365,16 +365,16 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	if (parentNode->conditionsMet == false) {
 		return;
 	}
-	if (dynamic_cast< GUIElementNode* >(parentNode) != nullptr) {
-		auto parentElementNode = dynamic_cast< GUIElementNode* >(parentNode);
+	if (dynamic_cast<GUIElementNode*>(parentNode) != nullptr) {
+		auto parentElementNode = required_dynamic_cast<GUIElementNode*>(parentNode);
 		if (parentElementNode->focusable == true && (parentElementNode->getController() == nullptr || parentElementNode->getController()->isDisabled() == false)) {
-			focusableNodes.push_back(dynamic_cast< GUIElementNode* >(parentNode));
+			focusableNodes.push_back(required_dynamic_cast<GUIElementNode*>(parentNode));
 		}
 	}
 	for (auto i = 0; i < parentNode->subNodes.size(); i++) {
 		auto subNode = parentNode->subNodes[i];
-		if (dynamic_cast< GUIParentNode* >(subNode) != nullptr) {
-			determineFocussedNodes(dynamic_cast< GUIParentNode* >(subNode), focusableNodes);
+		if (dynamic_cast<GUIParentNode*>(subNode) != nullptr) {
+			determineFocussedNodes(required_dynamic_cast<GUIParentNode*>(subNode), focusableNodes);
 		}
 	}
 }
@@ -512,10 +512,10 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
+		if (dynamic_cast<GUIElementNode*>(childControllerNode) != nullptr == false)
 			continue;
 
-		auto guiElementNode = (dynamic_cast< GUIElementNode* >(childControllerNode));
+		auto guiElementNode = required_dynamic_cast<GUIElementNode*>(childControllerNode);
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
 			auto& name = guiElementNode->getName();
@@ -533,10 +533,10 @@ void GUIScreenNode::setValues(const map<string, MutableString>& values)
 	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
+		if (dynamic_cast<GUIElementNode*>(childControllerNode) != nullptr == false)
 			continue;
 
-		auto guiElementNode = (dynamic_cast< GUIElementNode* >(childControllerNode));
+		auto guiElementNode = required_dynamic_cast<GUIElementNode*>(childControllerNode);
 		auto guiElementNodeController = guiElementNode->getController();
 		if (guiElementNodeController->hasValue()) {
 			auto name = guiElementNode->getName();

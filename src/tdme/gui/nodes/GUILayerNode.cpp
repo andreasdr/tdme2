@@ -3,33 +3,36 @@
 #include <set>
 #include <string>
 
-#include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 using std::set;
 using std::to_string;
 
 using tdme::gui::nodes::GUILayerNode;
-using tdme::gui::nodes::GUINode;
+
+using tdme::gui::GUI;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUILayerNode::GUILayerNode(
@@ -65,7 +68,7 @@ bool GUILayerNode::isContentNode()
 	return false;
 }
 
-int GUILayerNode::getContentWidth()
+int32_t GUILayerNode::getContentWidth()
 {
 	auto width = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -81,7 +84,7 @@ int GUILayerNode::getContentWidth()
 	return width;
 }
 
-int GUILayerNode::getContentHeight()
+int32_t GUILayerNode::getContentHeight()
 {
 	auto height = 0;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -97,7 +100,7 @@ int GUILayerNode::getContentHeight()
 	return height;
 }
 
-void GUILayerNode::setTop(int top)
+void GUILayerNode::setTop(int32_t top)
 {
 	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	GUIParentNode::setTop(top);
@@ -109,7 +112,7 @@ void GUILayerNode::setTop(int top)
 	}
 }
 
-void GUILayerNode::setLeft(int left)
+void GUILayerNode::setLeft(int32_t left)
 {
 	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	GUIParentNode::setLeft(left);
@@ -142,8 +145,8 @@ void GUILayerNode::layoutSubNodes()
 			guiSubNode->computedConstraints.width = width;
 			doLayoutSubNodes = true;
 		}
-		if (dynamic_cast< GUIParentNode* >(guiSubNode) != nullptr && doLayoutSubNodes == true) {
-			(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
+		if (dynamic_cast<GUIParentNode*>(guiSubNode) != nullptr && doLayoutSubNodes == true) {
+			(required_dynamic_cast<GUIParentNode*>(guiSubNode))->layoutSubNodes();
 		}
 	}
 	setTop(computedConstraints.top);

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -18,8 +19,9 @@
 
 using std::string;
 
-using tdme::gui::elements::GUIMenuHeaderItemController;
+using tdme::gui::GUI;
 using tdme::gui::elements::GUIMenuItemController;
+using tdme::gui::elements::GUIMenuHeaderItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -38,7 +40,7 @@ string GUIMenuItemController::CONDITION_UNSELECTED = "unselected";
 GUIMenuItemController::GUIMenuItemController(GUINode* node)
 	: GUIElementController(node)
 {
-	this->selected = (dynamic_cast<GUIElementNode*>(node))->isSelected();
+	this->selected = required_dynamic_cast<GUIElementNode*>(node)->isSelected();
 }
 
 bool GUIMenuItemController::isSelected()
@@ -48,7 +50,7 @@ bool GUIMenuItemController::isSelected()
 
 void GUIMenuItemController::select()
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = true;
 	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -56,7 +58,7 @@ void GUIMenuItemController::select()
 
 void GUIMenuItemController::unselect()
 {
-	auto& nodeConditions = (dynamic_cast< GUIElementNode* >(node))->getActiveConditions();
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	nodeConditions.remove(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
 	this->selected = false;
 	nodeConditions.add(this->selected == true?CONDITION_SELECTED:CONDITION_UNSELECTED);
@@ -99,7 +101,7 @@ void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		node->isEventBelongingToNode(event) &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
-		dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
+		required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
 		event->setProcessed(true);
 	}
 }
@@ -110,7 +112,7 @@ void GUIMenuItemController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 	if (isDisabled() == false && node == this->node && event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_SPACE: {
-				dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
+				required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
 				event->setProcessed(true);
 			}
 		}

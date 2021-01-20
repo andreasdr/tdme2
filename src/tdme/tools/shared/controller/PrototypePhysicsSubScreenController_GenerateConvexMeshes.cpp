@@ -189,7 +189,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 			vhacdParams.m_callback = &vhacdCallback;
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
-			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPathName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
@@ -277,7 +277,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 	} else
 	if (convexMeshMode == "model") {
 		try {
-			string meshPathName = Tools::getPath(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshPathName = Tools::getPathName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			string meshFileName = Tools::getFileName(prototypePhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
 			auto meshModel = ModelReader::read(
 				meshPathName,
@@ -324,7 +324,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 
 Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, unsigned int* triangles, unsigned int pointCount, unsigned int triangleCount) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
@@ -386,7 +386,7 @@ Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(con
 
 Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));

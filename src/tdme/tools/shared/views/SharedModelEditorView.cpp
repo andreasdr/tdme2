@@ -570,7 +570,7 @@ void SharedModelEditorView::addAttachment1(const string& nodeId, const string& a
 	engine->removeEntity("attachment1");
 	try {
 		if (attachment1Model != nullptr) delete attachment1Model;
-		attachment1Model = attachmentModelFile.empty() == true?nullptr:ModelReader::read(Tools::getPath(attachmentModelFile), Tools::getFileName(attachmentModelFile));
+		attachment1Model = attachmentModelFile.empty() == true?nullptr:ModelReader::read(Tools::getPathName(attachmentModelFile), Tools::getFileName(attachmentModelFile));
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::addAttachment1(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -593,7 +593,7 @@ void SharedModelEditorView::playSound(const string& soundId) {
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
 		string pathName = PrototypeReader::getResourcePathName(
-			Tools::getPath(prototype->getFileName()),
+			Tools::getPathName(prototype->getFileName()),
 			soundDefinition->getFileName()
 		);
 		string fileName = Tools::getFileName(soundDefinition->getFileName());
@@ -631,10 +631,10 @@ void SharedModelEditorView::updateRendering() {
 void SharedModelEditorView::onSetPrototypeData() {
 }
 
-void SharedModelEditorView::onRotation() {
+void SharedModelEditorView::onCameraRotation() {
 	prototypePhysicsView->updateGizmo(prototype);
 }
 
-void SharedModelEditorView::onScale() {
+void SharedModelEditorView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
 }

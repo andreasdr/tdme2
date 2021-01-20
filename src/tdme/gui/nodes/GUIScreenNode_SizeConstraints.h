@@ -11,9 +11,9 @@
 struct tdme::gui::nodes::GUIScreenNode_SizeConstraints
 {
 
-	int minWidth { -1 };
-	int minHeight { -1 };
-	int maxWidth { -1 };
-	int maxHeight { -1 };
+	int32_t minWidth { -1 };
+	int32_t minHeight { -1 };
+	int32_t maxWidth { -1 };
+	int32_t maxHeight { -1 };
 
 };

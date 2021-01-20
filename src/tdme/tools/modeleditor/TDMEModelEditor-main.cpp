@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-    ::tdme::tools::viewer::TDMEModelEditor::main(argc, argv);
+    ::tdme::tools::modeleditor::TDMEModelEditor::main(argc, argv);
 
     return 0;
 }

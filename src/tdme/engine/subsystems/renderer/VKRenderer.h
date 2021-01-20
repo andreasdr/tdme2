@@ -96,7 +96,7 @@ private:
 
 	struct shader_type {
 		struct uniform_type {
-			enum uniform_type_enum { TYPE_NONE, TYPE_UNIFORM, TYPE_SAMPLER2D };
+			enum uniform_type_enum { TYPE_NONE, TYPE_UNIFORM, TYPE_SAMPLER2D, TYPE_SAMPLERCUBE };
 			string name;
 			string newName;
 			uniform_type_enum type;
@@ -106,7 +106,7 @@ private:
 		};
 		unordered_map<string, uniform_type*> uniforms;
 		vector<uniform_type*> uniformList;
-		vector<uniform_type*> sampler2DUniformList;
+		vector<uniform_type*> samplerUniformList;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
@@ -316,6 +316,7 @@ private:
 		int32_t program_id { 0 };
 
 		float maskMaxValue { 1.0f };
+		array<float, 3> environmentMappingCubeMapPosition;
 
 		int32_t lighting { 0 };
 	};
@@ -632,6 +633,8 @@ public:
 	void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	float getMaskMaxValue(void* context) override;
 	void setMaskMaxValue(void* context, float maskMaxValue) override;
+	array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) override;
+	void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) override;
 	const Renderer_Statistics getStatistics() override;
 
 	/**

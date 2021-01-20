@@ -1,0 +1,80 @@
+<screen id="screen_entitylibrary" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
+	<layout alignment="vertical" width="100%" height="100%">
+		<layout alignment="none" width="100%" height="30" padding="5" horizontal-align="center" vertical-align="center">
+		</layout>
+		<layout width="100%" height="*" alignment="horizontal">
+				<layout width="100%" height="100%" alignment="vertical">
+					<space height="*" />
+					<layout width="100%" height="80%" alignment="horizontal">
+						<space width="*" />
+						<panel width="180" height="100%">
+							<layout alignment="vertical" width="100%" height="100%">
+								<selectbox id="entity_library_listbox" name="entity_library_listbox" width="100%" height="*">
+									<scrollarea id="entity_library_listbox_scrollarea" width="100%" height="100%">
+										<selectbox-option text="Option A" value="1" /> 
+										<selectbox-option text="Option B" value="2" />
+										<selectbox-option text="Option C" value="3" />
+										<selectbox-option text="Option D" value="4" />
+										<selectbox-option text="Option E" value="5" />
+										<selectbox-option text="Option F" value="6" />
+										<selectbox-option text="Option G" value="7" />
+										<selectbox-option text="Option H" value="8" />
+										<selectbox-option text="Option I" value="9" />
+										<selectbox-option text="Option J" value="10" selected="true" />
+										<selectbox-option text="Option K" value="11" />
+										<selectbox-option text="Option L" value="12" />
+										<selectbox-option text="Option M" value="13" />
+										<selectbox-option text="Option N" value="14" />
+										<selectbox-option text="Option O" value="15" />
+										<selectbox-option text="Option P" value="16" />
+										<selectbox-option text="Option Q" value="17" />
+										<selectbox-option text="Option R" value="18" />
+										<selectbox-option text="Option S" value="19" />
+										<selectbox-option text="Option T" value="20" />
+										<selectbox-option text="Option U" value="21" />
+										<selectbox-option text="Option V" value="22" />
+										<selectbox-option text="Option W" value="23" />
+										<selectbox-option text="Option X" value="24" />
+										<selectbox-option text="Option Y" value="25" />
+										<selectbox-option text="Option Z" value="26" />
+									</scrollarea>
+								</selectbox>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal">
+									<space width="*" />
+									<dropdown id="dropdown_entity_action" name="dropdown_entity_action" width="160" height="auto" text="Action ...">
+										<dropdown-option text="Action ..." value="action" />
+										<dropdown-option text="Edit" value="edit" />
+										<dropdown-option text="Delete" value="delete" />
+										<dropdown-option text="Create model" value="create_model" />
+										<dropdown-option text="Create particle system" value="create_particlesystem" />
+										<dropdown-option text="Create environment mapping" value="create_environmentmapping" />
+										<dropdown-option text="Create trigger" value="create_trigger" />
+										<dropdown-option text="Create empty" value="create_empty" />
+										<dropdown-option text="Create terrain" value="create_terrain" />
+										<dropdown-option text="Partition" value="partition" />
+										<!-- 
+										<dropdown-option text="Create light" value="create_light" />
+										 -->
+									</dropdown>
+									<space width="*" />
+								</layout>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<space width="*" />
+									<button id="button_entity_place" name="button_entity_place" text="Place" width="50" />
+									<space width="*" />
+									<button id="button_level_edit" name="button_level_edit" text="Level" width="90" />
+									<space width="*" />
+								</layout>
+								<space height="10" />
+							</layout>
+						</panel>
+					</layout>
+					<space height="*" />
+				</layout>
+		</layout>
+		<layout width="100%" height="200">
+		</layout>
+	</layout>
+</screen>

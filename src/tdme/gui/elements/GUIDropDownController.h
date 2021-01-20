@@ -10,15 +10,15 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::string;
 using std::vector;
+using std::string;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::utilities::MutableString;
 
@@ -78,7 +78,7 @@ private:
 	/**
 	 * Get selected option idx
 	 */
-	int getSelectedOptionIdx();
+	int32_t getSelectedOptionIdx();
 
 	/**
 	 * Select next node

@@ -5,7 +5,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
 
 - What is TDME2?
-    - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
+    - ThreeDeeMiniEngine2 is a lightweight multiplatform 3D engine including tools
       - Read about the [philosophy](./README-Philosophy.md) if interested
     - TDME2 is open source
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
@@ -160,11 +160,8 @@
                 - menu
                 - progress bar
                 - radio button
-                - scrollarea both
-                - scrollarea horizontal
-                - scrollarea vertical
+                - scrollarea
                 - selectbox including tree view
-                - selectbox with multiple selection including tree view
                 - slider horizontal
                 - slider vertical
                 - tabs
@@ -207,6 +204,7 @@
             - mutex
             - read write lock
             - semaphore
+            - spin lock
             - thread
     - Installer
         - TDME2 itself and TDME2 applications can be installed with TDME2 installer, which supports
@@ -224,7 +222,9 @@
     - documentation
 
 - What is WIP or planned
-    - Reflections via environment mapping
+    - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
+    - Terrain Editor
+    - Reflections via environment mapping(GL2, GLES2, Vulkan support is still missing)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
@@ -291,6 +291,7 @@
     - TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Terrain Editor, see [README-TerrainEditor.md](./README-TerrainEditor.md)
     - TDME2 Scene Editor, see [README-SceneEditor.md](./README-SceneEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 

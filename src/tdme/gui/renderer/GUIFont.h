@@ -62,12 +62,12 @@ private:
 	/**
 	 * The characters building up the font
 	 */
-	map<int, GUIFont_CharacterDefinition*> chars;
+	map<int32_t, GUIFont_CharacterDefinition*> chars;
 
 	/**
 	 * The height of a line
 	 */
-	int lineHeight { 0 };
+	int32_t lineHeight { 0 };
 
 	/**
 	 * Parse a single character line from the definition
@@ -81,7 +81,7 @@ private:
 	 * @param charId character id
 	 * @return character definition
 	 */
-	inline GUIFont_CharacterDefinition* getCharacter(int charId) {
+	inline GUIFont_CharacterDefinition* getCharacter(int32_t charId) {
 		auto charIt = chars.find(charId);
 		if (charIt != chars.end()) return charIt->second;
 		return nullptr;
@@ -126,7 +126,7 @@ public:
 	 * @param length length or 0 if full length
 	 * @param color color
 	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color);
+	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const MutableString& text, int32_t offset, int32_t length, const GUIColor& color);
 
 	/**
 	 * Get text index X of given text and index
@@ -136,7 +136,7 @@ public:
 	 * @param index index
 	 * @return text index x
 	 */
-	int getTextIndexX(const MutableString& text, int offset, int length, int index);
+	int32_t getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index);
 
 	/**
 	 * Get text index by text and X in space of text
@@ -146,39 +146,39 @@ public:
 	 * @param textX text X
 	 * @return text index
 	 */
-	int getTextIndexByX(const MutableString& text, int offset, int length, int textX);
+	int32_t getTextIndexByX(const MutableString& text, int32_t offset, int32_t length, int32_t textX);
 
 	/**
 	 * Get the offset from the draw location the font will place glyphs
 	 * @param text text The text that is to be tested
 	 * @return The yoffset from the y draw location at which text will start
 	 */
-	int getYOffset(const MutableString& text);
+	int32_t getYOffset(const MutableString& text);
 
 	/**
 	 * Text height
 	 * @param text text
 	 * @return text height
 	 */
-	int getTextHeight(const MutableString& text);
+	int32_t getTextHeight(const MutableString& text);
 
 	/**
 	 * Text width
 	 * @param text text
 	 * @return text width
 	 */
-	int getTextWidth(const MutableString& text);
+	int32_t getTextWidth(const MutableString& text);
 
 	/**
 	 * Get text index X at width
 	 * @param text text
 	 * @return text width
 	 */
-	int getTextIndexXAtWidth(const MutableString& text, int width);
+	int32_t getTextIndexXAtWidth(const MutableString& text, int32_t width);
 
 	/**
 	 * @return line height
 	 */
-	int getLineHeight();
+	int32_t getLineHeight();
 
 };

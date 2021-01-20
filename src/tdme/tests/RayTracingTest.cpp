@@ -14,7 +14,6 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/Camera.h>
@@ -39,6 +38,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -56,7 +56,6 @@ using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Camera;
@@ -81,6 +80,7 @@ using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 constexpr int32_t RayTracingTest::RIGID_TYPEID_STANDARD;
@@ -248,9 +248,9 @@ void RayTracingTest::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
-	auto groundModel = modelDeleter.add(PrimitiveModel::createModel(ground, "ground_model"));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
-	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
+	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
@@ -258,7 +258,7 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = prototypeDeleter.add(PrototypeReader::read("resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm"));
-	entityBoundingVolumeModel = modelDeleter.add(PrimitiveModel::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
+	entityBoundingVolumeModel = modelDeleter.add(Primitives::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
@@ -289,9 +289,9 @@ void RayTracingTest::initialize()
 	}
 	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
 	auto capsuleBig = bvDeleter.add(new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f));
-	auto capsuleBigModel = modelDeleter.add(PrimitiveModel::createModel(capsuleBig, "capsulebig_model"));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto capsuleBigModel = modelDeleter.add(Primitives::createModel(capsuleBig, "capsulebig_model"));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("player", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);

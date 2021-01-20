@@ -10,14 +10,14 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utilities/MutableString.h>
 
-using std::string;
 using std::vector;
+using std::string;
 
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeController;
 using tdme::utilities::MutableString;
 
 /**
@@ -30,15 +30,18 @@ class tdme::gui::elements::GUISelectBoxController final
 {
 	friend class GUISelectBox;
 	friend class GUISelectBoxOptionController;
-	friend class GUISelectBoxParentOptionController;
 
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
+	static constexpr char VALUE_DELIMITER { '|' };
 	vector<GUINode*> childControllerNodes;
-	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
+	vector<GUISelectBoxOptionController*> selectBoxMultipleOptionControllers;
 	bool disabled;
+	bool multipleSelection;
 	MutableString value;
+
+	bool keyControl;
 
 	/**
 	 * Private constructor
@@ -47,9 +50,14 @@ private:
 	GUISelectBoxController(GUINode* node);
 
 	/**
-	 * Init
+	 * @return if multiple selection is enabled
 	 */
-	void init();
+	bool isMultipleSelection();
+
+	/**
+	 * @return is control down
+	 */
+	bool isKeyControlDown();
 
 	/**
 	 * Unselect all nodes
@@ -57,29 +65,44 @@ private:
 	void unselect();
 
 	/**
+	 * Unfocus all nodes
+	 */
+	void unfocus();
+
+	/**
 	 * Determine select box option controllers
 	 */
-	void determineSelectBoxOptionControllers();
+	void determineSelectBoxMultipleOptionControllers();
 
 	/**
-	 * Get selected option idx
+	 * Get focussed option idx
 	 */
-	int getSelectedOptionIdx();
+	int32_t getFocussedOptionIdx();
 
 	/**
-	 * Select current option
+	 * Select current options
 	 */
 	void selectCurrent();
 
 	/**
-	 * Select next node
+	 * Focus next node
 	 */
-	void selectNext();
+	void focusNext();
 
 	/**
-	 * Select previous
+	 * Focus previous
 	 */
-	void selectPrevious();
+	void focusPrevious();
+
+	/**
+	 * Toggle selected node
+	 */
+	void toggle();
+
+	/**
+	 * Select focussed node
+	 */
+	void select();
 
 	/**
 	 * Toggle open state of current parent option
@@ -95,6 +118,7 @@ public:
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
 	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;
 	bool hasValue() override;

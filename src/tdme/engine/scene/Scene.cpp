@@ -151,8 +151,9 @@ void Scene::computeCenter()
 		center.add(sceneEntity->getTransformations().getTranslation());
 		entityCount++;
 	}
-	if (entityCount != 0)
+	if (entityCount > 0) {
 		center.scale(1.0f / entityCount);
+	}
 }
 
 void Scene::clearEntities()

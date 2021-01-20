@@ -1,5 +1,0 @@
-<element id="{$id}" width="{$width}" height="{$height}" border="1" border-color="black" name="{$name}" disabled="{$disabled}" focusable="true" overflow-y="downsize-children" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}"> 
-	<layout id="{$id}_inner" alignment="vertical" padding="5" width="100%" height="{$height}" background-color="#f0f0f0">
-		{__InnerXML__}
-	</layout>
-</element>

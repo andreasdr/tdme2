@@ -1,0 +1,55 @@
+<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+
+	<!-- unselected -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected,mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_unselected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+	</layout>
+	<!-- unselected, mouse over -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_unselected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	</layout>
+	<!-- unselected, disabled -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_unselected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+	</layout>
+	
+	
+	<!-- selected -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected,mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_selected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+	</layout>
+	
+	<!-- selected, mouse over -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unselected" show-on="mouseover" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_selected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+	</layout>
+	<!-- selected, disabled -->
+	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unselected" show-on="disabled" >
+		<space width="5"/>
+		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_selected.png" />
+		</layout>
+		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+	</layout>
+	
+</element>

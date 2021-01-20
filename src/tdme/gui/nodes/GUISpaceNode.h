@@ -5,14 +5,14 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/gui/nodes/GUINode.h>
 
 using std::string;
 
-using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
@@ -77,8 +77,8 @@ protected:
 
 public:
 	// overridden methods
-	int getContentWidth() override;
-	int getContentHeight() override;
+	int32_t getContentWidth() override;
+	int32_t getContentHeight() override;
 
 	/**
 	 * Create requested constraints
@@ -86,9 +86,10 @@ public:
 	 * @param top top
 	 * @param width width
 	 * @param height height
+	 * @param factor factor
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
 	// overridden methods
 	void dispose() override;

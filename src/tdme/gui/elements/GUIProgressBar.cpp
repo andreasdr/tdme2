@@ -1,12 +1,12 @@
 #include <tdme/gui/elements/GUIProgressBar.h>
 
 #include <string>
+#include <unordered_map>
 #include <tdme/gui/elements/GUIProgressBarController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <unordered_map>
 
 using std::string;
 using std::unordered_map;
@@ -31,7 +31,7 @@ const string& GUIProgressBar::getName()
 
 const string GUIProgressBar::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"progressbar.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"progressbar.xml":fileName);
 }
 
 unordered_map<string, string> GUIProgressBar::getAttributes(GUIScreenNode* screenNode)

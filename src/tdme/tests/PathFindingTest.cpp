@@ -13,7 +13,6 @@
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
@@ -30,6 +29,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/PathFinding.h>
+#include <tdme/utilities/Primitives.h>
 
 using std::string;
 using std::to_string;
@@ -45,7 +45,6 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
@@ -62,6 +61,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::PathFinding;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 PathFindingTest::PathFindingTest()

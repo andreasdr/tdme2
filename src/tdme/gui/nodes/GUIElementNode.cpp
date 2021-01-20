@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
+#include <algorithm>
 #include <set>
 #include <string>
 
@@ -7,18 +8,18 @@
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
@@ -27,6 +28,9 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::begin;
+using std::end;
+using std::find;
 using std::set;
 using std::to_string;
 
@@ -35,21 +39,21 @@ using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementIgnoreEventsController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utilities::Console;
-using tdme::utilities::Float;
 using tdme::utilities::Integer;
+using tdme::utilities::Float;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -83,7 +87,9 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseDoubleClickExpression,
 	const string& onMouseOverExpression,
 	const string& onMouseOutExpression,
-	const string& onChangeExpression
+	const string& onChangeExpression,
+	const string& parentElementId,
+	const string& options
 	) :
 	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
@@ -100,8 +106,15 @@ GUIElementNode::GUIElementNode(
 	this->onMouseOverExpression = onMouseOverExpression;
 	this->onMouseOutExpression = onMouseOutExpression;
 	this->onChangeExpression = onChangeExpression;
+	this->parentElementId = parentElementId;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
+	{
+		StringTokenizer t;
+		t.tokenize(StringTools::trim(options), ",");
+		while (t.hasMoreTokens() == true) this->options.push_back(StringTools::toLowerCase(StringTools::trim(t.nextToken())));
+
+	}
 }
 
 string GUIElementNode::CONDITION_ALWAYS = "always";
@@ -280,12 +293,14 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 		// image node specific data
 		if (subCommand == "maskmaxvalue") {
 			auto imageNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(nodeId));
-			if (StringTools::endsWith(value, ".value") == true) {
-				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
-				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
-				if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
-			} else {
-				imageNode->setMaskMaxValue(Float::parseFloat(value));
+			if (imageNode != nullptr) {
+				if (StringTools::endsWith(value, ".value") == true) {
+					auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
+					auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
+					if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
+				} else {
+					imageNode->setMaskMaxValue(Float::parseFloat(value));
+				}
 			}
 		} else
 		if (StringTools::startsWith(command,"delay(") == true &&
@@ -301,6 +316,14 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 
 void GUIElementNode::executeOnChangeExpression() {
 	if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
+}
+
+const string& GUIElementNode::getParentElementNodeId() {
+	return parentElementId;
+}
+
+bool GUIElementNode::hasOption(const string& option) {
+	return find(begin(options), end(options), option) != end(options);
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

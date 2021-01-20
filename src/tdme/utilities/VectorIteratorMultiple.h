@@ -21,9 +21,9 @@ template<typename T>
 class VectorIteratorMultiple final
 {
 private:
-	int32_t vectorIdx {  0 };
-	int32_t elementIdx {  0 };
-	vector<vector<T>*> vectorList {  };
+	int32_t vectorIdx { 0 };
+	int32_t elementIdx { 0 };
+	vector<vector<T>*> vectorList;
 
 public:
 	/**

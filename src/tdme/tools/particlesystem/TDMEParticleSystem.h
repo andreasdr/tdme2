@@ -27,7 +27,6 @@ class tdme::tools::particlesystem::TDMEParticleSystem final
 	: public virtual Application
 {
 private:
-	static string VERSION;
 	static TDMEParticleSystem* instance;
 	Engine* engine { nullptr };
 	View* view { nullptr };

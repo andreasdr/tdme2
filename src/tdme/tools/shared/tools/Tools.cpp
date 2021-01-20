@@ -5,6 +5,8 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -17,7 +19,6 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
@@ -44,6 +45,7 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -56,6 +58,8 @@ using tdme::tools::shared::tools::Tools;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -68,7 +72,6 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
@@ -94,6 +97,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
+using tdme::utilities::Primitives;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -255,11 +259,11 @@ float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	auto modelId = "ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
-	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::ZYX, nullptr);
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/sceneeditor/textures", "groundplate.png");
+	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundNode = new Node(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
@@ -277,7 +281,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundNode, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundNode, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity nodeFacesEntityGround(groundNode, "ground node faces entity ground");
+	FacesEntity nodeFacesEntityGround(groundNode, "ground.facesentity");
 	nodeFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> nodeFacesEntities;
 	nodeFacesEntityGround.setFaces(groundFacesGround);
@@ -396,7 +400,7 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 	dynamic_cast<EntityHierarchy*>(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
-	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
+	for (auto i = 1; i < engine->getLightCount(); i++) engine->getLightAt(i)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(0.7f, 0.7f, 0.7f, 1.0f));
 	light0->setDiffuse(Color4(0.3f, 0.3f, 0.3f, 1.0f));
@@ -474,7 +478,7 @@ const string Tools::getApplicationRootPath(const string& fileName)
 	return "";
 }
 
-const string Tools::getPath(const string& fileName)
+const string Tools::getPathName(const string& fileName)
 {
 	return FileSystem::getInstance()->getPathName(fileName);
 }
@@ -525,35 +529,35 @@ void Tools::loadSettings(Application* application) {
 
 Model* Tools::getGizmoAll() {
 	if (gizmoAll == nullptr) {
-		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.tm");
+		gizmoAll = ModelReader::read("resources/engine/models", "gizmo_all.tm");
 	}
 	return gizmoAll;
 }
 
 Model* Tools::getGizmoTranslationScale() {
 	if (gizmoTranslationScale == nullptr) {
-		gizmoTranslationScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_transscale.tm");
+		gizmoTranslationScale = ModelReader::read("resources/engine/models", "gizmo_transscale.tm");
 	}
 	return gizmoTranslationScale;
 }
 
 Model* Tools::getGizmoTranslation() {
 	if (gizmoTranslation == nullptr) {
-		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.tm");
+		gizmoTranslation = ModelReader::read("resources/engine/models", "gizmo_translate.tm");
 	}
 	return gizmoTranslation;
 }
 
 Model* Tools::getGizmoScale() {
 	if (gizmoScale == nullptr) {
-		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.tm");
+		gizmoScale = ModelReader::read("resources/engine/models", "gizmo_scale.tm");
 	}
 	return gizmoScale;
 }
 
 Model* Tools::getGizmoRotations() {
 	if (gizmoRotations == nullptr) {
-		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.tm");
+		gizmoRotations = ModelReader::read("resources/engine/models", "gizmo_rotate.tm");
 	}
 	return gizmoRotations;
 }
@@ -567,7 +571,7 @@ Model* Tools::getDefaultObb() {
 			OrientedBoundingBox::AABB_AXIS_Z,
 			Vector3(0.5f, 0.5f, 0.5f)
 		);
-		defaultOBB = PrimitiveModel::createModel(&obb, "tdme.obb.default");
+		defaultOBB = Primitives::createModel(&obb, "tdme.obb.default");
 	}
 	return defaultOBB;
 

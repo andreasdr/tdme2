@@ -114,7 +114,7 @@ void PrototypeBaseSubScreenController::setPrototypePresetIds(const map<string, v
 	string prototypePropertiesPresetsInnerNodeSubNodesXML = "";
 	prototypePropertiesPresetsInnerNodeSubNodesXML =
 		prototypePropertiesPresetsInnerNodeSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		prototypePropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	for (auto it: prototypePresetIds) {
@@ -129,7 +129,7 @@ void PrototypeBaseSubScreenController::setPrototypePresetIds(const map<string, v
 			" />\n";
 		idx++;
 	}
-	prototypePropertiesPresetsInnerNodeSubNodesXML = prototypePropertiesPresetsInnerNodeSubNodesXML + "</scrollarea-vertical>";
+	prototypePropertiesPresetsInnerNodeSubNodesXML = prototypePropertiesPresetsInnerNodeSubNodesXML + "</scrollarea>";
 	try {
 		prototypePropertiesPresetsInnerNode->replaceSubNodes(prototypePropertiesPresetsInnerNodeSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -154,7 +154,7 @@ void PrototypeBaseSubScreenController::setPrototypeProperties(Prototype* prototy
 	string prototypePropertiesListBoxSubNodesXML = "";
 	prototypePropertiesListBoxSubNodesXML =
 		prototypePropertiesListBoxSubNodesXML +
-		"<scrollarea-vertical id=\"" +
+		"<scrollarea id=\"" +
 		prototypePropertiesList->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	for (auto i = 0; i < prototype->getPropertyCount(); i++) {
@@ -171,7 +171,7 @@ void PrototypeBaseSubScreenController::setPrototypeProperties(Prototype* prototy
 			(selectedName.length() > 0 && entityProperty->getName() == selectedName ? "selected=\"true\" " : "") +
 			"/>\n";
 	}
-	prototypePropertiesListBoxSubNodesXML = prototypePropertiesListBoxSubNodesXML + "</scrollarea-vertical>\n";
+	prototypePropertiesListBoxSubNodesXML = prototypePropertiesListBoxSubNodesXML + "</scrollarea>\n";
 	try {
 		prototypePropertiesListBoxInnerNode->replaceSubNodes(prototypePropertiesListBoxSubNodesXML, false);
 	} catch (Exception& exception) {

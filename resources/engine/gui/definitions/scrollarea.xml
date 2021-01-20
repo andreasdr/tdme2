@@ -1,0 +1,18 @@
+<element show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" border="{$border}" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
+	<layout id="{$id}_layout" width="100%" height="100%" alignment="vertical">
+		<layout id="{$id}_scrollarea_vertical_inner" width="100%" height="*" alignment="horizontal">
+			<layout id="{$id}_inner" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" padding="{$padding}" overflow-x="scroll" overflow-y="scroll" width="*" height="100%">
+				{__InnerXML__}
+			</layout>
+			<layout show-on="vertical-scrollbar" id="{$id}_scrollbar_vertical_layout" alignment="vertical" width="auto" height="100%"  background-color="{$color.element_midground}">
+				<vertical-scrollbar-internal id="{$id}_scrollbar_vertical_layout_bar" border="2" border-color="#00000000" width="10" height="*" color-none="{$color.element_foreground}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
+			</layout>
+		</layout>
+		<layout show-on="horizontal-scrollbar" id="{$id}_scrollbar_horizontal_layout" alignment="horizontal" width="100%" height="auto">
+			<layout id="{$id}_scrollbar_horizontal_layout_inner" alignment="horizontal" width="100%" height="auto" background-color="{$color.element_midground}">
+				<horizontal-scrollbar-internal id="{$id}_scrollbar_horizontal_layout_bar" border="2" border-color="#00000000" width="*" height="10" color-none="{$color.element_foreground}" color-mouseover="{$color.focus}" color-dragging="{$color.focus}" />
+			</layout>
+			<space width="24" height="24" />
+		</layout>
+	</layout>
+</element>

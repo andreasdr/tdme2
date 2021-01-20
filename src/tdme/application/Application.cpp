@@ -679,8 +679,8 @@ void Application::setIcon() {
 	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
 	#if defined(VULKAN) || defined(GLFW3)
 		auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
-		if (FileSystem::getInstance()->fileExists("resources/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
-		auto texture = TextureReader::read("resources/icons", logoFileName, false, false);
+		if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+		auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
 		if (texture != nullptr) {
 			auto textureData = texture->getTextureData();
 			auto textureWidth = texture->getTextureWidth();
@@ -695,8 +695,8 @@ void Application::setIcon() {
 				glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
 			}
 			GLFWimage glfwIcon;
-			glfwIcon.width = texture->getWidth();
-			glfwIcon.height = texture->getHeight();
+			glfwIcon.width = texture->getTextureWidth();
+			glfwIcon.height = texture->getTextureHeight();
 			glfwIcon.pixels = glfwPixels;
 			glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
 			texture->releaseReference();
@@ -704,7 +704,7 @@ void Application::setIcon() {
 		}
 	#elif defined(_WIN32)
 		HWND hwnd = FindWindow(NULL, title.c_str());
-		HANDLE icon = LoadImage(GetModuleHandle(nullptr), "resources/win32/app.ico", IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
+		HANDLE icon = LoadImage(GetModuleHandle(nullptr), "resources/platforms/win32/app.ico", IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
 		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
 	#endif
 }

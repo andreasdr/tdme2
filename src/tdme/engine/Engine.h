@@ -242,9 +242,9 @@ private:
 	ShadowMapping* shadowMapping { nullptr };
 	float shadowMapLightEyeDistanceScale { 1.0f };
 
-	map<string, Entity*> entitiesById;
-	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
-	map<string, Entity*> noFrustumCullingEntitiesById;
+	unordered_map<string, Entity*> entitiesById;
+	unordered_map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
+	unordered_map<string, Entity*> noFrustumCullingEntitiesById;
 
 	DecomposedEntities visibleDecomposedEntities;
 
@@ -389,18 +389,18 @@ private:
 	Engine();
 
 	/**
-	 * Determine entity type
-	 * @param entity entity to investigate
+	 * Decompose entity type
+	 * @param entity entity to decompose
 	 * @param decomposedEntities decomposed entities
 	 */
-	void determineEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
+	void decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities);
 
 	/**
-	 * Determine entity types
-	 * @param entities given entities to investigate
+	 * Decompose entity types
+	 * @param entities given entities to decompose
 	 * @param decomposedEntities decomposed entities
 	 */
-	void determineEntityTypes(
+	void decomposeEntityTypes(
 		const vector<Entity*>& entities,
 		DecomposedEntities& decomposedEntities
 	);

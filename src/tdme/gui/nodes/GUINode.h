@@ -2,34 +2,34 @@
 
 #include <array>
 #include <map>
-#include <set>
 #include <string>
 #include <vector>
+#include <set>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
-#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 using std::map;
+using std::vector;
 using std::set;
 using std::string;
-using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::effects::GUIEffect;
@@ -37,15 +37,15 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
+using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
@@ -156,8 +156,8 @@ protected:
 	GUINodeConditions hideOn;
 	GUINodeController* controller { nullptr };
 	map<string, GUIEffect*> effects;
-	int guiEffectOffsetX;
-	int guiEffectOffsetY;
+	int32_t guiEffectOffsetX;
+	int32_t guiEffectOffsetY;
 	bool conditionsMet;
 	bool layouted;
 	bool haveOutEffect;
@@ -216,13 +216,13 @@ protected:
 	 * Set computed left
 	 * @param left left
 	 */
-	virtual void setLeft(int left);
+	virtual void setLeft(int32_t left);
 
 	/**
 	 * Set computed top
 	 * @param top top
 	 */
-	virtual void setTop(int top);
+	virtual void setTop(int32_t top);
 
 	/**
 	 * Layout
@@ -242,7 +242,7 @@ protected:
 	 * @param value value
 	 * @return pixel
 	 */
-	virtual int layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int autoValue, int parentValue, int value);
+	virtual int32_t layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value);
 
 	/**
 	 * Get requested constraints type
@@ -258,7 +258,7 @@ protected:
 	 * @param defaultConstraintsValue default constraints value
 	 * @return requested constraints value
 	 */
-	static int getRequestedConstraintsValue(const string& constraint, int defaultConstraintsValue);
+	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
 
 	/**
 	 * Get requested pixel value
@@ -266,7 +266,7 @@ protected:
 	 * @param defaultValue default value
 	 * @return value
 	 */
-	static int getRequestedPixelValue(const string& value, int defaultValue);
+	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
 
 	/**
 	 * Check if conditions are met
@@ -322,22 +322,22 @@ public:
 	/**
 	 * @return content width including border, margin
 	 */
-	virtual int getContentWidth() = 0;
+	virtual int32_t getContentWidth() = 0;
 
 	/**
 	 * @return content height including border, margin
 	 */
-	virtual int getContentHeight() = 0;
+	virtual int32_t getContentHeight() = 0;
 
 	/**
 	 * @return auto width if auto width requested or content width
 	 */
-	virtual int getAutoWidth();
+	virtual int32_t getAutoWidth();
 
 	/**
 	 * @return auto height if auto height requested or content height
 	 */
-	virtual int getAutoHeight();
+	virtual int32_t getAutoHeight();
 
 	/**
 	 * @return border
@@ -373,9 +373,10 @@ public:
 	 * @param top top
 	 * @param width width
 	 * @param height height
+	 * @param factor factor
 	 * @return requested constraints
 	 */
-	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height, int factor);
 
 	/**
 	 * Get color
@@ -492,6 +493,15 @@ public:
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
 
 	/**
+	 * Get event position clamped to node constraints
+	 * 	TODO: use Vector2 instead of array<float, 2>
+	 * @param event event
+	 * @param position x,y position clamped to node constraints
+	 * @return void
+	 */
+	virtual void getEventNodePosition(GUIMouseEvent* event, array<float, 2>& position);
+
+	/**
 	 * @return first parent node in tree with controller node attached
 	 */
 	virtual GUIParentNode* getParentControllerNode();
@@ -553,24 +563,24 @@ public:
 	/**
 	 * @return GUI effect offset X
 	 */
-	int getGUIEffectOffsetX();
+	int32_t getGUIEffectOffsetX();
 
 	/**
 	 * Set GUI effect offset X
 	 * @param guiEffectOffsetX gui effect offset X
 	 */
-	void setGUIEffectOffsetX(int guiEffectOffsetX);
+	void setGUIEffectOffsetX(int32_t guiEffectOffsetX);
 
 	/**
 	 * @return GUI effect offset Y
 	 */
-	int getGUIEffectOffsetY();
+	int32_t getGUIEffectOffsetY();
 
 	/**
 	 * Set GUI effect offset Y
 	 * @param guiEffectOffsetY gui effect offset Y
 	 */
-	void setGUIEffectOffsetY(int guiEffectOffsetY);
+	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
 
 	/**
 	 * Add effect, effect already registered with the is will be removed

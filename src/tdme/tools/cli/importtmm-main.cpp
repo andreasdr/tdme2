@@ -19,6 +19,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -44,6 +45,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Object3DModel;
+using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
@@ -53,7 +55,7 @@ using tdme::utilities::StringTools;
 
 static Model* createModel(const string& id, vector<Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
-	auto material = new Material("tdme.primitive.material");
+	auto material = new Material("primitive");
 	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
 	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
@@ -109,8 +111,8 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("importtmm 1.9.9"));
-	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
+	Console::println(string("importtmm ") + Version::getVersion());
+	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 3) {
 		Console::println("Usage: importtmm tmmfile.tmm modelfile.ext [bvs-model.ext]");

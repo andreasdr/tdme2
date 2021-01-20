@@ -9,7 +9,6 @@
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
@@ -20,6 +19,7 @@
 #include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
@@ -32,7 +32,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
@@ -44,6 +43,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::AtomicOperations;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
 volatile unsigned int PrototypeBoundingVolume::modelIdx = 0;
@@ -78,7 +78,7 @@ void PrototypeBoundingVolume::setupSphere(const Vector3& center, float radius)
 	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new Sphere(center, radius);
 	if (model != nullptr) delete model;
-	model = PrimitiveModel::createModel(
+	model = Primitives::createModel(
 		boundingVolume,
 		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
@@ -96,7 +96,7 @@ void PrototypeBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, f
 	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new Capsule(a, b, radius);
 	if (model != nullptr) delete model;
-	model = PrimitiveModel::createModel(
+	model = Primitives::createModel(
 		boundingVolume,
 		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
@@ -114,7 +114,7 @@ void PrototypeBoundingVolume::setupObb(const Vector3& center, const Vector3& axi
 	if (boundingVolume != nullptr) delete boundingVolume;
 	boundingVolume = new OrientedBoundingBox(center, axis0, axis1, axis2, halfExtension);
 	if (model != nullptr) delete model;
-	model = PrimitiveModel::createModel(
+	model = Primitives::createModel(
 		boundingVolume,
 		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
@@ -133,7 +133,7 @@ void PrototypeBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 	BoundingBox aabb(min, max);
 	boundingVolume = new OrientedBoundingBox(&aabb);
 	if (model != nullptr) delete model;
-	model = PrimitiveModel::createModel(
+	model = Primitives::createModel(
 		boundingVolume,
 		string(prototype->getModel() != nullptr ? prototype->getModel()->getId() : "none") +
 			string(",") +
@@ -161,7 +161,7 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
 		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
 		delete convexMeshObject3DModel;
-		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
+		Primitives::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (Exception& exception) {
 		Console::print(string("PrototypeBoundingVolume::setupConvexMesh(): An error occurred: " + modelMeshFile + ": "));

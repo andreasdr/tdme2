@@ -1928,6 +1928,9 @@ int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& 
 		} else
 		if (uniformType == "sampler2D") {
 			// no op
+		} else
+		if (uniformType == "samplerCube") {
+			// no op
 		} else {
 			if (structs.find(uniformType) != structs.end()) {
 				uint32_t size = determineAlignment(structs, structs.find(uniformType)->second);
@@ -1961,7 +1964,7 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
 			arraySize = Integer::parseInt(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
-			if (uniformType != "sampler2D") uniformArrays.insert(uniformName);
+			if (uniformType != "sampler2D" && uniformType != "samplerCube") uniformArrays.insert(uniformName);
 		}
 		if (uniformType == "int") {
 			for (auto i = 0; i < arraySize; i++) {
@@ -2098,6 +2101,22 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 						.name = prefix + uniformName + suffix,
 						.newName = prefix + uniformName + newSuffix,
 						.type = shader_type::uniform_type::TYPE_SAMPLER2D,
+						.position = -1,
+						.size = 0,
+						.texture_unit = -1
+					};
+			}
+			continue;
+		} else
+		if (uniformType == "samplerCube") {
+			for (auto i = 0; i < arraySize; i++) {
+				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+				auto newSuffix = isArray == true?"_" + to_string(i):"";
+				shader.uniforms[prefix + uniformName + suffix] = new shader_type::uniform_type
+					{
+						.name = prefix + uniformName + suffix,
+						.newName = prefix + uniformName + newSuffix,
+						.type = shader_type::uniform_type::TYPE_SAMPLERCUBE,
 						.position = -1,
 						.size = 0,
 						.texture_unit = -1
@@ -2291,6 +2310,28 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 							newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
 						}
 						shader.samplers++;
+					} else
+					if (line.find("samplerCube") != -1) {
+						uniform = StringTools::substring(line, string("uniform").size() + 1);
+						t2.tokenize(uniform, "\t ;");
+						string uniformType;
+						string uniformName;
+						if (t2.hasMoreTokens() == true) uniformType = t2.nextToken();
+						while (t2.hasMoreTokens() == true) uniformName = t2.nextToken();
+						auto isArray = false;
+						auto arraySize = 1;
+						if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+							isArray = true;
+							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
+							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+							arraySize = Integer::parseInt(arraySizeString);
+							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
+						}
+						for (auto i = 0; i < arraySize; i++) {
+							auto suffix = isArray == true?"_" + to_string(i):"";
+							newShaderSourceLines.push_back("layout(binding = {$SAMPLERCUBE_BINDING_" + uniformName + suffix + "_IDX}) uniform samplerCube " + uniformName + suffix + ";");
+						}
+						shader.samplers++;
 					} else {
 						uniform = StringTools::substring(line, string("uniform").size() + 1);
 						uboUniformCount++;
@@ -2368,6 +2409,15 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			} else {
 				for (auto& uniformIt: shader.uniforms) {
 					if (uniformIt.second->type == shader_type::uniform_type::TYPE_SAMPLER2D) {
+						if (uniformIt.second->name != uniformIt.second->newName) {
+							line = StringTools::replace(
+								line,
+								uniformIt.second->name,
+								uniformIt.second->newName
+							);
+						}
+					} else
+					if (uniformIt.second->type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
 						if (uniformIt.second->name != uniformIt.second->newName) {
 							line = StringTools::replace(
 								line,
@@ -2539,7 +2589,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 			};
 		}
 		// sampler2D
-		for (auto uniform: shader->sampler2DUniformList) {
+		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -2872,7 +2922,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 			};
 		}
 		// sampler2D
-		for (auto uniform: shader->sampler2DUniformList) {
+		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -3181,7 +3231,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 			};
 		}
 		// sampler2D
-		for (auto uniform: shader->sampler2DUniformList) {
+		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -3684,6 +3734,10 @@ bool VKRenderer::linkProgram(int32_t programId)
 			if (uniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 				shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
 				uniform.position = bindingIdx++;
+			} else
+			if (uniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+				shader->source = StringTools::replace(shader->source, "{$SAMPLERCUBE_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
+				uniform.position = bindingIdx++;
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
 		}
@@ -3820,13 +3874,14 @@ bool VKRenderer::linkProgram(int32_t programId)
 			}
 			auto uniform = shaderUniformIt->second;
 			shader->uniformList[uniformId] = uniform;
-			if (uniform->type == shader_type::uniform_type::TYPE_SAMPLER2D) shader->sampler2DUniformList.push_back(uniform);
+			if (uniform->type == shader_type::uniform_type::TYPE_SAMPLER2D ||
+				uniform->type == shader_type::uniform_type::TYPE_SAMPLERCUBE) shader->samplerUniformList.push_back(uniform);
 		}
 	}
 
 	//
 	for (auto shader: program->shaders) {
-		shader->sampler2DUniformList.shrink_to_fit();
+		shader->samplerUniformList.shrink_to_fit();
 	}
 
 	// total bindings of program
@@ -5656,7 +5711,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniform: shader->sampler2DUniformList) {
+			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
@@ -5749,7 +5804,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniform: shader->sampler2DUniformList) {
+			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
@@ -5836,7 +5891,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
-			for (auto uniform: shader->sampler2DUniformList) {
+			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
 					texDescs[samplerIdx] = {
 						.sampler = white_texture_default->sampler,
@@ -6371,6 +6426,16 @@ float VKRenderer::getMaskMaxValue(void* context) {
 void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	contextTyped.maskMaxValue = maskMaxValue;
+}
+
+array<float, 3>& VKRenderer::getEnvironmentMappingCubeMapPosition(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.environmentMappingCubeMapPosition;
+}
+
+void VKRenderer::setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.environmentMappingCubeMapPosition = position;
 }
 
 void VKRenderer::setVSyncEnabled(bool vSync) {

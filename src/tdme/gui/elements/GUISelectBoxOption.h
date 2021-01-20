@@ -5,10 +5,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
-#include <tdme/gui/elements/GUIElement.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/gui/elements/GUIElement.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 
 using std::string;
 using std::unordered_map;
@@ -24,23 +24,20 @@ using tdme::os::filesystem::FileSystemException;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISelectBoxOption final
-	: public GUIElement
+class tdme::gui::elements::GUISelectBoxOption final: public GUIElement
 {
 
 private:
 	static string NAME;
 
 public:
-	/**
-	 * Public constructor
-	 */
-	GUISelectBoxOption();
-
-	// overridden methods
 	const string& getName() override;
 	const string getTemplate(const string& pathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
+	/**
+	 * Public constructor
+	 */
+	GUISelectBoxOption();
 };

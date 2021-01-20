@@ -1,7 +1,0 @@
-<screen id="popup_progressbar" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="1920" max-height="1080">
-	<panel alignment="none" width="100%" height="100%" vertical-align="center" horizontal-align="center" background-color="#ffffff00">
-		<panel alignment="center" width="auto" height="auto">
-			<progress-bar id="progressbar" value="0.5" />
-		</panel>
-	</panel>
-</screen>

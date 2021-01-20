@@ -22,7 +22,7 @@ class tdme::math::Quaternion final
 {
 // see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
 private:
-	array<float, 4> data {  };
+	array<float, 4> data;
 
 public:
 	/**

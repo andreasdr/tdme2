@@ -1,0 +1,3 @@
+<element width="100%" height="*" background-color="{$color.element_foreground}" border-left="1" border-right="1" border-bottom="1" border-color="{$color.element_frame}">
+	{__InnerXML__}
+</element>

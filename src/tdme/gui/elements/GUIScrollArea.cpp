@@ -32,7 +32,7 @@ const string& GUIScrollArea::getName()
 
 const string GUIScrollArea::getTemplate(const string& pathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"scrollarea.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"scrollarea.xml":fileName);
 }
 
 unordered_map<string, string> GUIScrollArea::getAttributes(GUIScreenNode* screenNode)

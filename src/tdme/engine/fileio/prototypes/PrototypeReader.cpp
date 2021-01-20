@@ -116,7 +116,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		);
 	} else
 	if (prototypeType == Prototype_Type::EMPTY) {
-		model = ModelReader::read("resources/engine/tools/sceneeditor/models", "empty.dae");
+		model = ModelReader::read("resources/engine/models", "empty.tm");
 	}
 
 	prototype = new Prototype(
@@ -235,7 +235,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 	);
 	auto applicationRoot = Tools::getApplicationRootPath(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
-	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
+	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
 }
 
 PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype* prototype, const string& pathName, Value& jBv)

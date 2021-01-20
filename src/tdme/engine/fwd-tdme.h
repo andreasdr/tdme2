@@ -36,6 +36,7 @@ namespace engine {
 	class SceneConnector;
 	class Timing;
 	class Transformations;
+	struct Version;
 	class WindowManager;
 }  // namespace engine
 }  // namespace tdme

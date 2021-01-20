@@ -172,10 +172,10 @@ void TriggerView::dispose()
 	Engine::getInstance()->reset();
 }
 
-void TriggerView::onRotation() {
+void TriggerView::onCameraRotation() {
 	prototypePhysicsView->updateGizmo(prototype);
 }
 
-void TriggerView::onScale() {
+void TriggerView::onCameraScale() {
 	prototypePhysicsView->updateGizmo(prototype);
 }

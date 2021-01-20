@@ -13,7 +13,6 @@
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/Camera.h>
@@ -29,6 +28,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ObjectDeleter.h>
+#include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
@@ -48,7 +48,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Camera;
@@ -64,6 +63,7 @@ using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ObjectDeleter;
+using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
 constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
@@ -170,13 +170,13 @@ void PhysicsTest3::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto side = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f)));
-	auto sideModel = modelDeleter.add(PrimitiveModel::createModel(side, "side_model"));
-	sideModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	sideModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	auto sideModel = modelDeleter.add(Primitives::createModel(side, "side_model"));
+	sideModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	sideModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	auto nearFar = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 16.0f, 1.0f)));
-	auto nearFarModel = modelDeleter.add(PrimitiveModel::createModel(nearFar, "far_model"));
-	nearFarModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	nearFarModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	auto nearFarModel = modelDeleter.add(Primitives::createModel(nearFar, "far_model"));
+	nearFarModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	nearFarModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("far", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
@@ -200,9 +200,9 @@ void PhysicsTest3::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {side});
 	auto box = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.6f, 0.6f, 0.6f)));
-	auto boxModel = modelDeleter.add(PrimitiveModel::createModel(box, "box_model"));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
-	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
+	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D("box" + to_string(i), boxModel);
 		entity->setContributesShadows(true);
@@ -222,9 +222,9 @@ void PhysicsTest3::initialize()
 		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	auto sphere = bvDeleter.add(new Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.4f));
-	auto sphereModel = modelDeleter.add(PrimitiveModel::createModel(sphere, "sphere_model"));
-	sphereModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.8f, 0.8f, 1.0f));
-	sphereModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.0f, 1.0f, 1.0f, 1.0f));
+	auto sphereModel = modelDeleter.add(Primitives::createModel(sphere, "sphere_model"));
+	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.8f, 0.8f, 1.0f));
+	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.0f, 1.0f, 1.0f, 1.0f));
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
 		entity = new Object3D("sphere" + to_string(i), sphereModel);
 		entity->setContributesShadows(true);
@@ -235,9 +235,9 @@ void PhysicsTest3::initialize()
 		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	auto capsule = bvDeleter.add(new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, -0.5f, 0.0f), 0.25f));
-	auto capsuleModel = modelDeleter.add(PrimitiveModel::createModel(capsule, "capsule_model"));
-	capsuleModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.0f, 0.8f, 1.0f));
-	capsuleModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 1.0f, 1.0f));
+	auto capsuleModel = modelDeleter.add(Primitives::createModel(capsule, "capsule_model"));
+	capsuleModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.0f, 0.8f, 1.0f));
+	capsuleModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 1.0f, 1.0f));
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
 		entity = new Object3D("capsule" + to_string(i), capsuleModel);
 		entity->setContributesShadows(true);
@@ -248,9 +248,9 @@ void PhysicsTest3::initialize()
 		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.4f, 3.0f, Vector3(1.0f, 1.0f, 1.0f), {capsule});
 	}
 	auto capsuleBig = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f)));
-	auto capsuleBigModel = modelDeleter.add(PrimitiveModel::createModel(capsuleBig, "capsulebig_model"));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
-	capsuleBigModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	auto capsuleBigModel = modelDeleter.add(Primitives::createModel(capsuleBig, "capsulebig_model"));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
+	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("capsulebig1", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
