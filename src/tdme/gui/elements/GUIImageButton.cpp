@@ -12,8 +12,8 @@
 using std::string;
 using std::unordered_map;
 
-using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIButtonController;
+using tdme::gui::elements::GUIImageButton;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;

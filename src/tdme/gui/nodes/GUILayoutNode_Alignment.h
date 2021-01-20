@@ -7,9 +7,9 @@
 
 using std::string;
 
-using tdme::utilities::Enum;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
+using tdme::utilities::Enum;
 
 /**
  * GUI layout node alignment enum

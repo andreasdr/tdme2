@@ -11,8 +11,8 @@ using std::find;
 using std::vector;
 
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(elementNode)

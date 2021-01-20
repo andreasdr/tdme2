@@ -1,21 +1,21 @@
 #include <tdme/gui/elements/GUITabsController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 
 using tdme::gui::elements::GUITabsController;
 
-using tdme::gui::GUI;
 using tdme::gui::elements::GUITabContentController;
 using tdme::gui::elements::GUITabController;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
 GUITabsController::GUITabsController(GUINode* node)

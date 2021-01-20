@@ -1,25 +1,25 @@
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 
-using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController_State;
 using tdme::gui::nodes::GUILayoutNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 
 GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(GUINode* node)
 	: GUINodeController(node)

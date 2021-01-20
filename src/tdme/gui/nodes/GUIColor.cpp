@@ -14,9 +14,9 @@ using std::array;
 using std::string;
 using std::vector;
 
-using tdme::gui::nodes::GUIColor;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::GUIParserException;
 using tdme::utilities::StringTools;
 

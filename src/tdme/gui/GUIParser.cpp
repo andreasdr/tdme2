@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 
-#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>
@@ -27,10 +26,10 @@
 #include <tdme/gui/elements/GUISliderH.h>
 #include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
-#include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/elements/GUITabs.h>
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
+#include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -50,17 +49,18 @@
 #include <tdme/gui/nodes/GUISpaceNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalNode.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Console.h>
-#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Properties.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -68,8 +68,6 @@ using std::string;
 using std::to_string;
 using std::unordered_map;
 
-using tdme::gui::GUIParser;
-using tdme::gui::GUIParserException;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::elements::GUIButton;
@@ -93,10 +91,10 @@ using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
-using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
+using tdme::gui::elements::GUITabContent;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -114,21 +112,23 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
+using tdme::gui::GUIParser;
+using tdme::gui::GUIParserException;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
-using tdme::utilities::StringTools;
-using tdme::utilities::Console;
-using tdme::utilities::Exception;
 using tdme::utilities::Properties;
+using tdme::utilities::StringTools;
 
+using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
 using tinyxml::TiXmlElement;
-using tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 

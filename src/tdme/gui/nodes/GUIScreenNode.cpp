@@ -1,27 +1,27 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
-#include <set>
 #include <map>
+#include <set>
 #include <string>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIElementController.h>
-#include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
-#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -32,23 +32,23 @@ using std::set;
 using std::string;
 using std::to_string;
 
-using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIMouseOverListener;
-using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIElementController;
-using tdme::gui::nodes::GUINode_ComputedConstraints;
-using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
-using tdme::gui::nodes::GUINode_RequestedConstraints;
-using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINode_ComputedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUI;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 

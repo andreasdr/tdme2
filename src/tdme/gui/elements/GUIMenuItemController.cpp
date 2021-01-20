@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/elements/GUIMenuHeaderItemController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -14,14 +13,14 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
 
-using tdme::gui::GUI;
-using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::elements::GUIMenuHeaderItemController;
+using tdme::gui::elements::GUIMenuItemController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
@@ -31,6 +30,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 

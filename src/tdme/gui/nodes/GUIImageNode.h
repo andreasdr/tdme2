@@ -7,17 +7,17 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
-using tdme::gui::nodes::GUINode;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;

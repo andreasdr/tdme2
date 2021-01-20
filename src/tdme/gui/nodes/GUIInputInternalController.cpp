@@ -1,26 +1,25 @@
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
-#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
+#include <tdme/gui/GUI.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Time.h>
 
 using tdme::gui::nodes::GUIInputInternalController;
 
-using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -28,14 +27,15 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUIInputInternalNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
+using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 using tdme::utilities::Time;
 

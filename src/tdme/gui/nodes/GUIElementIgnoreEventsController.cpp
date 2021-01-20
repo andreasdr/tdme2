@@ -1,19 +1,19 @@
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/GUI.h>
 
-using tdme::gui::nodes::GUIElementIgnoreEventsController;
-using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementIgnoreEventsController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::GUI;
 
 GUIElementIgnoreEventsController::GUIElementIgnoreEventsController(GUINode* node)
 	: GUINodeController(node)

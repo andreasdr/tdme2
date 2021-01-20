@@ -5,9 +5,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
+#include <tdme/gui/elements/GUIElement.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/gui/elements/GUIElement.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 

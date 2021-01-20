@@ -7,13 +7,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/InputEventHandler.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/gui/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -29,9 +29,9 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::Engine;
 using tdme::application::InputEventHandler;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;

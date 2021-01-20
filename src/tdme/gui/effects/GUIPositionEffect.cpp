@@ -1,11 +1,11 @@
 #include <tdme/gui/effects/GUIPositionEffect.h>
 
-#include <tdme/gui/GUI.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/gui/GUI.h>
 
 using tdme::gui::effects::GUIPositionEffect;
-using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::GUI;
 
 GUIPositionEffect::GUIPositionEffect(): GUIEffect()
 {
