@@ -47,6 +47,7 @@ private:
 	GUIElementNode* textElementNode { nullptr };
 	MutableString value;
 	string search;
+	int lastSelectedDropDownOptionControlerIdx { -1 };
 
 private:
 	/**
@@ -89,6 +90,11 @@ private:
 	 * Select previous
 	 */
 	void selectPrevious();
+
+	/**
+	 * Select last
+	 */
+	void selectLast();
 
 	/**
 	 * Do search

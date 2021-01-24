@@ -59,9 +59,6 @@ class tdme::tools::sceneeditor::controller::SceneEditorScreenController final
 	, public GUIChangeListener
 {
 private:
-	static MutableString CHECKBOX_CHECKED;
-	static MutableString CHECKBOX_UNCHECKED;
-	static MutableString TEXT_EMPTY;
 	SceneEditorView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };

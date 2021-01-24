@@ -60,7 +60,7 @@ void Light::update(void* context) {
 		light.position = position.getArray();
 		light.spotDirection = spotDirection.getArray();
 		light.spotExponent = spotExponent;
-		light.spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
+		light.spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * spotCutOff));
 		light.constantAttenuation = constantAttenuation;
 		light.linearAttenuation = linearAttenuation;
 		light.quadraticAttenuation = quadraticAttenuation;

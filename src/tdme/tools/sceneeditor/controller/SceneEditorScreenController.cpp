@@ -79,10 +79,6 @@ using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
-MutableString SceneEditorScreenController::CHECKBOX_CHECKED = MutableString("1");
-MutableString SceneEditorScreenController::CHECKBOX_UNCHECKED = MutableString("");
-MutableString SceneEditorScreenController::TEXT_EMPTY = MutableString("");
-
 SceneEditorScreenController::SceneEditorScreenController(SceneEditorView* view)
 {
 	this->view = view;
@@ -196,12 +192,12 @@ void SceneEditorScreenController::setScreenCaption(const string& text)
 
 void SceneEditorScreenController::setGrid(bool enabled, float gridY)
 {
-	gridEnabled->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	gridEnabled->getController()->setValue(MutableString(enabled == true?"1":""));
 	gridYPosition->getController()->setValue(MutableString(Tools::formatFloat(gridY)));
 }
 
 void SceneEditorScreenController::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
-	this->snappingEnabled->getController()->setValue(snappingEnabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	this->snappingEnabled->getController()->setValue(MutableString(snappingEnabled == true?"1":""));
 	this->snappingX->getController()->setValue(MutableString(Tools::formatFloat(snappingX)));
 	this->snappingZ->getController()->setValue(MutableString(Tools::formatFloat(snappingZ)));
 }
@@ -222,9 +218,9 @@ void SceneEditorScreenController::unsetEntityProperties()
 	btnEntityPropertyAdd->getController()->setDisabled(true);
 	btnEntityPropertyRemove->getController()->setDisabled(true);
 	btnEntityPropertySave->getController()->setDisabled(true);
-	entityPropertyName->getController()->setValue(TEXT_EMPTY);
+	entityPropertyName->getController()->setValue(MutableString());
 	entityPropertyName->getController()->setDisabled(true);
-	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
+	entityPropertyValue->getController()->setValue(MutableString());
 	entityPropertyValue->getController()->setDisabled(true);
 	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesListBox->getScreenNode()->getNodeById(entityPropertiesListBox->getId() + "_inner")));
 	entityPropertiesListBoxInnerNode->clearSubNodes();
@@ -248,13 +244,13 @@ void SceneEditorScreenController::setEntityData(const string& name, const string
 
 void SceneEditorScreenController::unsetEntityData()
 {
-	entityName->getController()->setValue(TEXT_EMPTY);
+	entityName->getController()->setValue(MutableString());
 	entityName->getController()->setDisabled(true);
-	entityDescription->getController()->setValue(TEXT_EMPTY);
+	entityDescription->getController()->setValue(MutableString());
 	entityDescription->getController()->setDisabled(true);
-	entityModel->getController()->setValue(TEXT_EMPTY);
+	entityModel->getController()->setValue(MutableString());
 	entityModel->getController()->setDisabled(true);
-	entityCenter->getController()->setValue(TEXT_EMPTY);
+	entityCenter->getController()->setValue(MutableString());
 	entityCenter->getController()->setDisabled(true);
 	btnEntityDataApply->getController()->setDisabled(true);
 }
@@ -397,23 +393,23 @@ void SceneEditorScreenController::unsetEntityTransformations()
 	entityRotationX->getController()->setDisabled(true);
 	entityRotationY->getController()->setDisabled(true);
 	entityRotationZ->getController()->setDisabled(true);
-	entityTranslationX->getController()->setValue(TEXT_EMPTY);
-	entityTranslationY->getController()->setValue(TEXT_EMPTY);
-	entityTranslationZ->getController()->setValue(TEXT_EMPTY);
-	entityScaleX->getController()->setValue(TEXT_EMPTY);
-	entityScaleY->getController()->setValue(TEXT_EMPTY);
-	entityScaleZ->getController()->setValue(TEXT_EMPTY);
-	entityRotationX->getController()->setValue(TEXT_EMPTY);
-	entityRotationY->getController()->setValue(TEXT_EMPTY);
-	entityRotationZ->getController()->setValue(TEXT_EMPTY);
+	entityTranslationX->getController()->setValue(MutableString());
+	entityTranslationY->getController()->setValue(MutableString());
+	entityTranslationZ->getController()->setValue(MutableString());
+	entityScaleX->getController()->setValue(MutableString());
+	entityScaleY->getController()->setValue(MutableString());
+	entityScaleZ->getController()->setValue(MutableString());
+	entityRotationX->getController()->setValue(MutableString());
+	entityRotationY->getController()->setValue(MutableString());
+	entityRotationZ->getController()->setValue(MutableString());
 }
 
 void SceneEditorScreenController::onScenePropertiesSelectionChanged()
 {
 	scenePropertyName->getController()->setDisabled(true);
-	scenePropertyName->getController()->setValue(TEXT_EMPTY);
+	scenePropertyName->getController()->setValue(MutableString());
 	scenePropertyValue->getController()->setDisabled(true);
-	scenePropertyValue->getController()->setValue(TEXT_EMPTY);
+	scenePropertyValue->getController()->setValue(MutableString());
 	scenePropertySave->getController()->setDisabled(true);
 	scenePropertyRemove->getController()->setDisabled(true);
 	auto mapProperty = view->getScene()->getProperty(scenePropertiesListBox->getController()->getValue().getString());
@@ -527,9 +523,9 @@ void SceneEditorScreenController::setEntityPresetIds(const map<string, vector<Pr
 void SceneEditorScreenController::onEntityPropertiesSelectionChanged()
 {
 	entityPropertyName->getController()->setDisabled(true);
-	entityPropertyName->getController()->setValue(TEXT_EMPTY);
+	entityPropertyName->getController()->setValue(MutableString());
 	entityPropertyValue->getController()->setDisabled(true);
-	entityPropertyValue->getController()->setValue(TEXT_EMPTY);
+	entityPropertyValue->getController()->setValue(MutableString());
 	btnEntityPropertySave->getController()->setDisabled(true);
 	btnEntityPropertyRemove->getController()->setDisabled(true);
 	auto sceneEntity = view->getSelectedSceneEntity();
@@ -767,7 +763,7 @@ void SceneEditorScreenController::onGridApply()
 			throw ExceptionBase("grid y position must be within -5 .. +5");
 
 		view->setGridY(gridY);
-		view->setGridEnabled(gridEnabled->getController()->getValue().equals(CHECKBOX_CHECKED));
+		view->setGridEnabled(gridEnabled->getController()->getValue().equals("1"));
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
@@ -780,7 +776,7 @@ void SceneEditorScreenController::onSnappingApply()
 		if (snappingXValue < 0.0f || snappingXValue > 5.0f) throw ExceptionBase("snapping x must be within 0 .. 5");
 		auto snappingZValue = Float::parseFloat(snappingZ->getController()->getValue().getString());
 		if (snappingZValue < 0.0f || snappingZValue > 5.0f) throw ExceptionBase("snapping x must be within 0 .. 5");
-		view->setSnapping(snappingEnabled->getController()->getValue().equals(CHECKBOX_CHECKED), snappingXValue, snappingZValue);
+		view->setSnapping(snappingEnabled->getController()->getValue().equals("1"), snappingXValue, snappingZValue);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (exception.what()));
 	}
@@ -844,7 +840,7 @@ void SceneEditorScreenController::setLight(int i, const Color4& ambient, const C
 	lightsSpotDirection[i]->getController()->setValue(MutableString(Tools::formatFloat(spotDirection.getX())).append(", ").append(Tools::formatFloat(spotDirection.getY())).append(", ").append(Tools::formatFloat(spotDirection.getZ())));
 	lightsSpotExponent[i]->getController()->setValue(MutableString(Tools::formatFloat(spotExponent)));
 	lightsSpotCutoff[i]->getController()->setValue(MutableString(Tools::formatFloat(spotCutoff)));
-	lightsEnabled[i]->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	lightsEnabled[i]->getController()->setValue(MutableString(enabled == true?"1":""));
 	lightsAmbient[i]->getController()->setDisabled(enabled == false);
 	lightsDiffuse[i]->getController()->setDisabled(enabled == false);
 	lightsSpecular[i]->getController()->setDisabled(enabled == false);
@@ -882,7 +878,7 @@ void SceneEditorScreenController::onLight3Apply()
 void SceneEditorScreenController::onLightApply(int lightIdx)
 {
 	try {
-		auto enabled = lightsEnabled[lightIdx]->getController()->getValue().equals(CHECKBOX_CHECKED);
+		auto enabled = lightsEnabled[lightIdx]->getController()->getValue().equals("1");
 		view->applyLight(
 			lightIdx,
 			Tools::convertToColor4(lightsAmbient[lightIdx]->getController()->getValue().getString()),

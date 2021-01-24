@@ -783,8 +783,8 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			particleSystemEmitter->getActiveConditions().add(EMITTER_POINTPARTICLEEMITTER);
 			auto emitter = particleSystem->getPointParticleEmitter();
 			ppeCount->getController()->setValue(MutableString(emitter->getCount()));
-			ppeLifeTime->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTime())));
-			ppeLifeTimeRnd->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTimeRnd())));
+			ppeLifeTime->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTime())));
+			ppeLifeTimeRnd->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTimeRnd())));
 			ppeMass->getController()->setValue(MutableString(emitter->getMass(), 4));
 			ppeMassRnd->getController()->setValue(MutableString(emitter->getMassRnd(), 4));
 			ppePosition->getController()->setValue(MutableString(Tools::formatVector3(emitter->getPosition())));
@@ -798,8 +798,8 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			particleSystemEmitter->getActiveConditions().add(EMITTER_BOUNDINGBOXPARTICLEEMITTER);
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
 			bbpeCount->getController()->setValue(MutableString(emitter->getCount()));
-			bbpeLifeTime->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTime())));
-			bbpeLifeTimeRnd->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTimeRnd())));
+			bbpeLifeTime->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTime())));
+			bbpeLifeTimeRnd->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTimeRnd())));
 			bbpeMass->getController()->setValue(MutableString(emitter->getMass(), 4));
 			bbpeMassRnd->getController()->setValue(MutableString(emitter->getMassRnd(), 4));
 			bbpeVelocity->getController()->setValue(MutableString(Tools::formatVector3(emitter->getVelocity())));
@@ -822,8 +822,8 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTER);
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			cpeCount->getController()->setValue(MutableString(emitter->getCount()));
-			cpeLifeTime->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTime())));
-			cpeLifeTimeRnd->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTimeRnd())));
+			cpeLifeTime->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTime())));
+			cpeLifeTimeRnd->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTimeRnd())));
 			cpeMass->getController()->setValue(MutableString(emitter->getMass(), 4));
 			cpeMassRnd->getController()->setValue(MutableString(emitter->getMassRnd(), 4));
 			cpeVelocity->getController()->setValue(MutableString(Tools::formatVector3(emitter->getVelocity())));
@@ -847,8 +847,8 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			particleSystemEmitter->getActiveConditions().add(EMITTER_CIRCLEPARTICLEEMITTERPLANEVELOCITY);
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			cpepvCount->getController()->setValue(MutableString(emitter->getCount()));
-			cpepvLifeTime->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTime())));
-			cpepvLifeTimeRnd->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTimeRnd())));
+			cpepvLifeTime->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTime())));
+			cpepvLifeTimeRnd->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTimeRnd())));
 			cpepvMass->getController()->setValue(MutableString(emitter->getMass(), 4));
 			cpepvMassRnd->getController()->setValue(MutableString(emitter->getMassRnd(), 4));
 			cpepvVelocity->getController()->setValue(MutableString(emitter->getVelocity(), 4));
@@ -872,8 +872,8 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 			particleSystemEmitter->getActiveConditions().add(EMITTER_SPHEREPARTICLEEMITTER);
 			auto emitter = particleSystem->getSphereParticleEmitter();
 			speCount->getController()->setValue(MutableString(emitter->getCount()));
-			speLifeTime->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTime())));
-			speLifeTimeRnd->getController()->setValue(MutableString(static_cast< int >(emitter->getLifeTimeRnd())));
+			speLifeTime->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTime())));
+			speLifeTimeRnd->getController()->setValue(MutableString(static_cast<int>(emitter->getLifeTimeRnd())));
 			speMass->getController()->setValue(MutableString(emitter->getMass(), 4));
 			speMassRnd->getController()->setValue(MutableString(emitter->getMassRnd(), 4));
 			speVelocity->getController()->setValue(MutableString(Tools::formatVector3(emitter->getVelocity())));

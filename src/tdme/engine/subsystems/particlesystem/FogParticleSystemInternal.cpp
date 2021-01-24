@@ -113,10 +113,10 @@ void FogParticleSystemInternal::initialize() {
 		int64_t timeRnd = (int64_t)(Math::random() * (float)particle.lifeTimeMax);
 		auto& color = particle.color.getArray();
 		auto& colorAdd = particle.colorAdd.getArray();
-		color[0] += colorAdd[0] * static_cast< float >(timeRnd);
-		color[1] += colorAdd[1] * static_cast< float >(timeRnd);
-		color[2] += colorAdd[2] * static_cast< float >(timeRnd);
-		color[3] += colorAdd[3] * static_cast< float >(timeRnd);
+		color[0] += colorAdd[0] * static_cast<float>(timeRnd);
+		color[1] += colorAdd[1] * static_cast<float>(timeRnd);
+		color[2] += colorAdd[2] * static_cast<float>(timeRnd);
+		color[3] += colorAdd[3] * static_cast<float>(timeRnd);
 
 		// set up bounding box
 		point.set(particle.position);

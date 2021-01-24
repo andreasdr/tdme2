@@ -190,12 +190,12 @@ void ObjectParticleSystemInternal::updateParticles()
 		}
 		// add gravity if our particle have a noticable mass
 		if (particle.mass > Math::EPSILON)
-			particle.velocity.sub(Vector3(0.0f, 0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f, 0.0f));
+			particle.velocity.sub(Vector3(0.0f, 0.5f * Math::g * static_cast<float>(timeDelta) / 1000.0f, 0.0f));
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
 		// translation
-		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
+		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast<float>(timeDelta) / 1000.0f));
 		// update up effect colors
 		object->setEffectColorAdd(effectColorAdd);
 		object->setEffectColorMul(effectColorMul);

@@ -96,15 +96,16 @@ void GUIDropDownController::unselect()
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
-			required_dynamic_cast<GUIDropDownOptionController*>(childController)->unselect();
-		}
+		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
+		if (childController != nullptr) childController->unselect();
 	}
 }
 
 void GUIDropDownController::toggleOpenState()
 {
+	if (open == false) {
+		lastSelectedDropDownOptionControlerIdx = getSelectedOptionIdx();
+	}
 	required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	arrowNode->getActiveConditions().remove(open == true?CONDITION_OPENED:CONDITION_CLOSED);
 	open = open == true?false:true;
@@ -120,10 +121,8 @@ void GUIDropDownController::determineDropDownOptionControllers()
 	required_dynamic_cast<GUIParentNode*>(node)->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
-		auto childController = childControllerNode->getController();
-		if (dynamic_cast<GUIDropDownOptionController*>(childController) != nullptr) {
-			dropDownOptionControllers.push_back(required_dynamic_cast<GUIDropDownOptionController*>(childController));
-		}
+		auto childController = dynamic_cast<GUIDropDownOptionController*>(childControllerNode->getController());
+		if (childController != nullptr) dropDownOptionControllers.push_back(childController);
 	}
 }
 
@@ -172,6 +171,20 @@ void GUIDropDownController::selectPrevious()
 	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->select();
 	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeX(dropDownNode);
 	dropDownOptionControllers[selectedDropDownOptionControlerIdx]->getNode()->scrollToNodeY(dropDownNode);
+}
+
+void GUIDropDownController::selectLast()
+{
+	determineDropDownOptionControllers();
+	if (lastSelectedDropDownOptionControlerIdx == -1 || lastSelectedDropDownOptionControlerIdx >= dropDownOptionControllers.size()) {
+		lastSelectedDropDownOptionControlerIdx = -1;
+		return;
+	}
+	unselect();
+
+	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->select();
+	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->getNode()->scrollToNodeX(dropDownNode);
+	dropDownOptionControllers[lastSelectedDropDownOptionControlerIdx]->getNode()->scrollToNodeY(dropDownNode);
 }
 
 void GUIDropDownController::doSearch() {
@@ -230,7 +243,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
 		auto keyChar = event->getKeyChar();
-		if (keyChar >= 32 && keyChar < 127) {
+		if (keyChar > 32 && keyChar < 127 && keyChar >= 32) {
 			event->setProcessed(true);
 			#if defined(VULKAN) || defined(GLFW3)
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
@@ -238,14 +251,24 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 			#endif
 				search+= event->getKeyChar();
+				if (isOpen() == false) toggleOpenState();
 			}
 		} else {
 			switch (event->getKeyCode()) {
+				case GUIKeyboardEvent::KEYCODE_ESCAPE:
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (isOpen() == true) {
+							selectLast();
+							toggleOpenState();
+						}
+					}
+					break;
 				case GUIKeyboardEvent::KEYCODE_BACKSPACE:
 				case GUIKeyboardEvent::KEYCODE_DELETE: {
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						search.clear();
 					}
+					if (isOpen() == false) toggleOpenState();
 					break;
 				case GUIKeyboardEvent::KEYCODE_UP: {
 						event->setProcessed(true);
@@ -282,7 +305,6 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 				}
 			}
 		}
-		if (open == false) toggleOpenState();
 		doSearch();
 	}
 }
@@ -299,6 +321,9 @@ void GUIDropDownController::onFocusGained()
 
 void GUIDropDownController::onFocusLost()
 {
+	if (isOpen() == true) {
+		toggleOpenState();
+	}
 }
 
 bool GUIDropDownController::hasValue()

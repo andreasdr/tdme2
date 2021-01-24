@@ -37,10 +37,11 @@ GUIInputController::GUIInputController(GUINode* node)
 }
 
 void GUIInputController::onValueChange() {
+	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	if (inputNode->getText().getString().empty() == true) {
-		required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("hint");
+		if (nodeConditions.has("hint") == false) nodeConditions.add("hint");
 	} else {
-		required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("hint");
+		if (nodeConditions.has("hint") == true) nodeConditions.remove("hint");
 	}
 }
 

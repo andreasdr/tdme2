@@ -195,8 +195,8 @@ void ShadowMapRenderShaderBaseImplementation::updateLight(Renderer* renderer, vo
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
-	renderer->setProgramUniformFloat(context, renderUniformTexturePixelWidth, 1.0f / static_cast< float >(Engine::getShadowMapWidth()));
-	renderer->setProgramUniformFloat(context, renderUniformTexturePixelHeight, 1.0f / static_cast< float >(Engine::getShadowMapHeight()));
+	renderer->setProgramUniformFloat(context, renderUniformTexturePixelWidth, 1.0f / static_cast<float>(Engine::getShadowMapWidth()));
+	renderer->setProgramUniformFloat(context, renderUniformTexturePixelHeight, 1.0f / static_cast<float>(Engine::getShadowMapHeight()));
 }
 
 void ShadowMapRenderShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)

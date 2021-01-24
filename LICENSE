@@ -1,6 +1,6 @@
 MIT License
 
-Copyright 2012...2020 Andreas Drewke and others if not stated differently in 
+Copyright 2012...2021 Andreas Drewke and others if not stated differently in 
 header file.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +25,19 @@ Please note that TDME2 depends on several 3rd party libraries which are included
 in this repository. 
 
 Third party library licenses:
+
+
+    ext/blender-ui-icons/LICENSE
+    ------------------------------
+
+        We are currently using some Blender(www.blender.org) user interface icons. 
+
+        Please see the following license
+        - https://creativecommons.org/licenses/by-sa/4.0/
+
+        We did change the bitmaps derived from the vector graphics file.
+        However we did not change to vector graphics file itself. 
+
 
     ext/fbx/LICENSE
     -----------------
@@ -1339,7 +1352,7 @@ Third party library licenses:
                 Free Software Foundation, Inc.
                 59 Temple Place
                 Suite 330
-                Boston, MA    02111-1307
+                Boston, MA  02111-1307
                 USA
 
             The contact addresses for pthreads-win32 is as follows:
@@ -1676,8 +1689,8 @@ Third party library licenses:
            limitations under the License.
 
 
-    resources/gui-system/fonts/LICENSE
-    ------------------------------------
+    resources/engine/fonts/LICENSE
+    --------------------------------
 
                                          Apache License
                                    Version 2.0, January 2004

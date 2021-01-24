@@ -686,17 +686,17 @@ public:
 		auto axis0 = 0;
 		auto axis1 = 1;
 		auto axis2 = 2;
-		auto cy = static_cast< float >(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
+		auto cy = static_cast<float>(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
 		if (cy > 16.0f * Math::EPSILON) {
-			euler[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
-			euler[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			euler[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
+			euler[0] = static_cast<float>((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
+			euler[1] = static_cast<float>((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			euler[2] = static_cast<float>((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
 		} else {
-			euler[0] = static_cast< float >((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
-			euler[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			euler[0] = static_cast<float>((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
+			euler[1] = static_cast<float>((Math::atan2(-data[axis2 + 4 * axis0], cy)));
 			euler[2] = 0.0f;
 		}
-		euler.scale(static_cast< float >((180.0 / Math::PI)));
+		euler.scale(static_cast<float>((180.0 / Math::PI)));
 	}
 
 	/**

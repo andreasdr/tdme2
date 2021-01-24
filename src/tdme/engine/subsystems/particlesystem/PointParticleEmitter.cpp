@@ -43,7 +43,7 @@ void PointParticleEmitter::emit(Particle* particle)
 		velocity[1] + (Math::random() * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
 		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
-	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
+	particle->mass = mass + static_cast<float>((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;
 	particle->color.set(colorStart);

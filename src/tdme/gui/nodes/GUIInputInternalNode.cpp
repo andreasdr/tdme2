@@ -133,7 +133,7 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 
 	GUINode::render(guiRenderer);
 	auto controller = required_dynamic_cast<GUIInputInternalController*>(this->controller);
-	auto inputController = dynamic_cast<GUIInputController*>(this->getParentControllerNode()->getController());
+	auto inputController = required_dynamic_cast<GUIInputController*>(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
 	if (font != nullptr) font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (screenNode->getGUI() != nullptr && static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {

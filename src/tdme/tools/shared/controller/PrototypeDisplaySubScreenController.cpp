@@ -23,9 +23,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-MutableString PrototypeDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
-MutableString PrototypeDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");
-
 PrototypeDisplaySubScreenController::PrototypeDisplaySubScreenController(PrototypePhysicsView* physicsView)
 {
 	view = new PrototypeDisplayView(this);
@@ -55,31 +52,31 @@ void PrototypeDisplaySubScreenController::initialize(GUIScreenNode* screenNode)
 
 void PrototypeDisplaySubScreenController::setupDisplay()
 {
-	displayShadowing->getController()->setValue(view->isDisplayShadowing() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
-	displayGround->getController()->setValue(view->isDisplayGroundPlate() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
-	displayBoundingVolume->getController()->setValue(physicsView->isDisplayBoundingVolume() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	displayShadowing->getController()->setValue(MutableString(view->isDisplayShadowing() == true?"1":""));
+	displayGround->getController()->setValue(MutableString(view->isDisplayGroundPlate() == true?"1":""));
+	displayBoundingVolume->getController()->setValue(MutableString(physicsView->isDisplayBoundingVolume() == true?"1":""));
 }
 
 void PrototypeDisplaySubScreenController::onDisplayApply()
 {
-	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED));
-	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals(CHECKBOX_CHECKED));
-	physicsView->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED));
+	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals("1"));
+	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals("1"));
+	physicsView->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals("1"));
 }
 
 bool PrototypeDisplaySubScreenController::getDisplayShadowing()
 {
-	return displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED);
+	return displayShadowing->getController()->getValue().equals("1");
 }
 
 bool PrototypeDisplaySubScreenController::getDisplayGround()
 {
-	return displayGround->getController()->getValue().equals(CHECKBOX_CHECKED);
+	return displayGround->getController()->getValue().equals("1");
 }
 
 bool PrototypeDisplaySubScreenController::getDisplayBoundingVolume()
 {
-	return displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED);
+	return displayBoundingVolume->getController()->getValue().equals("1");
 }
 
 void PrototypeDisplaySubScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)

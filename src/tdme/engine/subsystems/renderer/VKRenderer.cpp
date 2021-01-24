@@ -1343,7 +1343,7 @@ void VKRenderer::initialize()
 
 		// set up lights
 		for (auto i = 0; i < context.lights.size(); i++) {
-			context.lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
+			context.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
 		}
 		context.texture_matrix.identity();
 

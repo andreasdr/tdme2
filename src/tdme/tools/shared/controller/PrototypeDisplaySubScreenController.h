@@ -25,8 +25,6 @@ using tdme::utilities::MutableString;
 class tdme::tools::shared::controller::PrototypeDisplaySubScreenController final
 {
 private:
-	static MutableString CHECKBOX_CHECKED;
-	static MutableString CHECKBOX_UNCHECKED;
 	GUIElementNode* displayBoundingVolume { nullptr };
 	GUIElementNode* displayShadowing { nullptr };
 	GUIElementNode* displayGround { nullptr };

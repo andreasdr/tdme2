@@ -57,8 +57,6 @@ using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-MutableString EnvironmentMappingScreenController::TEXT_EMPTY = MutableString("");
-
 EnvironmentMappingScreenController::EnvironmentMappingScreenController(EnvironmentMappingView* view)
 {
 	class OnSetEntityDataAction: public virtual Action
@@ -169,9 +167,9 @@ void EnvironmentMappingScreenController::setGeneration() {
 
 void EnvironmentMappingScreenController::unsetGeneration() {
 	generationRenderPasses->getController()->setDisabled(true);
-	generationRenderPasses->getController()->setValue(TEXT_EMPTY);
+	generationRenderPasses->getController()->setValue(MutableString());
 	generationFrequency->getController()->setDisabled(true);
-	generationFrequency->getController()->setValue(TEXT_EMPTY);
+	generationFrequency->getController()->setValue(MutableString());
 	generationApply->getController()->setDisabled(true);
 }
 

@@ -34,7 +34,6 @@ using tdme::utilities::MutableString;
 class tdme::tools::shared::controller::PrototypeBaseSubScreenController final
 {
 private:
-	static MutableString TEXT_EMPTY;
 	PrototypeBaseView* view { nullptr };
 	PopUps* popUps { nullptr };
 	GUIElementNode* prototypeName { nullptr };

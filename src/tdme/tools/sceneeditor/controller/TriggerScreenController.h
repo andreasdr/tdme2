@@ -41,7 +41,6 @@ class tdme::tools::sceneeditor::controller::TriggerScreenController final
 	, public GUIChangeListener
 {
 private:
-	static MutableString TEXT_EMPTY;
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	TriggerView* view { nullptr };

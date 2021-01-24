@@ -45,8 +45,6 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-MutableString PrototypeBaseSubScreenController::TEXT_EMPTY = MutableString("");
-
 PrototypeBaseSubScreenController::PrototypeBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction)
 {
 	this->view = new PrototypeBaseView(this);
@@ -91,9 +89,9 @@ void PrototypeBaseSubScreenController::setPrototypeData(const string& name, cons
 
 void PrototypeBaseSubScreenController::unsetPrototypeData()
 {
-	prototypeName->getController()->setValue(TEXT_EMPTY);
+	prototypeName->getController()->setValue(MutableString());
 	prototypeName->getController()->setDisabled(true);
-	prototypeDescription->getController()->setValue(TEXT_EMPTY);
+	prototypeDescription->getController()->setValue(MutableString());
 	prototypeDescription->getController()->setDisabled(true);
 	prototypeApply->getController()->setDisabled(true);
 }
@@ -192,9 +190,9 @@ void PrototypeBaseSubScreenController::unsetPrototypeProperties()
 	prototypePropertyAdd->getController()->setDisabled(true);
 	prototypePropertyRemove->getController()->setDisabled(true);
 	prototypePropertySave->getController()->setDisabled(true);
-	prototypePropertyName->getController()->setValue(TEXT_EMPTY);
+	prototypePropertyName->getController()->setValue(MutableString());
 	prototypePropertyName->getController()->setDisabled(true);
-	prototypePropertyValue->getController()->setValue(TEXT_EMPTY);
+	prototypePropertyValue->getController()->setValue(MutableString());
 	prototypePropertyValue->getController()->setDisabled(true);
 }
 
@@ -231,9 +229,9 @@ void PrototypeBaseSubScreenController::onPrototypePropertyPresetApply(Prototype*
 void PrototypeBaseSubScreenController::onPrototypePropertiesSelectionChanged(Prototype* entity)
 {
 	prototypePropertyName->getController()->setDisabled(true);
-	prototypePropertyName->getController()->setValue(TEXT_EMPTY);
+	prototypePropertyName->getController()->setValue(MutableString());
 	prototypePropertyValue->getController()->setDisabled(true);
-	prototypePropertyValue->getController()->setValue(TEXT_EMPTY);
+	prototypePropertyValue->getController()->setValue(MutableString());
 	prototypePropertySave->getController()->setDisabled(true);
 	prototypePropertyRemove->getController()->setDisabled(true);
 	auto entityProperty = entity->getProperty(prototypePropertiesList->getController()->getValue().getString());

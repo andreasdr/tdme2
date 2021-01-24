@@ -39,7 +39,7 @@ bool GUIEffect::update(GUIRenderer* guiRenderer)
 {
 	if (active == false) return false;
 	// TODO: Maybe do not use timing from main engine
-	timePassed = static_cast< float >((Engine::getInstance()->getTiming()->getDeltaTime())) / 1000.0f;
+	timePassed = static_cast<float>((Engine::getInstance()->getTiming()->getDeltaTime())) / 1000.0f;
 	timeLeft -= timePassed;
 	if (timeLeft < 0.0f) {
 		timeLeft = 0.0f;

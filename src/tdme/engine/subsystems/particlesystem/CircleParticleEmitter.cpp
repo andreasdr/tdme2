@@ -46,7 +46,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 	particle->active = true;
 	particle->spriteIndex = 0.0f;
 	// emit particle in circle spanned on axis 0 and axis 1
-	auto rnd = static_cast< float >(Math::random());
+	auto rnd = static_cast<float>(Math::random());
 	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));
 	sinOnAxis1.set(axis1Transformed).scale(Math::sin(Math::PI * 2 * rnd));
 	particle->position.set(cosOnAxis0);
@@ -59,7 +59,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	// mass
-	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
+	particle->mass = mass + static_cast<float>((Math::random() * (massRnd)));
 	// life time
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
 	particle->lifeTimeCurrent = 0LL;

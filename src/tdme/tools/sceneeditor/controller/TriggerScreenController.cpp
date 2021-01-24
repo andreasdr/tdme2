@@ -50,8 +50,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 
-MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
-
 TriggerScreenController::TriggerScreenController(TriggerView* view)
 {
 	class OnSetEntityDataAction: public virtual Action

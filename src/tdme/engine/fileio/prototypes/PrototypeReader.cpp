@@ -94,9 +94,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	Prototype* prototype;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
 	auto pivot = Vector3(
-		static_cast< float >(jEntityRoot["px"].GetFloat()),
-		static_cast< float >(jEntityRoot["py"].GetFloat()),
-		static_cast< float >(jEntityRoot["pz"].GetFloat())
+		static_cast<float>(jEntityRoot["px"].GetFloat()),
+		static_cast<float>(jEntityRoot["py"].GetFloat()),
+		static_cast<float>(jEntityRoot["pz"].GetFloat())
 	);
 	auto prototypeType = Prototype_Type::valueOf((jEntityRoot["type"].GetString()));
 	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
@@ -249,68 +249,68 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 	if (StringTools::equalsIgnoreCase(bvTypeString, "sphere") == true) {
 		entityBoundingVolume->setupSphere(
 			Vector3(
-				static_cast< float >(jBv["cx"].GetFloat()),
-				static_cast< float >(jBv["cy"].GetFloat()),
-				static_cast< float >(jBv["cz"].GetFloat())
+				static_cast<float>(jBv["cx"].GetFloat()),
+				static_cast<float>(jBv["cy"].GetFloat()),
+				static_cast<float>(jBv["cz"].GetFloat())
 			),
-			static_cast< float >(jBv["r"].GetFloat())
+			static_cast<float>(jBv["r"].GetFloat())
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "capsule") == true) {
 		entityBoundingVolume->setupCapsule(
 			Vector3(
-				static_cast< float >(jBv["ax"].GetFloat()),
-				static_cast< float >(jBv["ay"].GetFloat()),
-				static_cast< float >(jBv["az"].GetFloat())
+				static_cast<float>(jBv["ax"].GetFloat()),
+				static_cast<float>(jBv["ay"].GetFloat()),
+				static_cast<float>(jBv["az"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["bx"].GetFloat()),
-				static_cast< float >(jBv["by"].GetFloat()),
-				static_cast< float >(jBv["bz"].GetFloat())
+				static_cast<float>(jBv["bx"].GetFloat()),
+				static_cast<float>(jBv["by"].GetFloat()),
+				static_cast<float>(jBv["bz"].GetFloat())
 			),
-			static_cast< float >(jBv["r"].GetFloat())
+			static_cast<float>(jBv["r"].GetFloat())
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "aabb") == true) {
 		entityBoundingVolume->setupAabb(
 			Vector3(
-				static_cast< float >(jBv["mix"].GetFloat()),
-				static_cast< float >(jBv["miy"].GetFloat()),
-				static_cast< float >(jBv["miz"].GetFloat())
+				static_cast<float>(jBv["mix"].GetFloat()),
+				static_cast<float>(jBv["miy"].GetFloat()),
+				static_cast<float>(jBv["miz"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["max"].GetFloat()),
-				static_cast< float >(jBv["may"].GetFloat()),
-				static_cast< float >(jBv["maz"].GetFloat())
+				static_cast<float>(jBv["max"].GetFloat()),
+				static_cast<float>(jBv["may"].GetFloat()),
+				static_cast<float>(jBv["maz"].GetFloat())
 			)
 		);
 	} else
 	if (StringTools::equalsIgnoreCase(bvTypeString, "obb") == true) {
 		entityBoundingVolume->setupObb(
 			Vector3(
-				static_cast< float >(jBv["cx"].GetFloat()),
-				static_cast< float >(jBv["cy"].GetFloat()),
-				static_cast< float >(jBv["cz"].GetFloat())
+				static_cast<float>(jBv["cx"].GetFloat()),
+				static_cast<float>(jBv["cy"].GetFloat()),
+				static_cast<float>(jBv["cz"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a0x"].GetFloat()),
-				static_cast< float >(jBv["a0y"].GetFloat()),
-				static_cast< float >(jBv["a0z"].GetFloat())
+				static_cast<float>(jBv["a0x"].GetFloat()),
+				static_cast<float>(jBv["a0y"].GetFloat()),
+				static_cast<float>(jBv["a0z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a1x"].GetFloat()),
-				static_cast< float >(jBv["a1y"].GetFloat()),
-				static_cast< float >(jBv["a1z"].GetFloat())
+				static_cast<float>(jBv["a1x"].GetFloat()),
+				static_cast<float>(jBv["a1y"].GetFloat()),
+				static_cast<float>(jBv["a1z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a2x"].GetFloat()),
-				static_cast< float >(jBv["a2y"].GetFloat()),
-				static_cast< float >(jBv["a2z"].GetFloat())
+				static_cast<float>(jBv["a2x"].GetFloat()),
+				static_cast<float>(jBv["a2y"].GetFloat()),
+				static_cast<float>(jBv["a2z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["hex"].GetFloat()),
-				static_cast< float >(jBv["hey"].GetFloat()),
-				static_cast< float >(jBv["hez"].GetFloat())
+				static_cast<float>(jBv["hex"].GetFloat()),
+				static_cast<float>(jBv["hey"].GetFloat()),
+				static_cast<float>(jBv["hez"].GetFloat())
 			)
 		);
 	} else
@@ -378,9 +378,9 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
-			objectParticleSystem->getScale().setX(static_cast< float >(jObjectParticleSystem["sx"].GetFloat()));
-			objectParticleSystem->getScale().setY(static_cast< float >(jObjectParticleSystem["sy"].GetFloat()));
-			objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].GetFloat()));
+			objectParticleSystem->getScale().setX(static_cast<float>(jObjectParticleSystem["sx"].GetFloat()));
+			objectParticleSystem->getScale().setY(static_cast<float>(jObjectParticleSystem["sy"].GetFloat()));
+			objectParticleSystem->getScale().setZ(static_cast<float>(jObjectParticleSystem["sz"].GetFloat()));
 			objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].GetBool());
 			try {
 				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());
@@ -464,43 +464,43 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			emitter->setCount(jPointParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jPointParticleEmitter["lt"].GetInt());
 			emitter->setLifeTimeRnd(jPointParticleEmitter["ltrnd"].GetInt());
-			emitter->setMass(static_cast< float >(jPointParticleEmitter["m"].GetFloat()));
-			emitter->setMassRnd(static_cast< float >(jPointParticleEmitter["mrnd"].GetFloat()));
+			emitter->setMass(static_cast<float>(jPointParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast<float>(jPointParticleEmitter["mrnd"].GetFloat()));
 			emitter->setPosition(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["px"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["py"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["pz"].GetFloat())
+					static_cast<float>(jPointParticleEmitter["px"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["py"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["pz"].GetFloat())
 				)
 			);
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["vx"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["vy"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["vz"].GetFloat())
+					static_cast<float>(jPointParticleEmitter["vx"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["vy"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["vrndx"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["vrndy"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["vrndz"].GetFloat())
+					static_cast<float>(jPointParticleEmitter["vrndx"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["vrndy"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jPointParticleEmitter["csr"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["csg"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["csb"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["csa"].GetFloat())
+					static_cast<float>(jPointParticleEmitter["csr"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["csg"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["csb"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jPointParticleEmitter["cer"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["ceg"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["ceb"].GetFloat()),
-					static_cast< float >(jPointParticleEmitter["cea"].GetFloat())
+					static_cast<float>(jPointParticleEmitter["cer"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["ceg"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["ceb"].GetFloat()),
+					static_cast<float>(jPointParticleEmitter["cea"].GetFloat())
 				)
 			);
 		} else
@@ -510,71 +510,71 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			emitter->setCount(jBoundingBoxParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].GetInt());
 			emitter->setLifeTimeRnd(jBoundingBoxParticleEmitter["ltrnd"].GetInt());
-			emitter->setMass(static_cast< float >(jBoundingBoxParticleEmitter["m"].GetFloat()));
-			emitter->setMassRnd(static_cast< float >(jBoundingBoxParticleEmitter["mrnd"].GetFloat()));
+			emitter->setMass(static_cast<float>(jBoundingBoxParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast<float>(jBoundingBoxParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["vx"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vy"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vz"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["vx"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["vy"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndx"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndy"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndz"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["vrndx"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["vrndy"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jBoundingBoxParticleEmitter["csr"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csg"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csb"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csa"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["csr"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["csg"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["csb"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jBoundingBoxParticleEmitter["cer"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ceg"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ceb"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["cea"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["cer"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ceg"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ceb"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setObbCenter(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["ocx"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ocy"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ocz"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["ocx"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ocy"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ocz"].GetFloat())
 				)
 			);
 			emitter->setObbHalfextension(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["ohex"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ohey"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ohez"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["ohex"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ohey"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["ohez"].GetFloat())
 				)
 			);
 			emitter->setObbAxis0(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0x"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0y"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0z"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["oa0x"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa0y"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa0z"].GetFloat())
 				)
 			);
 			emitter->setObbAxis1(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1x"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1y"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1z"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["oa1x"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa1y"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa1z"].GetFloat())
 				)
 			);
 			emitter->setObbAxis2(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2x"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2y"].GetFloat()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2z"].GetFloat())
+					static_cast<float>(jBoundingBoxParticleEmitter["oa2x"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa2y"].GetFloat()),
+					static_cast<float>(jBoundingBoxParticleEmitter["oa2z"].GetFloat())
 				)
 			);
 		} else
@@ -584,58 +584,58 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			emitter->setCount(jCircleParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jCircleParticleEmitter["lt"].GetInt());
 			emitter->setLifeTimeRnd(jCircleParticleEmitter["ltrnd"].GetInt());
-			emitter->setMass(static_cast< float >(jCircleParticleEmitter["m"].GetFloat()));
-			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitter["mrnd"].GetFloat()));
+			emitter->setMass(static_cast<float>(jCircleParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast<float>(jCircleParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["vx"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["vy"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["vz"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["vx"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["vy"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["vrndx"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["vrndy"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["vrndz"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["vrndx"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["vrndy"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jCircleParticleEmitter["csr"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["csg"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["csb"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["csa"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["csr"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["csg"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["csb"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jCircleParticleEmitter["cer"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["ceg"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["ceb"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["cea"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["cer"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["ceg"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["ceb"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["cx"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["cy"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["cz"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["cx"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["cy"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jCircleParticleEmitter["r"].GetFloat()));
+			emitter->setRadius(static_cast<float>(jCircleParticleEmitter["r"].GetFloat()));
 			emitter->setAxis0(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["a0x"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["a0y"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["a0z"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["a0x"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["a0y"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["a0z"].GetFloat())
 				)
 			);
 			emitter->setAxis1(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["a1x"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["a1y"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitter["a1z"].GetFloat())
+					static_cast<float>(jCircleParticleEmitter["a1x"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["a1y"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitter["a1z"].GetFloat())
 				)
 			);
 		} else
@@ -645,46 +645,46 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].GetInt());
 			emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].GetInt());
 			emitter->setLifeTimeRnd(jCircleParticleEmitterPlaneVelocity["ltrnd"].GetInt());
-			emitter->setMass(static_cast< float >(jCircleParticleEmitterPlaneVelocity["m"].GetFloat()));
-			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["mrnd"].GetFloat()));
-			emitter->setVelocity(static_cast< float >(jCircleParticleEmitterPlaneVelocity["v"].GetFloat()));
-			emitter->setVelocityRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["vrnd"].GetFloat()));
+			emitter->setMass(static_cast<float>(jCircleParticleEmitterPlaneVelocity["m"].GetFloat()));
+			emitter->setMassRnd(static_cast<float>(jCircleParticleEmitterPlaneVelocity["mrnd"].GetFloat()));
+			emitter->setVelocity(static_cast<float>(jCircleParticleEmitterPlaneVelocity["v"].GetFloat()));
+			emitter->setVelocityRnd(static_cast<float>(jCircleParticleEmitterPlaneVelocity["vrnd"].GetFloat()));
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csr"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csg"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csb"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csa"].GetFloat())
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["csr"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["csg"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["csb"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cer"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceg"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceb"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cea"].GetFloat())
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["cer"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["ceg"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["ceb"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cx"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cy"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cz"].GetFloat())
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["cx"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["cy"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jCircleParticleEmitterPlaneVelocity["r"].GetFloat()));
+			emitter->setRadius(static_cast<float>(jCircleParticleEmitterPlaneVelocity["r"].GetFloat()));
 			emitter->setAxis0(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0x"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0y"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0z"].GetFloat())
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a0x"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a0y"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a0z"].GetFloat())
 				)
 			);
 			emitter->setAxis1(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1x"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1y"].GetFloat()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1z"].GetFloat())
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a1x"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a1y"].GetFloat()),
+					static_cast<float>(jCircleParticleEmitterPlaneVelocity["a1z"].GetFloat())
 				)
 			);
 		} else
@@ -694,46 +694,46 @@ void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSyste
 			emitter->setCount(jSphereParticleEmitter["c"].GetInt());
 			emitter->setLifeTime(jSphereParticleEmitter["lt"].GetInt());
 			emitter->setLifeTimeRnd(jSphereParticleEmitter["ltrnd"].GetInt());
-			emitter->setMass(static_cast< float >(jSphereParticleEmitter["m"].GetFloat()));
-			emitter->setMassRnd(static_cast< float >(jSphereParticleEmitter["mrnd"].GetFloat()));
+			emitter->setMass(static_cast<float>(jSphereParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast<float>(jSphereParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["vx"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["vy"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["vz"].GetFloat())
+					static_cast<float>(jSphereParticleEmitter["vx"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["vy"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["vrndx"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["vrndy"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["vrndz"].GetFloat())
+					static_cast<float>(jSphereParticleEmitter["vrndx"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["vrndy"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jSphereParticleEmitter["csr"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["csg"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["csb"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["csa"].GetFloat())
+					static_cast<float>(jSphereParticleEmitter["csr"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["csg"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["csb"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jSphereParticleEmitter["cer"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["ceg"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["ceb"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["cea"].GetFloat())
+					static_cast<float>(jSphereParticleEmitter["cer"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["ceg"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["ceb"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["cx"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["cy"].GetFloat()),
-					static_cast< float >(jSphereParticleEmitter["cz"].GetFloat())
+					static_cast<float>(jSphereParticleEmitter["cx"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["cy"].GetFloat()),
+					static_cast<float>(jSphereParticleEmitter["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].GetFloat()));
+			emitter->setRadius(static_cast<float>(jSphereParticleEmitter["r"].GetFloat()));
 		} else {
 			Console::println(
 				"PrototypeWriter::export(): unknown particle system emitter '" +

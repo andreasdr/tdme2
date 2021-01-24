@@ -41,7 +41,6 @@ class tdme::tools::sceneeditor::controller::EnvironmentMappingScreenController f
 	, public GUIChangeListener
 {
 private:
-	static MutableString TEXT_EMPTY;
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	EnvironmentMappingView* view { nullptr };

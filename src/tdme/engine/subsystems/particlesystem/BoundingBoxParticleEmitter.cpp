@@ -49,9 +49,9 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	auto& obbHalfExtensionXYZ = obbTransformed->getHalfExtension().getArray();
 	// emit particle in oriented bounding box
 	particle->position.set(0.0f, 0.0f, 0.0f);
-	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
-	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
-	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
+	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
+	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
+	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast<float>(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
 	// compute velocity
 	particle->velocity.set(
 		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),

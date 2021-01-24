@@ -255,6 +255,7 @@ public:
 	/**
 	 * Actually do the invalidate layout
 	 * @param node node
+	 * @return (parent)node thats need a layout
 	 */
 	GUINode* forceInvalidateLayout(GUINode* node);
 

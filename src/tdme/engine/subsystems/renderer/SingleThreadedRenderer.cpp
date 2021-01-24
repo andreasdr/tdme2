@@ -14,7 +14,7 @@ SingleThreadedRenderer::SingleThreadedRenderer()
 {
 	// set up lights
 	for (auto i = 0; i < lights.size(); i++) {
-		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
+		lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
 	}
 }
 
