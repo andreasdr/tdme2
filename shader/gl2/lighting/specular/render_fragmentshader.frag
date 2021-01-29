@@ -9,6 +9,10 @@ uniform int diffuseTextureAvailable;
 uniform int diffuseTextureMaskedTransparency;
 uniform float diffuseTextureMaskedTransparencyThreshold;
 
+uniform samplerCube environmentMappingTextureUnit;
+uniform int environmentMappingTextureAvailable;
+uniform vec3 environmentMappingPosition;
+
 varying vec2 vsFragTextureUV;
 varying vec4 vsFragColor;
 
@@ -66,6 +70,9 @@ varying vec4 vsFragColor;
 		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 		return result;
 	}
+#elif defined(HAVE_WATER_SHADER)
+	varying vec3 vsPosition;
+	varying vec3 vsNormal;
 #endif
 
 void main (void) {
@@ -148,6 +155,17 @@ void main (void) {
 		if (terrainBlending[3] > 0.001) gl_FragColor+= readTerrainTextureSnow(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 		gl_FragColor*= vsFragColor;
 		gl_FragColor = clamp(effectColorAdd + gl_FragColor, 0.0, 1.0);
+	#elif defined(HAVE_WATER_SHADER)
+		vec4 envColor = vec4(0.0f, 0.0f, 0.4f, 1.0f);
+		if (environmentMappingTextureAvailable == 1) {
+			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), vec3(0.0, 1.0, 0.0) * normalize(vsNormal * vec3(0.1, 1.0, 0.1)));
+			envColor = textureCube(environmentMappingTextureUnit, -reflectionVector) * 0.6;
+		}
+		gl_FragColor = vsFragColor * 0.4;
+		gl_FragColor+= vec4(envColor.rgb, 0.0);
+		gl_FragColor+= effectColorAdd;
+		gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+		gl_FragColor.a = 1.0;
 	#else
 		if (diffuseTextureAvailable == 1) {
 			gl_FragColor = clamp(effectColorAdd + diffuseTextureColor * vsFragColor, 0.0, 1.0);

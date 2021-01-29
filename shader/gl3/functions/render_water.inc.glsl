@@ -1,7 +1,7 @@
 // @see https://jayconrod.com/posts/34/water-simulation-in-glsl
 
 float wave(int i, float x, float y) {
-    float frequency = 2 * 3.14159 / wavelength[i];
+    float frequency = 2.0 * 3.14159 / wavelength[i];
     float phase = speed[i] * frequency;
     float theta = dot(direction[i], vec2(x, y));
     return amplitude[i] * sin(theta * frequency + time * phase);
@@ -15,7 +15,7 @@ float waveHeight(float x, float y) {
 }
 
 float dWavedx(int i, float x, float y) {
-    float frequency = 2 * 3.14159 / wavelength[i];
+    float frequency = 2.0 * 3.14159 / wavelength[i];
     float phase = speed[i] * frequency;
     float theta = dot(direction[i], vec2(x, y));
     float A = amplitude[i] * direction[i].x * frequency;
@@ -23,7 +23,7 @@ float dWavedx(int i, float x, float y) {
 }
 
 float dWavedy(int i, float x, float y) {
-    float frequency = 2 * 3.14159 / wavelength[i];
+    float frequency = 2.0 * 3.14159 / wavelength[i];
     float phase = speed[i] * frequency;
     float theta = dot(direction[i], vec2(x, y));
     float A = amplitude[i] * direction[i].y * frequency;

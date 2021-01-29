@@ -37,6 +37,6 @@ vec3 waveNormal(float x, float y) {
         dx += dWavedx(i, x, y);
         dy += dWavedy(i, x, y);
     }
-    vec3 n = vec3(-dx, -dy, 1.0 );
+    vec3 n = vec3(-dx, 1.0, -dy);
     return normalize(n);
 }

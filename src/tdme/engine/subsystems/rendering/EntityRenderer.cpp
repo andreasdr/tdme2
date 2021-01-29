@@ -409,6 +409,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 	vector<int32_t>* boundVBOOrigins = nullptr;
+	int32_t boundEnvironmentMappingCubeMapTextureId = -1;
 	for (auto object3DNodeIdx = 0; object3DNodeIdx < firstObject->object3dNodes.size(); object3DNodeIdx++) {
 		auto object3DNode = firstObject->object3dNodes[object3DNodeIdx];
 		// render each faces entity
@@ -570,6 +571,26 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
 					renderer->getTextureMatrix(context).set(_object3DNode->textureMatricesByEntities[faceEntityIdx]);
 					renderer->onUpdateTextureMatrix(context);
+				}
+				// reflection source; TODO: improve me!
+				if (object->getReflectionEnvironmentMappingId().empty() == false) {
+					EnvironmentMappingEntity* environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+					if (environmentMappingEntity == nullptr) {
+						auto environmentMappingEntityHierarchy = dynamic_cast<EntityHierarchy*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
+						if (environmentMappingEntityHierarchy != nullptr) environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(environmentMappingEntityHierarchy->getEntity("environmentmapping"));
+					}
+					if (environmentMappingEntity != nullptr) {
+						auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
+						if (boundEnvironmentMappingCubeMapTextureId != environmentMappingCubeMapTextureId) {
+							Vector3 translation;
+							environmentMappingEntity->getTransformationsMatrix().getTranslation(translation);
+							renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_ENVIRONMENT);
+							renderer->bindCubeMapTexture(context, environmentMappingCubeMapTextureId);
+							renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+							renderer->setEnvironmentMappingCubeMapPosition(context, translation.getArray());
+							boundEnvironmentMappingCubeMapTextureId = environmentMappingCubeMapTextureId;
+						}
+					}
 				}
 				// draw
 				renderer->drawIndexedTrianglesFromBufferObjects(context, facesToRender, faceIdx);
@@ -869,6 +890,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 					}
 
+					// reflection source; TODO: improve me!
 					if (object->getReflectionEnvironmentMappingId().empty() == false) {
 						EnvironmentMappingEntity* environmentMappingEntity = dynamic_cast<EnvironmentMappingEntity*>(engine->getEntity(object->getReflectionEnvironmentMappingId()));
 						if (environmentMappingEntity == nullptr) {

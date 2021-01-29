@@ -25,6 +25,7 @@ namespace prototype {
 		class Prototype_Type;
 		class PrototypeProperties;
 		class PrototypeProperty;
+		class PrototypeTerrain;
 }  // namespace prototype
 }  // namespace engine
 }  // namespace tdme

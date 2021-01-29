@@ -26,6 +26,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
+using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::tools::shared::views::SharedTerrainEditorView;
@@ -50,13 +51,16 @@ private:
 	GUIElementNode* terrainDimensionWidth { nullptr };
 	GUIElementNode* terrainDimensionDepth { nullptr };
 	GUIElementNode* btnTerrainDimensionApply { nullptr };
+	GUIElementNode* btnTerrainDimensionLoad { nullptr };
+	GUIElementNode* btnTerrainDimensionSave { nullptr };
 	GUIElementNode* brushScale { nullptr };
 	GUIElementNode* brushStrength { nullptr };
 	GUIElementNode* brushFile { nullptr };
 	GUIElementNode* brushFileLoad { nullptr };
 	GUIElementNode* brushFileClear { nullptr };
 	GUIElementNode* btnBrushApply { nullptr };
-	vector<Vector3> terrainVerticesVector;
+
+	FileDialogPath* terrainPath { nullptr };
 
 	bool haveCurrentBrushFlattenHeight { false };
 	float currentBrushFlattenHeight { 0.0f };
@@ -119,6 +123,21 @@ public:
 	void setTerrainDimension(float width, float height);
 
 	/**
+	 * On terrain load
+	 */
+	void onTerrainLoad();
+
+	/**
+	 * On terrain save
+	 */
+	void onTerrainSave();
+
+	/**
+	 * On load terrain
+	 */
+	void onLoadTerrain();
+
+	/**
 	 * On apply terrain dimension
 	 */
 	void onApplyTerrainDimension();
@@ -130,17 +149,21 @@ public:
 
 	/**
 	 * Apply current brush at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
 	 * @param deltaTime delta time between last frame and this frame
 	 */
-	void applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime);
+	void applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
 	 * Determine current brush flatten height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 * @param brushCenterPosition brush center position
 	 * @return success
 	 */
-	bool determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition);
+	bool determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
 
 	/**
 	 * Unset current brush flatten height

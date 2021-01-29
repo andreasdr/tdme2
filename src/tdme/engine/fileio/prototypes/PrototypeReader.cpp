@@ -24,6 +24,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -62,6 +63,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::LODObject3D;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -221,6 +223,16 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	}
 	//
 	if (prototype->getModel() != nullptr) ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
+
+	if (prototype->getType() == Prototype_Type::TERRAIN) {
+		auto terrain = prototype->getTerrain();
+		Value& jTerrain = jEntityRoot["t"];
+		terrain->setWidth(jTerrain["w"].GetFloat());
+		terrain->setDepth(jTerrain["d"].GetFloat());
+		Value jTerrainValues = jTerrain["v"].GetArray(); // TODO: how to avoid this copy???
+		for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
+	}
+
 	return prototype;
 }
 

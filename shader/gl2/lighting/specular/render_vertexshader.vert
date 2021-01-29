@@ -96,6 +96,8 @@ uniform float time;
 	uniform float wavelength[4];
 	uniform float speed[4];
 	uniform vec2 direction[4];
+	varying vec3 vsPosition;
+	varying vec3 vsNormal;
 #elif defined(HAVE_TERRAIN_SHADER)
 	varying vec3 vertex;
 	varying vec3 normal;
@@ -184,7 +186,7 @@ void main(void) {
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices
 		vec4 worldPosition4 = _modelMatrix * vec4(inVertex, 1.0);
-		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
+		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 2.0;
 		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
 		_modelMatrix[1][1] = 1.0;
 		shaderTransformMatrix =
@@ -194,7 +196,8 @@ void main(void) {
 				0.0, 0.0, 1.0, 0.0,
 				0.0, height, 0.0, 1.0
 			);
-		vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(waveNormal(worldPosition.x, worldPosition.z), 0.0)));
+		vsNormal = waveNormal(worldPosition.x, worldPosition.z);
+		vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(vsNormal, 0.0)));
 	#else
 		// compute the normal
 		vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(inNormal, 0.0)));
@@ -227,6 +230,6 @@ void main(void) {
 	vsFragColor.a = material.diffuse.a * effectColorMul.a;
 
 	#if defined(HAVE_WATER_SHADER)
-		vsFragColor*= vec4(0.25, 0.25, 0.8, 0.5);
+		vsPosition = position;
 	#endif
 }

@@ -1,7 +1,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDMEParticleSystemEditor?
-    - TDME based particle system editor 
+    - TDME2 based particle system editor 
 
 - What is already working
     - particle system loading

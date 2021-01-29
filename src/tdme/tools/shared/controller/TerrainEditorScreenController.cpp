@@ -1,8 +1,12 @@
 #include <string>
+#include <vector>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -10,7 +14,9 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -24,9 +30,14 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -34,6 +45,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
+using tdme::tools::shared::controller::FileDialogPath;
+using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
 using tdme::tools::shared::controller::TerrainEditorScreenController;
@@ -58,10 +71,10 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 
 		/**
 		 * Public constructor
-		 * @param TerrainEditorScreenController empty screen controller
+		 * @param terrainEditorScreenController terrain editor screen controller
 		 * @param finalView final view
 		 */
-		OnSetEntityDataAction(TerrainEditorScreenController* TerrainEditorScreenController, SharedTerrainEditorView* finalView): terrainEditorScreenController(terrainEditorScreenController), finalView(finalView) {
+		OnSetEntityDataAction(TerrainEditorScreenController* terrainEditorScreenController, SharedTerrainEditorView* finalView): terrainEditorScreenController(terrainEditorScreenController), finalView(finalView) {
 		}
 
 	private:
@@ -72,6 +85,7 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 	this->view = view;
 	auto const finalView = view;
 	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->terrainPath = new FileDialogPath(".");
 }
 
 GUIScreenNode* TerrainEditorScreenController::getScreenNode()
@@ -90,6 +104,8 @@ void TerrainEditorScreenController::initialize()
 		terrainDimensionWidth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_dimension_width"));
 		terrainDimensionDepth = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_dimension_depth"));
 		btnTerrainDimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_apply"));
+		btnTerrainDimensionLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_load"));
+		btnTerrainDimensionSave = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_save"));
 		brushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_scale"));
 		brushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_strength"));
 		brushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file"));
@@ -101,12 +117,15 @@ void TerrainEditorScreenController::initialize()
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
+	btnTerrainDimensionSave->getController()->setDisabled(true);
 	onApplyBrush();
 }
 
 void TerrainEditorScreenController::dispose()
 {
 	if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
+	delete prototypeBaseSubScreenController;
+	delete terrainPath;
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -151,6 +170,12 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		if (node->getId().compare(btnTerrainDimensionApply->getId()) == 0) {
 			onApplyTerrainDimension();
 		} else
+		if (node->getId().compare(btnTerrainDimensionLoad->getId()) == 0) {
+			onTerrainLoad();
+		} else
+		if (node->getId().compare(btnTerrainDimensionSave->getId()) == 0) {
+			onTerrainSave();
+		} else
 		if (node->getId().compare(btnBrushApply->getId()) == 0) {
 			onApplyBrush();
 		}
@@ -162,18 +187,128 @@ void TerrainEditorScreenController::setTerrainDimension(float width, float heigh
 	terrainDimensionDepth->getController()->setValue(MutableString(height));
 }
 
-void TerrainEditorScreenController::onApplyTerrainDimension() {
+void TerrainEditorScreenController::onLoadTerrain() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
 	try {
-		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
-		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
-		auto prototype = view->getPrototype();
-		terrainVerticesVector.clear();
-		auto terrainModel = Terrain::createTerrainModel(width, depth, 0.0f, terrainVerticesVector);
-		prototype->setModel(terrainModel);
-		view->setPrototype(prototype);
+		auto width = prototype->getTerrain()->getWidth();
+		auto depth = prototype->getTerrain()->getDepth();
+		BoundingBox terrainBoundingBox;
+		vector<Model*> terrainModels;
+		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
+		view->setTerrain(terrainBoundingBox, terrainModels);
+		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
+		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
+		btnTerrainDimensionSave->getController()->setDisabled(false);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void TerrainEditorScreenController::onApplyTerrainDimension() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	try {
+		auto width = Float::parseFloat(terrainDimensionWidth->getController()->getValue().getString());
+		auto depth = Float::parseFloat(terrainDimensionDepth->getController()->getValue().getString());
+		if (width < 1.0f || width > 4000.0f) throw ExceptionBase("Width must be within 1 .. 4000");
+		if (depth < 1.0f || depth > 4000.0f) throw ExceptionBase("Depth must be within 1 .. 4000");
+		prototype->getTerrain()->getHeightVector().clear();
+		BoundingBox terrainBoundingBox;
+		vector<Model*> terrainModels;
+		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
+		view->setTerrain(terrainBoundingBox, terrainModels);
+		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
+		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
+		btnTerrainDimensionSave->getController()->setDisabled(false);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorScreenController::onTerrainLoad()
+{
+	class OnTerrainLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnTerrainLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions;
+	extensions.push_back("tte");
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		terrainPath->getPath(),
+		"Load from: ",
+		extensions,
+		fileName,
+		true,
+		new OnTerrainLoadAction(this)
+	);
+}
+
+void TerrainEditorScreenController::onTerrainSave()
+{
+	class OnTerrainSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				terrainEditorScreenController->view->saveFile(
+					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
+					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				);
+				terrainEditorScreenController->terrainPath->setPath(
+						terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				);
+				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			} catch (Exception& exception) {
+				terrainEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
+		OnTerrainSave(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+	vector<string> extensions = {
+		"tte"
+	};
+	fileName = Tools::getFileName(fileName);
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		terrainPath->getPath(),
+		"Save to: ",
+		extensions,
+		fileName,
+		false,
+		new OnTerrainSave(this)
+	);
 }
 
 void TerrainEditorScreenController::onApplyBrush() {
@@ -219,13 +354,16 @@ void TerrainEditorScreenController::onApplyBrush() {
 	}
 }
 
-void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPosition, int64_t deltaTime) {
+void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
-	auto terrainModel = prototype->getModel();
+	if (prototype == nullptr) return;
+	if (terrainModels.empty() == true) return;
+	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return;
 	Terrain::applyBrushToTerrainModel(
-		terrainModel,
-		terrainVerticesVector,
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
 		currentBrushTexture,
 		currentBrushScale,
@@ -235,15 +373,18 @@ void TerrainEditorScreenController::applyBrush(const Vector3& brushCenterPositio
 	);
 }
 
-bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(const Vector3& brushCenterPosition) {
+bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return false;
 	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN) return true;
 	if (haveCurrentBrushFlattenHeight == true) return true;
-	auto prototype = view->getPrototype();
-	auto terrainModel = prototype->getModel();
+	if (terrainModels.empty() == true) return false;
+	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return false;
 	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelFlattenHeight(
-		terrainModel,
-		terrainVerticesVector,
+		terrainBoundingBox,
+		terrainModels,
+		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
 		currentBrushFlattenHeight
 	);

@@ -81,6 +81,10 @@
 							</layout>
 							<space height="20" />
 							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center">
+								<button id="button_terrain_dimension_load" name="button_terrain_dimension_load" text="Load" />
+								<space width="20" />
+								<button id="button_terrain_dimension_save" name="button_terrain_dimension_save" text="Save" />
+								<space width="20" />
 								<button id="button_terrain_dimension_apply" name="button_terrain_dimension_apply" text="Apply" />
 							</layout>
 						</layout>

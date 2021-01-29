@@ -1,7 +1,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDMESceneEditor?
-    - TDME based scene editor 
+    - TDME2 based scene editor 
 
 - What is already working
     - prototype library

@@ -1,7 +1,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDMEModelEditor?
-    - TDME based 3D model asset viewer/editor 
+    - TDME2 based 3D model asset viewer/editor 
 
 - What is already working
     - model loading

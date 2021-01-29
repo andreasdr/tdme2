@@ -1,12 +1,21 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDMETerrainEditor?
-    - TDME based 3D terrain editor 
+    - TDME2 based 3D terrain editor 
 
 - What is already working
     - setting up terrain properties
         - key, value map for what ever reason
-    - this is WIP
+    - create terrain from 1m x 1m up to 4000m x 4000m
+    - load and save terrains
+    - use a brush to alter terrain with predefined or user generated textures
+      - operations are add, subtract, flatten, delete, smooth
+      - load a predefined or user generated texture as brush, whereas the rgb color space is used as strength base
+      - set up the texture scale
+      - set up the strength which will be multiplied with strength base derived from texture rgb color space
+      - TODO: water brush that works similar to flatten
+    - use foliage brushes
+      - this is WIP
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)

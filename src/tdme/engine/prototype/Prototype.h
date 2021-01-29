@@ -28,6 +28,7 @@ using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypeProperties;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::Entity;
 using tdme::math::Vector3;
 
@@ -77,6 +78,7 @@ private:
 	map<string, string> distanceShaderParameters;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
+	PrototypeTerrain* terrain { nullptr };
 
 public:
 
@@ -536,6 +538,13 @@ public:
 	 */
 	inline void setEnvironmentMapTimeRenderUpdateFrequency(int64_t frequency) {
 		environmentMapTimeRenderUpdateFrequency = frequency;
+	}
+
+	/**
+	 * @return terrain
+	 */
+	inline PrototypeTerrain* getTerrain() {
+		return terrain;
 	}
 
 };

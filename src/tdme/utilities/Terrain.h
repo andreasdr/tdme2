@@ -6,12 +6,14 @@
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
 /**
@@ -20,67 +22,47 @@ using tdme::math::Vector3;
  */
 class tdme::utilities::Terrain
 {
+public:
+	static constexpr float STEP_SIZE { 1.0f };
+	static constexpr float PARTITION_SIZE { 64.0f };
+
 private:
 	/**
-	 * @param vertexIdx vertex index
-	 * @param verticesPerX vertices per X
-	 * @param verticesPerZ vertices per Z
-	 * @return terrain model vertex index at top of given vertex index
+	 * @param terrainHeightVector terrain height vector
+	 * @param verticesPerX vertices per x
+	 * @param verticesPerZ vertices per z
+	 * @param x x
+	 * @param z z
+	 * @return terrain vertex
 	 */
-	static inline int getTerrainModelTopVertexIdx(int vertexIdx, int verticesPerX, int verticesPerZ) {
-		if (vertexIdx == -1) return -1;
-		if (vertexIdx < verticesPerX) return -1;
-		return vertexIdx - verticesPerX;
-	}
-
-	/**
-	 * @param vertexIdx vertex index
-	 * @param verticesPerX vertices per X
-	 * @param verticesPerZ vertices per Z
-	 * @return terrain model vertex index at bottom of given vertex index
-	 */
-	static inline int getTerrainModelBottomVertexIdx(int vertexIdx, int verticesPerX, int verticesPerZ) {
-		if (vertexIdx == -1) return -1;
-		if (vertexIdx >= (verticesPerZ - 1) * verticesPerX) return -1;
-		return vertexIdx + verticesPerX;
-	}
-
-	/**
-	 * @param vertexIdx vertex index
-	 * @param verticesPerX vertices per X
-	 * @param verticesPerZ vertices per Z
-	 * @return terrain model vertex index at left of given vertex index
-	 */
-	static inline int getTerrainModelLeftVertexIdx(int vertexIdx, int verticesPerX, int verticesPerZ) {
-		if (vertexIdx == -1) return -1;
-		if (vertexIdx < 1) return -1;
-		return vertexIdx - 1;
-	}
-
-	/**
-	 * @param vertexIdx vertex index
-	 * @param verticesPerX vertices per X
-	 * @param verticesPerZ vertices per Z
-	 * @return terrain model vertex index at right of given vertex index
-	 */
-	static inline int getTerrainModelRightVertexIdx(int vertexIdx, int verticesPerX, int verticesPerZ) {
-		if (vertexIdx == -1) return -1;
-		if (vertexIdx > verticesPerZ * verticesPerX - 1) return -1;
-		return vertexIdx + 1;
+	static inline bool getTerrainVertex(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, Vector3& vertex) {
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
+			0.0f,
+			static_cast<float>(z) * STEP_SIZE
+		);
+		if (x < 0 || x >= verticesPerX) return false;
+		if (z < 0 || z >= verticesPerZ) return false;
+		vertex.set(
+			static_cast<float>(x) * STEP_SIZE,
+			terrainHeightVector[z * verticesPerX + x],
+			static_cast<float>(z) * STEP_SIZE
+		);
+		return true;
 	}
 
 	/**
 	 * Compute terrain vertex normal
-	 * @param terrainVerticesVector terrain vertices vector
-	 * @param vertexIdx vertex index
+	 * @param terrainHeightVector terrain height vector
+	 * @param verticesPerX vertices per x
 	 * @param verticesPerZ vertices per z
+	 * @param x x
+	 * @param z z
 	 * @return normal for given vertex index
 	 */
-	static const Vector3 computeTerrainVertexNormal(const vector<Vector3>& terrainVerticesVector, int vertexIdx, int verticesPerX);
+	static const Vector3 computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z);
 
 public:
-	static constexpr float STEP_SIZE { 0.5f };
-
 	enum BrushOperation {
 		BRUSHOPERATION_ADD,
 		BRUSHOPERATION_SUBTRACT,
@@ -94,15 +76,17 @@ public:
 	 * @param width width
 	 * @param depth depth
 	 * @param y float y
-	 * @param terrainVerticesVector terrain vertices vector
-	 * @return ground model
+	 * @param terrainHeightVector terrain height vector
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
 	 */
-	static Model* createTerrainModel(float width, float depth, float y, vector<Vector3>& terrainVerticesVector);
+	static void createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels);
 
 	/**
 	 * Apply brush to terrain model
-	 * @param terrainModel terrain model
-	 * @param terrainVerticesVector terrain vertices vector
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
 	 * @param brushTexture brush texture
 	 * @param brushScale brush scale
@@ -112,8 +96,9 @@ public:
 	 *
 	 */
 	static void applyBrushToTerrainModel(
-		Model* terrainModel,
-		vector<Vector3>& terrainVerticesVector,
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<Model*> terrainModels,
+		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		Texture* brushTexture,
 		float brushScale,
@@ -124,14 +109,16 @@ public:
 
 	/**
 	 * Get terrain model flatten height
-	 * @param terrainModel terrain model
-	 * @param terrainVerticesVector terrain vertices vector
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param terrainHeightVector terrain height vector
 	 * @param flattenHeight flatten height
 	 *
 	 */
 	static bool getTerrainModelFlattenHeight(
-		Model* terrainModel,
-		vector<Vector3>& terrainVerticesVector,
+		BoundingBox& terrainBoundingBox,  // TODO: constness
+		vector<Model*> terrainModels,
+		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		float& flattenHeight
 	);

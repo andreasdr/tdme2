@@ -33,6 +33,7 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -575,5 +576,17 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		jEntityRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
 		jEntityRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);
+	}
+	if (prototype->getType() == Prototype_Type::TERRAIN) {
+		auto terrain = prototype->getTerrain();
+		Value jTerrain;
+		jTerrain.SetObject();
+		jTerrain.AddMember("w", Value(terrain->getWidth()), jAllocator);
+		jTerrain.AddMember("d", Value(terrain->getDepth()), jAllocator);
+		Value jTerrainValues;
+		jTerrainValues.SetArray();
+		for (auto& v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
+		jTerrain.AddMember("v", jTerrainValues, jAllocator);
+		jEntityRoot.AddMember("t", jTerrain, jAllocator);
 	}
 }

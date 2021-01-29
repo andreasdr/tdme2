@@ -44,6 +44,8 @@
 #define FALSE		0
 #define MAX_LIGHTS	8
 
+{$DEFINITIONS}
+
 struct Material {
 	vec4 ambient;
 	vec4 diffuse;
@@ -71,7 +73,6 @@ uniform Light lights[MAX_LIGHTS];
 
 uniform int textureAtlasSize;
 uniform vec2 textureAtlasPixelDimension;
-
 
 uniform samplerCube environmentMappingTextureUnit;
 uniform int environmentMappingTextureAvailable;
@@ -103,8 +104,6 @@ in vec3 vsEyeDirection;
 out vec4 outColor;
 
 vec4 fragColor;
-
-{$DEFINITIONS}
 
 #if defined(HAVE_TERRAIN_SHADER)
 	#define TERRAIN_UV_SCALE			0.2
@@ -385,8 +384,8 @@ void main(void) {
 			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.1, 1.0, 0.1)));
 			envColor = texture(environmentMappingTextureUnit, -reflectionVector) * 0.6;
 		}
-		outColor = fragColor * 0.4;
-		outColor+= vec4(envColor.rgb, 0.0);
+		outColor = fragColor * vec4(envColor.rgb, 0.0);
+		outColor*= vec4(envColor.rgb, 0.0);
 		outColor+= vsEffectColorAdd;
 		outColor = clamp(outColor, 0.0, 1.0);
 		outColor.a = 0.5;

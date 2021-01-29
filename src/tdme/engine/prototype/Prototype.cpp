@@ -8,6 +8,7 @@
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -18,6 +19,7 @@ using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeParticleSystem;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::math::Vector3;
 using tdme::utilities::StringTools;
 
@@ -116,6 +118,9 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
 		this->physics = new PrototypePhysics();
+	} else
+	if (this->type == Prototype_Type::TERRAIN) {
+		this->terrain = new PrototypeTerrain();
 	}
 }
 
@@ -127,6 +132,7 @@ Prototype::~Prototype() {
 	for (auto particleSystem: particleSystems) delete particleSystem;
 	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
 	for (auto sound: sounds) delete sound;
+	if (terrain != nullptr) delete terrain;
 }
 
 void Prototype::setModel(Model* model) {
