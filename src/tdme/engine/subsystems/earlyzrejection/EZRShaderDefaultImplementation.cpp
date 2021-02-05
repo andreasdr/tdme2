@@ -55,3 +55,5 @@ void EZRShaderDefaultImplementation::initialize()
 	EZRShaderBaseImplementation::initialize();
 }
 
+void EZRShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

@@ -20,6 +20,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -37,6 +38,7 @@ using std::vector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -300,8 +302,7 @@ private:
 		array<uint32_t, 3> command_count { 0 };
 
 		string shader;
-		string shaderParametersHash;
-		map<string, string> shaderParameters;
+		EntityShaderParameters shaderParameters;
 		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 		Renderer_PBRMaterial pbrMaterial;
@@ -628,9 +629,8 @@ public:
 	Renderer_PBRMaterial& getPBRMaterial(void* context) override;
 	const string& getShader(void* context) override;
 	void setShader(void* context, const string& id) override;
-	const string& getShaderParametersHash(void* context) override;
-	const map<string, string>& getShaderParameters(void* context) override;
-	void setShaderParameters(void* context, const map<string, string>& parameters) override;
+	const EntityShaderParameters& getShaderParameters(void* context) override;
+	void setShaderParameters(void* context, const EntityShaderParameters& parameters) override;
 	float getMaskMaxValue(void* context) override;
 	void setMaskMaxValue(void* context, float maskMaxValue) override;
 	array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) override;

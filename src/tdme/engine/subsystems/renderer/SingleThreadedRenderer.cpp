@@ -1,11 +1,13 @@
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Time.h>
 
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Time;
@@ -61,15 +63,11 @@ void SingleThreadedRenderer::setShader(void* context, const string& id) {
 	shader = id;
 }
 
-const string& SingleThreadedRenderer::getShaderParametersHash(void* context) {
-	return shaderParametersHash;
-}
-
-const map<string, string>& SingleThreadedRenderer::getShaderParameters(void* context) {
+const EntityShaderParameters& SingleThreadedRenderer::getShaderParameters(void* context) {
 	return shaderParameters;
 }
 
-void SingleThreadedRenderer::setShaderParameters(void* context, const map<string, string>& parameters) {
+void SingleThreadedRenderer::setShaderParameters(void* context, const EntityShaderParameters& parameters) {
 	shaderParameters = parameters;
 }
 

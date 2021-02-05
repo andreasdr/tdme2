@@ -38,19 +38,24 @@ out vec4 vsEffectColorAdd;
 out vec3 vsEyeDirection;
 
 #if defined(HAVE_TERRAIN_SHADER)
-	out vec3 vertex;
-	out vec3 normal;
-	out float height;
-	out float slope;
+	out vec3 terrainVertex;
+	out vec3 terrainNormal;
+	out float terrainHeight;
+	out float terrainSlope;
 #elif defined(HAVE_WATER_SHADER)
 	// uniforms
 	uniform float waterHeight;
-	uniform int numWaves;
-	uniform float amplitude[4];
-	uniform float wavelength[4];
-	uniform float speed[4];
-	uniform vec2 direction[4];
-	out float height;
+	uniform int waterWaves;
+	uniform float waterAmplitude[4];
+	uniform float waterWavelength[4];
+	uniform float waterSpeed[4];
+	uniform vec2 waterDirection[4];
+#elif defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
 #endif
 
 #if defined(HAVE_DEPTH_FOG)
@@ -82,11 +87,11 @@ void main(void) {
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 heightVector4 = _modelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
-		vertex = heightVector3;
-		height = heightVector3.y;
+		terrainVertex = heightVector3;
+		terrainHeight = heightVector3.y;
 		vec4 normalVector4 = mat4(transpose(inverse(mat3(_modelMatrix)))) * vec4(inNormal, 0.0);
-		normal = normalize(normalVector4.xyz);
-		slope = abs(180.0 / 3.14 * acos(clamp(dot(normal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+		terrainNormal = normalize(normalVector4.xyz);
+		terrainSlope = abs(180.0 / 3.14 * acos(clamp(dot(terrainNormal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 		vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	#elif defined(HAVE_WATER_SHADER)
 		// transformations matrices

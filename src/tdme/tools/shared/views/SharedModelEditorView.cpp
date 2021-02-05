@@ -159,7 +159,7 @@ void SharedModelEditorView::initModel()
 		attachment1Model = nullptr;
 	}
 	modelFile = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
-	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(prototype->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
@@ -187,8 +187,8 @@ void SharedModelEditorView::setLodLevel(int lodLevel) {
 		this->lodLevel = lodLevel;
 		engine->reset();
 		initModelRequested = true;
-		modelEditorScreenController->setMaterials(prototype);
-		modelEditorScreenController->setAnimations(prototype);
+		modelEditorScreenController->setMaterials();
+		modelEditorScreenController->setAnimations();
 	}
 }
 
@@ -297,7 +297,7 @@ void SharedModelEditorView::optimizeModel() {
 	engine->removeEntity("model");
 	prototype->setModel(ModelTools::optimizeModel(prototype->unsetModel()));
 	initModelRequested = true;
-	modelEditorScreenController->setMaterials(prototype);
+	modelEditorScreenController->setMaterials();
 }
 
 void SharedModelEditorView::handleInputEvents()
@@ -382,17 +382,18 @@ void SharedModelEditorView::updateGUIElements()
 	if (prototype != nullptr) {
 		modelEditorScreenController->setScreenCaption("Model Editor - " + (prototype->getFileName().length() > 0 ? Tools::getFileName(prototype->getFileName()) : Tools::getFileName(prototype->getModelFileName())));
 		auto preset = prototype->getProperty("preset");
-		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", prototype, "");
+		modelEditorScreenController->setPrototypeProperties(preset != nullptr ? preset->getValue() : "", "");
 		modelEditorScreenController->setPrototypeData(prototype->getName(), prototype->getDescription());
 		modelEditorScreenController->setPivot(prototype->getPivot());
 		prototypePhysicsView->setBoundingVolumes(prototype);
 		prototypePhysicsView->setPhysics(prototype);
 		prototypePhysicsView->setTerrainMesh(prototype);
 		prototypePhysicsView->setConvexMeshes(prototype);
-		modelEditorScreenController->setRendering(prototype);
-		modelEditorScreenController->setLODLevel(prototype, lodLevel);
-		modelEditorScreenController->setMaterials(prototype);
-		modelEditorScreenController->setAnimations(prototype);
+		modelEditorScreenController->setRendering();
+		modelEditorScreenController->setShaderParameters();
+		modelEditorScreenController->setLODLevel(lodLevel);
+		modelEditorScreenController->setMaterials();
+		modelEditorScreenController->setAnimations();
 		modelEditorScreenController->setPreview();
 		modelEditorScreenController->setTools();
 		prototypeSoundsView->setSounds(prototype);
@@ -406,6 +407,7 @@ void SharedModelEditorView::updateGUIElements()
 		prototypePhysicsView->unsetTerrainMesh();
 		prototypePhysicsView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
+		modelEditorScreenController->unsetShaderParameters();
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();
@@ -451,7 +453,7 @@ void SharedModelEditorView::initialize()
 	}
 	loadSettings();
 	modelEditorScreenController->getPrototypeDisplaySubScreenController()->setupDisplay();
-	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::OBJECT3D));
+	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D));
 	prototypePhysicsView->initialize();
 	updateGUIElements();
 }
@@ -621,11 +623,25 @@ void SharedModelEditorView::updateRendering() {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	engine->removeEntity("model");
-	object->setShader(prototype->getShader());
-	object->setDistanceShader(prototype->getDistanceShader());
-	object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 	ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
 	resetPrototype();
+}
+
+void SharedModelEditorView::updateShaderParemeters() {
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (object == nullptr || prototype == nullptr) return;
+	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+	for (auto& parameterIt: shaderParametersDefault) {
+		auto& parameterName = parameterIt.first;
+		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+		object->setShaderParameter(parameterName, parameterValue);
+	}
+	for (auto& parameterIt: distanceShaderParametersDefault) {
+		auto& parameterName = parameterIt.first;
+		auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+		object->setDistanceShaderParameter(parameterName, parameterValue);
+	}
 }
 
 void SharedModelEditorView::onSetPrototypeData() {

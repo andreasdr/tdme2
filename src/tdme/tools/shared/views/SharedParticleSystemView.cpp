@@ -170,7 +170,7 @@ void SharedParticleSystemView::initParticleSystem()
 		return;
 
 	particleSystemFile = prototype->getFileName();
-	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(prototype);
 	updateGUIElements();
 }

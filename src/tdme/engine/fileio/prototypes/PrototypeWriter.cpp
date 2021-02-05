@@ -34,7 +34,10 @@
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -79,7 +82,10 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeProperty;
+using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
+using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -198,26 +204,6 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 	jEntityRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
 	jEntityRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
 	jEntityRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
-	if (prototype->getSounds().size() > 0) {
-		Value jSounds;
-		jSounds.SetArray();
-		for (auto sound: prototype->getSounds()) {
-			if (sound->getFileName().length() == 0) continue;
-			Value jSound;
-			jSound.SetObject();
-			jSound.AddMember("i", Value(sound->getId(), jAllocator), jAllocator);
-			jSound.AddMember("a", Value(sound->getAnimation(), jAllocator), jAllocator);
-			jSound.AddMember("file", Value(sound->getFileName(), jAllocator), jAllocator);
-			jSound.AddMember("g", Value(sound->getGain()), jAllocator);
-			jSound.AddMember("p", Value(sound->getPitch()), jAllocator);
-			jSound.AddMember("o", Value(sound->getOffset()), jAllocator);
-			jSound.AddMember("l", Value(sound->isLooping()), jAllocator);
-			jSound.AddMember("f", Value(sound->isFixed()), jAllocator);
-			jSounds.PushBack(jSound, jAllocator);
-		}
-		jEntityRoot.AddMember("sd", jSounds, jAllocator);
-	}
-
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();
@@ -573,6 +559,43 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 	jEntityRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
 	jEntityRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
+	{
+		Value jShaderParameters;
+		jShaderParameters.SetObject();
+		for (auto& shaderParameterIt: Engine::getShaderParameterDefaults(prototype->getShader())) {
+			auto& shaderParameterName = shaderParameterIt.first;
+			jShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
+		}
+		jEntityRoot.AddMember("sps", jShaderParameters, jAllocator);
+	}
+	{
+		Value jDistanceShaderParameters;
+		jDistanceShaderParameters.SetObject();
+		for (auto& shaderParameterIt: Engine::getShaderParameterDefaults(prototype->getDistanceShader())) {
+			auto& shaderParameterName = shaderParameterIt.first;
+			jDistanceShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getDistanceShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
+		}
+		jEntityRoot.AddMember("spds", jDistanceShaderParameters, jAllocator);
+	}
+	if (prototype->getSounds().size() > 0) {
+		Value jSounds;
+		jSounds.SetArray();
+		for (auto sound: prototype->getSounds()) {
+			if (sound->getFileName().length() == 0) continue;
+			Value jSound;
+			jSound.SetObject();
+			jSound.AddMember("i", Value(sound->getId(), jAllocator), jAllocator);
+			jSound.AddMember("a", Value(sound->getAnimation(), jAllocator), jAllocator);
+			jSound.AddMember("file", Value(sound->getFileName(), jAllocator), jAllocator);
+			jSound.AddMember("g", Value(sound->getGain()), jAllocator);
+			jSound.AddMember("p", Value(sound->getPitch()), jAllocator);
+			jSound.AddMember("o", Value(sound->getOffset()), jAllocator);
+			jSound.AddMember("l", Value(sound->isLooping()), jAllocator);
+			jSound.AddMember("f", Value(sound->isFixed()), jAllocator);
+			jSounds.PushBack(jSound, jAllocator);
+		}
+		jEntityRoot.AddMember("sd", jSounds, jAllocator);
+	}
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		jEntityRoot.AddMember("emrpm", Value(prototype->getEnvironmentMapRenderPassMask()), jAllocator);
 		jEntityRoot.AddMember("emtf", Value(prototype->getEnvironmentMapTimeRenderUpdateFrequency()), jAllocator);

@@ -229,64 +229,50 @@ void ShadowMapping::updateTextureMatrix(void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
-	// upload
-	{
-		auto v = runState;
-		if (v == ShadowMapping_RunState::CREATE) {
-			{
-				Engine::getShadowMapCreationShader()->updateTextureMatrix(context);
-				goto end_switch0;
-			}
-		} else
-		if (v == ShadowMapping_RunState::RENDER) {
-			{
-				Engine::getShadowMapRenderShader()->updateTextureMatrix(context);
-				goto end_switch0;
-			}
-		} else {
-			{
-				Console::println(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
+			Engine::getShadowMapCreationShader()->updateTextureMatrix(context);
+			break;
+		case ShadowMapping_RunState::RENDER:
+			Engine::getShadowMapRenderShader()->updateTextureMatrix(context);
+			break;
+		default:
+			Console::println(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
 	}
 }
 
 void ShadowMapping::updateMatrices(void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
-	// delegate to shader
-	{
-		if (runState == ShadowMapping_RunState::CREATE) {
+
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
 			Engine::getShadowMapCreationShader()->updateMatrices(context);
-		} else
-		if (runState == ShadowMapping_RunState::RENDER) {
+			break;
+		case ShadowMapping_RunState::RENDER:
 			Engine::getShadowMapRenderShader()->updateMatrices(context);
-		} else {
+			break;
+		default:
 			Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
-		}
 	}
 }
 
 void ShadowMapping::updateMaterial(void* context) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
-	{
-		auto v = runState;
-		if (v == ShadowMapping_RunState::CREATE) {
-			{
-				Engine::getShadowMapCreationShader()->updateMaterial(context);
-				goto end_switch0;;
-			}
-		} else
-		if (v == ShadowMapping_RunState::RENDER) {
-			{
-				Engine::getShadowMapRenderShader()->updateMaterial(context);
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
+
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
+			Engine::getShadowMapCreationShader()->updateMaterial(context);
+			break;
+		case ShadowMapping_RunState::RENDER:
+			Engine::getShadowMapRenderShader()->updateMaterial(context);
+			break;
+		default:
+			Console::println(string("ShadowMapping::updateMaterial(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -299,21 +285,17 @@ void ShadowMapping::updateLight(void* context, int32_t lightId) {
 void ShadowMapping::bindTexture(void* context, int32_t textureId) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
-	{
-		auto v = runState;
-		if (v == ShadowMapping_RunState::CREATE) {
-			{
-				Engine::getShadowMapCreationShader()->bindTexture(context, textureId);
-				goto end_switch0;;
-			}
-		} else
-		if (v == ShadowMapping_RunState::RENDER) {
-			{
-				Engine::getShadowMapRenderShader()->bindTexture(context, textureId);
-				goto end_switch0;;
-			}
-		}
-		end_switch0:;
+
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
+			Engine::getShadowMapCreationShader()->bindTexture(context, textureId);
+			break;
+		case ShadowMapping_RunState::RENDER:
+			Engine::getShadowMapRenderShader()->bindTexture(context, textureId);
+			break;
+		default:
+			Console::println(string("ShadowMapping::bindTexture(): unsupported run state '" + to_string(runState)));
 	}
 }
 
@@ -337,17 +319,36 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
 }
 
 void ShadowMapping::setShader(void* context, const string& id) {
-	{
-		if (runState == ShadowMapping_RunState::NONE) {
-			// no op
-		} else
-		if (runState == ShadowMapping_RunState::CREATE) {
+	if (runState == ShadowMapping_RunState::NONE)
+		return;
+
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
 			Engine::getShadowMapCreationShader()->setShader(context, id);
-		} else
-		if (runState == ShadowMapping_RunState::RENDER) {
+			break;
+		case ShadowMapping_RunState::RENDER:
 			Engine::getShadowMapRenderShader()->setShader(context, id);
-		} else {
+			break;
+		default:
 			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
-		}
 	}
 }
+
+void ShadowMapping::updateShaderParameters(void* context) {
+	if (runState == ShadowMapping_RunState::NONE)
+		return;
+
+	//
+	switch(runState) {
+		case ShadowMapping_RunState::CREATE:
+			Engine::getShadowMapCreationShader()->updateShaderParameters(context);
+			break;
+		case ShadowMapping_RunState::RENDER:
+			Engine::getShadowMapRenderShader()->updateShaderParameters(context);
+			break;
+		default:
+			Console::println(string("ShadowMapping::updateShaderParameters(): unsupported run state '" + to_string(runState)));
+	}
+}
+

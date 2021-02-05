@@ -38,15 +38,16 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 protected:
 	int32_t uniformWaterHeight { -1 };
 	int32_t uniformTime { -1 };
-	int32_t uniformNumWaves { -1 };
-	array<int32_t, WAVES_MAX> uniformAmplitude;
-	array<int32_t, WAVES_MAX> uniformWavelength;
-	array<int32_t, WAVES_MAX> uniformSpeed;
-	array<int32_t, WAVES_MAX> uniformDirection;
+	int32_t uniformWaterWaves { -1 };
+	array<int32_t, WAVES_MAX> uniformWaterAmplitude;
+	array<int32_t, WAVES_MAX> uniformWaterWaveLength;
+	array<int32_t, WAVES_MAX> uniformWaterSpeed;
+	array<int32_t, WAVES_MAX> uniformWaterDirection;
 	int32_t uniformModelMatrix { -1 };
 	float time { 0.0f };
 	array<float, WAVES_MAX> angle;

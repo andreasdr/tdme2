@@ -36,7 +36,7 @@ private:
 		bool applyPostProcessing;
 		int32_t renderTypes;
 		Color4 clearColor;
-		bool renderLightSource;
+		bool renderLightSources;
 		bool skipOnLightSourceNotVisible;
 	};
 	struct PostProcessingProgramStep {
@@ -68,7 +68,7 @@ public:
 	 * @param applyPostProcessing apply post processing
 	 * @param renderTypes render types
 	 * @param clearColor clear color
-	 * @param renderLightSource render light source
+	 * @param renderLightSources render light sources
 	 * @param skipOnLightSourceNotVisible skip on light source not visible
 	 */
 	void addEffectPass(
@@ -81,7 +81,7 @@ public:
 		bool applyPostProcessing,
 		int32_t renderTypes,
 		Color4 clearColor,
-		bool renderLightSource,
+		bool renderLightSources,
 		bool skipOnLightSourceNotVisible
 	);
 

@@ -222,14 +222,13 @@
     - documentation
 
 - What is WIP or planned
+    - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Terrain Editor
-    - Reflections via environment mapping(GL2, GLES2, Vulkan support is still missing)
+    - Reflections via environment mapping(Vulkan support is still missing)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
-    - Light scattering effect / effects
     - Simple script language
-    - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
     - Installer for MacOSX

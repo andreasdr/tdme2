@@ -47,4 +47,15 @@ void PostProcessingShaderBlurImplementation::initialize()
 
 	//
 	PostProcessingShaderBaseImplementation::initialize();
+
+	// register shader
+	if (initialized == true) {
+		Engine::registerShader(
+			Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
+			"blur"
+		);
+	}
+}
+
+void PostProcessingShaderBlurImplementation::setShaderParameters(void* context, Engine* engine) {
 }

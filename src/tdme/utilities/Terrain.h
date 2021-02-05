@@ -28,6 +28,7 @@ public:
 
 private:
 	/**
+	 * Get the terrain vertex for given x and z position
 	 * @param terrainHeightVector terrain height vector
 	 * @param verticesPerX vertices per x
 	 * @param verticesPerZ vertices per z
@@ -52,7 +53,7 @@ private:
 	}
 
 	/**
-	 * Compute terrain vertex normal
+	 * Compute terrain vertex normal for given x and z position
 	 * @param terrainHeightVector terrain height vector
 	 * @param verticesPerX vertices per x
 	 * @param verticesPerZ vertices per z
@@ -72,20 +73,20 @@ public:
 	};
 
 	/**
-	 * Creates a terrain model
+	 * Create terrain models
 	 * @param width width
 	 * @param depth depth
 	 * @param y float y
 	 * @param terrainHeightVector terrain height vector
 	 * @param terrainBoundingBox terrain bounding box
-	 * @param terrainModels terrain models
+	 * @param terrainModels terrain models vector
 	 */
 	static void createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels);
 
 	/**
-	 * Apply brush to terrain model
+	 * Apply brush to given terrain models
 	 * @param terrainBoundingBox terrain bounding box
-	 * @param terrainModels terrain models
+	 * @param terrainModels terrain models vector
 	 * @param terrainHeightVector terrain height vector
 	 * @param brushCenterPosition brush center position
 	 * @param brushTexture brush texture
@@ -95,7 +96,7 @@ public:
 	 * @param flattenHeight flatten height
 	 *
 	 */
-	static void applyBrushToTerrainModel(
+	static void applyBrushToTerrainModels(
 		BoundingBox& terrainBoundingBox, // TODO: constness
 		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,
@@ -108,14 +109,14 @@ public:
 	);
 
 	/**
-	 * Get terrain model flatten height
+	 * Get terrain models flatten height
 	 * @param terrainBoundingBox terrain bounding box
-	 * @param terrainModels terrain models
+	 * @param terrainModels terrain models vector
 	 * @param terrainHeightVector terrain height vector
 	 * @param flattenHeight flatten height
 	 *
 	 */
-	static bool getTerrainModelFlattenHeight(
+	static bool getTerrainModelsFlattenHeight(
 		BoundingBox& terrainBoundingBox,  // TODO: constness
 		vector<Model*> terrainModels,
 		vector<float>& terrainHeightVector,

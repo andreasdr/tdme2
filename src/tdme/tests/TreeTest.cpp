@@ -17,6 +17,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -46,6 +47,7 @@ using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
+using tdme::engine::ShaderParameter;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -131,7 +133,9 @@ void TreeTest::dispose()
 void TreeTest::initialize()
 {
 	engine->initialize();
-	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	engine->addPostProcessingProgram("light_scattering");
+	engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
+	engine->setSceneColor(Color4(0.2f, 0.2f, 0.8f, 1.0f));
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
@@ -150,6 +154,7 @@ void TreeTest::initialize()
 	light0->setQuadraticAttenuation(0.0f);
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
+	light0->setRenderLightSource(true);
 	light0->setEnabled(true);
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
@@ -182,6 +187,7 @@ void TreeTest::initialize()
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setShader("tree");
+		entity->setShaderParameter("speed", ShaderParameter(0.5f));
 		entity->update();
 		engine->addEntity(entity);
 	}

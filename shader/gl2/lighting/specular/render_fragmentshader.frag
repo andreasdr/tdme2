@@ -30,10 +30,10 @@ varying vec4 vsFragColor;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
 
-	varying vec3 vertex;
-	varying vec3 normal;
-	varying float height;
-	varying float slope;
+	varying vec3 terrainVertex;
+	varying vec3 terrainNormal;
+	varying float terrainHeight;
+	varying float terrainSlope;
 
 	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
@@ -92,56 +92,56 @@ void main (void) {
 
 	#if defined(HAVE_TERRAIN_SHADER)
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
-		vec3 uvMappingBlending = abs(normal);
+		vec3 uvMappingBlending = abs(terrainNormal);
 		uvMappingBlending = normalize(max(uvMappingBlending, 0.00001)); // Force weights to sum to 1.0
 		float b = (uvMappingBlending.x + uvMappingBlending.y + uvMappingBlending.z);
 		uvMappingBlending /= vec3(b, b, b);
 
 		vec4 terrainBlending = vec4(0.0, 0.0, 0.0, 0.0); // gras, dirt, stone, snow
 
-		// height
-		if (height > TERRAIN_LEVEL_1) {
-			float blendFactorHeight = clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-			if (slope >= 45.0) {
+		// terrainHeight
+		if (terrainHeight > TERRAIN_LEVEL_1) {
+			float blendFactorHeight = clamp((terrainHeight - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			if (terrainSlope >= 45.0) {
 				terrainBlending[2]+= blendFactorHeight; // stone
 			} else
-			if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
-				terrainBlending[3]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // snow
+			if (terrainSlope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+				terrainBlending[2]+= blendFactorHeight * ((terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+				terrainBlending[3]+= blendFactorHeight * (1.0 - (terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // snow
 			} else {
 				terrainBlending[3]+= blendFactorHeight; // snow
 			}
 		}
-		if (height >= TERRAIN_LEVEL_0 && height < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
+		if (terrainHeight >= TERRAIN_LEVEL_0 && terrainHeight < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
 			float blendFactorHeight = 1.0;
-			if (height > TERRAIN_LEVEL_1) {
-				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			if (terrainHeight > TERRAIN_LEVEL_1) {
+				blendFactorHeight = 1.0 - clamp((terrainHeight - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
 			} else
-			if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
-				blendFactorHeight = clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			if (terrainHeight < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+				blendFactorHeight = clamp((terrainHeight - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
 			}
 
-			if (slope >= 45.0) {
+			if (terrainSlope >= 45.0) {
 				terrainBlending[2]+= blendFactorHeight; // stone
 			} else
-			if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
-				terrainBlending[1]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+			if (terrainSlope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+				terrainBlending[2]+= blendFactorHeight * ((terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+				terrainBlending[1]+= blendFactorHeight * (1.0 - (terrainSlope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
 			} else
-			if (slope >= 26.0) {
+			if (terrainSlope >= 26.0) {
 				terrainBlending[1]+= blendFactorHeight; // dirt
 			} else
-			if (slope >= 26.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[1]+= blendFactorHeight * ((slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
-				terrainBlending[0]+= blendFactorHeight * (1.0 - (slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // gras
+			if (terrainSlope >= 26.0 - TERRAIN_SLOPE_BLEND) {
+				terrainBlending[1]+= blendFactorHeight * ((terrainSlope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+				terrainBlending[0]+= blendFactorHeight * (1.0 - (terrainSlope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // gras
 			} else {
 				terrainBlending[0]+= blendFactorHeight; // gras
 			}
 		}
-		if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+		if (terrainHeight < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
 			float blendFactorHeight = 1.0;
-			if (height > TERRAIN_LEVEL_0) {
-				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			if (terrainHeight > TERRAIN_LEVEL_0) {
+				blendFactorHeight = 1.0 - clamp((terrainHeight - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
 			}
 			// 0- meter
 			terrainBlending[1]+= blendFactorHeight; // dirt
@@ -149,10 +149,10 @@ void main (void) {
 
 		//
 		gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-		if (terrainBlending[0] > 0.001) gl_FragColor+= readTerrainTextureGras(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[0];
-		if (terrainBlending[1] > 0.001) gl_FragColor+= readTerrainTextureDirt(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[1];
-		if (terrainBlending[2] > 0.001) gl_FragColor+= readTerrainTextureStone(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
-		if (terrainBlending[3] > 0.001) gl_FragColor+= readTerrainTextureSnow(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
+		if (terrainBlending[0] > 0.001) gl_FragColor+= readTerrainTextureGras(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[0];
+		if (terrainBlending[1] > 0.001) gl_FragColor+= readTerrainTextureDirt(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[1];
+		if (terrainBlending[2] > 0.001) gl_FragColor+= readTerrainTextureStone(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
+		if (terrainBlending[3] > 0.001) gl_FragColor+= readTerrainTextureSnow(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 		gl_FragColor*= vsFragColor;
 		gl_FragColor = clamp(effectColorAdd + gl_FragColor, 0.0, 1.0);
 	#elif defined(HAVE_WATER_SHADER)

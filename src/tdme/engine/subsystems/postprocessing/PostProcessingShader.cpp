@@ -108,17 +108,7 @@ void PostProcessingShader::setBufferPixelHeight(void* context, float pixelHeight
 	implementation->setBufferPixelHeight(context, pixelHeight);
 }
 
-void PostProcessingShader::setTextureLightPositionX(void* context, float textureLightPositionX) {
+void PostProcessingShader::setShaderParameters(void* context, Engine* engine) {
 	if (implementation == nullptr) return;
-	implementation->setTextureLightPositionX(context, textureLightPositionX);
-}
-
-void PostProcessingShader::setTextureLightPositionY(void* context, float textureLightPositionY) {
-	if (implementation == nullptr) return;
-	implementation->setTextureLightPositionY(context, textureLightPositionY);
-}
-
-void PostProcessingShader::setIntensity(void* context, float intensity) {
-	if (implementation == nullptr) return;
-	implementation->setIntensity(context, intensity);
+	implementation->setShaderParameters(context, engine);
 }

@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -16,6 +17,8 @@ using std::map;
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
+
+using tdme::engine::EntityShaderParameters;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
@@ -38,9 +41,7 @@ private:
 	array<float, 3> environmentMappingCubeMapPosition;
 protected:
 	string shader;
-	map<string, string> shaderParameters;
-	string shaderParametersHash;
-
+	EntityShaderParameters shaderParameters;
 
 public:
 	/**
@@ -64,9 +65,8 @@ public:
 	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
 	virtual const string& getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
-	virtual const string& getShaderParametersHash(void* context) override;
-	virtual const map<string, string>& getShaderParameters(void* context) override;
-	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
+	virtual const EntityShaderParameters& getShaderParameters(void* context) override;
+	virtual void setShaderParameters(void* context, const EntityShaderParameters& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
 	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) override;

@@ -25,7 +25,9 @@
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -64,7 +66,9 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
+using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
@@ -217,6 +221,24 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	prototype->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	prototype->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
 	prototype->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
+	if (jEntityRoot.FindMember("sps") != jEntityRoot.MemberEnd()) {
+		Value& jShaderParameters = jEntityRoot["sps"];
+		EntityShaderParameters shaderParameters;
+		shaderParameters.setShader(prototype->getShader());
+		for (auto jShaderParameterIt = jShaderParameters.MemberBegin(); jShaderParameterIt != jShaderParameters.MemberEnd(); ++jShaderParameterIt) {
+			shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), jShaderParameterIt->value.GetString());
+		}
+		prototype->setShaderParameters(shaderParameters);
+	}
+	if (jEntityRoot.FindMember("spds") != jEntityRoot.MemberEnd()) {
+		Value& jDistanceShaderParameters = jEntityRoot["spds"];
+		EntityShaderParameters distanceShaderParameters;
+		distanceShaderParameters.setShader(prototype->getDistanceShader());
+		for (auto jDistanceShaderParameterIt = jDistanceShaderParameters.MemberBegin(); jDistanceShaderParameterIt != jDistanceShaderParameters.MemberEnd(); ++jDistanceShaderParameterIt) {
+			distanceShaderParameters.setShaderParameter(jDistanceShaderParameterIt->name.GetString(), jDistanceShaderParameterIt->value.GetString());
+		}
+		prototype->setDistanceShaderParameters(distanceShaderParameters);
+	}
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		prototype->setEnvironmentMapRenderPassMask(jEntityRoot["emrpm"].GetInt());
 		prototype->setEnvironmentMapTimeRenderUpdateFrequency(jEntityRoot["emtf"].GetInt64());

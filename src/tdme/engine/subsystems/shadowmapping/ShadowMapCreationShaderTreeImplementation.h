@@ -18,6 +18,9 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplem
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation: public ShadowMapCreationShaderBaseImplementation
 {
+private:
+	int32_t uniformSpeed { -1 };
+
 public:
 	/**
 	 * @return if supported by renderer
@@ -39,5 +42,6 @@ public:
 	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 };

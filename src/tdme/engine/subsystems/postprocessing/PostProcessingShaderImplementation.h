@@ -6,6 +6,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 
 /**
@@ -57,24 +58,10 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 	virtual void setBufferPixelHeight(void* context, float pixelHeight) = 0;
 
 	/**
-	 * Set texture light position x
+	 * Set shader parameters
 	 * @param context context
-	 * @param textureLightPositionX texture light position x
+	 * @param engine engine
 	 */
-	virtual void setTextureLightPositionX(void* context, float textureLightPositionX) = 0;
-
-	/**
-	 * Set texture light position y
-	 * @param context context
-	 * @param textureLightPositionY texture light position y
-	 */
-	virtual void setTextureLightPositionY(void* context, float textureLightPositionY) = 0;
-
-	/**
-	 * Set intensity
-	 * @param context context
-	 * @param intensity effect intensity
-	 */
-	virtual void setIntensity(void* context, float intensity) = 0;
+	virtual void setShaderParameters(void* context, Engine* engine) = 0;
 
 };

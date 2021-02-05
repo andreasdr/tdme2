@@ -87,7 +87,7 @@ void EnvironmentMappingView::setPrototype(Prototype* prototype)
 	engine->reset();
 	this->prototype = prototype;
 	prototype->setDefaultBoundingVolumes(1);
-	Tools::setupEntity(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(prototype);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(Prototype::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
 	updateGUIElements();

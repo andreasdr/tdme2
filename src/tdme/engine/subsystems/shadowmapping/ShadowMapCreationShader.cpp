@@ -90,6 +90,12 @@ void ShadowMapCreationShader::updateMaterial(void* context)
 	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
+void ShadowMapCreationShader::updateShaderParameters(void* context) {
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderPreContext.implementation == nullptr) return;
+	shadowMappingShaderPreContext.implementation->updateShaderParameters(renderer, context);
+}
+
 void ShadowMapCreationShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];

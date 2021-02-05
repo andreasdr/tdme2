@@ -99,6 +99,12 @@ public:
 	void updateTextureMatrix(void* context);
 
 	/**
+	 * Update shader parameters
+	 * @param context
+	 */
+	void updateShaderParameters(void* context);
+
+	/**
 	 * Set shader
 	 * @param context context
 	 * @param id id

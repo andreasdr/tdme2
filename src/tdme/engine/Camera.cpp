@@ -195,7 +195,7 @@ void Camera::update(void* context, int32_t width, int32_t height)
 
 	if (frustumChanged == true) {
 		// update frustum
-		frustum->updateFrustum();
+		frustum->updateFrustum(); // TODO: do frustum updating manually
 	}
 
 	lastZNear = zNear;

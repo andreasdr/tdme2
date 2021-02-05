@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
@@ -20,6 +21,7 @@ using std::remove;
 using std::string;
 using std::vector;
 
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -72,10 +74,10 @@ private:
 	float distanceShaderDistance { 10000.0f };
 	bool contributesShadows { true };
 	bool receivesShadows { true };
+	EntityShaderParameters shaderParameters;
+	EntityShaderParameters distanceShaderParameters;
 	map<string, PrototypeAudio*> soundsById;
 	vector<PrototypeAudio*> sounds;
-	map<string, string> shaderParameters;
-	map<string, string> distanceShaderParameters;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL };
 	int64_t environmentMapTimeRenderUpdateFrequency { -1LL };
 	PrototypeTerrain* terrain { nullptr };
@@ -393,6 +395,7 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+		shaderParameters.setShader(id);
 	}
 
 	/**
@@ -409,6 +412,7 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
+		distanceShaderParameters.setShader(id);
 	}
 
 	/**
@@ -425,6 +429,38 @@ public:
 	 */
 	inline void setDistanceShaderDistance(float distance) {
 		this->distanceShaderDistance = distance;
+	}
+
+	/**
+	 * Get shader parameters
+	 * @return shader parameters
+	 */
+	inline const EntityShaderParameters& getShaderParameters() {
+		return shaderParameters;
+	}
+
+	/**
+	 * Set shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setShaderParameters(EntityShaderParameters& parameters) {
+		shaderParameters = parameters;
+	}
+
+	/**
+	 * Get distance shader parameters
+	 * @return shader parameters
+	 */
+	inline const EntityShaderParameters& getDistanceShaderParameters() {
+		return distanceShaderParameters;
+	}
+
+	/**
+	 * Set distance shader parameters
+	 * @param parameters distance shader parameters
+	 */
+	inline void setDistanceShaderParameters(const EntityShaderParameters& parameters) {
+		distanceShaderParameters = parameters;
 	}
 
 	/**
@@ -477,38 +513,6 @@ public:
 	 * @return prototype audio
 	 */
 	PrototypeAudio* addSound(const string& id);
-
-	/**
-	 * Get shader parameters
-	 * @return shader parameters
-	 */
-	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
-		return shaderParameters;
-	}
-
-	/**
-	 * Set shader parameters
-	 * @param parameters shader parameters
-	 */
-	inline void setShaderParameters(const map<string, string>& parameters) {
-		shaderParameters = parameters;
-	}
-
-	/**
-	 * Get distance shader parameters
-	 * @return shader parameters
-	 */
-	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
-		return distanceShaderParameters;
-	}
-
-	/**
-	 * Set distance shader parameters
-	 * @param parameters distance shader parameters
-	 */
-	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
-		distanceShaderParameters = parameters;
-	}
 
 	/**
 	 * @return environment map render pass mask

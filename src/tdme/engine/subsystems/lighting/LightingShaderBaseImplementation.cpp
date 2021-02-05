@@ -37,86 +37,86 @@ void LightingShaderBaseImplementation::initialize()
 {
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, "inNormal");
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, "inTextureUV");
-		renderer->setProgramAttributeLocation(renderLightingProgramId, 4, "inOrigin");
+		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programId, 1, "inNormal");
+		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(programId, 4, "inOrigin");
 	}
 
 	// link program
-	if (renderer->linkProgram(renderLightingProgramId) == false) return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	// get uniforms
 	//	globals
-	uniformTextureAtlasSize = renderer->getProgramUniformLocation(renderLightingProgramId, "textureAtlasSize");
-	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(renderLightingProgramId, "textureAtlasPixelDimension");
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureUnit");
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAvailable");
-	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
-	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparencyThreshold");
+	uniformTextureAtlasSize = renderer->getProgramUniformLocation(programId, "textureAtlasSize");
+	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(programId, "textureAtlasPixelDimension");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
+	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programId, "diffuseTextureMaskedTransparency");
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(programId, "diffuseTextureMaskedTransparencyThreshold");
 
 	// additional mapping
 	if (renderer->isSpecularMappingAvailable() == true) {
-		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureUnit");
-		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureAvailable");
+		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(programId, "specularTextureUnit");
+		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(programId, "specularTextureAvailable");
 
 	}
 	if (renderer->isNormalMappingAvailable() == true) {
-		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureUnit");
-		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
+		uniformNormalTextureUnit = renderer->getProgramUniformLocation(programId, "normalTextureUnit");
+		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(programId, "normalTextureAvailable");
 	}
 
 	// environment mapping
-	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureUnit");
-	uniformEnvironmentMappingTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingTextureAvailable");
-	uniformEnvironmentMappingPosition = renderer->getProgramUniformLocation(renderLightingProgramId, "environmentMappingPosition");
+	uniformEnvironmentMappingTextureUnit = renderer->getProgramUniformLocation(programId, "environmentMappingTextureUnit");
+	uniformEnvironmentMappingTextureAvailable = renderer->getProgramUniformLocation(programId, "environmentMappingTextureAvailable");
+	uniformEnvironmentMappingPosition = renderer->getProgramUniformLocation(programId, "environmentMappingPosition");
 
 	// texture matrix
-	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
+	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
 
 	// matrices as uniform only if not using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
-		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
+		uniformNormalMatrix = renderer->getProgramUniformLocation(programId, "normalMatrix");
 		if (uniformNormalMatrix == -1) return;
 
-		uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
+		uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
 		if (uniformModelMatrix == -1) return;
 
-		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
-		uniformEffectColorAdd = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorAdd");
+		uniformEffectColorMul = renderer->getProgramUniformLocation(programId, "effectColorMul");
+		uniformEffectColorAdd = renderer->getProgramUniformLocation(programId, "effectColorAdd");
 	}
 
 	// camera, projection matrix
-	uniformCameraMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "cameraMatrix");
+	uniformCameraMatrix = renderer->getProgramUniformLocation(programId, "cameraMatrix");
 	if (uniformCameraMatrix == -1) return;
-	uniformProjectionMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "projectionMatrix");
+	uniformProjectionMatrix = renderer->getProgramUniformLocation(programId, "projectionMatrix");
 	if (uniformProjectionMatrix == -1) return;
 
 	//	material
-	uniformMaterialAmbient = renderer->getProgramUniformLocation(renderLightingProgramId, "material.ambient");
-	uniformMaterialDiffuse = renderer->getProgramUniformLocation(renderLightingProgramId, "material.diffuse");
-	uniformMaterialSpecular = renderer->getProgramUniformLocation(renderLightingProgramId, "material.specular");
-	uniformMaterialEmission = renderer->getProgramUniformLocation(renderLightingProgramId, "material.emission");
-	uniformMaterialShininess = renderer->getProgramUniformLocation(renderLightingProgramId, "material.shininess");
+	uniformMaterialAmbient = renderer->getProgramUniformLocation(programId, "material.ambient");
+	uniformMaterialDiffuse = renderer->getProgramUniformLocation(programId, "material.diffuse");
+	uniformMaterialSpecular = renderer->getProgramUniformLocation(programId, "material.specular");
+	uniformMaterialEmission = renderer->getProgramUniformLocation(programId, "material.emission");
+	uniformMaterialShininess = renderer->getProgramUniformLocation(programId, "material.shininess");
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) +"].enabled");
-		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId,"lights[" + to_string(i) + "].ambient");
-		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].diffuse");
-		uniformLightSpecular[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].specular");
-		uniformLightPosition[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].position");
-		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotDirection");
-		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotExponent");
-		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].spotCosCutoff");
-		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].constantAttenuation");
-		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].linearAttenuation");
-		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].quadraticAttenuation");
+		uniformLightEnabled[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) +"].enabled");
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(programId,"lights[" + to_string(i) + "].ambient");
+		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].diffuse");
+		uniformLightSpecular[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].specular");
+		uniformLightPosition[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].position");
+		uniformLightSpotDirection[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotDirection");
+		uniformLightSpotExponent[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotExponent");
+		uniformLightSpotCosCutoff[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].spotCosCutoff");
+		uniformLightConstantAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].constantAttenuation");
+		uniformLightLinearAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].linearAttenuation");
+		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
 	}
 
 	// use foliage animation
-	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
+	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 
 	//
 	initialized = true;
@@ -124,7 +124,7 @@ void LightingShaderBaseImplementation::initialize()
 
 void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	renderer->useProgram(context, renderLightingProgramId);
+	renderer->useProgram(context, programId);
 	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
 	// initialize static uniforms
 	if (renderer->isInstancedRenderingAvailable() == true) {
@@ -259,6 +259,9 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	//
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+}
+
+void LightingShaderBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 }
 
 void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)

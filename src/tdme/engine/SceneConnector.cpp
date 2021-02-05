@@ -328,6 +328,18 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			lodObject->setShader(prototype->getShader());
 			lodObject->setDistanceShader(prototype->getDistanceShader());
 			lodObject->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+			for (auto& parameterIt: shaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+				lodObject->setShaderParameter(parameterName, parameterValue);
+			}
+			for (auto& parameterIt: distanceShaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+				lodObject->setDistanceShaderParameter(parameterName, parameterValue);
+			}
 		} else {
 			// single
 			entity = new Object3D(
@@ -340,6 +352,18 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			object->setShader(prototype->getShader());
 			object->setDistanceShader(prototype->getDistanceShader());
 			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+			for (auto& parameterIt: shaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+				object->setShaderParameter(parameterName, parameterValue);
+			}
+			for (auto& parameterIt: distanceShaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+				object->setDistanceShaderParameter(parameterName, parameterValue);
+			}
 			if (enableEarlyZRejection == true && prototype->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
 			}
@@ -498,23 +522,42 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 		Console::println("SceneConnector::addLevel(): adding render group: " + itShader.first);
 		for (auto& itPartition: itShader.second) {
-			auto object3DRenderNode = new Object3DRenderGroup(
-				"tdme.rendernode." + itPartition.first + "." + to_string(renderNodeIdx++),
-				renderGroupsLODLevels,
-				renderGroupsLOD2MinDistance,
-				renderGroupsLOD3MinDistance,
-				renderGroupsLOD2ReduceBy,
-				renderGroupsLOD3ReduceBy
-			);
+			map<string, Object3DRenderGroup*> object3DRenderGroupsByShaderParameters;
 			for (auto& itModel: itPartition.second) {
 				if (progressCallback != nullptr) {
 					progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
 				}
 				progressStepCurrent++;
 				auto prototype = renderGroupSceneEditorEntities[itModel.first];
-				object3DRenderNode->setShader(prototype->getShader());
-				object3DRenderNode->setDistanceShader(prototype->getDistanceShader());
-				object3DRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+				auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + prototype->getDistanceShaderParameters().getShaderParametersHash();
+				if (object3DRenderGroupsByShaderParameters.find(hash) == object3DRenderGroupsByShaderParameters.end()) {
+					auto object3DRenderNode =
+						new Object3DRenderGroup(
+							"tdme.rendernode." + itPartition.first + "." + to_string(renderNodeIdx++),
+							renderGroupsLODLevels,
+							renderGroupsLOD2MinDistance,
+							renderGroupsLOD3MinDistance,
+							renderGroupsLOD2ReduceBy,
+							renderGroupsLOD3ReduceBy
+						);
+					object3DRenderNode->setShader(prototype->getShader());
+					object3DRenderNode->setDistanceShader(prototype->getDistanceShader());
+					object3DRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+					auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+					auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+					for (auto& parameterIt: shaderParametersDefault) {
+						auto& parameterName = parameterIt.first;
+						auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+						object3DRenderNode->setShaderParameter(parameterName, parameterValue);
+					}
+					for (auto& parameterIt: distanceShaderParametersDefault) {
+						auto& parameterName = parameterIt.first;
+						auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+						object3DRenderNode->setDistanceShaderParameter(parameterName, parameterValue);
+					}
+					object3DRenderGroupsByShaderParameters[hash] = object3DRenderNode;
+				}
+				auto object3DRenderNode = object3DRenderGroupsByShaderParameters[hash];
 				auto objectIdx = -1;
 				for (auto transformation: itModel.second) {
 					objectIdx++;
@@ -522,8 +565,11 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 					object3DRenderNode->addObject(prototype->getModel(), *transformation);
 				}
 			}
-			object3DRenderNode->updateRenderGroup();
-			engine->addEntity(object3DRenderNode);
+			for (auto& object3DRenderGroupsByShaderParametersIt: object3DRenderGroupsByShaderParameters) {
+				auto object3DRenderNode = object3DRenderGroupsByShaderParametersIt.second;
+				object3DRenderNode->updateRenderGroup();
+				engine->addEntity(object3DRenderNode);
+			}
 		}
 	}
 

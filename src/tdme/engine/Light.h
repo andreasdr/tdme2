@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
@@ -9,6 +10,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
@@ -34,6 +36,10 @@ private:
 	float constantAttenuation;
 	float linearAttenuation;
 	float quadraticAttenuation;
+	bool renderLightSource;
+	float lightSourceSize;
+	Texture* lightSourceTexture { nullptr };
+	int32_t lightSourceTextureId;
 	Renderer* renderer { nullptr };
 public:
 	/**
@@ -221,9 +227,70 @@ public:
 	}
 
 	/**
+	 * Returns if rendering light source is enabled
+	 * @return rendering light source is enabled
+	 */
+	inline bool isRenderLightSource() const {
+		return renderLightSource;
+	}
+
+	/**
+	 * Set rendering light source enabled/disabled
+	 * @param renderLightSource render light source enabled
+	 */
+	inline void setRenderLightSource(bool renderLightSource) {
+		this->renderLightSource = renderLightSource;
+	}
+
+	/**
+	 * Returns light source size
+	 * @return light source size (moon, sun)
+	 */
+	inline float getLightSourceSize() const {
+		return lightSourceSize;
+	}
+
+	/**
+	 * Set light source size (moon, sun)
+	 * TODO: this is a hack until we have shader properties
+	 * @param lightSourceSize light source size
+	 */
+	inline void setLightSourceSize(float lightSourceSize) {
+		this->lightSourceSize = lightSourceSize;
+	}
+
+	/**
+	 * Returns light source texture
+	 * @return light source texture
+	 */
+	inline Texture* getLightSourceTexture() const {
+		return lightSourceTexture;
+	}
+
+	/**
+	 * Returns light source texture
+	 * @return light source texture
+	 */
+	void setLightSourceTexture(Texture* texture);
+
+	/**
+	 * Returns light source texture id
+	 * @return light source texture id
+	 */
+	inline int32_t getLightSourceTextureId() const {
+		return lightSourceTextureId;
+	}
+
+	/**
+	 * Dispose
+	 */
+	void dispose();
+
+	/**
 	 * Update light
 	 * @param context context
 	 */
 	void update(void* context);
+
 
 };

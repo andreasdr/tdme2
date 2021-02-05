@@ -11,6 +11,7 @@
 					<tab id="tab_properties_model" text="Model" />
 					<tab id="tab_properties_pivot" text="Pivot" />
 					<tab id="tab_properties_rendering" text="Rendering" />
+					<tab id="tab_properties_shaderparameters" text="Shader Parameters" />
 					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
 					<tab id="tab_properties_physics" text="Physics" />
 					<tab id="tab_properties_model_properties" text="Properties" />
@@ -632,6 +633,12 @@
 									<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />
 								</layout>
 								<space height="20" />
+							</layout>
+						</scrollarea>
+					</tab-content>
+					<tab-content tab-id="tab_properties_shaderparameters">
+						<scrollarea width="100%" height="100%">
+							<layout id="shaderparameters_content" width="100%" height="auto" horizontal-align="center" alignment="vertical">
 							</layout>
 						</scrollarea>
 					</tab-content>

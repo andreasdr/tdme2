@@ -1,4 +1,4 @@
-<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" focusable="true" >
+<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
 	<!-- normal -->
 	<text
 		id="{$id}_unselected"

@@ -1,19 +1,28 @@
 #version 330
 
-// see: https://fabiensanglard.net/lightScattering/index.php
+// based on: https://fabiensanglard.net/lightScattering/index.php
 
-#define EXPOSURE	0.0015
+#define FALSE		0
+#define MAX_LIGHTS	8
+
+#define EXPOSURE	0.0075
 #define DECAY		1.0
 #define DENSITY		0.84
 #define WEIGHT		5.65
 #define SAMPLES		48
 
+// light structure
+struct Light {
+	int enabled;
+	vec2 position;
+	float intensity;
+};
+
 // uniforms
+uniform Light lights[MAX_LIGHTS];
 uniform sampler2D colorBufferTextureUnit;
 uniform float bufferTexturePixelWidth;
 uniform float bufferTexturePixelHeight;
-uniform float textureLightPositionX;
-uniform float textureLightPositionY;
 uniform float intensity;
 
 // passed from vertex shader
@@ -24,25 +33,31 @@ out vec4 outColor;
 
 // main
 void main(void) {
-	vec2 deltaTextureCoordinateTotal = vsFragTextureUV - vec2(textureLightPositionX, textureLightPositionY);
-	vec2 deltaTextureCoordinate = deltaTextureCoordinateTotal;
-	vec2 textureCoordinate = vsFragTextureUV.xy;
-	deltaTextureCoordinate *= 1.0 /  float(SAMPLES) * DENSITY;
-	float illuminationDecay = 1.0;
 	outColor = vec4(0.0, 0.0, 0.0, 0.0);
-	if (length(deltaTextureCoordinateTotal - deltaTextureCoordinate) < 0.5) {
-		for(int i = 0; i < SAMPLES; i++) {
-			float lengthAtFragment = length(deltaTextureCoordinateTotal - deltaTextureCoordinate);
-			if (lengthAtFragment >= 0.5) {
-				break;
+	for (int i = 0; i < MAX_LIGHTS; i++) {
+		// skip on disabled lights
+		if (lights[i].enabled == FALSE) continue;
+
+		//
+		vec2 deltaTextureCoordinateTotal = vsFragTextureUV - lights[i].position;
+		vec2 deltaTextureCoordinate = deltaTextureCoordinateTotal;
+		vec2 textureCoordinate = vsFragTextureUV;
+		deltaTextureCoordinate *= 1.0 /  float(SAMPLES) * DENSITY;
+		float illuminationDecay = 1.0;
+		if (length(deltaTextureCoordinateTotal - deltaTextureCoordinate) < 0.5) {
+			for(int j = 0; j < SAMPLES; j++) {
+				float lengthAtFragment = length(deltaTextureCoordinateTotal - deltaTextureCoordinate);
+				if (lengthAtFragment >= 0.5) {
+					break;
+				}
+				vec4 textureSample = texture(colorBufferTextureUnit, textureCoordinate);
+				textureSample *= illuminationDecay * WEIGHT;
+				outColor+= textureSample * (1.0 - (clamp(lengthAtFragment, 0.0, 0.5) / 0.5)) * lights[i].intensity;
+				illuminationDecay *= DECAY;
+				textureCoordinate -= deltaTextureCoordinate;
 			}
-			vec4 textureSample = texture(colorBufferTextureUnit, textureCoordinate);
-			textureSample *= illuminationDecay * WEIGHT;
-			outColor+= textureSample * (1.0 - (clamp(lengthAtFragment, 0.0, 0.5) / 0.5));
-			illuminationDecay *= DECAY;
-			textureCoordinate -= deltaTextureCoordinate;
 		}
 	}
-	outColor*= EXPOSURE * intensity;
-	outColor.a = 0.0;
+	outColor*= EXPOSURE;
+	outColor.a = 1.0;
 }

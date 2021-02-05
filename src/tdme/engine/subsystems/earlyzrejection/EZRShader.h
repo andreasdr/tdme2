@@ -106,4 +106,10 @@ public:
 	 */
 	void setShader(void* context, const string& id);
 
+	/**
+	 * Update shader parameters
+	 * @param context
+	 */
+	void updateShaderParameters(void* context);
+
 };

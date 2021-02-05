@@ -12,6 +12,7 @@ namespace engine {
 	class EngineVKRenderer;
 	class Entity;
 	class EntityHierarchy;
+	class EntityShaderParameters;
 	struct EntityPickingFilter;
 	class EnvironmentMapping;
 	class FrameBuffer;
@@ -34,6 +35,7 @@ namespace engine {
 	class PointsParticleSystem;
 	class Rotation;
 	class SceneConnector;
+	class ShaderParameter;
 	class Timing;
 	class Transformations;
 	struct Version;

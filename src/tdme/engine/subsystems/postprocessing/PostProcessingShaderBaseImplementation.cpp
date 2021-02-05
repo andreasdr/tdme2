@@ -38,9 +38,6 @@ void PostProcessingShaderBaseImplementation::initialize()
 	uniformTemporaryDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "temporaryDepthBufferTextureUnit");
 	uniformBufferTexturePixelWidth = renderer->getProgramUniformLocation(programId, "bufferTexturePixelWidth");
 	uniformBufferTexturePixelHeight = renderer->getProgramUniformLocation(programId, "bufferTexturePixelHeight");
-	uniformTextureLightPositionX = renderer->getProgramUniformLocation(programId, "textureLightPositionX");
-	uniformTextureLightPositionY = renderer->getProgramUniformLocation(programId, "textureLightPositionY");
-	uniformIntensity = renderer->getProgramUniformLocation(programId, "intensity");
 
 	//
 	initialized = true;
@@ -71,27 +68,5 @@ void PostProcessingShaderBaseImplementation::setBufferPixelWidth(void* context, 
 void PostProcessingShaderBaseImplementation::setBufferPixelHeight(void* context, float pixelHeight) {
 	if (uniformBufferTexturePixelHeight != -1) {
 		renderer->setProgramUniformFloat(context, uniformBufferTexturePixelHeight, pixelHeight);
-	}
-}
-
-void PostProcessingShaderBaseImplementation::setTextureLightPositionX(void* context, float textureLightPositionX) {
-	if (uniformTextureLightPositionX != -1) {
-		renderer->setProgramUniformFloat(context, uniformTextureLightPositionX, textureLightPositionX);
-	}
-}
-
-void PostProcessingShaderBaseImplementation::setTextureLightPositionY(void* context, float textureLightPositionY) {
-	if (uniformTextureLightPositionY != -1) {
-		#if defined(VULKAN)
-			renderer->setProgramUniformFloat(context, uniformTextureLightPositionY, 1.0f - textureLightPositionY);
-		#else
-			renderer->setProgramUniformFloat(context, uniformTextureLightPositionY, textureLightPositionY);
-		#endif
-	}
-}
-
-void PostProcessingShaderBaseImplementation::setIntensity(void* context, float intensity) {
-	if (uniformIntensity != -1) {
-		renderer->setProgramUniformFloat(context, uniformIntensity, intensity);
 	}
 }

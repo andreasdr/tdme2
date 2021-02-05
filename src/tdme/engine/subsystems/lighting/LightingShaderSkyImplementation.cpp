@@ -53,14 +53,16 @@ void LightingShaderSkyImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
 
 	// register shader
-	if (initialized == true) Engine::registerShader(Engine::ShaderType::OBJECT3D, getId(), {}, {});
+	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
 
+void LightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}

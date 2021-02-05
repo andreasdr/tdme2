@@ -24,10 +24,10 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplemen
 {
 protected:
 	Renderer* renderer { nullptr };
-	int32_t renderVertexShaderId { -1 };
+	int32_t vertexShaderId { -1 };
 	int32_t renderGeometryShaderId { -1 };
-	int32_t renderFragmentShaderId { -1 };
-	int32_t renderProgramId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
 	int32_t renderUniformShadowMapLookUps { -1 };
 	int32_t renderUniformTextureUnit { -1 };
 	int32_t renderUniformTexturePixelWidth { -1 };
@@ -78,6 +78,7 @@ public:
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void updateMaterial(Renderer* renderer, void* context) override;
 	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override = 0;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 	virtual void setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;

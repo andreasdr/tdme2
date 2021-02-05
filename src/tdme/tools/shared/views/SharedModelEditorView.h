@@ -260,4 +260,9 @@ public:
 	 */
 	void updateRendering();
 
+	/**
+	 * Update shader parameters
+	 */
+	void updateShaderParemeters();
+
 };

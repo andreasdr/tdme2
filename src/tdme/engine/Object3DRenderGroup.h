@@ -15,6 +15,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
@@ -34,6 +35,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
@@ -75,8 +77,9 @@ private:
 	float distanceShaderDistance { 50.0f };
 	array<int, 3> lodReduceBy;
 	bool enableEarlyZRejection { false };
-	map<string, string> shaderParameters;
-	map<string, string> distanceShaderParameters;
+
+	EntityShaderParameters shaderParameters;
+	EntityShaderParameters distanceShaderParameters;
 
 	/**
 	 * Compute bounding box
@@ -329,12 +332,16 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+		shaderParameters.setShader(id);
 		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setShader(id);
+		if (combinedEntity == nullptr) return;
+		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
+			static_cast<Object3D*>(combinedEntity)->setShader(id);
+			shaderParameters.setShader(static_cast<Object3D*>(combinedEntity)->getShader());
 		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setShader(id);
+		if (combinedEntity->getEntityType() == Entity::ENTITY_LODOBJECT3D) {
+			static_cast<LODObject3D*>(combinedEntity)->setShader(id);
+			shaderParameters.setShader(static_cast<LODObject3D*>(combinedEntity)->getShader());
 		}
 	}
 
@@ -351,12 +358,16 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
+		distanceShaderParameters.setShader(id);
 		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShader(id);
+		if (combinedEntity == nullptr) return;
+		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
+			static_cast<Object3D*>(combinedEntity)->setDistanceShader(id);
+			shaderParameters.setShader(static_cast<Object3D*>(combinedEntity)->getDistanceShader());
 		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShader(id);
+		if (combinedEntity->getEntityType() == Entity::ENTITY_LODOBJECT3D) {
+			static_cast<LODObject3D*>(combinedEntity)->setDistanceShader(id);
+			shaderParameters.setShader(static_cast<LODObject3D*>(combinedEntity)->getDistanceShader());
 		}
 	}
 
@@ -374,11 +385,12 @@ public:
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;
 		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
+		if (combinedEntity == nullptr) return;
+		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
+			static_cast<Object3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
+		if (combinedEntity->getEntityType() == Entity::ENTITY_LODOBJECT3D) {
+			static_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		}
 	}
 
@@ -398,46 +410,56 @@ public:
 	}
 
 	/**
-	 * Get shader parameters
-	 * @return shader parameters
+	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
-		return shaderParameters;
+	inline const ShaderParameter getShaderParameter(const string& parameterName) {
+		return shaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set shader parameters
-	 * @param parameters shader parameters
+	 * Set shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setShaderParameters(const map<string, string>& parameters) {
-		shaderParameters = parameters;
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setShaderParameters(shaderParameters);
+	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		shaderParameters.setShaderParameter(parameterName, parameterValue);
+		if (combinedEntity == nullptr) return;
+		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
+			static_cast<Object3D*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
 		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setShaderParameters(shaderParameters);
+		if (combinedEntity->getEntityType() == Entity::ENTITY_LODOBJECT3D) {
+			static_cast<LODObject3D*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
 		}
 	}
 
 	/**
-	 * Get distance shader parameters
-	 * @return distance shader parameters
+	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
-		return distanceShaderParameters;
+	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
+		return distanceShaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set distance shader parameters
-	 * @param parameters distance shader parameters
+	 * Set distance shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
-		distanceShaderParameters = parameters;
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShaderParameters(distanceShaderParameters);
+	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
+		if (combinedEntity == nullptr) return;
+		if (combinedEntity->getEntityType() == Entity::ENTITY_OBJECT3D) {
+			static_cast<Object3D*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
 		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderParameters(distanceShaderParameters);
+		if (combinedEntity->getEntityType() == Entity::ENTITY_LODOBJECT3D) {
+			static_cast<LODObject3D*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
 		}
 	}
 

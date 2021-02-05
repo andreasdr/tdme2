@@ -83,5 +83,6 @@ public:
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override = 0;
 
 };

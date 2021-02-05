@@ -262,6 +262,7 @@ SRCS = \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
+	src/tdme/engine/EntityShaderParameters.cpp \
 	src/tdme/engine/EnvironmentMapping.cpp \
 	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \

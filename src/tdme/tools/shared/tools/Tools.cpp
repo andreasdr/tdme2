@@ -113,7 +113,7 @@ Model* Tools::defaultOBB = nullptr;
 
 string Tools::formatFloat(float value)
 {
-	string floatString = to_string(value);
+	string floatString = to_string(value).substr(0, floatString.length() - 3);
 	return floatString.substr(0, floatString.length() - 3);
 }
 
@@ -236,7 +236,7 @@ void Tools::oseThumbnail(Prototype* model)
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
+	Tools::setupPrototype(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
 	// osEngine->makeScreenshot("tmp", model->getThumbnail());
@@ -296,9 +296,9 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
+void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
 {
-	if (entity == nullptr) return;
+	if (prototype == nullptr) return;
 
 	// create engine entity
 	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
@@ -310,8 +310,8 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 
 	// bounding volumes
 	auto entityBoundingVolumesHierarchy = new EntityHierarchy(Prototype::MODEL_BOUNDINGVOLUMES_ID);
-	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto entityBoundingVolume = entity->getBoundingVolume(i);
+	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+		auto entityBoundingVolume = prototype->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto bvObject = new Object3D(Prototype::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);
@@ -322,24 +322,24 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 	engine->addEntity(entityBoundingVolumesHierarchy);
 
 	//
-	if (entity->getType() == Prototype_Type::TRIGGER ||
-		entity->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
+	if (prototype->getType() == Prototype_Type::TRIGGER ||
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
-	if (entity->getType() == Prototype_Type::PARTICLESYSTEM) {
-		modelEntity = SceneConnector::createEntity(entity, "model", Transformations());
+	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
+		modelEntity = SceneConnector::createEntity(prototype, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else
-	if (entity->getModel() != nullptr) {
+	if (prototype->getModel() != nullptr) {
 		// model
 		Model* model = nullptr;
 		switch (lodLevel) {
 			case 1:
-				model = entity->getModel();
+				model = prototype->getModel();
 				break;
 			case 2:
 				{
-					auto lodLevelEntity = entity->getLODLevel2();
+					auto lodLevelEntity = prototype->getLODLevel2();
 					if (lodLevelEntity != nullptr) {
 						model = lodLevelEntity->getModel();
 						colorMul.set(lodLevelEntity->getColorMul());
@@ -349,7 +349,7 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 				}
 			case 3:
 				{
-					auto lodLevelEntity = entity->getLODLevel3();
+					auto lodLevelEntity = prototype->getLODLevel3();
 					if (lodLevelEntity != nullptr) {
 						model = lodLevelEntity->getModel();
 						colorMul.set(lodLevelEntity->getColorMul());
@@ -358,16 +358,29 @@ void Tools::setupEntity(Prototype* entity, Engine* engine, const Transformations
 					break;
 				}
 		}
-		entityBoundingBox = entity->getModel()->getBoundingBox();
+		entityBoundingBox = prototype->getModel()->getBoundingBox();
 		if (model != nullptr) {
 			modelEntity = new Object3D("model", model);
 			modelEntity->setContributesShadows(true);
 			modelEntity->setReceivesShadows(true);
 			modelEntity->setEffectColorMul(colorMul);
 			modelEntity->setEffectColorAdd(colorAdd);
-			dynamic_cast<Object3D*>(modelEntity)->setShader(entity->getShader());
-			dynamic_cast<Object3D*>(modelEntity)->setDistanceShader(entity->getDistanceShader());
-			dynamic_cast<Object3D*>(modelEntity)->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+			auto object = dynamic_cast<Object3D*>(modelEntity);
+			object->setShader(prototype->getShader());
+			object->setDistanceShader(prototype->getDistanceShader());
+			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+			for (auto& parameterIt: shaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+				object->setShaderParameter(parameterName, parameterValue);
+			}
+			for (auto& parameterIt: distanceShaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+				object->setDistanceShaderParameter(parameterName, parameterValue);
+			}
 			engine->addEntity(modelEntity);
 		}
 	}

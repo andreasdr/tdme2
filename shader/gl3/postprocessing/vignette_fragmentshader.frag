@@ -8,6 +8,7 @@ uniform sampler2D depthBufferTextureUnit;
 uniform float bufferTexturePixelWidth;
 uniform float bufferTexturePixelHeight;
 uniform float intensity;
+uniform vec3 borderColor;
 
 // passed from vertex shader
 in vec2 vsFragTextureUV;
@@ -19,7 +20,6 @@ out vec4 outColor;
 void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	float borderTransparency = 0.75;
-	vec3 borderColor = vec3(1.0, 0.0, 0.0);
 	vec4 originalColor = texture(colorBufferTextureUnit, vsFragTextureUV);
 	float fadeArea = intensity;
 	float fragmentIntensity = 1.0;

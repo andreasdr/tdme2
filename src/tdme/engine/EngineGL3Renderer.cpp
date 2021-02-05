@@ -155,4 +155,12 @@ void EngineGL3Renderer::onUpdateShader(void* context) {
 }
 
 void EngineGL3Renderer::onUpdateShaderParameters(void* context) {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateShaderParameters(context);
+
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateShaderParameters(context);
+
+	if (Engine::ezrShader != nullptr)
+		Engine::ezrShader->updateShaderParameters(context);
 }

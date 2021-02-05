@@ -141,7 +141,7 @@ void TDMETerrainEditor::initialize()
 			Prototype_Type::TERRAIN,
 			"Untitled",
 			"",
-			"Untitled.ter",
+			"Untitled.tte",
 			"",
 			"",
 			nullptr,

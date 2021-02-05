@@ -147,6 +147,12 @@ void LightingShader::setShader(void* context, const string& id) {
 	}
 }
 
+void LightingShader::updateShaderParameters(void* context) {
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateShaderParameters(renderer, context);
+}
+
 void LightingShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];

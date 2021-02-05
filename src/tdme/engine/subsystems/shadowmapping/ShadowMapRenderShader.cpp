@@ -97,6 +97,12 @@ void ShadowMapRenderShader::updateLight(void* context, int32_t lightId) {
 	shadowMappingShaderRenderContext.implementation->updateLight(renderer, context, lightId);
 }
 
+void ShadowMapRenderShader::updateShaderParameters(void* context) {
+	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
+	shadowMappingShaderRenderContext.implementation->updateShaderParameters(renderer, context);
+}
+
 void ShadowMapRenderShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];

@@ -26,7 +26,7 @@ void PostProcessingProgram::addEffectPass(
 	bool applyPostProcessing,
 	int32_t renderTypes,
 	Color4 clearColor,
-	bool renderLightSource,
+	bool renderLightSources,
 	bool skipOnLightSourceNotVisible
 ) {
 	PostProcessingProgramEffectPass effectPass;
@@ -39,7 +39,7 @@ void PostProcessingProgram::addEffectPass(
 	effectPass.applyPostProcessing = applyPostProcessing;
 	effectPass.renderTypes = renderTypes;
 	effectPass.clearColor = clearColor;
-	effectPass.renderLightSource = renderLightSource;
+	effectPass.renderLightSources = renderLightSources;
 	effectPass.skipOnLightSourceNotVisible = skipOnLightSourceNotVisible;
 	//effectPass
 	effectPasses.push_back(effectPass);

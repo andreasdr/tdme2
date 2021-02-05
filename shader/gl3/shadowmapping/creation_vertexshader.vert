@@ -18,6 +18,14 @@ uniform float time;
 
 {$DEFINITIONS}
 
+#if defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+#elif defined(HAVE_TREE)
+	uniform float speed;
+#endif
+
 // will be passed to fragment shader
 out vec2 vsFragTextureUV;
 

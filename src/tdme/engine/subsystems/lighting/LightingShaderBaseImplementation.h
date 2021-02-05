@@ -28,7 +28,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lighting::LightingShaderBaseImplementation: public LightingShaderImplementation
 {
 protected:
-	int32_t renderLightingProgramId { -1 };
+	int32_t programId { -1 };
 	int32_t renderLightingFragmentShaderId { -1 };
 	int32_t renderLightingVertexShaderId { -1 };
 	int32_t uniformTextureAtlasSize { -1 };
@@ -92,5 +92,6 @@ public:
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override = 0;
 
 };

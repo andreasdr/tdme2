@@ -10,6 +10,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -21,6 +22,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -1036,24 +1038,18 @@ public:
 	virtual void onUpdateShader(void* context) = 0;
 
 	/**
-	 * Set shader parameters hash
-	 * @param context context
-	 */
-	virtual const string& getShaderParametersHash(void* context) = 0;
-
-	/**
 	 * Get shader parameters
 	 * @param context context
 	 * @return shader parameters
 	 */
-	virtual const map<string, string>& getShaderParameters(void* context) = 0;
+	virtual const EntityShaderParameters& getShaderParameters(void* context) = 0;
 
 	/**
 	 * Set shader parameters
 	 * @param context context
 	 * @param parameters shader parameters
 	 */
-	virtual void setShaderParameters(void* context, const map<string, string>& parameters) = 0;
+	virtual void setShaderParameters(void* context, const EntityShaderParameters& parameters) = 0;
 
 	/**
 	 * On update shader parameters

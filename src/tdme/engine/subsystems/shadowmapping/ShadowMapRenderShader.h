@@ -97,6 +97,12 @@ public:
 	void updateLight(void* context, int32_t lightId);
 
 	/**
+	 * Update shader parameters
+	 * @param context
+	 */
+	void updateShaderParameters(void* context);
+
+	/**
 	 * Bind texture
 	 * @param context context
 	 * @param textureId texture id

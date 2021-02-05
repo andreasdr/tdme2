@@ -7,6 +7,7 @@
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -20,6 +21,7 @@ using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
@@ -65,9 +67,9 @@ void LightingShaderWaterImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -76,29 +78,29 @@ void LightingShaderWaterImplementation::initialize()
 	initialized = false;
 
 	//
-	uniformWaterHeight = renderer->getProgramUniformLocation(renderLightingProgramId, "waterHeight");
+	uniformWaterHeight = renderer->getProgramUniformLocation(programId, "waterHeight");
 	if (uniformWaterHeight == -1) return;
-	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
+	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 	if (uniformTime == -1) return;
-	uniformNumWaves = renderer->getProgramUniformLocation(renderLightingProgramId, "numWaves");
-	if (uniformNumWaves == -1) return;
+	uniformWaterWaves = renderer->getProgramUniformLocation(programId, "waterWaves");
+	if (uniformWaterWaves == -1) return;
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformAmplitude[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "amplitude[" + to_string(i) + "]");
-		if (uniformAmplitude[i] == -1) return;
+		uniformWaterAmplitude[i] = renderer->getProgramUniformLocation(programId, "waterAmplitude[" + to_string(i) + "]");
+		if (uniformWaterAmplitude[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformWavelength[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "wavelength[" + to_string(i) + "]");
-		if (uniformWavelength[i] == -1) return;
+		uniformWaterWaveLength[i] = renderer->getProgramUniformLocation(programId, "waterWavelength[" + to_string(i) + "]");
+		if (uniformWaterWaveLength[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformSpeed[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "speed[" + to_string(i) + "]");
-		if (uniformSpeed[i] == -1) return;
+		uniformWaterSpeed[i] = renderer->getProgramUniformLocation(programId, "waterSpeed[" + to_string(i) + "]");
+		if (uniformWaterSpeed[i] == -1) return;
 	}
 	for (auto i = 0; i < WAVES_MAX; i++) {
-		uniformDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "direction[" + to_string(i) + "]");
-		if (uniformDirection[i] == -1) return;
+		uniformWaterDirection[i] = renderer->getProgramUniformLocation(programId, "waterDirection[" + to_string(i) + "]");
+		if (uniformWaterDirection[i] == -1) return;
 	}
-	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
+	uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
 
 	//
 	initialized = true;
@@ -107,12 +109,13 @@ void LightingShaderWaterImplementation::initialize()
 	for (auto i = 0; i < 4; i++) angle[i] = -Math::PI / 3.0f + Math::random() * Math::PI * 2.0f / 3.0f;
 
 	// register shader
-	Engine::registerShader(
-		Engine::ShaderType::OBJECT3D,
-		getId(),
-		{{"speed", "float;0.0;10.0"}},
-		{{"speed", "1.0"}}
-	);
+	if (initialized == true) {
+		Engine::registerShader(
+			Engine::ShaderType::SHADERTYPE_OBJECT3D,
+			getId(),
+			{{ "speed", ShaderParameter(1.0f) }}
+		);
+	}
 }
 
 void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context) {
@@ -121,12 +124,12 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 	//
 	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.25f);
 	renderer->setProgramUniformFloat(context, uniformTime, time / 10.0f);
-	renderer->setProgramUniformInteger(context, uniformNumWaves, 4);
+	renderer->setProgramUniformInteger(context, uniformWaterWaves, 4);
 	for (auto i = 0; i < 4; i++) {
-		renderer->setProgramUniformFloat(context, uniformAmplitude[i], 0.5f / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformWavelength[i], 8 * Math::PI / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformSpeed[i], 1.0f + 1.0f * i);
-		renderer->setProgramUniformFloatVec2(context, uniformDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
+		renderer->setProgramUniformFloat(context, uniformWaterAmplitude[i], 0.5f / (i + 1));
+		renderer->setProgramUniformFloat(context, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
+		renderer->setProgramUniformFloat(context, uniformWaterSpeed[i], 1.0f + 1.0f * i);
+		renderer->setProgramUniformFloatVec2(context, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;
 }
@@ -134,4 +137,7 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, void* context) {
 	LightingShaderBaseImplementation::updateMatrices(renderer, context);
 	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
+}
+
+void LightingShaderWaterImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 }

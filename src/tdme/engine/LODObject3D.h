@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
@@ -27,6 +28,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
@@ -83,8 +85,8 @@ private:
 	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
 
-	map<string, string> shaderParameters;
-	map<string, string> distanceShaderParameters;
+	EntityShaderParameters shaderParameters;
+	EntityShaderParameters distanceShaderParameters;
 
 	/**
 	 * Set parent entity, needs to be called before adding to engine
@@ -515,41 +517,49 @@ public:
 	void setEnableEarlyZRejection(bool enableEarlyZRejection);
 
 	/**
-	 * Get shader parameters
-	 * @return shader parameters
+	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
-		return shaderParameters;
+	inline const ShaderParameter getShaderParameter(const string& parameterName) {
+		return shaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set shader parameters
-	 * @param parameters shader parameters
+	 * Set shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setShaderParameters(const map<string, string>& parameters) {
-		shaderParameters = parameters;
-		if (objectLOD1 != nullptr) objectLOD1->setShaderParameters(shaderParameters);
-		if (objectLOD2 != nullptr) objectLOD2->setShaderParameters(shaderParameters);
-		if (objectLOD3 != nullptr) objectLOD3->setShaderParameters(shaderParameters);
+	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		shaderParameters.setShaderParameter(parameterName, parameterValue);
+		if (objectLOD1 != nullptr) objectLOD1->setShaderParameter(parameterName, parameterValue);
+		if (objectLOD2 != nullptr) objectLOD2->setShaderParameter(parameterName, parameterValue);
+		if (objectLOD3 != nullptr) objectLOD3->setShaderParameter(parameterName, parameterValue);
 	}
 
 	/**
-	 * Get distance shader parameters
-	 * @return distance shader parameters
+	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
-		return distanceShaderParameters;
+	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
+		return distanceShaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set distance shader parameters
-	 * @param parameters distance shader parameters
+	 * Set distance shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
-		distanceShaderParameters = parameters;
-		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderParameters(distanceShaderParameters);
-		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderParameters(distanceShaderParameters);
-		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderParameters(distanceShaderParameters);
+	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
+		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderParameter(parameterName, parameterValue);
+		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderParameter(parameterName, parameterValue);
+		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderParameter(parameterName, parameterValue);
 	}
 
 };

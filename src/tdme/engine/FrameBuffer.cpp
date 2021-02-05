@@ -165,7 +165,7 @@ void FrameBuffer::renderToScreen()
 	renderer->enableCulling(context);
 }
 
-void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary, FrameBuffer* blendToSource, bool fixedLightScatteringIntensity, float lightScatteringItensityValue)
+void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary, FrameBuffer* blendToSource)
 {
 	if (target != nullptr) {
 		target->enableFrameBuffer();
@@ -200,40 +200,13 @@ void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuf
 	int _width = engine->getScaledWidth() != -1?engine->getScaledWidth():engine->getWidth();
 	int _height = engine->getScaledHeight() != -1?engine->getScaledHeight():engine->getHeight();
 
-	// TODO: this code is a hack until we have shader parameters
-	Vector2 lightSourcePosition2D;
-	engine->computeScreenCoordinateByWorldCoordinate(engine->getLightSourcePosition(), lightSourcePosition2D);
-	lightSourcePosition2D.setX(Math::clamp(lightSourcePosition2D.getX() / static_cast<float>(_width), 0.0f, 1.0f));
-	lightSourcePosition2D.setY(Math::clamp(1.0f - (lightSourcePosition2D.getY() / static_cast<float>(_height)), 0.0f, 1.0f));
-	float intensity = 1.0f;
-	auto programIntensity = engine->getPostProcessingProgramParameter(programId, "intensity");
-	if (programIntensity.empty() == false) {
-		intensity = Float::parseFloat(programIntensity);
-	} else
-	if (fixedLightScatteringIntensity == true) {
-		intensity = lightScatteringItensityValue;
-	} else {
-		float _intensity = 1.0f;
-		if (lightSourcePosition2D.getX() < 0.4f) _intensity = lightSourcePosition2D.getX() / 0.4f;
-		if (_intensity < intensity) intensity = _intensity;
-		if (lightSourcePosition2D.getX() > 0.6f) _intensity = (1.0f - lightSourcePosition2D.getX()) / 0.4f;
-		if (_intensity < intensity) intensity = _intensity;
-		if (lightSourcePosition2D.getY() < 0.4f) _intensity = lightSourcePosition2D.getY() / 0.4f;
-		if (_intensity < intensity) intensity = _intensity;
-		if (lightSourcePosition2D.getY() > 0.6f) _intensity = (1.0f - lightSourcePosition2D.getY()) / 0.4f;
-		if (_intensity < intensity) intensity = _intensity;
-		intensity*= lightScatteringItensityValue;
-	}
-
 	// use post processing shader
 	auto postProcessingShader = Engine::getInstance()->getPostProcessingShader();
 	postProcessingShader->useProgram();
 	postProcessingShader->setShader(context, shaderId);
 	postProcessingShader->setBufferPixelWidth(context, 1.0f / static_cast<float>(source->getWidth()));
 	postProcessingShader->setBufferPixelHeight(context, 1.0f / static_cast<float>(source->getHeight()));
-	postProcessingShader->setTextureLightPositionX(context, lightSourcePosition2D.getX());
-	postProcessingShader->setTextureLightPositionY(context, lightSourcePosition2D.getY());
-	postProcessingShader->setIntensity(context, intensity);
+	postProcessingShader->setShaderParameters(context, engine);
 
 	// bind color buffer texture
 	renderer->setTextureUnit(context, 0);

@@ -67,11 +67,25 @@ void LightingShaderLightScatteringFoliageImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
+
+	//
+	if (initialized == false) return;
+
+	// uniforms
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
+	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
 }
 
+void LightingShaderLightScatteringFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+	auto& shaderParameters = renderer->getShaderParameters(context);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
+}

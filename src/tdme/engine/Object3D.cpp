@@ -109,17 +109,21 @@ void Object3D::initialize()
 void Object3D::setShader(const string& id) {
 	if (model->getShaderModel() == ShaderModel::PBR) {
 		shaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
+		shaderParameters.setShader(shaderId);
 	} else
 	if (model->getShaderModel() == ShaderModel::SPECULAR) {
 		shaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
+		shaderParameters.setShader(shaderId);
 	}
 }
 
 void Object3D::setDistanceShader(const string& id) {
 	if (model->getShaderModel() == ShaderModel::PBR) {
 		distanceShaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
+		distanceShaderParameters.setShader(distanceShaderId);
 	} else
 	if (model->getShaderModel() == ShaderModel::SPECULAR) {
 		distanceShaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
+		distanceShaderParameters.setShader(distanceShaderId);
 	}
 }

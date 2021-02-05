@@ -17,6 +17,15 @@ uniform float time;
 
 {$DEFINITIONS}
 
+#if defined(HAVE_FOLIAGE)
+	uniform float speed;
+	uniform float amplitudeDefault;
+	uniform float amplitudeMax;
+	uniform float xxx;
+#elif defined(HAVE_TREE)
+	uniform float speed;
+#endif
+
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
 

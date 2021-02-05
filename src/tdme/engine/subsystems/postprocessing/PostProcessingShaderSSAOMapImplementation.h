@@ -11,6 +11,7 @@
 using std::array;
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Post processing shader SSAO map generation implementation
@@ -36,6 +37,7 @@ public:
 	// overridden methods
 	virtual void initialize() override;
 	virtual void useProgram(void* context) override;
+	virtual void setShaderParameters(void* context, Engine* engine) override;
 
 private:
 	array<int32_t, 16> uniformSphere;

@@ -7,6 +7,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Post processing shader vignette implementation
@@ -15,6 +16,10 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderVignetteImplementation: public PostProcessingShaderBaseImplementation
 {
+private:
+	int32_t uniformIntensity { -1 };
+	int32_t uniformBorderColor { -1 };
+
 public:
 	/**
 	 * Returns if shader is supported on given renderer
@@ -31,5 +36,6 @@ public:
 
 	// overridden methods
 	virtual void initialize() override;
+	virtual void setShaderParameters(void* context, Engine* engine) override;
 
 };

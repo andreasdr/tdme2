@@ -19,6 +19,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
@@ -41,6 +42,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityShaderParameters;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
@@ -78,10 +80,8 @@ private:
 	bool disableDepthTest { false };
 	int64_t frameTransformationsLast { -1LL };
 	int64_t timeTransformationsLast { -1LL };
-	map<string, string> shaderParameters;
-	string shaderParametersHash;
-	map<string, string> distanceShaderParameters;
-	string distanceShaderParametersHash;
+	EntityShaderParameters shaderParameters;
+	EntityShaderParameters distanceShaderParameters;
 
 	/**
 	 * Compute animations
@@ -137,14 +137,6 @@ private:
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		for (auto& transformations: instanceTransformations) transformations.applyParentTransformations(parentTransformations);
 		updateBoundingBox();
-	}
-
-	/**
-	 * Get shader parameters hash
-	 * @return shader parameters hash
-	 */
-	inline const string& getShaderParametersHash() {
-		return shaderParametersHash;
 	}
 
 public:
@@ -412,43 +404,43 @@ public:
 	}
 
 	/**
-	 * Get shader parameters
-	 * @return shader parameters
+	 * Returns shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
-		return shaderParameters;
+	inline const ShaderParameter getShaderParameter(const string& parameterName) {
+		return shaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set shader parameters
-	 * @param parameters shader parameters
+	 * Set shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setShaderParameters(const map<string, string>& parameters) {
-		shaderParameters = parameters;
-		shaderParametersHash.clear();
-		for (auto& parameterIt: shaderParameters) {
-			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
-		}
+	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		shaderParameters.setShaderParameter(parameterName, parameterValue);
 	}
 
 	/**
-	 * Get distance shader parameters
-	 * @return distance shader parameters
+	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
 	 */
-	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
-		return distanceShaderParameters;
+	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
+		return distanceShaderParameters.getShaderParameter(parameterName);
 	}
 
 	/**
-	 * Set distance shader parameters
-	 * @param parameters distance shader parameters
+	 * Set distance shader parameter for given parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
 	 */
-	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
-		distanceShaderParameters = parameters;
-		distanceShaderParametersHash.clear();
-		for (auto& parameterIt: shaderParameters) {
-			distanceShaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
-		}
+	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
+		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
 	}
 
 };

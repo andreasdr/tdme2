@@ -18,6 +18,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -48,6 +49,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::Rotation;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -188,10 +190,11 @@ void FoliageTest::initialize()
 			z+= Math::random() * 0.5f + 0.5;
 		}
 	#endif
+	foliageObject->updateRenderGroup();
 	foliageObject->setShader("foliage");
 	foliageObject->setContributesShadows(true);
 	foliageObject->setReceivesShadows(true);
-	foliageObject->updateRenderGroup();
+	foliageObject->setShaderParameter("speed", ShaderParameter(0.1f));
 	engine->addEntity(foliageObject);
 }
 

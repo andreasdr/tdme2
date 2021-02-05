@@ -12,6 +12,7 @@ using std::map;
 using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 
 /**
@@ -87,24 +88,9 @@ public:
 	void setBufferPixelHeight(void* context, float pixelHeight);
 
 	/**
-	 * Set texture light position x
-	 * @param context context
-	 * @param textureLightPositionX texture light position x
+	 * Set shader parameters
+	 * @param engine engine
 	 */
-	void setTextureLightPositionX(void* context, float textureLightPositionX);
-
-	/**
-	 * Set texture light position y
-	 * @param context context
-	 * @param textureLightPositionY texture light position y
-	 */
-	void setTextureLightPositionY(void* context, float textureLightPositionY);
-
-	/**
-	 * Set intensity
-	 * @param context context
-	 * @param intensity effect intensity
-	 */
-	void setIntensity(void* context, float intensity);
+	void setShaderParameters(void* context, Engine* engine);
 
 };

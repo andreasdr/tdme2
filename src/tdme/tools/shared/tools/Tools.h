@@ -164,13 +164,13 @@ public:
 
 	/**
 	 * Set up entity in given engine with look from rotations and scale
-	 * @param entity entity
+	 * @param prototype prototype
 	 * @param engine engine
 	 * @param lookFromRotations look from rotations
 	 * @param camScale scale
 	 * @param lodLevel lod level
 	 */
-	static void setupEntity(Prototype* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
+	static void setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
 
 	/**
 	 * Get relative resources file name

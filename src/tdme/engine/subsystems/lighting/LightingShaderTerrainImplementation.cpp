@@ -63,9 +63,9 @@ void LightingShaderTerrainImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
@@ -74,18 +74,18 @@ void LightingShaderTerrainImplementation::initialize()
 	//
 	initialized = false;
 
-	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
+	uniformModelMatrix = renderer->getProgramUniformLocation(programId, "modelMatrix");
 
-	uniformGrasTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "grasTextureUnit");
+	uniformGrasTextureUnit = renderer->getProgramUniformLocation(programId, "grasTextureUnit");
 	if (uniformGrasTextureUnit == -1) return;
 
-	uniformDirtTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "dirtTextureUnit");
+	uniformDirtTextureUnit = renderer->getProgramUniformLocation(programId, "dirtTextureUnit");
 	if (uniformDirtTextureUnit == -1) return;
 
-	uniformSnowTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "snowTextureUnit");
+	uniformSnowTextureUnit = renderer->getProgramUniformLocation(programId, "snowTextureUnit");
 	if (uniformSnowTextureUnit == -1) return;
 
-	uniformStoneTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "stoneTextureUnit");
+	uniformStoneTextureUnit = renderer->getProgramUniformLocation(programId, "stoneTextureUnit");
 	if (uniformStoneTextureUnit == -1) return;
 
 	//
@@ -98,7 +98,7 @@ void LightingShaderTerrainImplementation::initialize()
 	initialized = true;
 
 	// register shader
-	Engine::registerShader(Engine::ShaderType::OBJECT3D, getId(), {}, {});
+	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
 
 void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* context) {
@@ -143,4 +143,7 @@ void LightingShaderTerrainImplementation::unUseProgram(void* context) {
 void LightingShaderTerrainImplementation::updateMatrices(Renderer* renderer, void* context) {
 	LightingShaderBaseImplementation::updateMatrices(renderer, context);
 	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
+}
+
+void LightingShaderTerrainImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 }

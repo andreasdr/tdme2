@@ -119,6 +119,9 @@ void EZRShaderBaseImplementation::updateMaterial(Renderer* renderer, void* conte
 	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
+void EZRShaderBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}
+
 void EZRShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {

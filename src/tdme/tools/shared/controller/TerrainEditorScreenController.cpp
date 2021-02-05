@@ -15,8 +15,8 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
-#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
+#include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -360,7 +360,7 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 	if (terrainModels.empty() == true) return;
 	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return;
-	Terrain::applyBrushToTerrainModel(
+	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
 		prototype->getTerrain()->getHeightVector(),
@@ -381,7 +381,7 @@ bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(BoundingB
 	if (terrainModels.empty() == true) return false;
 	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return false;
-	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelFlattenHeight(
+	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelsFlattenHeight(
 		terrainBoundingBox,
 		terrainModels,
 		prototype->getTerrain()->getHeightVector(),

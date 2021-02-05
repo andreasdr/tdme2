@@ -79,6 +79,13 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) = 0;
 
 	/**
+	 * Update shader parameters
+	 * @param renderer renderer
+	 * @param context context
+	 */
+	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
+
+	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param context contet

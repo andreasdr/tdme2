@@ -30,6 +30,7 @@
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -37,6 +38,7 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utilities/Console.h>
 
 using std::array;
 using std::map;
@@ -85,6 +87,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
@@ -94,6 +97,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
+using tdme::utilities::Console;
 using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 
 /**
@@ -147,7 +151,7 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
-	enum ShaderType { OBJECT3D };
+	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
 
@@ -187,18 +191,14 @@ private:
 	static int32_t environmentMappingHeight;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
-	static int32_t lightSourceTextureId;
 
 	struct Shader {
 		ShaderType type;
 		string id;
-		map<string, string> parameterTypes;
-		map<string, string> parameterDefaults;
+		map<string, ShaderParameter> parameterDefaults;
 	};
 
 	static map<string, Shader> shaders;
-
-	map<string, map<string, string>> postProcessingShaderParameters;
 
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
@@ -228,11 +228,6 @@ private:
 
 	array<Light, LIGHTS_MAX> lights;
 	Color4 sceneColor;
-	bool renderLightSourceEnabled;
-	float lightSourceSize;
-	Vector3 lightSourcePosition;
-	bool fixedLightScatteringIntensity;
-	float lightScatteringItensityValue;
 	FrameBuffer* frameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
@@ -260,6 +255,8 @@ private:
 	bool initialized;
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
+
+	map<string, map<string, ShaderParameter>> shaderParameters;
 
 	class EngineThread: public Thread {
 		friend class Engine;
@@ -636,23 +633,76 @@ public:
 	 * @param type shader type
 	 * @param shaderId shader id
 	 * @param parameterTypes parameter types
-	 * @param parameterDefaults parameter defaults
+	 * @param parameterDefault parameter defaults
 	 */
-	static void registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parametersDefaults);
+	static void registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults = {});
 
 	/**
-	 * Returns parameter types of shader with given id
-	 * @param shaderId shader id
-	 * @return shader parameter types
-	 */
-	static const map<string, string> getShaderParameterTypes(const string& shaderId);
-
-	/**
-	 * Returns parameter default value of shader with given id
+	 * Returns parameter defaults of shader with given id
 	 * @param shaderId shader id
 	 * @return shader parameter defaults
 	 */
-	static const map<string, string> getShaderParameterDefaults(const string& shaderId);
+	static const map<string, ShaderParameter> getShaderParameterDefaults(const string& shaderId);
+
+	/**
+	 * Returns shader parameter default value for given shader id and parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
+	 */
+	static inline const ShaderParameter getDefaultShaderParameter(const string& shaderId, const string& parameterName) {
+		auto shaderIt = shaders.find(shaderId);
+		if (shaderIt == shaders.end()) {
+			Console::println("Engine::getDefaultShaderParameter(): no shader registered with id: " + shaderId);
+			return ShaderParameter();
+		}
+		auto& shader = shaderIt->second;
+		auto shaderParameterIt = shader.parameterDefaults.find(parameterName);
+		if (shaderParameterIt == shader.parameterDefaults.end()) {
+			Console::println("Engine::getDefaultShaderParameter(): no default for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			return ShaderParameter();
+		}
+		auto& shaderParameter = shaderParameterIt->second;
+		return shaderParameter;
+	}
+
+	/**
+	 * Returns shader parameter for given shader id and parameter name, if the value does not exist, the default will be returned
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @return shader parameter
+	 */
+	inline const ShaderParameter getShaderParameter(const string& shaderId, const string& parameterName) {
+		auto shaderParameterIt = shaderParameters.find(shaderId);
+		if (shaderParameterIt == shaderParameters.end()) {
+			return getDefaultShaderParameter(shaderId, parameterName);
+		}
+		auto& shaderParameterMap = shaderParameterIt->second;
+		auto shaderParameterParameterIt = shaderParameterMap.find(parameterName);
+		if (shaderParameterParameterIt == shaderParameterMap.end()) {
+			return getDefaultShaderParameter(shaderId, parameterName);
+		}
+		auto& shaderParameter = shaderParameterParameterIt->second;
+		return shaderParameter;
+	}
+
+	/**
+	 * Set shader parameter for given shader id and parameter name
+	 * @param shaderId shader id
+	 * @param parameterName parameter name
+	 * @param paraemterValue parameter value
+	 */
+	inline void setShaderParameter(const string& shaderId, const string& parameterName, const ShaderParameter& parameterValue) {
+		auto currentShaderParameter = getShaderParameter(shaderId, parameterName);
+		if (currentShaderParameter.getType() == ShaderParameter::TYPE_NONE) {
+			Console::println("Engine::setShaderParameter(): no parameter for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+			return;
+		}
+		if (currentShaderParameter.getType() != parameterValue.getType()) {
+			Console::println("Engine::setShaderParameter(): parameter type mismatch for shader registered with id: " + shaderId + ", and parameter name: " + parameterName);
+		}
+		shaderParameters[shaderId][parameterName] = parameterValue;
+	}
 
 	/**
 	 * Creates an offscreen rendering instance
@@ -771,94 +821,6 @@ public:
 	 */
 	inline void setSceneColor(const Color4& sceneColor) {
 		this->sceneColor = sceneColor;
-	}
-
-	/**
-	 * Returns if rendering light source is enabled
-	 * @return rendering light source is enabled
-	 */
-	inline bool isRenderLightSource() const {
-		return renderLightSourceEnabled;
-	}
-
-	/**
-	 * Set rendering light source enabled/disabled
-	 * @param renderLightSource render light source enabled
-	 */
-	inline void setRenderLightSource(bool renderLightSourceEnabled) {
-		this->renderLightSourceEnabled = renderLightSourceEnabled;
-	}
-
-	/**
-	 * Returns light source size
-	 * TODO: this is a hack until we have shader properties
-	 * @return light source size (moon, sun)
-	 */
-	inline float getLightSourceSize() const {
-		return lightSourceSize;
-	}
-
-	/**
-	 * Set light source size (moon, sun)
-	 * TODO: this is a hack until we have shader properties
-	 * @param lightSourceSize light source size
-	 */
-	inline void setLightSourceSize(float lightSourceSize) {
-		this->lightSourceSize = lightSourceSize;
-	}
-
-	/**
-	 * Returns light source position(moon, sun)
-	 * TODO: this is a hack until we have shader properties
-	 * @return light source position
-	 */
-	inline const Vector3& getLightSourcePosition() const {
-		return lightSourcePosition;
-	}
-
-	/**
-	 * Set light source position(moon, sun)
-	 * TODO: this is a hack until we have shader properties
-	 * @param lightSourcePosition light source position
-	 */
-	inline void setLightSourcePosition(const Vector3& lightSourcePosition) {
-		this->lightSourcePosition = lightSourcePosition;
-	}
-
-	/**
-	 * Returns if light scattering intensity is fixed
-	 * // TODO: this is a hack until we got shader parameters
-	 * @return if light scattering intensity is fixed
-	 */
-	inline bool isFixedLightScatteringIntensity() {
-		return fixedLightScatteringIntensity;
-	}
-
-	/**
-	 * Sets if light scattering intensity is fixed
-	 * // TODO: this is a hack until we got shader parameters
-	 * @param fixedLightScatteringIntensity light scattering intensity is fixed
-	 */
-	inline void setFixedLightScatteringIntensity(float fixedLightScatteringIntensity) {
-		this->fixedLightScatteringIntensity = fixedLightScatteringIntensity;
-	}
-
-	/**
-	 * Returns light scattering intensity (base) value
-	 * // TODO: this is a hack until we got shader parameters
-	 * @return light scattering intensity base value
-	 */
-	inline float getLightScatteringItensityValue() {
-		return lightScatteringItensityValue;
-	}
-
-	/**
-	 * Set light scattering intensity base value
-	 * // TODO: this is a hack until we got shader parameters
-	 * @param lightScatteringItensityValue light scattering intensity base value
-	 */
-	inline void setLightScatteringItensityValue(float lightScatteringItensityValue) {
-		this->lightScatteringItensityValue = lightScatteringItensityValue;
 	}
 
 	/**
@@ -1055,34 +1017,16 @@ public:
 	void addPostProcessingProgram(const string& programId);
 
 	/**
-	 * Get post processing program parameter
-	 * @param programId program id
-	 * @param name parameter name
-	 * @return parameter value or empty string
-	 */
-	const string getPostProcessingProgramParameter(const string& programId, const string& name);
-
-	/**
-	 * Set post processing program parameter
-	 * @param programId program id
-	 * @param name parameter name
-	 * @param value parameter value
-	 */
-	void setPostProcessingProgramParameter(const string& programId, const string& name, const string& value);
-
-	/**
-	 * Set post processing program parameter
-	 * @param programId program id
-	 * @param name parameter name
-	 */
-	void removePostProcessingProgramParameter(const string& programId, const string& name);
-
-	/**
 	 * @return renderer statistics
 	 */
 	inline Renderer::Renderer_Statistics getRendererStatistics() {
 		return renderer->getStatistics();
 	}
+
+	/**
+	 * Print registered shaders and it default parameters to console
+	 */
+	void dumpShaders();
 
 private:
 	/**
@@ -1161,11 +1105,11 @@ private:
 	void render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
-	 * Render light source
+	 * Render light sources
 	 * @param width render target width
 	 * @param height render target height
 	 * @return if light source is visible
 	 */
-	bool renderLightSource(int width, int height);
+	bool renderLightSources(int width, int height);
 
 };

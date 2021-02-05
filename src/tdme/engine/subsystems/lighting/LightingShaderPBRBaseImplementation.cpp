@@ -229,6 +229,9 @@ void LightingShaderPBRBaseImplementation::updateMatrices(Renderer* renderer, voi
 void LightingShaderPBRBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 }
 
+void LightingShaderPBRBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+}
+
 void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
@@ -243,3 +246,4 @@ void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, void* 
 			break;
 	}
 }
+

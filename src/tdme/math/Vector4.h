@@ -26,6 +26,13 @@ private:
 public:
 	/**
 	 * Public constructor
+	 */
+	inline Vector4() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
 	 * @param v vector
 	 */
 	inline Vector4(const Vector4& v) {
@@ -434,11 +441,5 @@ public:
 			);
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline Vector4() {
-		data.fill(0.0f);
-	}
 
 };

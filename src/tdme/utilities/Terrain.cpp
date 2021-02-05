@@ -277,7 +277,7 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& te
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
-void Terrain::applyBrushToTerrainModel(
+void Terrain::applyBrushToTerrainModels(
 	BoundingBox& terrainBoundingBox,
 	vector<Model*> terrainModels,
 	vector<float>& terrainHeightVector,
@@ -600,7 +600,7 @@ void Terrain::applyBrushToTerrainModel(
 	}
 }
 
-bool Terrain::getTerrainModelFlattenHeight(
+bool Terrain::getTerrainModelsFlattenHeight(
 	BoundingBox& terrainBoundingBox,
 	vector<Model*> terrainModels,
 	vector<float>& terrainHeightVector,

@@ -7,6 +7,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 /**
  * Post processing shader blur implementation
@@ -31,5 +32,6 @@ public:
 
 	// overridden methods
 	virtual void initialize() override;
+	virtual void setShaderParameters(void* context, Engine* engine) override;
 
 };

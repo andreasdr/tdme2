@@ -34,24 +34,27 @@ void ShadowMapRenderShaderDefaultImplementation::initialize()
 	auto shaderVersion = renderer->getShaderVersion();
 
 	// load shadow mapping shaders
-	renderVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_vertexshader.vert"
 	);
-	if (renderVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
 
-	renderFragmentShaderId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_fragmentshader.frag"
 	);
-	if (renderFragmentShaderId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
-	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	ShadowMapRenderShaderBaseImplementation::initialize();
+}
+
+void ShadowMapRenderShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 }

@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-
-#include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
@@ -14,7 +14,8 @@ using std::to_string;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::Engine;
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -68,21 +69,28 @@ void LightingShaderTreeImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	renderer->attachShaderToProgram(programId, renderLightingVertexShaderId);
+	renderer->attachShaderToProgram(programId, renderLightingFragmentShaderId);
 
 	//
 	LightingShaderBaseImplementation::initialize();
 
+	//
+	if (initialized == false) return;
+
+	// uniforms
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+
 	// register shader
-	if (initialized == true) {
-		Engine::registerShader(
-			Engine::ShaderType::OBJECT3D,
-			getId(),
-			{{"speed", "float;0.0;10.0"}},
-			{{"speed", "1.0"}}
-		);
-	}
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		getId(),
+		{{ "speed", ShaderParameter(1.0f) }}
+	);
 }
 
+void LightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+	auto& shaderParameters = renderer->getShaderParameters(context);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+}

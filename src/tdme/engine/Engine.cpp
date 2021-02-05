@@ -20,7 +20,6 @@
 #include <string>
 
 #include <tdme/application/Application.h>
-#include <tdme/engine/Camera.h>
 #if defined(VULKAN)
 	#include <tdme/engine/EngineVKRenderer.h>
 #else
@@ -61,6 +60,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -78,6 +78,7 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
@@ -153,6 +154,7 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::ShaderParameter;
 using tdme::engine::Timing;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
@@ -202,7 +204,6 @@ int32_t Engine::environmentMappingWidth = 512;
 int32_t Engine::environmentMappingHeight = 512;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
-int32_t Engine::lightSourceTextureId = 0;
 map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
@@ -248,11 +249,6 @@ Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
-	renderLightSourceEnabled = false;
-	lightSourceSize = 0.25f;
-	lightSourcePosition.set(0.0f, 25000.0f, -100000.0f);
-	fixedLightScatteringIntensity = false;
-	lightScatteringItensityValue = 1.0f;
 	frameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
@@ -335,8 +331,10 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->camera = new Camera(renderer);
 	offScreenEngine->partition = new PartitionOctTree();
 	// create lights
-	for (auto i = 0; i < offScreenEngine->lights.size(); i++)
+	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
 		offScreenEngine->lights[i] = Light(renderer, i);
+		offScreenEngine->lights[i].setLightSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
+	}
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
@@ -584,8 +582,8 @@ void Engine::initialize()
 
 	#if defined(VULKAN)
 		renderer = new EngineVKRenderer(this);
-		Console::println(string("TDME::Using Vulkan"));
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		Console::println(string("TDME2::Using Vulkan"));
+		// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -594,8 +592,8 @@ void Engine::initialize()
 		#if defined(__APPLE__)
 		{
 			renderer = new EngineGL3Renderer(this);
-			Console::println(string("TDME::Using GL3+/CORE"));
-			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			Console::println(string("TDME2::Using GL3+/CORE"));
+			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
@@ -608,10 +606,10 @@ void Engine::initialize()
 			glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
 			glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
 			if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-				Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				Console::println(string("TDME2::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL3Renderer(this);
 			} else {
-				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				Console::println(string("TDME2::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL2Renderer(this);
 			}
 			shadowMappingEnabled = true;
@@ -622,8 +620,8 @@ void Engine::initialize()
 		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && defined(GLES2)
 		{
 			renderer = new EngineGLES2Renderer(this);
-			Console::println(string("TDME::Using GLES2"));
-			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			Console::println(string("TDME2::Using GLES2"));
+			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -650,7 +648,7 @@ void Engine::initialize()
 	} else {
 		threadCount = 1;
 	}
-	Console::println(string("TDME::Thread count: ") + to_string(threadCount));
+	Console::println(string("TDME2::Thread count: ") + to_string(threadCount));
 
 	// initialize object buffers
 	ObjectBuffer::initialize();
@@ -680,7 +678,10 @@ void Engine::initialize()
 	camera = new Camera(renderer);
 
 	// create lights
-	for (auto i = 0; i < lights.size(); i++) lights[i] = Light(renderer, i);
+	for (auto i = 0; i < lights.size(); i++) {
+		lights[i] = Light(renderer, i);
+		lights[i].setLightSourceTexture(TextureReader::read("resources/engine/textures", "sun.png"));
+	}
 
 	// create partition
 	partition = new PartitionOctTree();
@@ -718,18 +719,18 @@ void Engine::initialize()
 
 	// check if VBOs are available
 	if (renderer->isBufferObjectsAvailable()) {
-		Console::println(string("TDME::VBOs are available."));
+		Console::println(string("TDME2::VBOs are available."));
 	} else {
-		Console::println(string("TDME::VBOs are not available! Engine will not work!"));
+		Console::println(string("TDME2::VBOs are not available! Engine will not work!"));
 		initialized = false;
 	}
 
 	// check FBO support
 	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println(string("TDME::Basic FBOs are not available!"));
+		Console::println(string("TDME2::Basic FBOs are not available!"));
 		shadowMappingEnabled = false;
 	} else {
-		Console::println(string("TDME::Basic FBOs are available."));
+		Console::println(string("TDME2::Basic FBOs are available."));
 	}
 
 	// TODO: make this configurable
@@ -738,23 +739,23 @@ void Engine::initialize()
 
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
-		Console::println(string("TDME::Using shadow mapping"));
+		Console::println(string("TDME2::Using shadow mapping"));
 		shadowMappingShaderPre = new ShadowMapCreationShader(renderer);
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMapRenderShader(renderer);
 		shadowMappingShaderRender->initialize();
 		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
-		Console::println(string("TDME::Not using shadow mapping"));
+		Console::println(string("TDME2::Not using shadow mapping"));
 	}
 
 	// initialize skinning shader
 	if (skinningShaderEnabled == true) {
-		Console::println(string("TDME::Using skinning compute shader"));
+		Console::println(string("TDME2::Using skinning compute shader"));
 		skinningShader = new SkinningShader(renderer);
 		skinningShader->initialize();
 	} else {
-		Console::println(string("TDME::Not using skinning compute shader"));
+		Console::println(string("TDME2::Not using skinning compute shader"));
 	}
 
 	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
@@ -796,10 +797,10 @@ void Engine::initialize()
 	}
 
 	//
-	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
+	Console::println(string("TDME2::initialized & ready: ") + to_string(initialized));
 
-	//
-	lightSourceTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
+	// show registered shaders
+	dumpShaders();
 }
 
 void Engine::reshape(int32_t width, int32_t height)
@@ -1204,8 +1205,8 @@ void Engine::display()
 			camera->update(context, frameBufferWidth, frameBufferHeight);
 			//
 			auto lightSourceVisible = false;
-			if (effectPass.renderLightSource == true) {
-				lightSourceVisible = renderLightSource(frameBufferWidth, frameBufferHeight);
+			if (effectPass.renderLightSources == true) {
+				lightSourceVisible = renderLightSources(frameBufferWidth, frameBufferHeight);
 			}
 			if (effectPass.skipOnLightSourceNotVisible == true && lightSourceVisible == false) {
 				effectPassSkip[frameBufferIdx] = true;
@@ -1286,7 +1287,7 @@ void Engine::display()
 		true,
 		true,
 		true,
-		renderLightSourceEnabled,
+		true,
 		true,
 		EntityRenderer::RENDERTYPE_NORMALS |
 			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
@@ -1913,24 +1914,6 @@ void Engine::addPostProcessingProgram(const string& programId) {
 	if (postProcessing->getPostProcessingProgram(programId) != nullptr) postProcessingPrograms.push_back(programId);
 }
 
-const string Engine::getPostProcessingProgramParameter(const string& programId, const string& name) {
-	auto programIt = postProcessingShaderParameters.find(programId);
-	if (programIt == postProcessingShaderParameters.end()) return string();
-	auto programParameterIt = programIt->second.find(name);
-	if (programParameterIt == programIt->second.end()) return string();
-	return programParameterIt->second;
-}
-
-void Engine::setPostProcessingProgramParameter(const string& programId, const string& name, const string& value) {
-	// TODO: check if parameter is available
-	postProcessingShaderParameters[programId][name] = value;
-}
-
-void Engine::removePostProcessingProgramParameter(const string& programId, const string& name) {
-	postProcessingShaderParameters[programId].erase(name);
-	if (postProcessingShaderParameters[programId].size() == 0) postProcessingShaderParameters.erase(programId);
-}
-
 void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer) {
 	auto postProcessingFrameBufferIdx = 0;
 	for (auto programId: postProcessingPrograms) {
@@ -1973,7 +1956,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					target = postProcessingTemporaryFrameBuffer;
 					break;
 			}
-			FrameBuffer::doPostProcessing(this, target, source, programId, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource, fixedLightScatteringIntensity, lightScatteringItensityValue);
+			FrameBuffer::doPostProcessing(this, target, source, programId, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
@@ -2006,20 +1989,25 @@ const vector<string> Engine::getRegisteredShader(ShaderType type) {
 	return result;
 }
 
-void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parameterDefaults) {
+void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, ShaderParameter>& parameterDefaults) {
 	if (shaders.find(shaderId) != shaders.end()) {
 		Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
 		return;
 	}
-	shaders[shaderId] = {.type = type, .id = shaderId, .parameterTypes = parameterTypes, .parameterDefaults = parameterDefaults };
+	shaders[shaderId] = {
+		.type = type,
+		.id = shaderId,
+		.parameterDefaults = parameterDefaults
+	};
 }
 
-const map<string, string> Engine::getShaderParameterTypes(const string& shaderId) {
-	return shaders.find(shaderId)->second.parameterTypes;
-}
-
-const map<string, string> Engine::getShaderParameterDefaults(const string& shaderId) {
-	return shaders.find(shaderId)->second.parameterDefaults;
+const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const string& shaderId) {
+	auto shaderIt = shaders.find(shaderId);
+	if (shaderIt == shaders.end()) {
+		Console::println("Engine::getShaderParameterDefaults(): No registered shader: " + shaderId);
+		return map<string, ShaderParameter>();
+	}
+	return shaderIt->second.parameterDefaults;
 }
 
 void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
@@ -2216,7 +2204,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 		auto _width = scaledWidth != -1?scaledWidth:width;
 		auto _height = scaledHeight != -1?scaledHeight:height;
 		//
-		renderLightSource(_width, _height);
+		renderLightSources(_width, _height);
 	}
 
 	//
@@ -2224,15 +2212,68 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 	Engine::renderer->setEffectPass(0);
 }
 
-bool Engine::renderLightSource(int width, int height) {
-	auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
-	Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
-	Vector2 lightSourcePosition2D;
-	auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D, width, height);
-	lightSourcePosition2D.sub(lightSourceDimension2D.clone().scale(0.5f));
-	if (visible == true) {
-		texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, lightSourceTextureId, width, height);
+bool Engine::renderLightSources(int width, int height) {
+	auto lightSourceVisible = false;
+	for (auto& light: lights) {
+		if (light.isEnabled() == false || light.isRenderLightSource() == false) continue;
+		auto lightSourceSize = light.getLightSourceSize();
+		auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
+		Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
+		Vector2 lightSourcePosition2D;
+		Vector3 lightSourcePosition = Vector3(light.getPosition().getX(), light.getPosition().getY(), light.getPosition().getZ());
+		lightSourcePosition.scale(1.0f / light.getPosition().getW());
+		auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D, width, height);
+		lightSourcePosition2D.sub(lightSourceDimension2D.clone().scale(0.5f));
+		if (visible == true) {
+			texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, light.getLightSourceTextureId(), width, height);
+			lightSourceVisible = true;
+		}
 	}
-	return visible;
+	return lightSourceVisible;
 }
 
+void Engine::dumpShaders() {
+	for (auto shaderType = 0; shaderType < SHADERTYPE_MAX; shaderType++)
+	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
+		string shaderTypeString = "unknowm";
+		switch (shaderType) {
+			case SHADERTYPE_OBJECT3D: shaderTypeString = "object3d"; break;
+			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
+			default: break;
+		}
+		Console::println(string("TDME2::registered " + shaderTypeString + " shader: ") + shaderId);
+		auto& defaultShaderParameters = getShaderParameterDefaults(shaderId);
+		if (defaultShaderParameters.size() > 0) {
+			Console::print("\t");
+			for (auto it: defaultShaderParameters) {
+				auto& parameterName = it.first;
+				Console::print(parameterName);
+				switch(it.second.getType()) {
+					case ShaderParameter::TYPE_NONE:
+						Console::print("=none; ");
+						break;
+					case ShaderParameter::TYPE_FLOAT:
+						Console::print("=float(");
+						Console::print(to_string(getShaderParameter(shaderId, parameterName).getFloatValue()));
+						Console::print("); ");
+						break;
+					case ShaderParameter::TYPE_VECTOR3:
+						{
+							Console::print("=float(");
+							auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) Console::print(",");
+								Console::print(to_string(shaderParameterArray[i]));
+							}
+							Console::print("); ");
+						}
+						break;
+					default:
+						Console::print("=unknown; ");
+						break;
+				}
+			}
+			Console::println();
+		}
+	}
+}

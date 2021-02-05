@@ -127,7 +127,7 @@ void EnvironmentMapping::render(const Vector3& position)
 			true,
 			false,
 			false,
-			engine->isRenderLightSource(),
+			true,
 			true,
 			EntityRenderer::RENDERTYPE_NORMALS |
 				EntityRenderer::RENDERTYPE_TEXTUREARRAYS |

@@ -404,6 +404,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	cameraMatrix.set(renderer->getModelViewMatrix());
 	// render faces entities
 	auto currentFrontFace = -1;
+	string shaderParametersHash;
 	auto firstObject = objects[0];
 	// all objects share the same object 3d node structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
@@ -484,10 +485,11 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					// skip to next object
 					continue;
 				}
+
 				// shader
-				auto objectShader = object->getDistanceShader().length() == 0?
-					object->getShader():
-					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+				auto distanceShader = object->getDistanceShader().empty() == true?false:objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() >= Math::square(object->getDistanceShaderDistance());
+				auto objectShader =
+					distanceShader == false?
 						object->getShader():
 						object->getDistanceShader();
 				// TODO: shader parameters
@@ -504,6 +506,12 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					setupMaterial(context, _object3DNode, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
 					// only update materials for next calls
 					materialUpdateOnly = true;
+				}
+				// shader parameters
+				if (shaderParametersHash.empty() == true || shaderParametersHash != renderer->getShaderParameters(context).getShaderParametersHash()) {
+					renderer->setShaderParameters(context, distanceShader == true?object->distanceShaderParameters:object->shaderParameters);
+					renderer->onUpdateShaderParameters(context);
+					shaderParametersHash = renderer->getShaderParameters(context).getShaderParametersHash();
 				}
 				// bind buffer base objects if not bound yet
 				auto currentVBOIds = _object3DNode->renderer->vboBaseIds;
@@ -718,6 +726,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 				FloatBuffer fbMvMatrices = object3DRenderContext.bbMvMatrices->asFloatBuffer();
 
 				string materialKey;
+				string shaderParametersHash;
 				bool materialUpdateOnly = false;
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
@@ -766,9 +775,9 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// check if shader did change
 					// shader
-					auto objectShader = object->getDistanceShader().length() == 0?
-						object->getShader():
-						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+					auto distanceShader = object->getDistanceShader().empty() == true?false:objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() >= Math::square(object->getDistanceShaderDistance());
+					auto objectShader =
+						distanceShader == false?
 							object->getShader():
 							object->getDistanceShader();
 					if (hadShaderSetup == false) {
@@ -803,6 +812,16 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if (materialKey != materialKeyCurrent) {
 						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
+					}
+
+					// shader parameters
+					if (shaderParametersHash.empty() == true) {
+						renderer->setShaderParameters(context, distanceShader == true?object->distanceShaderParameters:object->shaderParameters);
+						renderer->onUpdateShaderParameters(context);
+						shaderParametersHash = renderer->getShaderParameters(context).getShaderParametersHash();
+					} else
+					if (shaderParametersHash != renderer->getShaderParameters(context).getShaderParametersHash()) {
+						object3DRenderContext.objectsNotRendered.push_back(object);
 					}
 
 					// bind buffer base objects if not bound yet

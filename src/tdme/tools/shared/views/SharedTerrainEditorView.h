@@ -11,10 +11,10 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
 
-using tdme::engine::prototype::Prototype;
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::TerrainEditorScreenController;

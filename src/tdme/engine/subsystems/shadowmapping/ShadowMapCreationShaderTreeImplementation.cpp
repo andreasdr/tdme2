@@ -3,6 +3,8 @@
 #include <string>
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
@@ -10,6 +12,8 @@ using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderTreeImplementation;
+using tdme::engine::EntityShaderParameters;
+using tdme::engine::ShaderParameter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -68,5 +72,15 @@ void ShadowMapCreationShaderTreeImplementation::initialize()
 
 	//
 	ShadowMapCreationShaderBaseImplementation::initialize();
+
+	//
+	if (initialized == false) return;
+
+	// uniforms
+	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
 }
 
+void ShadowMapCreationShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+	auto& shaderParameters = renderer->getShaderParameters(context);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+}

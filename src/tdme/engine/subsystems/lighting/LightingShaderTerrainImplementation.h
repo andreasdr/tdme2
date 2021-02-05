@@ -36,6 +36,7 @@ public:
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void unUseProgram(void* context) override;
 	virtual void updateMatrices(Renderer* renderer, void* context) override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 private:
 	int32_t uniformModelMatrix { -1 };

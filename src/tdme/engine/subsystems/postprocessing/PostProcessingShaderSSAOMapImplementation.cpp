@@ -59,6 +59,9 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	//
 	PostProcessingShaderBaseImplementation::initialize();
 
+	//
+	if (initialized == false) return;
+
 	// custom initialization
 	for (auto i = 0; i < uniformSphere.size(); i++) {
 		uniformSphere[i] = renderer->getProgramUniformLocation(programId, "sphere[" + to_string(i) + "]");
@@ -75,6 +78,9 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	auto randomTexture = TextureReader::read("resources/engine/textures", "random.png");
 	randomTexture->setUseMipMap(false);
 	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture, renderer->getDefaultContext());
+
+	// register shader
+	Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssaomap");
 }
 
 void PostProcessingShaderSSAOMapImplementation::useProgram(void* context) {
@@ -100,3 +106,5 @@ void PostProcessingShaderSSAOMapImplementation::useProgram(void* context) {
 	renderer->bindTexture(context, randomTextureId);
 }
 
+void PostProcessingShaderSSAOMapImplementation::setShaderParameters(void* context, Engine* engine) {
+}

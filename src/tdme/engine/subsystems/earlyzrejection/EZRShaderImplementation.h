@@ -76,6 +76,13 @@ struct tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation
 	virtual void updateMaterial(Renderer* renderer, void* context) = 0;
 
 	/**
+	 * Update shader parameters
+	 * @param renderer renderer
+	 * @param context
+	 */
+	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
+
+	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param context context

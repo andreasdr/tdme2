@@ -1,9 +1,11 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -17,9 +19,11 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::map;
 using std::string;
 using std::vector;
 
+using tdme::engine::ShaderParameter;
 using tdme::engine::model::Material;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -27,6 +31,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
@@ -72,6 +77,7 @@ private:
 	GUIElementNode* renderingDistanceShader { nullptr };
 	GUIElementNode* renderingDistanceShaderDistance { nullptr };
 	GUIElementNode* renderingApply { nullptr };
+	GUIParentNode* shaderParametersContent { nullptr };
 	GUIElementNode* lodLevel { nullptr };
 	GUIElementNode* lodLevelApply { nullptr };
 	GUIElementNode* lodType { nullptr };
@@ -176,17 +182,17 @@ public:
 	SharedModelEditorView* getView();
 
 	/**
-	 * @return entity display sub screen controller
+	 * @return prototype display sub screen controller
 	 */
 	PrototypeDisplaySubScreenController* getPrototypeDisplaySubScreenController();
 
 	/**
-	 * @return entity bounding volume sub screen controller
+	 * @return prototype bounding volume sub screen controller
 	 */
 	PrototypePhysicsSubScreenController* getPrototypePhysicsSubScreenController();
 
 	/**
-	 * @return entity sounds sub screen controller
+	 * @return prototype sounds sub screen controller
 	 */
 	PrototypeSoundsSubScreenController* getPrototypeSoundsSubScreenController();
 
@@ -228,10 +234,9 @@ public:
 	/**
 	 * Set up prototype properties
 	 * @param presetId preset id
-	 * @param entity entity properties
 	 * @param selectedName selected name
 	 */
-	void setPrototypeProperties(const string& presetId, Prototype* entity, const string& selectedName);
+	void setPrototypeProperties(const string& presetId, const string& selectedName);
 
 	/**
 	 * Unset prototype properties
@@ -257,9 +262,8 @@ public:
 
 	/**
 	 * Set renering options
-	 * @param entity entity
 	 */
-	void setRendering(Prototype* entity);
+	void setRendering();
 
 	/**
 	 * Unset rendering
@@ -267,11 +271,20 @@ public:
 	void unsetRendering();
 
 	/**
+	 * Set shader parameters
+	 */
+	void setShaderParameters();
+
+	/**
+	 * Unset shader parameters
+	 */
+	void unsetShaderParameters();
+
+	/**
 	 * Set lod level
-	 * @param entity entity
 	 * @param level lod level
 	 */
-	void setLODLevel(Prototype* entity, int level);
+	void setLODLevel(int level);
 
 	/**
 	 * Unset LOD level
@@ -300,9 +313,8 @@ public:
 
 	/**
 	 * Set materials
-	 * @param entity entity
 	 */
-	void setMaterials(Prototype* entity);
+	void setMaterials();
 
 	/**
 	 * Unset materials
@@ -369,7 +381,7 @@ public:
 	/**
 	 * Set animations
 	 */
-	void setAnimations(Prototype* entity);
+	void setAnimations();
 
 	/**
 	 * On animation drop down value changed
@@ -473,6 +485,11 @@ public:
 	 * On rendering apply
 	 */
 	void onRenderingApply();
+
+	/**
+	 * On shader parameters apply
+	 */
+	void onShaderParametersApply();
 
 	/**
 	 * On tools compute normals

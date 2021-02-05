@@ -17,6 +17,9 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::lighting::LightingShaderTreeImplementation: public LightingShaderBaseImplementation
 {
+private:
+	int32_t uniformSpeed { -1 };
+
 public:
 	/**
 	 * Public constructor
@@ -33,5 +36,6 @@ public:
 	// overridden methods
 	virtual const string getId() override;
 	virtual void initialize() override;
+	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
 
 };

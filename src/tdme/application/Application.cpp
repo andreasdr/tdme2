@@ -320,7 +320,7 @@ Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
-bool Application::limitFPS = false;
+bool Application::limitFPS = true;
 
 #if defined(VULKAN) || defined(GLFW3)
 	GLFWwindow* Application::glfwWindow = nullptr;
