@@ -30,9 +30,9 @@ const string& GUIMenuItem::getName()
 	return NAME;
 }
 
-const string GUIMenuItem::getTemplate(const string& pathName, const string& fileName)
+const string GUIMenuItem::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"menu-item.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"menu-item.xml":fileName);
 }
 
 unordered_map<string, string> GUIMenuItem::getAttributes(GUIScreenNode* screenNode)

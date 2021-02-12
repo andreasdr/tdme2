@@ -43,7 +43,7 @@ using tdme::utilities::Console;
 
 Scene::Scene()
 {
-	applicationRoot = "";
+	applicationRootPathName = "";
 	pathName = ".";
 	fileName = "untitled.tl";
 	rotationOrder = RotationOrder::XYZ;

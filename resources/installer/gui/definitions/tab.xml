@@ -1,0 +1,14 @@
+<element id="{$id}" width="auto" height="auto" border="1" border-color="black" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<!-- unselected, no mouse over -->
+	<text background-color="#F0F0F0" hide-on="disabled,selected,mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#000000" />
+	<!-- unselected, mouse over -->
+	<text background-color="#B0B0FF" hide-on="disabled,selected" show-on="mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#000000" />
+	<!-- selected, no mouse over -->
+	<text background-color="#8080FF" hide-on="disabled,unselected,mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" />
+	<!-- selected, mouse over -->
+	<text background-color="#8080FF" hide-on="disabled,unselected" show-on="mouseover" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" />
+	<!-- unselected, disabled -->
+	<text background-color="#A0A0A0" hide-on="selected" show-on="disabled" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" />
+	<!-- selected, disabled -->
+	<text background-color="#A0A0A0" hide-on="unselected" show-on="disabled" width="auto" height="28" padding="5" horizontal-align="center" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" />
+</element>

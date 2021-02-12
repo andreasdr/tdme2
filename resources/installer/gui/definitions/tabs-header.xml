@@ -1,0 +1,6 @@
+<element width="100%" height="auto" focusable="true">
+	<layout alignment="horizontal" width="100%" height="auto">
+		{__InnerXML__}
+		<space width="*" height="100%" border="1" border-color="#000000" />
+	</layout>
+</element>

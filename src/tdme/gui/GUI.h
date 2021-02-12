@@ -49,7 +49,9 @@ template<typename T, typename U>
 static T required_dynamic_cast(U u)
 {
 	auto t = dynamic_cast<T>(u);
-	if (t == nullptr) throw ExceptionBase("required_dynamic_cast did fail");
+	if (t == nullptr) {
+		throw ExceptionBase("required_dynamic_cast did fail");
+	}
 	return t;
 }
 

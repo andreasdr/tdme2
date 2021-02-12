@@ -20,6 +20,7 @@ GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode
 GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT = new GUINode_RequestedConstraints_RequestedConstraintsType("PERCENT", 1);
 GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::STAR = new GUINode_RequestedConstraints_RequestedConstraintsType("STAR", 2);
 GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::AUTO = new GUINode_RequestedConstraints_RequestedConstraintsType("AUTO", 3);
+GUINode_RequestedConstraints_RequestedConstraintsType* tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL = new GUINode_RequestedConstraints_RequestedConstraintsType("TABLECELL", 5);
 
 GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstraints_RequestedConstraintsType::valueOf(const string& name)
 {
@@ -28,6 +29,7 @@ GUINode_RequestedConstraints_RequestedConstraintsType* GUINode_RequestedConstrai
 	if (PERCENT->getName() == name) return PERCENT;
 	if (PIXEL->getName() == name) return PIXEL;
 	if (STAR->getName() == name) return STAR;
+	if (TABLECELL->getName() == name) return TABLECELL;
 	// TODO: throw exception here maybe
 	return nullptr;
 }

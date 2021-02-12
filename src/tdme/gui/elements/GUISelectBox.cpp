@@ -30,9 +30,9 @@ const string& GUISelectBox::getName()
 	return NAME;
 }
 
-const string GUISelectBox::getTemplate(const string& pathName, const string& fileName)
+const string GUISelectBox::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"selectbox.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"selectbox.xml":fileName);
 }
 
 unordered_map<string, string> GUISelectBox::getAttributes(GUIScreenNode* screenNode)

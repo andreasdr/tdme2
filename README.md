@@ -148,6 +148,7 @@
             - panel
             - scrollbars
             - space
+            - table
             - text + multiline text
         - supports custom templates and compound elements defined by templates and its controllers
             - compound elements
@@ -316,6 +317,5 @@
     - I have easy to hard task regarding engine/tools development
     - I have tasks regarding documentation
     - I even might have system administrator tasks
-    - If interested to get involved as software architect, I am currently looking for someone to review/improve parts of the architecture
 
 - I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, ..., consider a donation here https://www.paypal.me/andreasdrewke

@@ -1,0 +1,3 @@
+<layout id="{$tab-id}-content" show-on="{$tab-id}-content-selected" width="100%" height="100%" alignment="none" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}">
+	{__InnerXML__}
+</layout>

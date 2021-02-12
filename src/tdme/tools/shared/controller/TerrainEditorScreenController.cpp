@@ -336,6 +336,9 @@ void TerrainEditorScreenController::onApplyBrush() {
 		} else
 		if (brushOperationName == "smooth") {
 			currentBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+		} else
+		if (brushOperationName == "water") {
+			currentBrushOperation = Terrain::BRUSHOPERATION_WATER;
 		}
 
 		// scale, strength
@@ -354,6 +357,10 @@ void TerrainEditorScreenController::onApplyBrush() {
 	}
 }
 
+Terrain::BrushOperation TerrainEditorScreenController::getBrushOperation() {
+	return currentBrushOperation;
+}
+
 void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
@@ -369,30 +376,30 @@ void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, 
 		currentBrushScale,
 		currentBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
 		currentBrushOperation,
-		currentBrushFlattenHeight
+		currentBrushHeight
 	);
 }
 
-bool TerrainEditorScreenController::determineCurrentBrushFlattenHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
+bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return false;
-	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN) return true;
-	if (haveCurrentBrushFlattenHeight == true) return true;
+	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN && currentBrushOperation != Terrain::BRUSHOPERATION_WATER) return true;
+	if (haveCurrentBrushHeight == true) return true;
 	if (terrainModels.empty() == true) return false;
 	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return false;
-	haveCurrentBrushFlattenHeight = Terrain::getTerrainModelsFlattenHeight(
+	haveCurrentBrushHeight = Terrain::getTerrainModelsHeight(
 		terrainBoundingBox,
 		terrainModels,
 		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
-		currentBrushFlattenHeight
+		currentBrushHeight
 	);
-	return haveCurrentBrushFlattenHeight;
+	return haveCurrentBrushHeight;
 }
 
 void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
-	haveCurrentBrushFlattenHeight = false;
+	haveCurrentBrushHeight = false;
 }
 
 

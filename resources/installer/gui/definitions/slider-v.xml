@@ -1,0 +1,3 @@
+<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" focusable="true" width="52" height="223" background-image="resources/installer/gui/images/sliderv/slider_v_rail.png" value="{$value}" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" vertical-align="top">
+	<image id="{$id}_slider" src="resources/installer/gui/images/sliderv/slider_v.png" width="50" height="26" />
+</element>

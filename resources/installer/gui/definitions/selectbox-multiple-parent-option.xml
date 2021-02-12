@@ -1,0 +1,35 @@
+<element id="{$id}" width="100%" height="auto" value="{$value}" selected="{$selected}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
+	<layout alignment="horizontal" width="100%" height="auto" background-color="#F0F0F0">
+		<element show-on="enabled" id="{$id}_arrow" width="15" height="20" horizontal-align="center" vertical-align="center">
+			<!-- Image needs transparency and white arrow so that I can do effects on it -->
+			<image effect-color-mul="#8080A0" hide-on="opened,mouseover" src="resources/installer/gui/images/selectbox/expand-arrow.png" vertical-align="center" />
+			<image effect-color-mul="#8080FF" hide-on="opened" src="resources/installer/gui/images/selectbox/expand-arrow.png" vertical-align="center" />
+			<image effect-color-mul="#8080A0" hide-on="closed,mouseover" src="resources/installer/gui/images/selectbox/collapse-arrow.png" vertical-align="center" />
+			<image effect-color-mul="#8080FF" hide-on="closed" src="resources/installer/gui/images/selectbox/collapse-arrow.png" vertical-align="center" />
+		</element>
+		<layer width="*" height="auto">
+			<!-- unfocused, unselected, no mouse over -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected,mouseover" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#000000" background-color="#F0F0F0" />
+			<!-- unfocused, unselected, mouse over -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,selected" show-on="mouseover" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#000000" background-color="#B0B0FF" />
+			<!-- unfocused, selected, no mouse over -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected,mouseover" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" background-color="#8080FF" />
+			<!-- unfocused, selected, mouse over -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,focussed,unselected" show-on="mouseover" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#FFFFFF" background-color="#B0B0FF" />
+			<!-- focussed, unselected -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,selected" show-on="focussed" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" background-color="#B0B0FF" color="#000000" />
+			<!-- focussed, selected -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="disabled,unselected" show-on="focussed" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" background-color="#B0B0FF" color="#FFFFFF" />
+			<!-- disabled, unselected -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="selected" show-on="disabled" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#A0A0A0" />
+			<!-- disabled, selected -->
+			<text padding-top="2" padding-bottom="2" width="100%" hide-on="unselected" show-on="disabled" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#D0D0D0" background-color="#808080" />
+		</layer>
+	</layout>
+</element>
+<layout show-on="{$id}_arrow.opened" alignment="horizontal" width="100%" height="auto" background-color="#F0F0F0">
+	<space width="30" />
+	<layout id="{$id}_inner" alignment="vertical" width="*" height="auto" background-color="#f0f0f0">
+		{__InnerXML__}
+	</layout>
+</layout>

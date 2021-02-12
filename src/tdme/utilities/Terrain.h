@@ -2,6 +2,7 @@
 
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <set>
 #include <vector>
 
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Vector3.h>
 
+using std::set;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
@@ -63,13 +65,69 @@ private:
 	 */
 	static const Vector3 computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z);
 
+	/**
+	 * Determine if water can be generated
+	 * @param terrainHeightVector terrain height vector
+	 * @param verticesPerX vertices per x
+	 * @param verticesPerZ vertices per z
+	 * @param x x
+	 * @param z z
+	 * @param waterHeight water height
+	 * @return if water can be generated at given position
+	 */
+	static bool determineWater(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight) {
+		if (x < 0 || x >= verticesPerX ||
+			z < 0 || z >= verticesPerZ) return false;
+		auto vertexIdx = z * verticesPerX + x;
+		auto terrainVertexHeight = terrainHeightVector[vertexIdx];
+		if (terrainVertexHeight >= waterHeight) return false;
+		return true;
+	}
+
+	/**
+	 * Determine if water can be generated from left to right starting with x and z
+	 * @param terrainHeightVector terrain height vector
+	 * @param verticesPerX vertices per x
+	 * @param verticesPerZ vertices per z
+	 * @param x x
+	 * @param z z
+	 * @param waterHeight water height
+	 * @param waterXPositionSet water x position set
+	 * @return if water can be generated at given position
+	 */
+	static void determineWaterXPositionSet(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z, float waterHeight, set<int>& waterXPositionSet) {
+		auto xMin = -1;
+		auto xMax = +1;
+		while(true == true) {
+			auto terrainHeightVectorX = x + xMin;
+			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= verticesPerX ||
+				z < 0 || z >= verticesPerZ) break;
+			auto vertexIdx = z * verticesPerX + terrainHeightVectorX;
+			auto terrainVertexHeight = terrainHeightVector[vertexIdx];
+			if (terrainVertexHeight >= waterHeight) break;
+			waterXPositionSet.insert(terrainHeightVectorX);
+			xMin--;
+		}
+		while(true == true) {
+			auto terrainHeightVectorX = x + xMax;
+			if (terrainHeightVectorX < 0 || terrainHeightVectorX >= verticesPerX ||
+				z < 0 || z >= verticesPerZ) break;
+			auto vertexIdx = z * verticesPerX + terrainHeightVectorX;
+			auto terrainVertexHeight = terrainHeightVector[vertexIdx];
+			if (terrainVertexHeight >= waterHeight) break;
+			waterXPositionSet.insert(terrainHeightVectorX);
+			xMax++;
+		}
+	}
+
 public:
 	enum BrushOperation {
 		BRUSHOPERATION_ADD,
 		BRUSHOPERATION_SUBTRACT,
 		BRUSHOPERATION_FLATTEN,
 		BRUSHOPERATION_DELETE,
-		BRUSHOPERATION_SMOOTH
+		BRUSHOPERATION_SMOOTH,
+		BRUSHOPERATION_WATER,
 	};
 
 	/**
@@ -98,7 +156,7 @@ public:
 	 */
 	static void applyBrushToTerrainModels(
 		BoundingBox& terrainBoundingBox, // TODO: constness
-		vector<Model*> terrainModels,
+		vector<Model*>& terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		Texture* brushTexture,
@@ -109,18 +167,19 @@ public:
 	);
 
 	/**
-	 * Get terrain models flatten height
+	 * Get terrain models height for e.g. flatten
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainModels terrain models vector
 	 * @param terrainHeightVector terrain height vector
-	 * @param flattenHeight flatten height
+	 * @param brushHeight brush height
 	 *
 	 */
-	static bool getTerrainModelsFlattenHeight(
+	static bool getTerrainModelsHeight(
 		BoundingBox& terrainBoundingBox,  // TODO: constness
-		vector<Model*> terrainModels,
+		vector<Model*>& terrainModels,
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
-		float& flattenHeight
+		float& brushHeight
 	);
+
 };

@@ -39,7 +39,7 @@ class tdme::engine::scene::Scene final
 	: public PrototypeProperties
 {
 private:
-	string applicationRoot;
+	string applicationRootPathName;
 	string pathName;
 	string fileName;
 	RotationOrder* rotationOrder { nullptr };
@@ -79,18 +79,18 @@ public:
 	~Scene();
 
 	/**
-	 * @return application root
+	 * @return application root path name
 	 */
-	inline const string& getApplicationRoot() {
-		return applicationRoot;
+	inline const string& getApplicationRootPathName() {
+		return applicationRootPathName;
 	}
 
 	/**
-	 * Set application root
-	 * @param gameRoot gameRoot
+	 * Set application root path name
+	 * @param applicationRootPathName application root path name
 	 */
-	inline void setApplicationRoot(const string& applicationRoot) {
-		this->applicationRoot = applicationRoot;
+	inline void setApplicationRootPathName(const string& applicationRootPathName) {
+		this->applicationRootPathName = applicationRootPathName;
 	}
 
 	/**

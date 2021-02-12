@@ -181,11 +181,18 @@ public:
 	static const string getRelativeResourcesFileName(const string& applicationRoot, const string& fileName);
 
 	/**
-	 * Get application root path
+	 * Get application root path name
 	 * @param fileName file name
-	 * @return application root path
+	 * @return application root path name
 	 */
-	static const string getApplicationRootPath(const string& fileName);
+	static const string getApplicationRootPathName(const string& fileName);
+
+	/**
+	 * Get application sub path name
+	 * @param fileName application sub path name
+	 * @return application sub path name
+	 */
+	static const string getApplicationSubPathName(const string& fileName);
 
 	/**
 	 * Get path of given file name

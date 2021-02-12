@@ -89,7 +89,7 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
-	scene.setApplicationRoot(Tools::getApplicationRootPath(pathName));
+	scene.setApplicationRootPathName(Tools::getApplicationRootPathName(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
 	scene.setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
 	scene.clearProperties();

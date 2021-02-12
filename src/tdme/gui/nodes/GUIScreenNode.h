@@ -61,7 +61,8 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class GUIParentNode;
 
 private:
-	string applicationRootPath;
+	string applicationRootPathName;
+	string applicationSubPathName;
 	GUI* gui { nullptr };
 	int nodeCounter;
 	int screenWidth;
@@ -89,10 +90,17 @@ private:
 public:
 
 	/**
-	 * @return application root path
+	 * @return application root path name
 	 */
-	inline const string& getApplicationRootPath() {
-		return applicationRootPath;
+	inline const string& getApplicationRootPathName() {
+		return applicationRootPathName;
+	}
+
+	/**
+	 * @return application sub folder path name
+	 */
+	inline const string& getApplicationSubPathName() {
+		return applicationSubPathName;
 	}
 
 	/**
@@ -155,7 +163,7 @@ protected:
 	/**
 	 * Constructor
 	 * @param applicationRootPath application root path
-	 * @param id id
+	 * @param applicationSubPathName application sub path name which is usually "engine" or "project"
 	 * @param flow flow
 	 * @param overflowX overflow x
 	 * @param overflowY overflow y
@@ -176,7 +184,8 @@ protected:
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
-		const string& applicationRootPath,
+		const string& applicationRootPathName,
+		const string& applicationSubPathName,
 		const string& id,
 		GUINode_Flow* flow,
 		GUIParentNode_Overflow* overflowX,

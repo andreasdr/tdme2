@@ -113,7 +113,8 @@ Model* Tools::defaultOBB = nullptr;
 
 string Tools::formatFloat(float value)
 {
-	string floatString = to_string(value).substr(0, floatString.length() - 3);
+
+	string floatString = to_string(value);
 	return floatString.substr(0, floatString.length() - 3);
 }
 
@@ -476,17 +477,46 @@ const string Tools::getRelativeResourcesFileName(const string& applicationRoot, 
 	return newFileName;
 }
 
-const string Tools::getApplicationRootPath(const string& fileName)
+const string Tools::getApplicationRootPathName(const string& fileName)
 {
 	auto newFileName = StringTools::replace(fileName, '\\', '/');
-	auto filesRootIdx = -1;
-	if (filesRootIdx == -1) {
-		filesRootIdx = fileName.rfind("/resources/");
-		if (filesRootIdx != -1) return StringTools::substring(fileName, 0, filesRootIdx);
+	auto applicationRootPathNameIdx = -1;
+	if (applicationRootPathNameIdx == -1) {
+		applicationRootPathNameIdx = fileName.rfind("/resources/");
+		if (applicationRootPathNameIdx != -1) return StringTools::substring(fileName, 0, applicationRootPathNameIdx);
 	}
-	if (filesRootIdx == -1) {
-		filesRootIdx = fileName.rfind("resources/");
-		if (filesRootIdx != -1) return StringTools::substring(fileName, 0, filesRootIdx);
+	if (applicationRootPathNameIdx == -1) {
+		applicationRootPathNameIdx = fileName.rfind("resources/");
+		if (applicationRootPathNameIdx != -1) return StringTools::substring(fileName, 0, applicationRootPathNameIdx);
+	}
+	return "";
+}
+
+const string Tools::getApplicationSubPathName(const string& fileName)
+{
+	auto newFileName = StringTools::replace(fileName, '\\', '/');
+	auto applicationSubPathNameIdx = -1;
+	if (applicationSubPathNameIdx == -1) {
+		applicationSubPathNameIdx = fileName.rfind("/resources/");
+		if (applicationSubPathNameIdx != -1) {
+			applicationSubPathNameIdx+= string("/resources/").size();
+			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			if (applicationSubPathName == "engine") return applicationSubPathName; else
+			if (applicationSubPathName == "project") return applicationSubPathName; else
+			if (applicationSubPathName == "installer") return applicationSubPathName; else
+				return "engine";
+		}
+	}
+	if (applicationSubPathNameIdx == -1) {
+		applicationSubPathNameIdx = fileName.rfind("resources/");
+		if (applicationSubPathNameIdx != -1) {
+			applicationSubPathNameIdx+= string("resources/").size();
+			auto applicationSubPathName = StringTools::substring(fileName, applicationSubPathNameIdx,  fileName.find("/", applicationSubPathNameIdx));
+			if (applicationSubPathName == "engine") return applicationSubPathName; else
+			if (applicationSubPathName == "project") return applicationSubPathName; else
+			if (applicationSubPathName == "installer") return applicationSubPathName; else
+				return "engine";
+		}
 	}
 	return "";
 }

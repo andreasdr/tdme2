@@ -30,9 +30,9 @@ const string& GUIImageButton::getName()
 	return NAME;
 }
 
-const string GUIImageButton::getTemplate(const string& pathName, const string& fileName)
+const string GUIImageButton::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"image-button.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"image-button.xml":fileName);
 }
 
 unordered_map<string, string> GUIImageButton::getAttributes(GUIScreenNode* screenNode)

@@ -1,0 +1,3 @@
+<layout alignment="vertical" width="{$width}" height="{$height}">
+	{__InnerXML__}
+</layout>

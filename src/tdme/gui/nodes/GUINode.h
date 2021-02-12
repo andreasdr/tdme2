@@ -66,6 +66,9 @@ class tdme::gui::nodes::GUINode
 	friend class GUILayoutNode;
 	friend class GUIParentNode;
 	friend class GUIScreenNode;
+	friend class GUITableNode;
+	friend class GUITableCellNode;
+	friend class GUITableRowNode;
 	friend class GUIHorizontalScrollbarInternalController;
 	friend class GUIVerticalScrollbarInternalController;
 	friend class GUIInputInternalController;

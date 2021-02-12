@@ -30,9 +30,9 @@ const string& GUIKnob::getName()
 	return NAME;
 }
 
-const string GUIKnob::getTemplate(const string& pathName, const string& fileName)
+const string GUIKnob::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"knob.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"knob.xml":fileName);
 }
 
 unordered_map<string, string> GUIKnob::getAttributes(GUIScreenNode* screenNode)

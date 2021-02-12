@@ -265,6 +265,9 @@ int GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstra
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STAR)) {
 		return value;
+	} else
+	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::TABLECELL)) {
+		return value;
 	}
 	return -1;
 }
@@ -1333,7 +1336,7 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 		backgroundTextureId = 0;
 	}
 	if (backgroundImage.length() > 0) {
-		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPath(), backgroundImage);
+		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPathName(), backgroundImage);
 		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
 	}
 }

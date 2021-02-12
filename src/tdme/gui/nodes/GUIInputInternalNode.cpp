@@ -63,7 +63,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPath(), font);
+	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
 	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? GUIColor() : GUIColor(colorDisabled);
 	this->text = text;

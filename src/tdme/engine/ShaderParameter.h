@@ -25,7 +25,7 @@ private:
 	 * @return value as string
 	 */
 	inline const string toString(float value) const {
-		string floatString = to_string(value).substr(0, floatString.length() - 3);
+		string floatString = to_string(value);
 		return floatString.substr(0, floatString.length() - 3);
 	}
 

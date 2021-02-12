@@ -40,12 +40,13 @@ public:
 
 	/**
 	 * Retrieve template from given path name and optional file name
-	 * @param pathName path name
+	 * @param applicationPathName application path name
+	 * @param applicationSubPathName sub path name which is usually "project" or "engine"
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return template
 	 */
-	virtual const string getTemplate(const string& pathName, const string& fileName = string()) = 0;
+	virtual const string getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName = string()) = 0;
 
 	/**
 	 * Get default attributes

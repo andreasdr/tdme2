@@ -488,7 +488,7 @@ void GUIImageNode::setSource(const string& source) {
 		texture = nullptr;
 	}
 	this->source = source;
-	this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPath(), source);
+	this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 }
 
@@ -540,6 +540,6 @@ void GUIImageNode::setMask(const string& mask) {
 		maskTexture = nullptr;
 	}
 	this->mask = mask;
-	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPath(), mask);
+	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), mask);
 	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, nullptr);
 }

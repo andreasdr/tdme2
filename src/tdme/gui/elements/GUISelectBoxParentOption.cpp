@@ -30,9 +30,9 @@ const string& GUISelectBoxParentOption::getName()
 	return NAME;
 }
 
-const string GUISelectBoxParentOption::getTemplate(const string& pathName, const string& fileName)
+const string GUISelectBoxParentOption::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/engine/gui/definitions", fileName.empty() == true?"selectbox-parent-option.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"selectbox-parent-option.xml":fileName);
 }
 
 unordered_map<string, string> GUISelectBoxParentOption::getAttributes(GUIScreenNode* screenNode)

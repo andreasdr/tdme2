@@ -122,6 +122,12 @@
 									<space width="5" />
 									<text font="resources/engine/fonts/Roboto_20.fnt" text="Smooth" width="70" height="auto"/>
 								</layout>
+								<space width="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<radiobutton id="brush_operation_water" name="brush_operation" value="water" width="20" height="auto" />
+									<space width="5" />
+									<text font="resources/engine/fonts/Roboto_20.fnt" text="Water" width="70" height="auto"/>
+								</layout>
 							</layout>
 							<space height="10" />
 							<layout width="auto" height="auto" alignment="horizontal" horizontal-align="center">

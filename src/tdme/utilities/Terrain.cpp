@@ -1,6 +1,8 @@
 #include <tdme/utilities/Terrain.h>
 
 #include <array>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -22,6 +24,8 @@
 #include <tdme/utilities/ModelTools.h>
 
 using std::array;
+using std::map;
+using std::set;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -279,15 +283,16 @@ inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& te
 
 void Terrain::applyBrushToTerrainModels(
 	BoundingBox& terrainBoundingBox,
-	vector<Model*> terrainModels,
+	vector<Model*>& terrainModels,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
 	Texture* brushTexture,
 	float brushScale,
 	float brushStrength,
 	BrushOperation brushOperation,
-	float flattenHeight
+	float brushHeight
 ) {
+	Console::println("Terrain::applyBrushToTerrainModels(): ");
 	// check if we have a texture
 	if (brushTexture == nullptr) return;
 	// check if we have a model
@@ -301,6 +306,65 @@ void Terrain::applyBrushToTerrainModels(
 	auto partitionsX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / PARTITION_SIZE));
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
+
+	// water
+	if (brushOperation == BRUSHOPERATION_WATER) {
+		auto brushPosition = brushCenterPosition;
+		auto terrainHeightVectorXCenter = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);
+		auto terrainHeightVectorZCenter = static_cast<int>((brushPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
+		map<int, set<int>> waterPositionSet;
+
+		Console::println("WATER: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(brushHeight));
+
+		//
+		determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorXCenter, terrainHeightVectorZCenter, brushHeight, waterPositionSet[terrainHeightVectorZCenter]);
+
+		//
+		{
+			auto zLast = 0;
+			auto zMin = -1;
+			while (true == true) {
+				auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
+				auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMin;
+				for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
+					if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight) == true) {
+						determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight, waterPositionSet[terrainHeightVectorZ]);
+					}
+				}
+				if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
+				zLast = zMin;
+				zMin--;
+			}
+		}
+
+		//
+		{
+			auto zLast = 0;
+			auto zMax = 1;
+			while (true == true) {
+				auto terrainHeightVectorZLast = terrainHeightVectorZCenter + zLast;
+				auto terrainHeightVectorZ = terrainHeightVectorZCenter + zMax;
+				for (auto& zLastWaterXPosition: waterPositionSet[terrainHeightVectorZLast]) {
+					if (determineWater(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight) == true) {
+						determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, zLastWaterXPosition, terrainHeightVectorZ, brushHeight, waterPositionSet[terrainHeightVectorZ]);
+					}
+				}
+				if (waterPositionSet[terrainHeightVectorZ].empty() == true) break;
+				zLast = zMax;
+				zMax++;
+			}
+		}
+
+		//
+		for (auto& mIt: waterPositionSet) {
+			Console::print(to_string(mIt.first) + ": ");
+			for (auto waterXPosition: mIt.second) Console::print(to_string(waterXPosition) + " ");
+			Console::println();
+		}
+		return;
+	}
+
+	// other operations
 	auto textureData = brushTexture->getTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
@@ -345,7 +409,7 @@ void Terrain::applyBrushToTerrainModels(
 					terrainVertexHeight-= appliedStrength;
 					break;
 				case BRUSHOPERATION_FLATTEN:
-					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + flattenHeight * Math::clamp(appliedStrength, 0.0f, 1.0f);
+					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + brushHeight * Math::clamp(appliedStrength, 0.0f, 1.0f);
 					break;
 				case BRUSHOPERATION_DELETE:
 					terrainVertexHeight = terrainVertexHeight * (1.0f - Math::clamp(appliedStrength, 0.0f, 1.0f)) + 0.0f * Math::clamp(appliedStrength, 0.0f, 1.0f);
@@ -600,12 +664,12 @@ void Terrain::applyBrushToTerrainModels(
 	}
 }
 
-bool Terrain::getTerrainModelsFlattenHeight(
+bool Terrain::getTerrainModelsHeight(
 	BoundingBox& terrainBoundingBox,
-	vector<Model*> terrainModels,
+	vector<Model*>& terrainModels,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
-	float& flattenHeight
+	float& brushHeight
 ) {
 	// check if we have a model
 	if (terrainModels.empty() == true) return false;
@@ -617,7 +681,7 @@ bool Terrain::getTerrainModelsFlattenHeight(
 	auto terrainHeightVectorZ = static_cast<int>((brushCenterPosition.getZ() - terrainBoundingBox.getMin().getZ()) / STEP_SIZE);
 	if (terrainHeightVectorX < 0 || terrainHeightVectorX >= terreinHeightVectorVerticesPerZ ||
 			terrainHeightVectorZ < 0 || terrainHeightVectorZ >= terreinHeightVectorVerticesPerZ) return false;
-	flattenHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];
+	brushHeight = terrainHeightVector[terrainHeightVectorZ * terreinHeightVectorVerticesPerZ + terrainHeightVectorX];
 
 	//
 	return true;

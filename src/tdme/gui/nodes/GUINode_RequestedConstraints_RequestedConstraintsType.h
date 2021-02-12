@@ -31,6 +31,7 @@ public:
 	static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
+	static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
 
 	/**
 	 * Public constructor

@@ -1,0 +1,5 @@
+<element border="1" on-initialize="{$id}.condition={$text-on}" id="{$id}" name="{$name}" disabled="{$disabled}" width="{$width}" height="{$height}" value="{$value}">
+	<image width="100%" height="100%" scale9="8" id="{$id}_background" src="resources/installer/gui/images/progressbar/progressbar_fill.png" effect-color-mul="#DCDCDC"/>
+    <image width="100%" height="100%" scale9="8" id="{$id}_bar" src="resources/installer/gui/images/progressbar/progressbar_fill.png" effect-color-mul="#B0B0FF"/>
+    <text show-on="true" width="100%" height="100%" font="resources/installer/gui/fonts/Roboto_20.fnt" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" id="{$id}_text" />
+</element>

@@ -267,7 +267,7 @@ const string PrototypeReader::getResourcePathName(const string& pathName, const 
 		 ),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
-	auto applicationRoot = Tools::getApplicationRootPath(pathName);
+	auto applicationRoot = Tools::getApplicationRootPathName(pathName);
 	auto modelRelativeFileName = Tools::getRelativeResourcesFileName(applicationRoot, modelFile);
 	return (applicationRoot.length() > 0 ? applicationRoot + "/" : "") + Tools::getPathName(modelRelativeFileName);
 }

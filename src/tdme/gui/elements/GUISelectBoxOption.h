@@ -32,7 +32,7 @@ private:
 
 public:
 	const string& getName() override;
-	const string getTemplate(const string& pathName, const string& fileName = string()) override;
+	const string getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName = string()) override;
 	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
