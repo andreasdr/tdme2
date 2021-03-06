@@ -137,20 +137,15 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 		SharedParticleSystemView* finalView;
 	};
 
-	this->particleSystemPath = new FileDialogPath(".");
-	this->modelPath = new FileDialogPath(".");
-	this->audioPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
-	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), &particleSystemPath, false);
+	this->prototypeSoundsSubScreenController = new PrototypeSoundsSubScreenController(view, view->getPopUps(), &audioPath);
 	this->prototypeDisplaySubScreenController = new PrototypeDisplaySubScreenController(this->prototypePhysicsSubScreenController->getView());
 }
 
 ParticleSystemScreenController::~ParticleSystemScreenController() {
-	delete particleSystemPath;
-	delete modelPath;
 	delete prototypeBaseSubScreenController;
 	delete prototypeDisplaySubScreenController;
 	delete prototypePhysicsSubScreenController;
@@ -178,12 +173,12 @@ GUIScreenNode* ParticleSystemScreenController::getScreenNode()
 
 FileDialogPath* ParticleSystemScreenController::getParticleSystemPath()
 {
-	return particleSystemPath;
+	return &particleSystemPath;
 }
 
 FileDialogPath* ParticleSystemScreenController::getModelPath()
 {
-	return modelPath;
+	return &modelPath;
 }
 
 void ParticleSystemScreenController::initialize()
@@ -476,7 +471,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				try {
 					particleSystem->getObjectParticleSystem()->setModelFile(opsModel->getController()->getValue().getString());
 				} catch (Exception& exception) {
-					view->getPopUpsViews()->getInfoDialogScreenController()->show("Error", "An error occurred: " + (string(exception.what())));
+					view->getPopUps()->getInfoDialogScreenController()->show("Error", "An error occurred: " + (string(exception.what())));
 				}
 			} else
 			if (v == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
@@ -942,9 +937,9 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 	{
 	public:
 		void performAction() override {
-			particleSystemScreenController->view->loadFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-			particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			particleSystemScreenController->view->loadFile(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			particleSystemScreenController->particleSystemPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -961,8 +956,8 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 	vector<string> extensions = {
 		"tps"
 	};
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		particleSystemPath->getPath(),
+	view->getPopUps()->getFileDialogScreenController()->show(
+		particleSystemPath.getPath(),
 		"Load from: ",
 		extensions,
 		view->getFileName(),
@@ -978,9 +973,9 @@ void ParticleSystemScreenController::onPrototypeSave()
 	public:
 		void performAction() override {
 			try {
-				particleSystemScreenController->view->saveFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-				particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-				particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				particleSystemScreenController->view->saveFile(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+				particleSystemScreenController->particleSystemPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+				particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
 				particleSystemScreenController->showErrorPopUp("Warning", (exception.what()));
 			}
@@ -1005,8 +1000,8 @@ void ParticleSystemScreenController::onPrototypeSave()
 	vector<string> extensions = {
 		"tps"
 	};
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		particleSystemPath->getPath(),
+	view->getPopUps()->getFileDialogScreenController()->show(
+		particleSystemPath.getPath(),
 		"Save to: ",
 		extensions,
 		fileName,
@@ -1032,7 +1027,7 @@ void ParticleSystemScreenController::loadParticleSystem(const string& pathName, 
 
 void ParticleSystemScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void ParticleSystemScreenController::onValueChanged(GUIElementNode* node)
@@ -1093,9 +1088,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			{
 			public:
 				void performAction() override {
-					particleSystemScreenController->opsModel->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					particleSystemScreenController->opsModel->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
 				/**
@@ -1110,8 +1105,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			};
 
 			vector<string> extensions = ModelReader::getModelExtensions();
-			view->getPopUpsViews()->getFileDialogScreenController()->show(
-				modelPath->getPath(),
+			view->getPopUps()->getFileDialogScreenController()->show(
+				modelPath.getPath(),
 				"Load from: ",
 				extensions,
 				opsModel->getController()->getValue().getString(),
@@ -1124,9 +1119,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			{
 			public:
 				void performAction() override {
-					particleSystemScreenController->ppsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					particleSystemScreenController->ppsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
 				/**
@@ -1141,8 +1136,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			};
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
-			view->getPopUpsViews()->getFileDialogScreenController()->show(
-				modelPath->getPath(),
+			view->getPopUps()->getFileDialogScreenController()->show(
+				modelPath.getPath(),
 				"Load from: ",
 				extensions,
 				ppsTexture->getController()->getValue().getString(),
@@ -1155,9 +1150,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			{
 			public:
 				void performAction() override {
-					particleSystemScreenController->ppsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					particleSystemScreenController->ppsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
 				/**
@@ -1172,8 +1167,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			};
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
-			view->getPopUpsViews()->getFileDialogScreenController()->show(
-				modelPath->getPath(),
+			view->getPopUps()->getFileDialogScreenController()->show(
+				modelPath.getPath(),
 				"Load from: ",
 				extensions,
 				ppsTransparencyTexture->getController()->getValue().getString(),
@@ -1189,9 +1184,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			{
 			public:
 				void performAction() override {
-					particleSystemScreenController->fpsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					particleSystemScreenController->fpsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
 				/**
@@ -1206,8 +1201,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			};
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
-			view->getPopUpsViews()->getFileDialogScreenController()->show(
-				modelPath->getPath(),
+			view->getPopUps()->getFileDialogScreenController()->show(
+				modelPath.getPath(),
 				"Load from: ",
 				extensions,
 				ppsTexture->getController()->getValue().getString(),
@@ -1220,9 +1215,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			{
 			public:
 				void performAction() override {
-					particleSystemScreenController->fpsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
-					particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-					particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					particleSystemScreenController->fpsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()));
+					particleSystemScreenController->modelPath.setPath(particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+					particleSystemScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
 				/**
@@ -1237,8 +1232,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListenerType typ
 			};
 
 			vector<string> extensions = TextureReader::getTextureExtensions();
-			view->getPopUpsViews()->getFileDialogScreenController()->show(
-				modelPath->getPath(),
+			view->getPopUps()->getFileDialogScreenController()->show(
+				modelPath.getPath(),
 				"Load from: ",
 				extensions,
 				ppsTransparencyTexture->getController()->getValue().getString(),

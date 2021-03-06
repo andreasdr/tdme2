@@ -15,6 +15,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -152,8 +153,8 @@ private:
 	GUIElementNode* statsMaterialCount { nullptr };
 	GUIElementNode* viewPort { nullptr };
 
-	FileDialogPath* modelPath { nullptr };
-	FileDialogPath* audioPath { nullptr };
+	FileDialogPath modelPath;
+	FileDialogPath audioPath;
 
 	/**
 	 * @return prototype lod level or nullptr

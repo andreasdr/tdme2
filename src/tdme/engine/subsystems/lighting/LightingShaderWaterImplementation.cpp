@@ -122,13 +122,13 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 	LightingShaderBaseImplementation::useProgram(engine, context);
 
 	//
-	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.25f);
-	renderer->setProgramUniformFloat(context, uniformTime, time / 10.0f);
+	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.50f);
+	renderer->setProgramUniformFloat(context, uniformTime, time);
 	renderer->setProgramUniformInteger(context, uniformWaterWaves, 4);
 	for (auto i = 0; i < 4; i++) {
 		renderer->setProgramUniformFloat(context, uniformWaterAmplitude[i], 0.5f / (i + 1));
 		renderer->setProgramUniformFloat(context, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformWaterSpeed[i], 1.0f + 1.0f * i);
+		renderer->setProgramUniformFloat(context, uniformWaterSpeed[i], 1.0f + 1.0f * i / 2.0f);
 		renderer->setProgramUniformFloatVec2(context, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;

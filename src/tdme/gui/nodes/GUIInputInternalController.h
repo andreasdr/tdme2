@@ -39,9 +39,17 @@ private:
 	int index;
 	int offset;
 	bool isDragging;
-	array<float, 2> dragPosition;
-	int64_t draggingTickLast;
+	array<int, 2> dragPosition;
 	MutableString value;
+
+	enum Type { TYPE_STRING, TYPE_FLOAT, TYPE_INT};
+	Type type { TYPE_STRING };
+	bool haveMin { false };
+	bool haveMax { false };
+	bool haveStep { false };
+	float min { 0.0f };
+	float max { 0.0f };
+	float step { 0.0f };
 
 	/**
 	 * Private constructor

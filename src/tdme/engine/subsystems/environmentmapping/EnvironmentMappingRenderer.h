@@ -27,7 +27,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::environmentmapping::EnvironmentMapping final
+class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer final
 {
 	friend class tdme::engine::EnvironmentMapping;
 
@@ -97,12 +97,12 @@ public:
 	 * @param width width
 	 * @param height height
 	 */
-	EnvironmentMapping(Engine* engine, int32_t width, int32_t height);
+	EnvironmentMappingRenderer(Engine* engine, int32_t width, int32_t height);
 
 	/**
 	 * Destructor
 	 */
-	~EnvironmentMapping();
+	~EnvironmentMappingRenderer();
 
 	/**
 	 * @return width

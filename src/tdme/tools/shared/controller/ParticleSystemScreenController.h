@@ -12,7 +12,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
@@ -159,9 +159,9 @@ private:
 	GUIElementNode* particleSystemRemoveButton { nullptr };
 	GUIElementNode* viewPort { nullptr };
 
-	FileDialogPath* particleSystemPath { nullptr };
-	FileDialogPath* modelPath { nullptr };
-	FileDialogPath* audioPath { nullptr };
+	FileDialogPath particleSystemPath;
+	FileDialogPath modelPath;
+	FileDialogPath audioPath;
 
 public:
 	/**

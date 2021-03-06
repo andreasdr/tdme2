@@ -4,7 +4,7 @@
 
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
@@ -16,6 +16,7 @@
 using std::string;
 
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::Engine;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Partition;
@@ -23,7 +24,6 @@ using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 EnvironmentMapping::EnvironmentMapping(const string& id, int width, int height, BoundingBox boundingBox)
 {
@@ -40,14 +40,14 @@ void EnvironmentMapping::setEngine(Engine* engine) {
 }
 
 void EnvironmentMapping::initialize() {
-	environmentMappingImplementation = new EnvironmentMappingImplementation(engine, width, height);
-	environmentMappingImplementation->setRenderPassMask(renderPassMask);
-	environmentMappingImplementation->setTimeRenderUpdateFrequency(timeRenderUpdateFrequency);
-	environmentMappingImplementation->initialize();
+	environmentMappingRenderer = new EnvironmentMappingRenderer(engine, width, height);
+	environmentMappingRenderer->setRenderPassMask(renderPassMask);
+	environmentMappingRenderer->setTimeRenderUpdateFrequency(timeRenderUpdateFrequency);
+	environmentMappingRenderer->initialize();
 
 }
 void EnvironmentMapping::dispose() {
-	environmentMappingImplementation->dispose();
+	environmentMappingRenderer->dispose();
 }
 
 void EnvironmentMapping::fromTransformations(const Transformations& transformations)

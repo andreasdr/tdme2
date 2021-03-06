@@ -82,8 +82,6 @@ using tdme::utilities::StringTools;
 SceneEditorScreenController::SceneEditorScreenController(SceneEditorView* view)
 {
 	this->view = view;
-	this->scenePath = new FileDialogPath(".");
-	this->modelPath = new FileDialogPath(".");
 }
 
 GUIScreenNode* SceneEditorScreenController::getScreenNode()
@@ -93,7 +91,7 @@ GUIScreenNode* SceneEditorScreenController::getScreenNode()
 
 FileDialogPath* SceneEditorScreenController::getMapPath()
 {
-	return scenePath;
+	return &scenePath;
 }
 
 void SceneEditorScreenController::initialize()
@@ -693,7 +691,7 @@ void SceneEditorScreenController::onSceneLoad()
 	public:
 		void performAction() override {
 			sceneEditorScreenController->view->loadScene(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			sceneEditorScreenController->scenePath->setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			sceneEditorScreenController->scenePath.setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -711,7 +709,7 @@ void SceneEditorScreenController::onSceneLoad()
 	vector<string> extensions = ModelReader::getModelExtensions();
 	extensions.push_back("tl");
 	view->getPopUps()->getFileDialogScreenController()->show(
-		scenePath->getPath(),
+		scenePath.getPath(),
 		"Load from: ",
 		extensions,
 		view->getFileName(),
@@ -727,7 +725,7 @@ void SceneEditorScreenController::onSceneSave()
 	public:
 		void performAction() override {
 			sceneEditorScreenController->view->saveScene(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
-			sceneEditorScreenController->scenePath->setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			sceneEditorScreenController->scenePath.setPath(sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -746,7 +744,7 @@ void SceneEditorScreenController::onSceneSave()
 		"tl",
 	};
 	view->getPopUps()->getFileDialogScreenController()->show(
-		scenePath->getPath(),
+		scenePath.getPath(),
 		"Save to: ",
 		extensions,
 		view->getFileName(),
@@ -1001,7 +999,7 @@ void SceneEditorScreenController::onMapSkyModelLoad() {
 				"/" +
 				sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			sceneEditorScreenController->modelPath->setPath(
+			sceneEditorScreenController->modelPath.setPath(
 				sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 			);
 			sceneEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -1020,7 +1018,7 @@ void SceneEditorScreenController::onMapSkyModelLoad() {
 
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUps()->getFileDialogScreenController()->show(
-		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath->getPath():Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
+		sceneSkyModel->getController()->getValue().getString().empty() == true?modelPath.getPath():Tools::getPathName(sceneSkyModel->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
 		Tools::getFileName(sceneSkyModel->getController()->getValue().getString()),

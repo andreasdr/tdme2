@@ -170,6 +170,35 @@ public:
 		return entities;
 	}
 
+	/**
+	 * Returns first found entity with given entity type
+	 * @param entityType entity type
+	 * @return entity
+	 */
+	inline Entity* getEntityByType(EntityType entityType) {
+		for (auto entity: entities) {
+			if (entity->getEntityType() == entityType) {
+				return entity;
+			}
+		}
+		return nullptr;
+	}
+
+	/**
+	 * Return entities with given entity type
+	 * @param entityType entity type
+	 * @return entities by type
+	 */
+	inline vector<Entity*> getEntitiesByType(EntityType entityType) {
+		vector<Entity*> entitiesByType;
+		for (auto entity: entities) {
+			if (entity->getEntityType() == entityType) {
+				entitiesByType.push_back(entity);
+			}
+		}
+		return entitiesByType;
+	}
+
 	// overridden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;

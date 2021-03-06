@@ -11,7 +11,7 @@
 #include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
-#include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -44,7 +44,7 @@ private:
 	PrototypeBaseSubScreenController* prototypeBaseSubScreenController { nullptr };
 	PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController { nullptr };
 	EnvironmentMappingView* view { nullptr };
-	FileDialogPath* modelPath { nullptr };
+	FileDialogPath modelPath;
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
 	GUIElementNode* generationRenderPasses { nullptr };

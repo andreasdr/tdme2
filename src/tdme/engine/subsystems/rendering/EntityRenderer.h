@@ -301,6 +301,11 @@ public:
 	void render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/**
+	 * Renders collected transparent faces
+	 */
+	void renderTransparentFaces();
+
+	/**
 	 * Render points particle system entities
 	 * @param renderPass render pass
 	 * @param pses points particle system entities

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -10,6 +15,11 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
+
+using std::map;
+using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
@@ -39,17 +49,44 @@ private:
 	TerrainEditorScreenController* terrainEditorScreenController { nullptr };
 	Prototype* prototype { nullptr };
 	bool initModelRequested { false };
+	bool initCameraRequested { true };
 	CameraInputHandler* cameraInputHandler { nullptr };
 	bool brushingEnabled { false };
 	Vector3 brushCenterPosition;
 
+	float skyDomeTranslation { 0.0f };
+
+	Prototype* skySpherePrototype { nullptr };
+	Prototype* skyDomePrototype { nullptr };
+	Prototype* skyPanoramaPrototype { nullptr };
+	Prototype* spherePrototype { nullptr };
+
 	BoundingBox terrainBoundingBox;
 	vector<Model*> terrainModels;
+
+	struct Water {
+		Vector3 waterReflectionEnvironmentMappingPosition;
+		vector<Model*> waterModels;
+	};
+	map<int, Water> waters;
+
+	vector<int> partitionFoliageIdx;
+	unordered_set<int> temporaryPartitionIdxs;
 
 	/**
 	 * Init entity
 	 */
 	void initModel();
+
+	/**
+	 * Init sky
+	 */
+	void initSky();
+
+	/**
+	 * Update sky
+	 */
+	void updateSky();
 
 public:
 	/**
@@ -64,9 +101,9 @@ public:
 	~SharedTerrainEditorView();
 
 	/**
-	 * @return pop up views
+	 * @return pop ups
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * @return prototype
@@ -85,6 +122,65 @@ public:
 	 * @param terrainModels terrain models
 	 */
 	void setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels);
+
+	/**
+	 * Unset all water
+	 */
+	void unsetWater();
+
+	/**
+	 * Remove water
+	 * @param waterIdx water index
+	 */
+	void removeWater(int waterIdx);
+
+	/**
+	 * Add water
+	 * @param waterIdx water index
+	 * @param waterModels water models
+	 * @param waterReflectionEnvironmentMappingPosition water reflection environment mapping position
+	 */
+	void addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition);
+
+	/**
+	 * Add temporary foliage
+	 * @param newFoliageMaps new foliage maps
+	 */
+	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+
+	/**
+	 * Update temporary foliage
+	 */
+	void updateTemporaryFoliage(const unordered_set<int>& partitionIdxSet);
+
+	/**
+	 * Recreate temporary foliage at given partition indices
+	 * @param partitionIdxSet partition indices set
+	 */
+	inline void recreateTemporaryFoliage(const unordered_set<int>& partitionIdxSet) {
+		for (auto partitionIdx: partitionIdxSet) recreateTemporaryFoliage(partitionIdx);
+	}
+
+	/**
+	 * Recreate temporary foliage at given partition index
+	 * @param partitionIdx partition index
+	 */
+	void recreateTemporaryFoliage(int partitionIdx);
+
+	/**
+	 * Add foliage using render groups at given partition indices
+	 */
+	void addFoliage();
+
+	/**
+	 * Recreate foliage using render groups at given partition indices that has been transformed to temporary foliage
+	 */
+	void recreateFoliage();
+
+	/**
+	 * Reset camera
+	 */
+	void resetCamera();
 
 	/**
 	 * Init GUI elements

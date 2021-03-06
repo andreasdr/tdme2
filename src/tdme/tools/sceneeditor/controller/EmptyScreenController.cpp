@@ -62,7 +62,7 @@ EmptyScreenController::EmptyScreenController(EmptyView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
 }
 
 GUIScreenNode* EmptyScreenController::getScreenNode()
@@ -121,7 +121,7 @@ void EmptyScreenController::onQuit()
 
 void EmptyScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void EmptyScreenController::onValueChanged(GUIElementNode* node)

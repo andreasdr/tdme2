@@ -26,7 +26,7 @@ public:
 	 * @return copyright
 	 */
 	inline static string getCopyright() {
-		return "Programmed 2012-2021 by Andreas Drewke, drewke.net. Please see the license @ https://github.com/andreasdr/tdme2/blob/master/LICENSE";
+		return "Developed 2012-2021 by Andreas Drewke, Dominik Hepp, Mathias Lenz, Kolja Gumpert, drewke.net, mindty.com, github.com/mahula. Please see the license @ https://github.com/andreasdr/tdme2/blob/master/LICENSE";
 	}
 
 };

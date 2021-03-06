@@ -350,7 +350,7 @@ SRCS = \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
-	src/tdme/engine/subsystems/environmentmapping/EnvironmentMapping.cpp \
+	src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \

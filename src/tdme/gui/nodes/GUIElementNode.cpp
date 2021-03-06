@@ -326,6 +326,19 @@ bool GUIElementNode::hasOption(const string& option) {
 	return find(begin(options), end(options), option) != end(options);
 }
 
+const string GUIElementNode::getOptionValue(const string& option) {
+	StringTokenizer t;
+	for (auto& v: options) {
+		t.tokenize(v, "=");
+		if (t.hasMoreTokens() == false) continue;
+		auto optionName = StringTools::trim(t.nextToken());
+		if (optionName != option) continue;
+		if (t.hasMoreTokens() == false) continue;
+		return StringTools::trim(t.nextToken());
+	}
+	return string();
+}
+
 GUINodeConditions& GUIElementNode::getActiveConditions()
 {
 	return activeConditions;

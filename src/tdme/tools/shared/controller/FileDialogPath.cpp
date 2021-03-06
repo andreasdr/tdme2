@@ -3,9 +3,9 @@
 
 using tdme::tools::shared::controller::FileDialogPath;
 
-FileDialogPath::FileDialogPath(const string& path)
+FileDialogPath::FileDialogPath()
 {
-	this->path = path;
+	this->path = ".";
 }
 
 const string& FileDialogPath::getPath()

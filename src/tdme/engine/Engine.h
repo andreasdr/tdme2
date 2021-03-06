@@ -75,6 +75,7 @@ using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
+using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -98,7 +99,6 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
 
 /**
  * Engine main class
@@ -123,7 +123,7 @@ class tdme::engine::Engine final
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class tdme::application::Application;
-	friend class tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
+	friend class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -212,7 +212,7 @@ private:
 		vector<LinesObject3D*> linesObjects;
 		vector<Object3DRenderGroup*> objectRenderGroups;
 		vector<EntityHierarchy*> entityHierarchies;
-		vector<EnvironmentMappingEntity*> environmentMappingEntities;
+		vector<EnvironmentMapping*> environmentMappingEntities;
 		vector<Object3D*> ezrObjects;
 	};
 
@@ -852,8 +852,9 @@ public:
 	/**
 	 * Removes an entity
 	 * @param id id
+	 * @return if entity was found and removed
 	 */
-	void removeEntity(const string& id);
+	bool removeEntity(const string& id);
 
 	/**
 	 * Removes all entities and caches

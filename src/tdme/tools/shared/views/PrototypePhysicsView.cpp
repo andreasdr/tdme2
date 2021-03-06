@@ -84,7 +84,7 @@ PrototypePhysicsView::PrototypePhysicsView(PrototypePhysicsSubScreenController* 
 PrototypePhysicsView::~PrototypePhysicsView() {
 }
 
-PopUps* PrototypePhysicsView::getPopUpsViews()
+PopUps* PrototypePhysicsView::getPopUps()
 {
 	return popUps;
 }

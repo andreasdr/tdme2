@@ -12,6 +12,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 
 using std::array;

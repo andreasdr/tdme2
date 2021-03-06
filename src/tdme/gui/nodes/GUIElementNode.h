@@ -218,6 +218,11 @@ public:
 	bool hasOption(const string& option);
 
 	/**
+	 * @returns an option value, like <... options="type=float,min=0.0,max=1.0,step=0.1" /> or empty string if option does not exist
+	 */
+	const string getOptionValue(const string& option);
+
+	/**
 	 * @return active conditions
 	 */
 	GUINodeConditions& getActiveConditions();

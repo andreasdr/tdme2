@@ -54,9 +54,9 @@ public:
 	~TriggerView();
 
 	/**
-	 * @return pop up views
+	 * @return pop ups
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * @return prototype

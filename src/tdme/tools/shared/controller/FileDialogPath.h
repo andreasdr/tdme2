@@ -22,7 +22,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	FileDialogPath(const string& path);
+	FileDialogPath();
 
 	/**
 	 * @return path

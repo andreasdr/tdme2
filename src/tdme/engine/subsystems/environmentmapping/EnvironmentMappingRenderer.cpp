@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 
 #include <vector>
 
@@ -24,7 +24,7 @@
 
 using std::vector;
 
-using tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -45,7 +45,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Time;
 
-EnvironmentMapping::EnvironmentMapping(Engine* engine, int32_t width, int32_t height)
+EnvironmentMappingRenderer::EnvironmentMappingRenderer(Engine* engine, int32_t width, int32_t height)
 {
 	this->engine = engine;
 	this->width = width;
@@ -54,11 +54,11 @@ EnvironmentMapping::EnvironmentMapping(Engine* engine, int32_t width, int32_t he
 	camera->setCameraMode(Camera::CAMERAMODE_NONE);
 }
 
-EnvironmentMapping::~EnvironmentMapping() {
+EnvironmentMappingRenderer::~EnvironmentMappingRenderer() {
 	delete camera;
 }
 
-void EnvironmentMapping::initialize()
+void EnvironmentMappingRenderer::initialize()
 {
 	cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
 	for (auto i = 0; i < frameBuffers.size(); i++) {
@@ -67,11 +67,11 @@ void EnvironmentMapping::initialize()
 	}
 }
 
-void EnvironmentMapping::reshape(int32_t width, int32_t height)
+void EnvironmentMappingRenderer::reshape(int32_t width, int32_t height)
 {
 }
 
-void EnvironmentMapping::dispose()
+void EnvironmentMappingRenderer::dispose()
 {
 	for (auto i = 0; i < frameBuffers.size(); i++) {
 		frameBuffers[i]->dispose();
@@ -80,7 +80,7 @@ void EnvironmentMapping::dispose()
 	engine->renderer->disposeTexture(cubeMapTextureId);
 }
 
-void EnvironmentMapping::render(const Vector3& position)
+void EnvironmentMappingRenderer::render(const Vector3& position)
 {
 	auto now = Time::getCurrentMillis();
 	if (timeRenderLast != -1LL && now - timeRenderLast < timeRenderUpdateFrequency) return;

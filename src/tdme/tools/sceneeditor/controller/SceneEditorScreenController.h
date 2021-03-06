@@ -19,6 +19,7 @@
 #include <tdme/tools/sceneeditor/controller/fwd-tdme.h>
 #include <tdme/tools/sceneeditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
+#include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
@@ -126,8 +127,8 @@ private:
 	array<GUIElementNode*, 4> ligthsSpotDirectionCompute;
 	array<GUIElementNode*, 4> lightsEnabled;
 	GUIElementNode* viewPort { nullptr };
-	FileDialogPath* scenePath { nullptr };
-	FileDialogPath* modelPath { nullptr };
+	FileDialogPath scenePath;
+	FileDialogPath modelPath;
 
 public:
 	/**

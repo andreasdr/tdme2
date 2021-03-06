@@ -604,12 +604,83 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 		auto terrain = prototype->getTerrain();
 		Value jTerrain;
 		jTerrain.SetObject();
-		jTerrain.AddMember("w", Value(terrain->getWidth()), jAllocator);
-		jTerrain.AddMember("d", Value(terrain->getDepth()), jAllocator);
-		Value jTerrainValues;
-		jTerrainValues.SetArray();
-		for (auto& v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
-		jTerrain.AddMember("v", jTerrainValues, jAllocator);
+		{
+			jTerrain.AddMember("w", Value(terrain->getWidth()), jAllocator);
+			jTerrain.AddMember("d", Value(terrain->getDepth()), jAllocator);
+			Value jTerrainValues;
+			jTerrainValues.SetArray();
+			for (auto& v: terrain->getHeightVector()) jTerrainValues.PushBack(Value(v), jAllocator);
+			jTerrain.AddMember("t", jTerrainValues, jAllocator);
+		}
+		{
+			Value jWaterPositionMaps;
+			jWaterPositionMaps.SetArray();
+			auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
+			for (auto i: waterPositionMapsIndices) {
+				const auto& waterPositionMap = terrain->getWaterPositionMap(i);
+				Value jWaterPositionMap;
+				jWaterPositionMap.SetObject();
+				jWaterPositionMap.AddMember("h", Value(terrain->getWaterPositionMapHeight(i)), jAllocator);
+				Value jWaterPositionMapWater;
+				jWaterPositionMapWater.SetObject();
+				for (auto& waterPositionMapIt: waterPositionMap) {
+					auto z = waterPositionMapIt.first;
+					Value jWaterPositionMapWaterXArray;
+					jWaterPositionMapWaterXArray.SetArray();
+					for (auto x: waterPositionMapIt.second) {
+						jWaterPositionMapWaterXArray.PushBack(Value(x), jAllocator);
+					}
+					jWaterPositionMapWater.AddMember(Value(to_string(z).c_str(), jAllocator), jWaterPositionMapWaterXArray, jAllocator);
+				}
+				jWaterPositionMap.AddMember("w", jWaterPositionMapWater, jAllocator);
+				jWaterPositionMaps.PushBack(jWaterPositionMap, jAllocator);
+			}
+			jTerrain.AddMember("W", jWaterPositionMaps, jAllocator);
+		}
+		{
+			Value jFoliage;
+			jFoliage.SetObject();
+			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+			auto foliagePrototypeIndices = terrain->getFoliagePrototypeIndices();
+			for (auto foliagePrototypeIdx: foliagePrototypeIndices) {
+				auto foliagePrototype = terrain->getFoliagePrototype(foliagePrototypeIdx);
+				if (foliagePrototype == nullptr) continue;
+				Value jFoliagePrototype;
+				jFoliagePrototype.SetObject();
+				jFoliagePrototype.AddMember("f", Value(foliagePrototype->getFileName(), jAllocator), jAllocator);
+
+				//
+				Value jFoliagePrototypePartitions;
+				jFoliagePrototypePartitions.SetArray();
+
+				//
+				for (auto& foliagePrototypeMapPartition: foliageMaps) {
+					auto& foliagePrototypePartitionTransformationsVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
+					Value jFoliagePrototypePartitionTransformations;
+					jFoliagePrototypePartitionTransformations.SetArray();
+					for (auto& transformations: foliagePrototypePartitionTransformationsVector) {
+						Value jFoliagePrototypeTransformations;
+						jFoliagePrototypeTransformations.SetObject();
+						jFoliagePrototypeTransformations.AddMember("tx", Value(transformations.getTranslation().getX()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("ty", Value(transformations.getTranslation().getY()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("tz", Value(transformations.getTranslation().getZ()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("sx", Value(transformations.getScale().getX()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("sy", Value(transformations.getScale().getY()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("sz", Value(transformations.getScale().getZ()), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("rx", Value(transformations.getRotationAngle(0)), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("ry", Value(transformations.getRotationAngle(1)), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("rz", Value(transformations.getRotationAngle(2)), jAllocator);
+						jFoliagePrototypePartitionTransformations.PushBack(jFoliagePrototypeTransformations, jAllocator);
+					}
+					jFoliagePrototypePartitions.PushBack(jFoliagePrototypePartitionTransformations, jAllocator);
+				}
+				jFoliagePrototype.AddMember("t", jFoliagePrototypePartitions, jAllocator);
+
+				//
+				jFoliage.AddMember(Value(to_string(foliagePrototypeIdx).c_str(), jAllocator), jFoliagePrototype, jAllocator);
+			}
+			jTerrain.AddMember("f", jFoliage, jAllocator);
+		}
 		jEntityRoot.AddMember("t", jTerrain, jAllocator);
 	}
 }

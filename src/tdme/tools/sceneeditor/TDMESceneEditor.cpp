@@ -118,9 +118,10 @@ void TDMESceneEditor::quit() {
 }
 
 void TDMESceneEditor::display() {
+	if (view != nullptr) view->display();
 	engine->display();
-	if (view != nullptr)
-		view->display();
+	engine->getGUI()->handleEvents();
+	engine->getGUI()->render();
 	if (quitRequested == true) {
 		dispose();
 		Application::exit(0);

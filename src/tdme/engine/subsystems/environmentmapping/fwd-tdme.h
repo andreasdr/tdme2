@@ -5,7 +5,7 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace environmentmapping {
-	class EnvironmentMapping;
+	class EnvironmentMappingRenderer;
 }  // namespace environmentmapping
 }  // namespace subsystems
 }  // namespace engine

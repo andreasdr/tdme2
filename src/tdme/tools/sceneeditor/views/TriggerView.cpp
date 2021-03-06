@@ -68,7 +68,7 @@ TriggerView::~TriggerView() {
 	delete prototypePhysicsView;
 }
 
-PopUps* TriggerView::getPopUpsViews()
+PopUps* TriggerView::getPopUps()
 {
 	return popUps;
 }
@@ -113,8 +113,6 @@ void TriggerView::display()
 
 	// rendering
 	prototypePhysicsView->display(prototype);
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 }
 
 void TriggerView::updateGUIElements()

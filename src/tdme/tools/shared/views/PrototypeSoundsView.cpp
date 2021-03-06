@@ -27,7 +27,7 @@ PrototypeSoundsView::PrototypeSoundsView(PrototypeSoundsSubScreenController* pro
 	this->popUps = popUps;
 }
 
-PopUps* PrototypeSoundsView::getPopUpsViews() {
+PopUps* PrototypeSoundsView::getPopUps() {
 	return popUps;
 }
 

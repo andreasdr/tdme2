@@ -81,6 +81,8 @@ private:
 	EntityShaderParameters shaderParameters;
 	EntityShaderParameters distanceShaderParameters;
 
+	bool optimizeModels;
+
 	/**
 	 * Compute bounding box
 	 */
@@ -132,6 +134,7 @@ public:
 	 * @param modelLOD3MinDistance model LOD 3 min distance
 	 * @param modelLOD2ReduceBy model LOD 2 reduce by factor
 	 * @param modelLOD3ReduceBy model LOD 3 reduce by factor
+	 * @param optimizeModels optimize models
 	 */
 	Object3DRenderGroup(
 		const string& id,
@@ -139,7 +142,8 @@ public:
 		float modelLOD2MinDistance = 25.0f,
 		float modelLOD3MinDistance = 50.0f,
 		int modelLOD2ReduceBy = 4,
-		int modelLOD3ReduceBy = 16
+		int modelLOD3ReduceBy = 16,
+		bool optimizeModels = true
 	);
 
 	/**

@@ -52,7 +52,8 @@ Object3DRenderGroup::Object3DRenderGroup(
 	float modelLOD2MinDistance,
 	float modelLOD3MinDistance,
 	int modelLOD2ReduceBy,
-	int modelLOD3ReduceBy
+	int modelLOD3ReduceBy,
+	bool optimizeModels
 ):
 	id(id)
 {
@@ -69,6 +70,7 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->lodReduceBy[2] = modelLOD3ReduceBy;
 	this->modelLOD2MinDistance = modelLOD2MinDistance;
 	this->modelLOD3MinDistance = modelLOD3MinDistance;
+	this->optimizeModels = optimizeModels;
 }
 
 Object3DRenderGroup::~Object3DRenderGroup() {
@@ -324,8 +326,10 @@ void Object3DRenderGroup::updateRenderGroup() {
 	}
 
 	// optimize models
-	for (auto i = 0; i < combinedModels.size(); i++) {
-		combinedModels[i] = ModelTools::optimizeModel(combinedModels[i]);
+	if (optimizeModels == true) {
+		for (auto i = 0; i < combinedModels.size(); i++) {
+			combinedModels[i] = ModelTools::optimizeModel(combinedModels[i]);
+		}
 	}
 
 	if (combinedModels.size() == 1) {
@@ -382,6 +386,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 	//
 	updateBoundingBox();
+	update();
 }
 
 void Object3DRenderGroup::addObject(Model* model, const Transformations& transformations) {

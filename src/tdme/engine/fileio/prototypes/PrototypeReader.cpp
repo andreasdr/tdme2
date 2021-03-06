@@ -27,6 +27,7 @@
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -36,6 +37,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -68,6 +70,7 @@ using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
+using tdme::engine::Rotation;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -77,6 +80,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
+using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
 
@@ -246,15 +250,91 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	//
 	if (prototype->getModel() != nullptr) ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
 
+	//
 	if (prototype->getType() == Prototype_Type::TERRAIN) {
 		auto terrain = prototype->getTerrain();
 		Value& jTerrain = jEntityRoot["t"];
-		terrain->setWidth(jTerrain["w"].GetFloat());
-		terrain->setDepth(jTerrain["d"].GetFloat());
-		Value jTerrainValues = jTerrain["v"].GetArray(); // TODO: how to avoid this copy???
-		for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
+		{
+			terrain->setWidth(jTerrain["w"].GetFloat());
+			terrain->setDepth(jTerrain["d"].GetFloat());
+			Value jTerrainValues = jTerrain["t"].GetArray(); // TODO: how to avoid this copy???
+			for (auto i = 0; i < jTerrainValues.Size(); i++) terrain->getHeightVector().push_back(jTerrainValues[i].GetFloat());
+		}
+		{
+			auto jWaterPositionMapsArray = jTerrain["W"].GetArray();
+			for (auto i = 0; i < jWaterPositionMapsArray.Size(); i++) {
+				auto waterPositionMapIdx = terrain->allocateWaterPositionMapIdx();
+				auto& jWaterPositionMap = jWaterPositionMapsArray[i];
+				auto& jWaterPositionMapData = jWaterPositionMap["w"];
+				terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
+				for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
+					auto z = Integer::parseInt(jWaterPositionMapDataIt->name.GetString());
+					auto xArray = jWaterPositionMapDataIt->value.GetArray();
+					for (auto j = 0; j < xArray.Size(); j++) {
+						auto x = xArray[j].GetFloat();
+						terrain->getWaterPositionMap(waterPositionMapIdx)[z].insert(x);
+					}
+				}
+			}
+		}
+		{
+			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+			auto& jFoliage = jTerrain["f"];
+			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
+				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
+				auto jFoliagePrototypePartitions = jFoliagePrototype["t"].GetArray();
+
+
+				//
+				Prototype* foliagePrototype = nullptr;
+				try {
+					auto foliagePrototypeFileName = jFoliagePrototype["f"].GetString();
+					foliagePrototype = PrototypeReader::read(
+						getResourcePathName(pathName, foliagePrototypeFileName),
+						FileSystem::getInstance()->getFileName(foliagePrototypeFileName)
+					);
+				} catch (Exception& exception) {
+					Console::println(string("PrototypeReader::read(): An error occurred: ") + exception.what());
+					continue;
+				}
+
+				//
+				auto foliagePrototypeIndex = prototype->getTerrain()->getFoliagePrototypeIndex(foliagePrototype);
+
+				//
+				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {
+					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
+					if (foliagePrototypePartitionIdx >= foliageMaps.size()) foliageMaps.push_back(unordered_map<int, vector<Transformations>>());
+					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
+					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
+						Value& jFoliagePrototypeTransformations = jFoliagePrototypePartitionTransformations[jFoliagePrototypePartitionTransformationsIdx];
+						Transformations foliagePrototypeTransformations;
+						foliagePrototypeTransformations.setTranslation(
+							Vector3(
+								jFoliagePrototypeTransformations["tx"].GetFloat(),
+								jFoliagePrototypeTransformations["ty"].GetFloat(),
+								jFoliagePrototypeTransformations["tz"].GetFloat()
+							)
+						);
+						foliagePrototypeTransformations.addRotation(Rotation::Z_AXIS, jFoliagePrototypeTransformations["rz"].GetFloat());
+						foliagePrototypeTransformations.addRotation(Rotation::Y_AXIS, jFoliagePrototypeTransformations["ry"].GetFloat());
+						foliagePrototypeTransformations.addRotation(Rotation::X_AXIS, jFoliagePrototypeTransformations["rx"].GetFloat());
+						foliagePrototypeTransformations.setScale(
+							Vector3(
+								jFoliagePrototypeTransformations["sx"].GetFloat(),
+								jFoliagePrototypeTransformations["sy"].GetFloat(),
+								jFoliagePrototypeTransformations["sz"].GetFloat()
+							)
+						);
+						foliagePrototypeTransformations.update();
+						foliagePrototypePartitionTransformations.push_back(foliagePrototypeTransformations);
+					}
+				}
+			}
+		}
 	}
 
+	//
 	return prototype;
 }
 

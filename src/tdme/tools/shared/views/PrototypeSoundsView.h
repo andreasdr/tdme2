@@ -40,9 +40,9 @@ public:
 	PrototypeSoundsView(PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController, PopUps* popUps);
 
 	/**
-	 * @return pop ups view
+	 * @return pop ups
 	 */
-	PopUps* getPopUpsViews();
+	PopUps* getPopUps();
 
 	/**
 	 * Unset sounds

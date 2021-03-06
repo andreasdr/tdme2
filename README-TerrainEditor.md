@@ -13,9 +13,13 @@
       - load a predefined or user generated texture as brush, whereas the rgb color space is used as strength base
       - set up the texture scale
       - set up the strength which will be multiplied with strength base derived from texture rgb color space
-      - TODO: water brush that works similar to flatten
-    - use foliage brushes
-      - this is WIP
+      - foliage gets updated after terrain height change
+    - create water meshes with a auto fill like algorithm at grabbed brush terrain height
+    - use a brush to add or remove foliage with predefined or user generated textures
+      - operations are add, subtract #wip
+      - load a predefined or user generated texture as brush, whereas the rgb color space is used as density base
+      - set up the texture scale
+      - set up the density which will be multiplied with density base derived from texture rgb color space
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)

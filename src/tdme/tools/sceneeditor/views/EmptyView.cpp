@@ -64,7 +64,7 @@ EmptyView::~EmptyView() {
 	delete cameraRotationInputHandler;
 }
 
-PopUps* EmptyView::getPopUpsViews()
+PopUps* EmptyView::getPopUps()
 {
 	return popUps;
 }
@@ -128,10 +128,6 @@ void EmptyView::display()
 	viewPortWidth = (int)((float)viewPortWidth * xScale);
 	viewPortHeight = (int)((float)viewPortHeight * yScale);
 	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
-
-	// rendering
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 }
 
 void EmptyView::updateGUIElements()

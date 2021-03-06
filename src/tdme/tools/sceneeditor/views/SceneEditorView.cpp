@@ -716,10 +716,6 @@ void SceneEditorView::display()
 
 	//
 	updateSkyPosition();
-
-	// rendering
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 }
 
 void SceneEditorView::selectEntities(const vector<string>& entityIds)

@@ -228,12 +228,12 @@ void PrototypeSoundsSubScreenController::onSoundLoad(int soundIdx) {
 		}
 		void performAction() override {
 			prototypeSoundsSubScreenController->soundsSoundFile[soundIdx]->getController()->setValue(
-				prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+				prototypeSoundsSubScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName() +
 				"/" +
-				prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				prototypeSoundsSubScreenController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			prototypeSoundsSubScreenController->audioPath->setPath(prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			prototypeSoundsSubScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+			prototypeSoundsSubScreenController->audioPath->setPath(prototypeSoundsSubScreenController->getView()->getPopUps()->getFileDialogScreenController()->getPathName());
+			prototypeSoundsSubScreenController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 	private:
 		PrototypeSoundsSubScreenController* prototypeSoundsSubScreenController;
@@ -241,7 +241,7 @@ void PrototypeSoundsSubScreenController::onSoundLoad(int soundIdx) {
 	};
 
 	vector<string> extensions = {{"ogg"}};
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		soundsSoundFile[soundIdx]->getController()->getValue().getString().length() > 0?Tools::getPathName(soundsSoundFile[soundIdx]->getController()->getValue().getString()):audioPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -282,7 +282,7 @@ void PrototypeSoundsSubScreenController::onSoundApply(int soundIdx, Prototype* p
 
 void PrototypeSoundsSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void PrototypeSoundsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* prototype) {

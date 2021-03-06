@@ -7,7 +7,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
@@ -20,6 +20,7 @@ using std::string;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -27,7 +28,6 @@ using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 /**
  * Environment mapping entity
@@ -44,7 +44,7 @@ private:
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_NONE };
-	EnvironmentMappingImplementation* environmentMappingImplementation { nullptr };
+	EnvironmentMappingRenderer* environmentMappingRenderer { nullptr };
 	bool enabled { true };
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
@@ -73,7 +73,7 @@ private:
 	inline void render() {
 		Vector3 translation;
 		getTransformationsMatrix().getTranslation(translation);
-		environmentMappingImplementation->render(translation);
+		environmentMappingRenderer->render(translation);
 	}
 
 public:
@@ -261,7 +261,7 @@ public:
 	 */
 	inline void setRenderPassMask(int32_t renderPassMask) {
 		this->renderPassMask = renderPassMask;
-		if (environmentMappingImplementation != nullptr) environmentMappingImplementation->setRenderPassMask(renderPassMask);
+		if (environmentMappingRenderer != nullptr) environmentMappingRenderer->setRenderPassMask(renderPassMask);
 	}
 
 	/**
@@ -277,7 +277,7 @@ public:
 	 */
 	inline void setTimeRenderUpdateFrequency(int64_t frequency) {
 		this->timeRenderUpdateFrequency = frequency;
-		if (environmentMappingImplementation != nullptr) environmentMappingImplementation->setTimeRenderUpdateFrequency(frequency);
+		if (environmentMappingRenderer != nullptr) environmentMappingRenderer->setTimeRenderUpdateFrequency(frequency);
 	}
 
 	/**
@@ -286,16 +286,16 @@ public:
 	 * @return frame buffer of given index
 	 */
 	inline FrameBuffer* getFrameBuffer(int idx) {
-		if (environmentMappingImplementation == nullptr) return nullptr;
-		return environmentMappingImplementation->getFrameBuffer(idx);
+		if (environmentMappingRenderer == nullptr) return nullptr;
+		return environmentMappingRenderer->getFrameBuffer(idx);
 	}
 
 	/**
 	 * @return cube map texture id
 	 */
 	inline int32_t getCubeMapTextureId() {
-		if (environmentMappingImplementation == nullptr) return 0;
-		return environmentMappingImplementation->getCubeMapTextureId();
+		if (environmentMappingRenderer == nullptr) return 0;
+		return environmentMappingRenderer->getCubeMapTextureId();
 	}
 
 };

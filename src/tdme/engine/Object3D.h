@@ -75,6 +75,8 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	string reflectionEnvironmentMappingId;
+	bool reflectionEnvironmentMappingPositionSet { false };
+	Vector3 reflectionEnvironmentMappingPosition;
 	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
 	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
@@ -356,6 +358,37 @@ public:
 	 */
 	inline void setReflectionEnvironmentMappingId(const string& reflectionEnvironmentMappingId) {
 		this->reflectionEnvironmentMappingId = reflectionEnvironmentMappingId;
+	}
+
+	/**
+	 * @return if object3d has a reflection environment mapping position
+	 */
+	inline bool hasReflectionEnvironmentMappingPosition() {
+		return reflectionEnvironmentMappingPositionSet;
+	}
+
+	/**
+	 * @return reflection environment mapping position
+	 */
+	inline const Vector3& getReflectionEnvironmentMappingPosition() {
+		return reflectionEnvironmentMappingPosition;
+	}
+
+	/**
+	 * Set reflection environment mapping position
+	 * @param reflectionEnvironmentMappingPosition reflection environment mapping position
+	 */
+	inline void setReflectionEnvironmentMappingPosition(const Vector3& reflectionEnvironmentMappingPosition) {
+		this->reflectionEnvironmentMappingPositionSet = true;
+		this->reflectionEnvironmentMappingPosition = reflectionEnvironmentMappingPosition;
+	}
+
+	/**
+	 * Unset reflection environment mapping position
+	 */
+	inline void unsetReflectionEnvironmentMappingPosition() {
+		this->reflectionEnvironmentMappingPositionSet = false;
+		this->reflectionEnvironmentMappingPosition.set(0.0f, 0.0f, 0.0f);
 	}
 
 	/**

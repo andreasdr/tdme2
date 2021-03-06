@@ -77,9 +77,8 @@ TriggerScreenController::TriggerScreenController(TriggerView* view)
 
 	this->view = view;
 	auto const finalView = view;
-	this->modelPath = new FileDialogPath(".");
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), modelPath, false);
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), &modelPath, false);
 }
 
 PrototypePhysicsSubScreenController* TriggerScreenController::getPrototypePhysicsSubScreenController()
@@ -144,7 +143,7 @@ void TriggerScreenController::onQuit()
 
 void TriggerScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void TriggerScreenController::onValueChanged(GUIElementNode* node)

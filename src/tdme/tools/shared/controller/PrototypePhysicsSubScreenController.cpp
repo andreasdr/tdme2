@@ -458,14 +458,14 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshFile(Prototy
 		void performAction() override {
 			prototypePhysicsSubScreenController->boundingvolumeConvexMeshFile[idxFinal]->getController()->setValue(
 				MutableString(
-					prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+					prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 					"/" +
-					prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				)
 			);
 			prototypePhysicsSubScreenController->onBoundingVolumeConvexMeshApply(prototypeFinal, idxFinal);
-			prototypePhysicsSubScreenController->modelPath->setPath(prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			prototypePhysicsSubScreenController->modelPath->setPath(prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -490,7 +490,7 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshFile(Prototy
 	auto const idxFinal = idx;
 	auto const prototypeFinal = prototype;
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",
 		extensions,
@@ -508,13 +508,13 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(Proto
 		void performAction() override {
 			prototypePhysicsSubScreenController->convexMeshesFile->getController()->setValue(
 				MutableString(
-					prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+					prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 					"/" +
-					prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				)
 			);
-			prototypePhysicsSubScreenController->modelPath->setPath(prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			prototypePhysicsSubScreenController->modelPath->setPath(prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -534,7 +534,7 @@ void PrototypePhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(Proto
 
 	auto const prototypeFinal = prototype;
 	vector<string> extensions = ModelReader::getModelExtensions();
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
+	view->getPopUps()->getFileDialogScreenController()->show(
 		Tools::getPathName(convexMeshesFile->getController()->getValue().getString()),
 		"Load from: ",
 		extensions,
@@ -742,7 +742,7 @@ void PrototypePhysicsSubScreenController::onConvexMeshModeChanged(bool disabled)
 
 void PrototypePhysicsSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void PrototypePhysicsSubScreenController::onValueChanged(GUIElementNode* node, Prototype* prototype) {

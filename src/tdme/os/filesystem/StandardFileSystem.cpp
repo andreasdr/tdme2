@@ -280,24 +280,24 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 }
 
 const string StandardFileSystem::getCurrentWorkingPathName() {
-	// cwd
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
 	if (cwdPtr == nullptr) {
 		throw FileSystemException("Unable to get current working path(" + to_string(errno) + ")");
 	}
-	return (cwdPtr);
+	auto cwd = string(cwdPtr);
+	return StringTools::replace(cwd, "\\", "/");
 }
 
 const string StandardFileSystem::getPathName(const string& fileName) {
-	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	string unixFileName = StringTools::replace(fileName, '\\', '/');
 	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return ".";
 	return StringTools::substring(unixFileName, 0, lastPathSeparator);
 }
 
 const string StandardFileSystem::getFileName(const string& fileName) {
-	string unixFileName = StringTools::replace(fileName, L'\\', L'/');
+	string unixFileName = StringTools::replace(fileName, '\\', '/');
 	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringTools::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());

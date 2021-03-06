@@ -36,7 +36,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
-#include <tdme/engine/subsystems/environmentmapping/EnvironmentMapping.h>
+#include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -111,6 +111,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
+using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -170,8 +171,6 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using EnvironmentMappingEntity = tdme::engine::EnvironmentMapping;
-using EnvironmentMappingImplementation = tdme::engine::subsystems::environmentmapping::EnvironmentMapping;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
@@ -423,11 +422,11 @@ void Engine::registerEntity(Entity* entity) {
 	}
 }
 
-void Engine::removeEntity(const string& id)
+bool Engine::removeEntity(const string& id)
 {
 	// get entity and remove if we have any
 	auto entityByIdIt = entitiesById.find(id);
-	if (entityByIdIt == entitiesById.end()) return;
+	if (entityByIdIt == entitiesById.end()) return false;
 
 	//
 	auto entity = entityByIdIt->second;
@@ -554,6 +553,9 @@ void Engine::removeEntity(const string& id)
 		),
 		visibleDecomposedEntities.environmentMappingEntities.end()
 	);
+
+	//
+	return true;
 }
 
 void Engine::reset()
@@ -1010,7 +1012,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITY_ENVIRONMENTMAPPING:
 			{
-				auto eme = static_cast<EnvironmentMappingEntity*>(entity);
+				auto eme = static_cast<EnvironmentMapping*>(entity);
 				decomposedEntities.environmentMappingEntities.push_back(eme);
 			}
 			break;
@@ -1161,7 +1163,7 @@ void Engine::display()
 	resetLists(visibleDecomposedEntities);
 	computeTransformations(camera->getFrustum(), visibleDecomposedEntities, true, true);
 
-	// create environment maps
+	// render environment maps
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
 
 	// camera
@@ -1216,7 +1218,7 @@ void Engine::display()
 					visibleDecomposedEntities,
 					effectPassIdx,
 					Entity::RENDERPASS_ALL,
-					"ls_",
+					effectPass.shaderPrefix,
 					false,
 					false,
 					false,
@@ -2067,6 +2069,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objects,
@@ -2081,8 +2084,12 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
 			}
 		}
+
+		// render transparent faces
+		entityRenderer->renderTransparentFaces();
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
@@ -2135,6 +2142,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objectsPostPostProcessing,
@@ -2149,8 +2157,12 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
 			}
 		}
+
+		// render transparent faces
+		entityRenderer->renderTransparentFaces();
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
@@ -2173,6 +2185,7 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
 			if ((renderPassMask & renderPass) == renderPass) {
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();
 				entityRenderer->render(
 					renderPass,
 					visibleDecomposedEntities.objectsNoDepthTest,
@@ -2187,8 +2200,12 @@ void Engine::render(DecomposedEntities& visibleDecomposedEntities, int32_t effec
 					((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
 					((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
 				);
+				if (renderPass == Entity::RENDERPASS_WATER) renderer->disableBlending();
 			}
 		}
+
+		// render transparent faces
+		entityRenderer->renderTransparentFaces();
 
 		//
 		renderer->enableDepthBufferTest();

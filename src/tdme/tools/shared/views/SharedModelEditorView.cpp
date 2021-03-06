@@ -372,8 +372,6 @@ void SharedModelEditorView::display()
 	// rendering
 	prototypeDisplayView->display(prototype);
 	prototypePhysicsView->display(prototype);
-	engine->getGUI()->handleEvents();
-	engine->getGUI()->render();
 	audio->update();
 }
 

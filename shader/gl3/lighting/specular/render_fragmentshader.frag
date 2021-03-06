@@ -380,19 +380,19 @@ void main(void) {
 		//
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
-			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.1, 1.0, 0.1)));
+			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.01, 1.0, 0.01)));
 			envColor = texture(environmentMappingTextureUnit, -reflectionVector);
 		}
 		outColor = fragColor * 0.4;
-		outColor+= envColor * 0.6;
+		outColor+= envColor;
 		outColor+= vsEffectColorAdd;
 		outColor = clamp(outColor, 0.0, 1.0);
-		outColor.a = 0.5;
+		outColor.a = 0.6;
 		if (fogStrength > 0.0) {
 			outColor = vec4(
 				(outColor.rgb * (1.0 - fogStrength)) +
 				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
-				1.0
+				0.6
 			);
 		}
 	#else

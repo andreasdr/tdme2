@@ -84,9 +84,8 @@ EnvironmentMappingScreenController::EnvironmentMappingScreenController(Environme
 
 	this->view = view;
 	auto const finalView = view;
-	this->modelPath = new FileDialogPath(".");
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUpsViews(), modelPath, false, 1, PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
+	this->prototypePhysicsSubScreenController = new PrototypePhysicsSubScreenController(view->getPopUps(), &modelPath, false, 1, PrototypePhysicsSubScreenController::BOUNDINGVOLUMETYPE_BOUNDINGBOX);
 }
 
 PrototypePhysicsSubScreenController* EnvironmentMappingScreenController::getPrototypePhysicsSubScreenController()
@@ -214,7 +213,7 @@ void EnvironmentMappingScreenController::getViewPort(int& left, int& top, int& w
 
 void EnvironmentMappingScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void EnvironmentMappingScreenController::onQuit()

@@ -1,6 +1,10 @@
+#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
+
+#include <map>
 #include <string>
 #include <vector>
 
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Model.h>
@@ -18,7 +22,6 @@
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/controller/PrototypeBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/TerrainEditorScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/tools/shared/views/SharedTerrainEditorView.h>
@@ -28,10 +31,12 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Terrain.h>
 
+using std::map;
 using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Model;
@@ -84,8 +89,7 @@ TerrainEditorScreenController::TerrainEditorScreenController(SharedTerrainEditor
 
 	this->view = view;
 	auto const finalView = view;
-	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->terrainPath = new FileDialogPath(".");
+	this->prototypeBaseSubScreenController = new PrototypeBaseSubScreenController(view->getPopUps(), new OnSetEntityDataAction(this, finalView));
 }
 
 GUIScreenNode* TerrainEditorScreenController::getScreenNode()
@@ -106,26 +110,58 @@ void TerrainEditorScreenController::initialize()
 		btnTerrainDimensionApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_apply"));
 		btnTerrainDimensionLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_load"));
 		btnTerrainDimensionSave = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_dimension_save"));
-		brushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_scale"));
-		brushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_strength"));
-		brushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file"));
-		brushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_load"));
-		brushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("brush_file_clear"));
-		btnBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_brush_apply"));
+		terrainBrushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_scale"));
+		terrainBrushStrength = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_strength"));
+		terrainBrushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file"));
+		terrainBrushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_load"));
+		terrainBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_brush_file_clear"));
+		btnTerrainBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_terrain_brush_apply"));
+
+		foliageBrushScale = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_scale"));
+		foliageBrushDensity = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_density"));
+		foliageBrushFile = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file"));
+		foliageBrushFileLoad = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file_load"));
+		foliageBrushFileClear = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_file_clear"));
+		btnFoliageBrushApply = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("button_foliage_brush_apply"));
+
+		for (auto i = 0; i < 5; i++) {
+			foliageBrushPrototypeFileCount[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_count"));
+			foliageBrushPrototypeFile[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1)));
+			foliageBrushPrototypeFileLoad[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_load"));
+			foliageBrushPrototypeFileClear[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_clear"));
+			foliageBrushPrototypeScaleMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_scale_min"));
+			foliageBrushPrototypeScaleMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_scale_max"));
+			foliageBrushPrototypeRangeXMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_xmin"));
+			foliageBrushPrototypeRangeXMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_xmax"));
+			foliageBrushPrototypeRangeYMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymin"));
+			foliageBrushPrototypeRangeYMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymax"));
+			foliageBrushPrototypeRangeZMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmin"));
+			foliageBrushPrototypeRangeZMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmax"));
+		}
+
 	} catch (Exception& exception) {
 		Console::print(string("TerrainEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	prototypeBaseSubScreenController->initialize(screenNode);
 	btnTerrainDimensionSave->getController()->setDisabled(true);
-	onApplyBrush();
+	onApplyTerrainBrush();
+	for (auto i = 0; i < 5; i++) {
+		foliageBrushPrototypeScaleMin[i]->getController()->setValue(MutableString(1.0f));
+		foliageBrushPrototypeScaleMax[i]->getController()->setValue(MutableString(1.0f));
+		foliageBrushPrototypeRangeXMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeXMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeYMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(0.0f));
+	}
 }
 
 void TerrainEditorScreenController::dispose()
 {
-	if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
+	if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 	delete prototypeBaseSubScreenController;
-	delete terrainPath;
 }
 
 void TerrainEditorScreenController::setScreenCaption(const string& text)
@@ -155,7 +191,7 @@ void TerrainEditorScreenController::unsetPrototypeProperties()
 
 void TerrainEditorScreenController::showErrorPopUp(const string& caption, const string& message)
 {
-	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
 void TerrainEditorScreenController::onValueChanged(GUIElementNode* node)
@@ -176,8 +212,53 @@ void TerrainEditorScreenController::onActionPerformed(GUIActionListenerType type
 		if (node->getId().compare(btnTerrainDimensionSave->getId()) == 0) {
 			onTerrainSave();
 		} else
-		if (node->getId().compare(btnBrushApply->getId()) == 0) {
-			onApplyBrush();
+		if (node->getId().compare(terrainBrushFileLoad->getId()) == 0) {
+			onTerrainBrushFileLoad();
+		} else
+		if (node->getId().compare(terrainBrushFileClear->getId()) == 0) {
+			onTerrainBrushFileClear();
+		} else
+		if (node->getId().compare(btnTerrainBrushApply->getId()) == 0) {
+			onApplyTerrainBrush();
+		} else
+		if (node->getId().compare(foliageBrushFileLoad->getId()) == 0) {
+			onFoliageBrushFileLoad();
+		} else
+		if (node->getId().compare(foliageBrushFileClear->getId()) == 0) {
+			onFoliageBrushFileClear();
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[0]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(0);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[0]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(0);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[1]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(1);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[1]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(1);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[2]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(2);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[2]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(2);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[3]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(3);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[3]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(3);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileLoad[4]->getId()) == 0) {
+			onFoliageBrushPrototypeLoad(4);
+		} else
+		if (node->getId().compare(foliageBrushPrototypeFileClear[4]->getId()) == 0) {
+			onFoliageBrushPrototypeClear(4);
+		} else
+		if (node->getId().compare(btnFoliageBrushApply->getId()) == 0) {
+			onApplyFoliageBrush();
 		}
 	}
 }
@@ -198,10 +279,33 @@ void TerrainEditorScreenController::onLoadTerrain() {
 		BoundingBox terrainBoundingBox;
 		vector<Model*> terrainModels;
 		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
+		view->unsetWater();
 		view->setTerrain(terrainBoundingBox, terrainModels);
+		auto waterPositionMapsIndices = prototype->getTerrain()->getWaterPositionMapsIndices();
+		for (auto waterPositionMapIdx: waterPositionMapsIndices) {
+			vector<Model*> waterModels;
+			Terrain::createWaterModels(
+				terrainBoundingBox,
+				prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+				prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+				waterPositionMapIdx,
+				waterModels
+			);
+			view->addWater(
+				waterPositionMapIdx,
+				waterModels,
+				Terrain::computeWaterReflectionEnvironmentMappingPosition(
+					prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+					prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
+				)
+			);
+		}
+		view->addFoliage();
+		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
+		view->resetCamera();
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -218,10 +322,14 @@ void TerrainEditorScreenController::onApplyTerrainDimension() {
 		if (width < 1.0f || width > 4000.0f) throw ExceptionBase("Width must be within 1 .. 4000");
 		if (depth < 1.0f || depth > 4000.0f) throw ExceptionBase("Depth must be within 1 .. 4000");
 		prototype->getTerrain()->getHeightVector().clear();
+		for (auto idx: prototype->getTerrain()->getWaterPositionMapsIndices()) prototype->getTerrain()->removeWaterPositionMap(idx);
 		BoundingBox terrainBoundingBox;
 		vector<Model*> terrainModels;
 		Terrain::createTerrainModels(width, depth, 0.0f, prototype->getTerrain()->getHeightVector(), terrainBoundingBox, terrainModels);
 		view->setTerrain(terrainBoundingBox, terrainModels);
+		view->unsetWater();
+		Terrain::createFoliageMaps(terrainBoundingBox, prototype->getTerrain()->getFoliageMaps());
+		Terrain::createFoliageMaps(terrainBoundingBox, newFoliageMaps);
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 		btnTerrainDimensionSave->getController()->setDisabled(false);
@@ -236,9 +344,9 @@ void TerrainEditorScreenController::onTerrainLoad()
 	{
 	public:
 		void performAction() override {
-			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
-			terrainEditorScreenController->terrainPath->setPath(terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
-			terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			terrainEditorScreenController->terrainPath.setPath(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
 		/**
@@ -255,8 +363,8 @@ void TerrainEditorScreenController::onTerrainLoad()
 	vector<string> extensions;
 	extensions.push_back("tte");
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		terrainPath->getPath(),
+	view->getPopUps()->getFileDialogScreenController()->show(
+		terrainPath.getPath(),
 		"Load from: ",
 		extensions,
 		fileName,
@@ -273,13 +381,13 @@ void TerrainEditorScreenController::onTerrainSave()
 		void performAction() override {
 			try {
 				terrainEditorScreenController->view->saveFile(
-					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(),
-					terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
+					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);
-				terrainEditorScreenController->terrainPath->setPath(
-						terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+				terrainEditorScreenController->terrainPath.setPath(
+						terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
 				);
-				terrainEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 			} catch (Exception& exception) {
 				terrainEditorScreenController->showErrorPopUp("Warning", (string(exception.what())));
 			}
@@ -301,8 +409,8 @@ void TerrainEditorScreenController::onTerrainSave()
 		"tte"
 	};
 	fileName = Tools::getFileName(fileName);
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		terrainPath->getPath(),
+	view->getPopUps()->getFileDialogScreenController()->show(
+		terrainPath.getPath(),
 		"Save to: ",
 		extensions,
 		fileName,
@@ -311,97 +419,403 @@ void TerrainEditorScreenController::onTerrainSave()
 	);
 }
 
-void TerrainEditorScreenController::onApplyBrush() {
+void TerrainEditorScreenController::onTerrainBrushFileLoad() {
+	class OnTerrainBrushFileLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->terrainBrushFile->getController()->setValue(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->brushTexturePath.setPath(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnTerrainBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		terrainBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath.getPath():Tools::getPathName(terrainBrushFile->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(terrainBrushFile->getController()->getValue().getString()),
+		true,
+		new OnTerrainBrushFileLoadAction(this)
+	);
+}
+
+void TerrainEditorScreenController::onTerrainBrushFileClear() {
+	terrainBrushFile->getController()->setValue(MutableString());
+}
+
+void TerrainEditorScreenController::onApplyTerrainBrush() {
 	try {
+		//
+		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
+
 		// texture
-		if (currentBrushTexture != nullptr) currentBrushTexture->releaseReference();
-		currentBrushTexture = nullptr;
+		if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
+		currentTerrainBrushTexture = nullptr;
 
 		// operation
 		map<string, MutableString> values;
 		screenNode->getValues(values);
-		auto brushOperationName = values["brush_operation"].getString();
-		currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
+		auto brushOperationName = values["terrain_brush_operation"].getString();
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
 		if (brushOperationName == "add") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_ADD;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_ADD;
 		} else
 		if (brushOperationName == "subtract") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
 		} else
 		if (brushOperationName == "flatten") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
 		} else
 		if (brushOperationName == "delete") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_DELETE;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_DELETE;
 		} else
 		if (brushOperationName == "smooth") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_SMOOTH;
 		} else
 		if (brushOperationName == "water") {
-			currentBrushOperation = Terrain::BRUSHOPERATION_WATER;
+			currentTerrainBrushOperation = Terrain::BRUSHOPERATION_WATER;
 		}
 
 		// scale, strength
-		currentBrushScale = Float::parseFloat(brushScale->getController()->getValue().getString());
-		currentBrushStrength = Float::parseFloat(brushStrength->getController()->getValue().getString());
+		currentTerrainBrushScale = Float::parseFloat(terrainBrushScale->getController()->getValue().getString());
+		currentTerrainBrushStrength = Float::parseFloat(terrainBrushStrength->getController()->getValue().getString());
 
-		if (currentBrushScale < 0.1f || currentBrushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
-		if (currentBrushStrength <= 0.0f || currentBrushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
+		if (currentTerrainBrushScale < 0.1f || currentTerrainBrushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
+		if (currentTerrainBrushStrength <= 0.0f || currentTerrainBrushStrength > 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
 
 		// texture
-		auto brushTextureFileName = brushFile->getController()->getValue().getString();
-		currentBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+		auto brushTextureFileName = terrainBrushFile->getController()->getValue().getString();
+		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-Terrain::BrushOperation TerrainEditorScreenController::getBrushOperation() {
-	return currentBrushOperation;
+Terrain::BrushOperation TerrainEditorScreenController::getTerrainBrushOperation() {
+	return currentTerrainBrushOperation;
 }
 
-void TerrainEditorScreenController::applyBrush(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
+Terrain::BrushOperation TerrainEditorScreenController::getFoliageBrushOperation() {
+	return currentFoliageBrushOperation;
+}
+
+void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
-	auto terrainModel = terrainModels[0];
-	if (terrainModel == nullptr) return;
 	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
 		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
-		currentBrushTexture,
-		currentBrushScale,
-		currentBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
-		currentBrushOperation,
-		currentBrushHeight
+		currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		currentTerrainBrushStrength * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+		currentTerrainBrushOperation,
+		currentTerrainBrushHeight
 	);
+
+	//
+	Terrain::updateFoliageTerrainBrush(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		prototype->getTerrain()->getFoliageMaps(),
+		recreateFoliagePartitions
+	);
+
+	//
+	view->updateTemporaryFoliage(recreateFoliagePartitions);
+	recreateFoliagePartitions.clear();
+}
+
+void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, int64_t deltaTime) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	switch(currentFoliageBrushOperation) {
+		case Terrain::BRUSHOPERATION_ADD:
+			//
+			Terrain::applyFoliageBrush(
+				terrainBoundingBox,
+				prototype->getTerrain()->getHeightVector(),
+				brushCenterPosition,
+				currentFoliageBrushTexture,
+				currentFoliageBrushScale,
+				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushIds,
+				currentFoliageBrushCount,
+				currentFoliageBrushPrototypeScale,
+				currentFoliageBrushPrototypeRotations,
+				currentFoliageBrushPrototypeSlopeMax,
+				currentFoliageBrushPrototypeHeightMax,
+				currentFoliageBrushOperation,
+				prototype->getTerrain()->getFoliageMaps(),
+				newFoliageMaps
+			);
+			break;
+		case Terrain::BRUSHOPERATION_DELETE:
+			//
+			Terrain::applyFoliageDeleteBrush(
+				terrainBoundingBox,
+				brushCenterPosition,
+				currentFoliageBrushTexture,
+				currentFoliageBrushScale,
+				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushOperation,
+				prototype->getTerrain()->getFoliageMaps(),
+				recreateFoliagePartitions
+			);
+			break;
+	}
+
+	//
+	view->addTemporaryFoliage(newFoliageMaps);
+	view->recreateTemporaryFoliage(recreateFoliagePartitions);
+
+	//
+	recreateFoliagePartitions.clear();
+	Terrain::emptyFoliageMaps(newFoliageMaps);
+}
+
+void TerrainEditorScreenController::createWater(BoundingBox& terrainBoundingBox, const Vector3& brushCenterPosition, vector<Model*>& waterModels, Vector3& waterReflectionEnvironmentMappingPosition) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	auto waterPositionMapIdx = prototype->getTerrain()->allocateWaterPositionMapIdx();
+	prototype->getTerrain()->setWaterPositionMapHeight(waterPositionMapIdx, currentTerrainBrushHeight);
+	if (Terrain::computeWaterPositionMap(
+		terrainBoundingBox,
+		prototype->getTerrain()->getHeightVector(),
+		brushCenterPosition,
+		prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+		prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx)) == true) {
+		//
+		Terrain::createWaterModels(
+			terrainBoundingBox,
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+			waterPositionMapIdx,
+			waterModels
+		);
+		waterReflectionEnvironmentMappingPosition = Terrain::computeWaterReflectionEnvironmentMappingPosition(
+			prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+			prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx)
+		);
+		view->addWater(
+			waterPositionMapIdx,
+			waterModels,
+			waterReflectionEnvironmentMappingPosition
+		);
+	}
+}
+
+void TerrainEditorScreenController::deleteWater(int waterPositionMapIdx) {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	prototype->getTerrain()->removeWaterPositionMap(waterPositionMapIdx);
+	view->removeWater(waterPositionMapIdx);
 }
 
 bool TerrainEditorScreenController::determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition) {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return false;
-	if (currentBrushOperation != Terrain::BRUSHOPERATION_FLATTEN && currentBrushOperation != Terrain::BRUSHOPERATION_WATER) return true;
-	if (haveCurrentBrushHeight == true) return true;
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_FLATTEN && currentTerrainBrushOperation != Terrain::BRUSHOPERATION_WATER) return true;
+	if (haveCurrentTerrainBrushHeight == true) return true;
 	if (terrainModels.empty() == true) return false;
 	auto terrainModel = terrainModels[0];
 	if (terrainModel == nullptr) return false;
-	haveCurrentBrushHeight = Terrain::getTerrainModelsHeight(
+	haveCurrentTerrainBrushHeight = Terrain::getTerrainModelsHeight(
 		terrainBoundingBox,
 		terrainModels,
 		prototype->getTerrain()->getHeightVector(),
 		brushCenterPosition,
-		currentBrushHeight
+		currentTerrainBrushHeight
 	);
-	return haveCurrentBrushHeight;
+	return haveCurrentTerrainBrushHeight;
 }
 
 void TerrainEditorScreenController::unsetCurrentBrushFlattenHeight() {
-	haveCurrentBrushHeight = false;
+	haveCurrentTerrainBrushHeight = false;
 }
 
+void TerrainEditorScreenController::onFoliageBrushFileLoad() {
+	class OnFoliageBrushFileLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->foliageBrushFile->getController()->setValue(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->brushTexturePath.setPath(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 */
+		OnFoliageBrushFileLoadAction(TerrainEditorScreenController* terrainEditorScreenController): terrainEditorScreenController(terrainEditorScreenController) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+	};
+
+	vector<string> extensions = TextureReader::getTextureExtensions();
+	view->getPopUps()->getFileDialogScreenController()->show(
+		foliageBrushFile->getController()->getValue().getString().empty() == true?brushTexturePath.getPath():Tools::getPathName(foliageBrushFile->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(foliageBrushFile->getController()->getValue().getString()),
+		true,
+		new OnFoliageBrushFileLoadAction(this)
+	);
+}
+
+void TerrainEditorScreenController::onFoliageBrushFileClear() {
+	foliageBrushFile->getController()->setValue(MutableString());
+}
+
+void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
+	class OnFoliageBrushPrototypeLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			terrainEditorScreenController->foliageBrushPrototypeFile[idx]->getController()->setValue(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+				"/" +
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			);
+			terrainEditorScreenController->prototypePath.setPath(
+				terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName()
+			);
+			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param terrainEditorScreenController terrain editor screen controller
+		 * @param idx index
+		 */
+		OnFoliageBrushPrototypeLoadAction(TerrainEditorScreenController* terrainEditorScreenController, int idx): terrainEditorScreenController(terrainEditorScreenController), idx(idx) {
+		}
+
+	private:
+		TerrainEditorScreenController* terrainEditorScreenController;
+		int idx;
+	};
+
+	vector<string> extensions = { "tmm" };
+	view->getPopUps()->getFileDialogScreenController()->show(
+		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath.getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
+		"Load from: ",
+		extensions,
+		Tools::getFileName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
+		true,
+		new OnFoliageBrushPrototypeLoadAction(this, idx)
+	);
+}
+
+void TerrainEditorScreenController::onApplyFoliageBrush() {
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	try {
+		//
+		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
+
+		// texture
+		if (currentFoliageBrushTexture != nullptr) currentFoliageBrushTexture->releaseReference();
+		currentFoliageBrushTexture = nullptr;
+
+		//
+		currentFoliageBrushPrototypes.fill(nullptr);
+
+		// operation
+		map<string, MutableString> values;
+		screenNode->getValues(values);
+		auto brushOperationName = values["foliage_brush_operation"].getString();
+		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
+		if (brushOperationName == "add") {
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_ADD;
+		} else
+		if (brushOperationName == "subtract") {
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_SUBTRACT;
+		} else
+		if (brushOperationName == "flatten") {
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_FLATTEN;
+		} else
+		if (brushOperationName == "delete") {
+			currentFoliageBrushOperation = Terrain::BRUSHOPERATION_DELETE;
+		}
+
+		// scale, strength
+		currentFoliageBrushScale = Float::parseFloat(foliageBrushScale->getController()->getValue().getString());
+		currentFoliageBrushDensity = Float::parseFloat(foliageBrushDensity->getController()->getValue().getString());
+
+		if (currentFoliageBrushScale < 0.1f || currentFoliageBrushScale > 100.0f) throw ExceptionBase("Brush scale must be within 0.1 .. 100");
+		if (currentFoliageBrushDensity <= 0.0f || currentFoliageBrushDensity> 10.0f) throw ExceptionBase("Brush strength must be within 0 .. 10");
+
+		// texture
+		auto brushTextureFileName = foliageBrushFile->getController()->getValue().getString();
+		currentFoliageBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+
+		// prototypes
+		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
+			auto foliagePrototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
+			if (foliagePrototypeFileName.empty() == false) {
+				currentFoliageBrushPrototypes[i] = PrototypeReader::read(
+					PrototypeReader::getResourcePathName(Tools::getPathName(foliagePrototypeFileName), foliagePrototypeFileName),
+					Tools::getFileName(foliagePrototypeFileName)
+				);
+			}
+			currentFoliageBrushIds[i] = foliagePrototypeFileName.empty() == true?-1:prototype->getTerrain()->getFoliagePrototypeIndex(currentFoliageBrushPrototypes[i]);
+			currentFoliageBrushCount[i] = Float::parseFloat(foliageBrushPrototypeFileCount[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeScale[i][0] = Float::parseFloat(foliageBrushPrototypeScaleMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeScale[i][1] = Float::parseFloat(foliageBrushPrototypeScaleMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][0] = Float::parseFloat(foliageBrushPrototypeRangeXMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][1] = Float::parseFloat(foliageBrushPrototypeRangeXMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][2] = Float::parseFloat(foliageBrushPrototypeRangeYMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][3] = Float::parseFloat(foliageBrushPrototypeRangeYMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][4] = Float::parseFloat(foliageBrushPrototypeRangeZMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeRotations[i][5] = Float::parseFloat(foliageBrushPrototypeRangeZMax[i]->getController()->getValue().getString());
+		}
+	} catch (Exception& exception) {
+		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorScreenController::onFoliageBrushPrototypeClear(int idx) {
+	foliageBrushPrototypeFile[idx]->getController()->setValue(MutableString());
+}
 
 void TerrainEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
 	auto& constraints = viewPort->getComputedConstraints();

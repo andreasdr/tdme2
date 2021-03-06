@@ -86,8 +86,8 @@ using tdme::utilities::MutableString;
 
 void PrototypePhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(PrototypePhysicsSubScreenController* prototypePhysicsSubScreenController, Prototype* entityFinal)
 {
-	string meshPathName = prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
-	string meshFileName = prototypePhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName();
+	string meshPathName = prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
+	string meshFileName = prototypePhysicsSubScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName();
 	// delete old convex meshes
 	for (auto i = 0; i < Prototype::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
@@ -143,7 +143,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 		};
 
 		//
-		prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->show();
+		prototypePhysicsSubScreenController->getView()->getPopUps()->getProgressBarScreenController()->show();
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			IVHACD::Parameters vhacdParams;
@@ -183,7 +183,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 			if (vhacdParams.m_pca > 1) {
 				throw ExceptionBase("PCA must be between 0 and 1");
 			}
-			VHACDCallback vhacdCallback(prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController());
+			VHACDCallback vhacdCallback(prototypePhysicsSubScreenController->getView()->getPopUps()->getProgressBarScreenController());
 			VHACDLogger vhacdLogger;
 			vhacdParams.m_logger = &vhacdLogger;
 			vhacdParams.m_callback = &vhacdCallback;
@@ -265,7 +265,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 			}
 		} catch (Exception &exception) {
 			convexMeshFileNames.clear();
-			prototypePhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+			prototypePhysicsSubScreenController->view->getPopUps()->getInfoDialogScreenController()->show(
 				"Warning: Could not create convex hulls",
 				exception.what()
 			);
@@ -273,7 +273,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 		}
 		vhacd->Clean();
 		vhacd->Release();
-		prototypePhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->close();
+		prototypePhysicsSubScreenController->getView()->getPopUps()->getProgressBarScreenController()->close();
 	} else
 	if (convexMeshMode == "model") {
 		try {
@@ -308,7 +308,7 @@ void PrototypePhysicsSubScreenController_GenerateConvexMeshes::generateConvexMes
 			delete meshModel;
 		} catch (Exception &exception) {
 			convexMeshFileNames.clear();
-			prototypePhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+			prototypePhysicsSubScreenController->view->getPopUps()->getInfoDialogScreenController()->show(
 				"Warning: Could not create convex hulls",
 				exception.what()
 			);
