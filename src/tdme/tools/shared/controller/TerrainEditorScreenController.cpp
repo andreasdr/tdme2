@@ -137,6 +137,11 @@ void TerrainEditorScreenController::initialize()
 			foliageBrushPrototypeRangeYMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_ymax"));
 			foliageBrushPrototypeRangeZMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmin"));
 			foliageBrushPrototypeRangeZMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_range_zmax"));
+			foliageBrushPrototypeSlopeMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_slope_min"));
+			foliageBrushPrototypeSlopeMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_slope_max"));
+			foliageBrushPrototypeHeightMin[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_height_min"));
+			foliageBrushPrototypeHeightMax[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_height_max"));
+			foliageBrushPrototypeNormalAlign[i] = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliage_brush_prototype_" + to_string(i + 1) + "_normalalign"));
 		}
 
 	} catch (Exception& exception) {
@@ -155,6 +160,11 @@ void TerrainEditorScreenController::initialize()
 		foliageBrushPrototypeRangeYMax[i]->getController()->setValue(MutableString(0.0f));
 		foliageBrushPrototypeRangeZMin[i]->getController()->setValue(MutableString(0.0f));
 		foliageBrushPrototypeRangeZMax[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeSlopeMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeSlopeMax[i]->getController()->setValue(MutableString(90.0f));
+		foliageBrushPrototypeHeightMin[i]->getController()->setValue(MutableString(0.0f));
+		foliageBrushPrototypeHeightMax[i]->getController()->setValue(MutableString(100.0f));
+		foliageBrushPrototypeNormalAlign[i]->getController()->setValue(MutableString());
 	}
 }
 
@@ -272,6 +282,9 @@ void TerrainEditorScreenController::onLoadTerrain() {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
+	// these ids get invalidated if loading a new terrain
+	currentFoliageBrushIds.fill(-1);
+
 	//
 	try {
 		auto width = prototype->getTerrain()->getWidth();
@@ -314,6 +327,9 @@ void TerrainEditorScreenController::onLoadTerrain() {
 void TerrainEditorScreenController::onApplyTerrainDimension() {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
+
+	// these ids get invalidated if loading a new terrain
+	currentFoliageBrushIds.fill(-1);
 
 	//
 	try {
@@ -462,6 +478,8 @@ void TerrainEditorScreenController::onTerrainBrushFileClear() {
 }
 
 void TerrainEditorScreenController::onApplyTerrainBrush() {
+	view->unsetTerrainBrush();
+
 	try {
 		//
 		currentFoliageBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -504,6 +522,9 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		// texture
 		auto brushTextureFileName = terrainBrushFile->getController()->getValue().getString();
 		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
+
+		//
+		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -522,6 +543,8 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 	if (terrainModels.empty() == true) return;
+
+	// delete first
 	Terrain::applyBrushToTerrainModels(
 		terrainBoundingBox,
 		terrainModels,
@@ -534,7 +557,7 @@ void TerrainEditorScreenController::applyTerrainBrush(BoundingBox& terrainBoundi
 		currentTerrainBrushHeight
 	);
 
-	//
+	// and update
 	Terrain::updateFoliageTerrainBrush(
 		terrainBoundingBox,
 		prototype->getTerrain()->getHeightVector(),
@@ -554,9 +577,27 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
 
+	// check if having brush prototypes (ids)
+	auto haveBrushPrototypeIds = false;
+	for (auto brushBrushId: currentFoliageBrushIds) {
+		if (brushBrushId != -1) haveBrushPrototypeIds = true;
+	}
+	if (haveBrushPrototypeIds == false) return;
+
 	//
 	switch(currentFoliageBrushOperation) {
 		case Terrain::BRUSHOPERATION_ADD:
+			//
+			Terrain::applyFoliageDeleteBrush(
+				terrainBoundingBox,
+				brushCenterPosition,
+				currentFoliageBrushTexture,
+				currentFoliageBrushScale,
+				currentFoliageBrushDensity,
+				Terrain::BRUSHOPERATION_DELETE,
+				prototype->getTerrain()->getFoliageMaps(),
+				recreateFoliagePartitions
+			);
 			//
 			Terrain::applyFoliageBrush(
 				terrainBoundingBox,
@@ -564,13 +605,14 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				brushCenterPosition,
 				currentFoliageBrushTexture,
 				currentFoliageBrushScale,
-				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushDensity,
 				currentFoliageBrushIds,
 				currentFoliageBrushCount,
 				currentFoliageBrushPrototypeScale,
 				currentFoliageBrushPrototypeRotations,
-				currentFoliageBrushPrototypeSlopeMax,
-				currentFoliageBrushPrototypeHeightMax,
+				currentFoliageBrushPrototypeSlope,
+				currentFoliageBrushPrototypeHeight,
+				currentFoliageBrushPrototypeNormalAlign,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
 				newFoliageMaps
@@ -583,7 +625,7 @@ void TerrainEditorScreenController::applyFoliageBrush(BoundingBox& terrainBoundi
 				brushCenterPosition,
 				currentFoliageBrushTexture,
 				currentFoliageBrushScale,
-				currentFoliageBrushDensity * static_cast<float>(deltaTime) / 200.0f, // if strength = 1.0f it will e.g. add to level 5 meters/second
+				currentFoliageBrushDensity,
 				currentFoliageBrushOperation,
 				prototype->getTerrain()->getFoliageMaps(),
 				recreateFoliagePartitions
@@ -747,6 +789,9 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 	if (prototype == nullptr) return;
 
 	//
+	view->unsetTerrainBrush();
+
+	//
 	try {
 		//
 		currentTerrainBrushOperation = Terrain::BRUSHOPERATION_NONE;
@@ -754,9 +799,6 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		// texture
 		if (currentFoliageBrushTexture != nullptr) currentFoliageBrushTexture->releaseReference();
 		currentFoliageBrushTexture = nullptr;
-
-		//
-		currentFoliageBrushPrototypes.fill(nullptr);
 
 		// operation
 		map<string, MutableString> values;
@@ -788,6 +830,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		currentFoliageBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		// prototypes
+		array<Prototype*, 5> currentFoliageBrushPrototypes { nullptr, nullptr, nullptr, nullptr, nullptr };
 		for (auto i = 0; i < currentFoliageBrushPrototypes.size(); i++) {
 			auto foliagePrototypeFileName = foliageBrushPrototypeFile[i]->getController()->getValue().getString();
 			if (foliagePrototypeFileName.empty() == false) {
@@ -806,7 +849,15 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 			currentFoliageBrushPrototypeRotations[i][3] = Float::parseFloat(foliageBrushPrototypeRangeYMax[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeRotations[i][4] = Float::parseFloat(foliageBrushPrototypeRangeZMin[i]->getController()->getValue().getString());
 			currentFoliageBrushPrototypeRotations[i][5] = Float::parseFloat(foliageBrushPrototypeRangeZMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeSlope[i][0] = Float::parseFloat(foliageBrushPrototypeSlopeMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeSlope[i][1] = Float::parseFloat(foliageBrushPrototypeSlopeMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeHeight[i][0] = Float::parseFloat(foliageBrushPrototypeHeightMin[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeHeight[i][1] = Float::parseFloat(foliageBrushPrototypeHeightMax[i]->getController()->getValue().getString());
+			currentFoliageBrushPrototypeNormalAlign[i] = foliageBrushPrototypeNormalAlign[i]->getController()->getValue().getString() == "1";
 		}
+
+		//
+		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));

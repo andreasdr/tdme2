@@ -91,7 +91,7 @@
           - specular lighting + foliage + depth fog
           - specular lighting + tree + depth fog
           - specular lighting + terrain + depth fog
-          - specular lighting + water + depth fog(WIP)
+          - specular lighting + water + depth fog
           - sky(no lighting + no depth fog + fragment depth at maximum)
           - PBR lighting(WIP)
         - shadow mapping
@@ -226,15 +226,13 @@
     - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Terrain Editor
-    - Reflections via environment mapping(Vulkan support is still missing)
+    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials, Vulkan support is missing)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Simple script language
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
     - Installer for MacOSX
-    - Integrate Haxe via HashLink to be able to script TDME2 applications or sub logics
-    - Water shader
     - Improve on Vulkan
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
@@ -300,8 +298,8 @@
     - the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
 
 - Other credits
-    - Mathias Lenz
     - Dominik Hepp
+    - Mathias Lenz
     - Kolja Gumpert
     - Mathias Wenzel
     - Sergiu Crăiţoiu

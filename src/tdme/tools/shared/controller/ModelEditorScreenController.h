@@ -97,6 +97,7 @@ private:
 	GUIElementNode* materialsMaterialSpecular { nullptr };
 	GUIElementNode* materialsMaterialEmission { nullptr };
 	GUIElementNode* materialsMaterialShininess { nullptr };
+	GUIElementNode* materialsMaterialReflection { nullptr };
 	GUIElementNode* materialsMaterialDiffuseTexture { nullptr };
 	GUIElementNode* materialsMaterialDiffuseTransparencyTexture { nullptr };
 	GUIElementNode* materialsMaterialNormalTexture { nullptr };

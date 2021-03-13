@@ -40,6 +40,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Terrain.h>
 
 #include <rapidjson/document.h>
 
@@ -83,6 +84,7 @@ using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
+using tdme::utilities::Terrain;
 
 using rapidjson::Document;
 using rapidjson::Value;
@@ -279,6 +281,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		}
 		{
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
+			Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
 			auto& jFoliage = jTerrain["f"];
 			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
 				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
@@ -304,7 +307,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 				//
 				for (auto foliagePrototypePartitionIdx = 0; foliagePrototypePartitionIdx < jFoliagePrototypePartitions.Size(); foliagePrototypePartitionIdx++) {
 					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
-					if (foliagePrototypePartitionIdx >= foliageMaps.size()) foliageMaps.push_back(unordered_map<int, vector<Transformations>>());
 					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
 					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
 						Value& jFoliagePrototypeTransformations = jFoliagePrototypePartitionTransformations[jFoliagePrototypePartitionTransformationsIdx];

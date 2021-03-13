@@ -151,7 +151,7 @@ void WaterTest::initialize()
 	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
 	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
 	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
-	spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmm");
+	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "CM_Sphere.tmm");
 
 	// add sky
 	{
@@ -198,17 +198,17 @@ void WaterTest::initialize()
 		engine->addEntity(skyPanorama);
 	}
 
-	/*
 	{
 		// sphere
-		auto sphere = new Object3D("sphere", sphereEntity->getModel());
-		sphere->setShader("water");
+		spherePrototype->getModel()->getMaterials()["CM_Shader_Sphere_M"]->getSpecularMaterialProperties()->setReflection(1.0f);
+		auto sphere = new Object3D("sphere", spherePrototype->getModel());
 		sphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
-		sphere->setTranslation(Vector3(0.0f, 10.0f, 0.0f));
+		sphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
+		sphere->setReflectionEnvironmentMappingId("New environment mapping_2");
+		sphere->setReflectionEnvironmentMappingPosition(sphere->getTranslation());
 		sphere->update();
 		engine->addEntity(sphere);
 	}
-	*/
 
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

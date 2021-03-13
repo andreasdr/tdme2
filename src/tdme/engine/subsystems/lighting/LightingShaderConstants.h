@@ -17,6 +17,7 @@ struct tdme::engine::subsystems::lighting::LightingShaderConstants final
 	static constexpr int32_t SPECULAR_TEXTUREUNIT_TERRAIN_DIRT { 5 };
 	static constexpr int32_t SPECULAR_TEXTUREUNIT_TERRAIN_STONE { 6 };
 	static constexpr int32_t SPECULAR_TEXTUREUNIT_TERRAIN_SNOW { 7 };
+	static constexpr int32_t SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH { 8 };
 
 	static constexpr int32_t PBR_TEXTUREUNIT_BASECOLOR { 0 };
 	static constexpr int32_t PBR_TEXTUREUNIT_METALLICROUGHNESS { 1 };

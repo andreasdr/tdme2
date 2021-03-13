@@ -52,6 +52,7 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 	float shininess;
+	float reflection;
 };
 
 struct Light {
@@ -96,8 +97,6 @@ uniform float time;
 	uniform float waterWavelength[4];
 	uniform float waterSpeed[4];
 	uniform vec2 waterDirection[4];
-	varying vec3 vsPosition;
-	varying vec3 vsNormal;
 #elif defined(HAVE_TERRAIN_SHADER)
 	varying vec3 terrainVertex;
 	varying vec3 terrainNormal;
@@ -111,8 +110,9 @@ uniform float time;
 	uniform float speed;
 #endif
 
-
 // will be passed to fragment shader
+varying vec3 vsPosition;
+varying vec3 vsNormal;
 varying vec2 vsFragTextureUV;
 varying vec4 vsFragColor;
 
@@ -237,7 +237,7 @@ void main(void) {
 	vsFragColor*= effectColorMul;
 	vsFragColor.a = material.diffuse.a * effectColorMul.a;
 
-	#if defined(HAVE_WATER_SHADER)
-		vsPosition = position;
-	#endif
+	//
+	vsPosition = position;
+	vsNormal = normal;
 }

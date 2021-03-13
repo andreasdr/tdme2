@@ -52,6 +52,7 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 	float shininess;
+	float reflection;
 };
 
 struct Light {
@@ -90,7 +91,7 @@ uniform vec3 environmentMappingPosition;
 	float materialShininess;
 #endif
 
-// passed from geometry shader
+// passed from vertex shader
 in vec2 vsFragTextureUV;
 in vec3 vsNormal;
 in vec3 vsPosition;
@@ -120,6 +121,11 @@ vec4 fragColor;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
+	#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+		uniform vec2 brushPosition;
+		uniform vec2 brushTextureDimension;
+		uniform sampler2D brushTextureUnit;
+	#endif
 
 	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
@@ -289,6 +295,14 @@ void main(void) {
 
 		// compute lights
 		computeLights(normal, vsPosition);
+
+		// reflection
+		#if !defined(HAVE_WATER_SHADER)
+			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+				vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), normal);
+				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
+			}
+		#endif
 	#endif
 
 	// take effect colors into account
@@ -362,6 +376,13 @@ void main(void) {
 			if (terrainBlending[2] > 0.001) outColor+= readTerrainTextureStone(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
 			if (terrainBlending[3] > 0.001) outColor+= readTerrainTextureSnow(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 			outColor*= fragColor;
+			#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+				vec2 brushTextureUV = ((vsPosition.xz - brushPosition) / brushTextureDimension) + vec2(0.5, 0.5);
+				if (brushTextureUV.x >= 0 && brushTextureUV.x <= 1.0 &&
+					brushTextureUV.y >= 0 && brushTextureUV.y <= 1.0) {
+					outColor+= vec4(texture(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
+				}
+			#endif
 			outColor = clamp(outColor, 0.0, 1.0);
 			if (fogStrength > 0.0) {
 				outColor = vec4(

@@ -203,6 +203,7 @@ void ModelEditorScreenController::initialize()
 		materialsMaterialSpecular= dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_specular"));
 		materialsMaterialEmission = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_emission"));
 		materialsMaterialShininess = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_shininess"));
+		materialsMaterialReflection = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_reflection"));
 		materialsMaterialDiffuseTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse_texture"));
 		materialsMaterialDiffuseTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_diffuse_transparency_texture"));
 		materialsMaterialNormalTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_normal_texture"));
@@ -712,6 +713,7 @@ void ModelEditorScreenController::setMaterials() {
 	materialsMaterialSpecular->getController()->setDisabled(false);
 	materialsMaterialEmission->getController()->setDisabled(false);
 	materialsMaterialShininess->getController()->setDisabled(false);
+	materialsMaterialReflection->getController()->setDisabled(false);
 	materialsMaterialDiffuseTexture->getController()->setDisabled(false);
 	materialsMaterialDiffuseTextureLoad->getController()->setDisabled(false);
 	materialsMaterialDiffuseTextureClear->getController()->setDisabled(false);
@@ -764,6 +766,8 @@ void ModelEditorScreenController::unsetMaterials() {
 	materialsMaterialEmission->getController()->setValue(MutableString());
 	materialsMaterialShininess->getController()->setDisabled(true);
 	materialsMaterialShininess->getController()->setValue(MutableString());
+	materialsMaterialReflection->getController()->setDisabled(true);
+	materialsMaterialReflection->getController()->setValue(MutableString());
 	materialsMaterialApply->getController()->setDisabled(true);
 	materialsMaterialDiffuseTexture->getController()->setValue(MutableString());
 	materialsMaterialDiffuseTextureLoad->getController()->setDisabled(true);
@@ -823,6 +827,7 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 	materialsMaterialSpecular->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getSpecularColor())));
 	materialsMaterialEmission->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getEmissionColor())));
 	materialsMaterialShininess->getController()->setValue(MutableString(Tools::formatFloat(specularMaterialProperties->getShininess())));
+	materialsMaterialReflection->getController()->setValue(MutableString(Tools::formatFloat(specularMaterialProperties->getReflection())));
 	materialsMaterialDiffuseTexture->getController()->setValue(
 		MutableString(specularMaterialProperties->getDiffuseTexturePathName()).append(specularMaterialProperties->getDiffuseTexturePathName() == ""?"":"/").append(specularMaterialProperties->getDiffuseTextureFileName())
 	);
@@ -932,6 +937,7 @@ void ModelEditorScreenController::onMaterialApply() {
 		specularMaterialProperties->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
 		specularMaterialProperties->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
 		specularMaterialProperties->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
+		specularMaterialProperties->setReflection(Tools::convertToFloat(materialsMaterialReflection->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseTexture(
 			Tools::getPathName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),

@@ -8,9 +8,6 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utilities/Console.h>
 
 using std::string;
 using std::to_string;
@@ -23,9 +20,6 @@ using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
-using tdme::utilities::Console;
 
 bool LightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
 	return true;
@@ -49,7 +43,7 @@ void LightingShaderTerrainImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.frag",
-		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG"
+		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG" + additionalDefinitions
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
@@ -58,7 +52,7 @@ void LightingShaderTerrainImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.vert",
-		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG"
+		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG" + additionalDefinitions
 	);
 	if (renderLightingVertexShaderId == 0) return;
 
@@ -96,9 +90,14 @@ void LightingShaderTerrainImplementation::initialize()
 
 	//
 	initialized = true;
+}
 
+void LightingShaderTerrainImplementation::registerShader() {
 	// register shader
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		getId()
+	);
 }
 
 void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* context) {
@@ -114,6 +113,7 @@ void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* conte
 	renderer->bindTexture(context, stoneTextureId);
 	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
 	renderer->bindTexture(context, snowTextureId);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_BRUSH);
 	renderer->setTextureUnit(context, currentTextureUnit);
 
 	//

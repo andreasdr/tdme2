@@ -28,6 +28,7 @@ private:
 	Color4 specularColor;
 	Color4 emissionColor;
 	float shininess;
+	float reflection;
 	string diffuseTexturePathName;
 	string diffuseTextureFileName;
 	string diffuseTransparencyTexturePathName;
@@ -134,6 +135,21 @@ public:
 	 */
 	inline void setShininess(float shininess) {
 		this->shininess = shininess;
+	}
+
+	/**
+	 * @return reflection
+	 */
+	inline float getReflection() const {
+		return reflection;
+	}
+
+	/**
+	 * Set up material reflection
+	 * @param reflection reflection
+	 */
+	inline void setReflection(float reflection) {
+		this->reflection = reflection;
 	}
 
 	/**

@@ -59,10 +59,12 @@ void LightingShaderSkyImplementation::initialize()
 
 	//
 	LightingShaderBaseImplementation::initialize();
-
-	// register shader
-	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
 }
+
+void LightingShaderSkyImplementation::registerShader() {
+	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
+}
+
 
 void LightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, void* context) {
 }

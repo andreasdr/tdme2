@@ -24,6 +24,7 @@ SpecularMaterialProperties::SpecularMaterialProperties()
 	specularColor.set(0.0f, 0.0f, 0.0f, 0.0f);
 	emissionColor.set(0.0f, 0.0f, 0.0f, 0.0f);
 	shininess = 0.0f;
+	reflection = 0.0f;
 	diffuseTexture = nullptr;
 	diffuseTextureTransparency = false;
 	diffuseTextureMaskedTransparency = false;

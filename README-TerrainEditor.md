@@ -14,12 +14,22 @@
       - set up the texture scale
       - set up the strength which will be multiplied with strength base derived from texture rgb color space
       - foliage gets updated after terrain height change
+      - the terrain brush is displayed on top of terrain
     - create water meshes with a auto fill like algorithm at grabbed brush terrain height
     - use a brush to add or remove foliage with predefined or user generated textures
-      - operations are add, subtract #wip
+      - operations are place, delete
       - load a predefined or user generated texture as brush, whereas the rgb color space is used as density base
       - set up the texture scale
       - set up the density which will be multiplied with density base derived from texture rgb color space
+      - each prototype that will be painted has the following properties
+        - scale min, max
+        - rotation range X axis min, max
+        - rotation range Y axis min, max
+        - rotation range Z axis min, max
+        - slope min, max
+        - height min, max
+        - normal align
+      - the foliage brush is displayed on top of terrain
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)

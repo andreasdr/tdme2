@@ -81,19 +81,18 @@ void LightingShaderFoliageImplementation::initialize()
 	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
 	uniformAmplitudeDefault = renderer->getProgramUniformLocation(programId, "amplitudeDefault");
 	uniformAmplitudeMax = renderer->getProgramUniformLocation(programId, "amplitudeMax");
+}
 
-	// register shader
-	if (initialized == true) {
-		Engine::registerShader(
-			Engine::ShaderType::SHADERTYPE_OBJECT3D,
-			getId(),
-			{
-				{ "speed", ShaderParameter(1.0f) },
-				{ "amplitudeDefault", ShaderParameter(0.0f) },
-				{ "amplitudeMax", ShaderParameter(20.0f) }
-			}
-		);
-	}
+void LightingShaderFoliageImplementation::registerShader() {
+	Engine::registerShader(
+		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		getId(),
+		{
+			{ "speed", ShaderParameter(1.0f) },
+			{ "amplitudeDefault", ShaderParameter(0.0f) },
+			{ "amplitudeMax", ShaderParameter(20.0f) }
+		}
+	);
 }
 
 void LightingShaderFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {

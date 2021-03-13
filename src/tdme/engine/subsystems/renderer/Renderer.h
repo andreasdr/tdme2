@@ -82,6 +82,7 @@ public:
 		array<float, 4> specular {{ 0.0f, 0.0f, 0.0f, 1.0f }};
 		array<float, 4> emission {{ 0.0f, 0.0f, 0.0f, 1.0f }};
 		float shininess { 0.0f };
+		float reflection { 0.0f };
 		int diffuseTextureMaskedTransparency { 0 };
 		float diffuseTextureMaskedTransparencyThreshold { 0.0f };
 		int textureAtlasSize { 1 };

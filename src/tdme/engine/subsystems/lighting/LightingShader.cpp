@@ -8,6 +8,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.h>
@@ -22,6 +23,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderLightScatteringDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderTerrainEditorImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
@@ -37,6 +39,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 	if (LightingShaderLightScatteringFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderLightScatteringFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderLightScatteringTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderLightScatteringTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderSkyImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderSkyImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderTerrainEditorImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTerrainEditorImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTerrainImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (LightingShaderWaterImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderWaterImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
@@ -60,6 +63,8 @@ bool LightingShader::isInitialized()
 	for (auto shaderIt: shader) {
 		if (shaderIt.second->isInitialized() == false) {
 			Console::println("LightingShader::isInitialized(): " + shaderIt.first + ": not initialized!");
+		} else {
+			shaderIt.second->registerShader();
 		}
 		initialized&= shaderIt.second->isInitialized();
 	}

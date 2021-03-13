@@ -6,6 +6,7 @@
 
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -13,6 +14,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -46,6 +48,7 @@ using std::unordered_set;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -53,6 +56,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::prototype::PrototypeTerrain;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -91,6 +95,7 @@ SharedTerrainEditorView::SharedTerrainEditorView(PopUps* popUps)
 }
 
 SharedTerrainEditorView::~SharedTerrainEditorView() {
+	unsetTerrainBrush();
 	delete terrainEditorScreenController;
 	delete cameraInputHandler;
 }
@@ -116,15 +121,21 @@ void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 	initModelRequested = true;
 }
 
-void SharedTerrainEditorView::removeWater(int waterIdx) {
-	auto& water = waters[waterIdx];
-	for (auto waterModel: water.waterModels) {
-		engine->removeEntity(waterModel->getId());
-		delete waterModel;
+void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
+	unsetTerrainBrush();
+	if (texture != nullptr) texture->acquireReference();
+	brushTexture = texture;
+	//
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * scale, static_cast<int>(texture->getTextureHeight()) * scale));
+	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
+}
+
+void SharedTerrainEditorView::unsetTerrainBrush() {
+	if (brushTexture != nullptr) {
+		engine->getTextureManager()->removeTexture(brushTexture->getId());
+		brushTexture->releaseReference();
+		brushTexture = nullptr;
 	}
-	waters.erase(waterIdx);
-	initModelRequested = true;
-	initCameraRequested = false;
 }
 
 void SharedTerrainEditorView::setTerrain(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels) {
@@ -144,6 +155,17 @@ void SharedTerrainEditorView::unsetWater() {
 		}
 	}
 	this->waters.clear();
+}
+
+void SharedTerrainEditorView::removeWater(int waterIdx) {
+	auto& water = waters[waterIdx];
+	for (auto waterModel: water.waterModels) {
+		engine->removeEntity(waterModel->getId());
+		delete waterModel;
+	}
+	waters.erase(waterIdx);
+	initModelRequested = true;
+	initCameraRequested = false;
 }
 
 void SharedTerrainEditorView::addWater(int waterIdx, vector<Model*> waterModels, const Vector3& waterReflectionEnvironmentMappingPosition) {
@@ -429,7 +451,7 @@ void SharedTerrainEditorView::initModel()
 		for (auto terrainModel: terrainModels) {
 			auto terrainObject3D = new Object3D("terrain." + to_string(idx), terrainModel);
 			terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
-			terrainObject3D->setShader("terrain");
+			terrainObject3D->setShader("terraineditor");
 			terrainObject3D->setContributesShadows(true);
 			terrainObject3D->setReceivesShadows(true);
 			engine->addEntity(terrainObject3D);
@@ -546,10 +568,15 @@ void SharedTerrainEditorView::updateSky() {
 
 void SharedTerrainEditorView::handleInputEvents()
 {
+	brushMoved = false;
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
 
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+			brushMoved = true;
+			engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				recreateFoliage();
@@ -559,6 +586,7 @@ void SharedTerrainEditorView::handleInputEvents()
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+				brushMoved = true;
 				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
@@ -601,6 +629,9 @@ void SharedTerrainEditorView::handleInputEvents()
 
 void SharedTerrainEditorView::display()
 {
+	//
+	engine->setShaderParameter("terraineditor", "brushPosition", Vector2(brushCenterPosition.getX(), brushCenterPosition.getZ()));
+
 	// commands
 	if (initModelRequested == true) {
 		initModel();
@@ -615,7 +646,9 @@ void SharedTerrainEditorView::display()
 			terrainEditorScreenController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		} else
 		if (terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
-			terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
+			if (brushMoved == true) {
+				terrainEditorScreenController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
+			}
 		}
 
 	}
@@ -734,6 +767,7 @@ void SharedTerrainEditorView::loadFile(const string& pathName, const string& fil
 	// TODO: a.drewke; delete prototype, also check other tools
 	auto prototype = PrototypeReader::read(pathName, fileName);
 	setPrototype(prototype);
+	unsetTerrainBrush();
 	partitionFoliageIdx.clear();
 	temporaryPartitionIdxs.clear();
 	terrainEditorScreenController->onLoadTerrain();

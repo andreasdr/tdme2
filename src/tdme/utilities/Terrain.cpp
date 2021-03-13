@@ -932,10 +932,19 @@ void Terrain::createFoliageMaps(
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
 	//
-	auto width = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX()));
-	auto depth = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ()));
-	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
-	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
+	auto width = terrainBoundingBox.getDimensions().getX();
+	auto depth = terrainBoundingBox.getDimensions().getZ();
+	createFoliageMaps(width, depth, foliageMaps);
+}
+
+void Terrain::createFoliageMaps(
+	float terrainWidth,
+	float terrainDepth,
+	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+) {
+	//
+	auto partitionsX = static_cast<int>(Math::ceil(terrainWidth / PARTITION_SIZE));
+	auto partitionsZ = static_cast<int>(Math::ceil(terrainDepth / PARTITION_SIZE));
 	auto partitionCount = partitionsX * partitionsZ;
 	foliageMaps.resize(partitionCount);
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
@@ -959,8 +968,9 @@ void Terrain::applyFoliageBrush(
 	array<float, 5> brushPrototypeCount,
 	array<array<float, 2>, 5> brushPrototypeScale,
 	array<array<float, 6>, 5> brushPrototypeRotation,
-	array<float, 5> brushPrototypeSlopeMax,
-	array<float, 5> brushPrototypeHeightMax,
+	array<array<float, 2>, 5> brushPrototypeSlope,
+	array<array<float, 2>, 5> brushPrototypeHeight,
+	array<bool, 5> brushPrototypeNormalAlign,
 	BrushOperation brushOperation,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
@@ -1129,7 +1139,7 @@ void Terrain::applyFoliageBrush(
 							}
 
 							// check height
-							if (height > brushPrototypeHeightMax[prototypeIdx]) continue;
+							if (height < brushPrototypeHeight[prototypeIdx][0] || height > brushPrototypeHeight[prototypeIdx][1]) continue;
 
 							//
 							if (haveContact == false) {
@@ -1144,14 +1154,31 @@ void Terrain::applyFoliageBrush(
 
 							// slope
 							auto slope = Math::abs(180.0f / 3.14f * Math::acos(Math::clamp(Vector3::computeDotProduct(normal, Vector3(0.0, 1.0, 0.0)), -1.0, 1.0)));
-							if (slope > brushPrototypeSlopeMax[prototypeIdx]) continue;
+							if (slope < brushPrototypeSlope[prototypeIdx][0] || slope > brushPrototypeSlope[prototypeIdx][1]) continue;
 
 							//
 							Transformations transformations;
 							transformations.setTranslation(translation);
-							transformations.addRotation(Rotation::Z_AXIS, brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random()));
-							transformations.addRotation(Rotation::Y_AXIS, brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random()));
-							transformations.addRotation(Rotation::X_AXIS, brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random()));
+							auto zAxisRotation = brushPrototypeRotation[prototypeIdx][4] + ((brushPrototypeRotation[prototypeIdx][5] - brushPrototypeRotation[prototypeIdx][4]) * Math::random());
+							auto yAxisRotation = brushPrototypeRotation[prototypeIdx][2] + ((brushPrototypeRotation[prototypeIdx][3] - brushPrototypeRotation[prototypeIdx][2]) * Math::random());
+							auto xAxisRotation = brushPrototypeRotation[prototypeIdx][0] + ((brushPrototypeRotation[prototypeIdx][1] - brushPrototypeRotation[prototypeIdx][0]) * Math::random());
+							if (brushPrototypeNormalAlign[prototypeIdx] == true) {
+								Vector3 euler;
+								xAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
+								zAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
+								Transformations _transformations;
+								_transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
+								_transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
+								_transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
+								_transformations.update();
+								_transformations.getTransformationsMatrix().computeEulerAngles(euler);
+								zAxisRotation = euler.getZ();
+								yAxisRotation = euler.getY();
+								xAxisRotation = euler.getX();
+							}
+							transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
+							transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
+							transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
 							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
 							transformations.setTranslation(translation.clone().setY(contact.getY()));
@@ -1227,7 +1254,7 @@ void Terrain::applyFoliageDeleteBrush(
 			auto green = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 1);
 			auto blue = textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 2);
 			auto alpha = textureBytePerPixel == 3?255:textureData->get(textureY * textureWidth * textureBytePerPixel + textureX * textureBytePerPixel + 3);
-			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f) * brushDensity;
+			auto appliedDensity = (static_cast<float>(red) + static_cast<float>(green) + static_cast<float>(blue)) / (255.0f * 3.0f);
 
 			//
 			auto terrainHeightVectorX = static_cast<int>((brushPosition.getX() - terrainBoundingBox.getMin().getX()) / STEP_SIZE);

@@ -81,8 +81,9 @@ void LightingShaderTreeImplementation::initialize()
 
 	// uniforms
 	uniformSpeed = renderer->getProgramUniformLocation(programId, "speed");
+}
 
-	// register shader
+void LightingShaderTreeImplementation::registerShader() {
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_OBJECT3D,
 		getId(),

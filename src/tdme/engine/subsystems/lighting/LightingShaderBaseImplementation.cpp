@@ -99,6 +99,7 @@ void LightingShaderBaseImplementation::initialize()
 	uniformMaterialSpecular = renderer->getProgramUniformLocation(programId, "material.specular");
 	uniformMaterialEmission = renderer->getProgramUniformLocation(programId, "material.emission");
 	uniformMaterialShininess = renderer->getProgramUniformLocation(programId, "material.shininess");
+	uniformMaterialReflection = renderer->getProgramUniformLocation(programId, "material.reflection");
 
 	//	lights
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
@@ -201,6 +202,8 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	if (uniformMaterialEmission != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialEmission, tmpColor4);
 	// shininess
 	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, material.shininess);
+	// reflection
+	if (uniformMaterialReflection != -1) renderer->setProgramUniformFloat(context, uniformMaterialReflection, material.reflection);
 	// diffuse texture masked transparency
 	if (uniformDiffuseTextureMaskedTransparency != -1) {
 		renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);

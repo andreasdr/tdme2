@@ -768,6 +768,14 @@
 								<space height="20" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="{$font.default}" text="Reflection" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_reflection" name="materials_material_reflection" width="450" height="auto" text="Reflection" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="{$font.default}" text="Diffuse texture" width="145" height="auto"/>
 										<space width="5" />
 										<input id="materials_material_diffuse_texture" name="materials_material_diffuse_texture" width="302" height="auto" text="Diffuse texture" disabled="true" />

@@ -45,6 +45,11 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	virtual void initialize() = 0;
 
 	/**
+	 * Register shader
+	 */
+	virtual void registerShader() = 0;
+
+	/**
 	 * Use lighting program
 	 * @param engine engine
 	 * @param context context

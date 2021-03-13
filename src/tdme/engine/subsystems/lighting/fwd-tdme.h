@@ -18,6 +18,7 @@ namespace lighting {
 	class LightingShaderPBRDefaultImplementation;
 	class LightingShaderSkyImplementation;
 	class LightingShaderTerrainImplementation;
+	class LightingShaderTerrainEditorImplementation;
 	class LightingShaderTreeImplementation;
 	class LightingShaderWaterImplementation;
 }  // namespace lighting
