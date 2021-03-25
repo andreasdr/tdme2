@@ -187,7 +187,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 	particleSystemFile = pathName + "/" + fileName;
 }
 
-void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName)
 {
 	PrototypeWriter::write(pathName, fileName, prototype);
 }
@@ -492,7 +492,7 @@ void SharedParticleSystemView::loadParticleSystem()
 	try {
 		auto oldEntity = prototype;
 		setPrototype(
-			loadParticleSystem(
+			loadParticleSystemPrototype(
 				particleSystemFile,
 				"",
 				FileSystem::getInstance()->getPathName(particleSystemFile),
@@ -505,7 +505,7 @@ void SharedParticleSystemView::loadParticleSystem()
 	}
 }
 
-Prototype* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
+Prototype* SharedParticleSystemView::loadParticleSystemPrototype(const string& name, const string& description, const string& pathName, const string& fileName)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
 		auto prototype = PrototypeReader::read(pathName, fileName);

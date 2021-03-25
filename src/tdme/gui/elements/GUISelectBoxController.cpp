@@ -209,10 +209,10 @@ void GUISelectBoxController::handleMouseEvent(GUINode* node, GUIMouseEvent* even
 	}
 }
 
-void GUISelectBoxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (disabled == false && node == this->node) {
+	GUIElementController::handleKeyboardEvent(event);
+	if (disabled == false) {
 		if (event->getType() != GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 			auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 			#if defined(GLFW3) || defined(VUKAN)

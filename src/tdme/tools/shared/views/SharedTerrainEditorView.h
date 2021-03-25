@@ -92,6 +92,13 @@ private:
 	 */
 	void updateSky();
 
+	/**
+	 * Load terrain prototype
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	virtual Prototype* loadTerrainPrototype(const string& pathName, const string& fileName);
+
 public:
 	/**
 	 * Public constructor
@@ -212,27 +219,34 @@ public:
 	void dispose() override;
 
 	/**
-	 * On set prototype data hook
-	 */
-	virtual void onSetPrototypeData();
-
-	/**
 	 * On init additional screens
 	 */
 	virtual void onInitAdditionalScreens();
 
 	/**
-	 * Load file
-	 * @param pathName path name
-	 * @param fileName file name
+	 * On load terrain
+	 * @param oldEntity old entity
+	 * @param entity entity
 	 */
-	void loadFile(const string& pathName, const string& fileName);
+	virtual void onLoadTerrain(Prototype* oldEntity, Prototype* entity);
 
 	/**
-	 * Save file
+	 * On set prototype data hook
+	 */
+	virtual void onSetPrototypeData();
+
+	/**
+	 * Load terrain
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void saveFile(const string& pathName, const string& fileName);
+	virtual void loadTerrain(const string& pathName, const string& fileName);
+
+	/**
+	 * Save terrain
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveTerrain(const string& pathName, const string& fileName);
 
 };

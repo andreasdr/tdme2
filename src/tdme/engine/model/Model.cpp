@@ -49,6 +49,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
 	this->authoringTool = authoringTool;
+	this->boundingBoxUpdated = false;
 }
 
 Model::~Model() {
@@ -95,7 +96,7 @@ AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, i
 		delete animationSetupIt->second;
 		animationSetups.erase(animationSetupIt);
 	}
-	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, "", speed);
+	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, string(), speed);
 	animationSetups[id] = animationSetup;
 	return animationSetup;
 }
@@ -156,4 +157,12 @@ bool Model::computeTransformationsMatrix(const map<string, Node*>& nodes, const 
 
 	//
 	return false;
+}
+
+void Model::invalidateBoundingBox() {
+	if (boundingBox != nullptr) {
+		delete boundingBox;
+		boundingBox = nullptr;
+		boundingBoxUpdated = true;
+	}
 }

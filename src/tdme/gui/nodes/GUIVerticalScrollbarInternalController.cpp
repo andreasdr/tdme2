@@ -138,7 +138,7 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 	}
 }
 
-void GUIVerticalScrollbarInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIVerticalScrollbarInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

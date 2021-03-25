@@ -238,10 +238,10 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	}
 }
 
-void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIDropDownController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (disabled == false && node == this->node) {
+	GUIElementController::handleKeyboardEvent(event);
+	if (disabled == false) {
 		auto keyChar = event->getKeyChar();
 		if (keyChar > 32 && keyChar < 127 && keyChar >= 32) {
 			event->setProcessed(true);

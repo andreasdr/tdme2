@@ -622,17 +622,21 @@ public:
 	 * Creates a depth buffer texture
 	 * @param width width
 	 * @param height height
+	 * @oaram cubeMapTextureId cube map texture id
+	 * @param cubeMapTextureIndex cube map texture index
 	 * @return depth texture id
 	 */
-	virtual int32_t createDepthBufferTexture(int32_t width, int32_t height) = 0;
+	virtual int32_t createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) = 0;
 
 	/**
 	 * Creates a color buffer texture
 	 * @param width width
 	 * @param height height
+	 * @oaram cubeMapTextureId cube map texture id
+	 * @param cubeMapTextureIndex cube map texture index
 	 * @return color buffer texture id
 	 */
-	virtual int32_t createColorBufferTexture(int32_t width, int32_t height) = 0;
+	virtual int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) = 0;
 
 	/**
 	 * Uploads texture data to current bound texture

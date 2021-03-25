@@ -328,7 +328,6 @@ public:
 
 	// overridden methods
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
-	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	/**
 	 * Add action listener

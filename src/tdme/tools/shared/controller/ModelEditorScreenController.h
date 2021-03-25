@@ -508,14 +508,14 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void saveFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Load file
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void loadFile(const string& pathName, const string& fileName);
 
 	/**
 	 * On value changed

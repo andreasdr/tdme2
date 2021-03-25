@@ -72,7 +72,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_LINESOBJECT3D;
+		return ENTITYTYPE_LINESOBJECT3D;
 	}
 
 	void setEngine(Engine* engine) override;

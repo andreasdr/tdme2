@@ -23,8 +23,8 @@
   - http://www.songho.ca/opengl/gl_transform.html
   - http://www.wazim.com/Collada_Tutorial_1.htm
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
+  - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
-  - https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
   - https://gist.github.com/niw/5963798
   - https://gist.github.com/Youka/4153f12cf2e17a77314c

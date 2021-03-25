@@ -519,12 +519,6 @@ public:
 	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds);
 
 	/**
-	 * Handle keyboard event
-	 * @param event event
-	 */
-	virtual void handleKeyboardEvent(GUIKeyboardEvent* event);
-
-	/**
 	 * @return controller
 	 */
 	virtual GUINodeController* getController();

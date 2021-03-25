@@ -205,6 +205,11 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	lastLookFrom.set(lookFrom);
 
 	// viewport
-	renderer->setViewPort(viewPortLeft, height - viewPortTop - viewPortHeight, viewPortWidth, viewPortHeight);
+	#if defined(VULKAN)
+		renderer->setViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+	#else
+		renderer->setViewPort(viewPortLeft, height - viewPortTop - viewPortHeight, viewPortWidth, viewPortHeight);
+	#endif
+
 	renderer->updateViewPort();
 }

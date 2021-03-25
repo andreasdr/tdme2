@@ -228,6 +228,13 @@ private:
 	 */
 	void dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent);
 
+	/**
+	 * Find entity
+	 * @param node node
+	 * @param entity entity
+	 */
+	void findEntity(PartitionOctTree_PartitionTreeNode* node, Entity* entity);
+
 public:
 	/**
 	 * Public constructor

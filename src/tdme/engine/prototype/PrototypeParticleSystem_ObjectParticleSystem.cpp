@@ -19,7 +19,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::StringTools;
 
-void PrototypeParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName) /* throws(Exception) */
+void PrototypeParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName)
 {
 	this->modelFileName = modelFileName;
 	model = ModelReader::read(

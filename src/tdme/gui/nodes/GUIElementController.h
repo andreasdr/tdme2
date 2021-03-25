@@ -53,7 +53,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;

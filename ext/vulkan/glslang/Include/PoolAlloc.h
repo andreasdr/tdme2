@@ -240,7 +240,12 @@ protected:
 
     int numCalls;           // just an interesting statistic
     size_t totalBytes;      // just an interesting statistic
-private:
+#if defined(__FreeBSD__)
+    // TODO: a.drewke, hack by me to compile VK
+    public:
+#else
+    private:
+#endif
     TPoolAllocator& operator=(const TPoolAllocator&);  // don't allow assignment operator
     TPoolAllocator(const TPoolAllocator&);  // don't allow default copy constructor
 };

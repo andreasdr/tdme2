@@ -5,7 +5,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
 - What is TDME2?
-    - ThreeDeeMiniEngine2 is a lightweight multiplatform 3D engine including tools
+    - ThreeDeeMiniEngine2 is a lightweight, multiplatform 3D engine including tools
       - Read about the [philosophy](./README-Philosophy.md) if interested
     - TDME2 is open source
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
@@ -226,7 +226,7 @@
     - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Terrain Editor
-    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials, Vulkan support is missing)
+    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials, Vulkan support is WIP)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Simple script language

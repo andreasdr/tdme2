@@ -55,7 +55,8 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->cursorMode = CURSORMODE_SHOW;
 	this->index = 0;
 	this->offset = 0;
-	this->isDragging = false;
+	this->draggingActive = false;
+	this->draggingInit = false;
 	this->dragPosition = {{ 0, 0 }};
 }
 
@@ -80,10 +81,14 @@ void GUIInputInternalController::initialize()
 	auto minAsString = inputNode->getOptionValue("min");
 	auto maxAsString = inputNode->getOptionValue("max");
 	auto stepAsString = inputNode->getOptionValue("step");
+	auto decimalsAsString = inputNode->getOptionValue("decimals");
 
 	min = Float::parseFloat(minAsString);
 	max = Float::parseFloat(maxAsString);
 	step = Float::parseFloat(stepAsString);
+
+	if (decimalsAsString.empty() == false)
+		decimals = Integer::parseInt(decimalsAsString);
 
 	haveMin = minAsString.empty() == false;
 	haveMax = maxAsString.empty() == false;
@@ -135,47 +140,78 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	}
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
-		isDragging = false;
+		if (draggingActive == false) {
+			if (node->isEventBelongingToNode(event) == true &&
+				event->getButton() == MOUSE_BUTTON_LEFT) {
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				index = textInputNode->getFont()->getTextIndexByX(
+					textInputNode->getText(),
+					offset,
+					0,
+					event->getX() -
+						(
+							textInputNode->computedConstraints.left + textInputNode->computedConstraints.alignmentLeft +
+							textInputNode->border.left+ textInputNode->padding.left
+						)
+				);
+				resetCursorMode();
+				event->setProcessed(true);
+				showCursor = true;
+			}
+		}
+		draggingInit = false;
+		draggingActive = false;
+		dragPosition[0] = 0;
+		dragPosition[1] = 0;
 		event->setProcessed(true);
 	} else
-	if (isDragging == true) {
-		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-		switch (type) {
-			case TYPE_STRING:
-				break;
-			case TYPE_FLOAT:
-				{
-					auto value = Float::parseFloat(textInputNode->getText().getString());
-					if (haveStep == true) {
-						value+= static_cast<float>(event->getXUnscaled() - dragPosition[0]) * step;
-					}
-					if (haveMin == true) {
-						if (value < min) value = min;
-					}
-					if (haveMax == true) {
-						if (value > max) value = max;
-					}
-					textInputNode->getText().set(value, 3);
-				}
-				break;
-			case TYPE_INT:
-				{
-					auto value = Integer::parseInt(textInputNode->getText().getString());
-					if (haveStep == true) {
-						value+= (event->getXUnscaled() - dragPosition[0]) * static_cast<int>(step);
-					}
-					if (haveMin == true) {
-						if (value < static_cast<int>(min)) value = static_cast<int>(min);
-					}
-					if (haveMax == true) {
-						if (value > static_cast<int>(max)) value = static_cast<int>(max);
-					}
-					textInputNode->getText().set(value);
-				}
-				break;
+	if (draggingInit == true || draggingActive == true) {
+		if (draggingInit == true) {
+			if (dragPosition[0] != event->getXUnscaled() ||
+				dragPosition[1] != event->getYUnscaled()) {
+				draggingInit = false;
+				draggingActive = true;
+			}
 		}
-		dragPosition[0] = event->getXUnscaled();
-		dragPosition[1] = event->getYUnscaled();
+		if (draggingActive == true) {
+			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+			switch (type) {
+				case TYPE_STRING:
+					break;
+				case TYPE_FLOAT:
+					{
+						auto value = Float::parseFloat(textInputNode->getText().getString());
+						if (haveStep == true) {
+							value+= static_cast<float>(event->getXUnscaled() - dragPosition[0]) * step;
+						}
+						if (haveMin == true) {
+							if (value < min) value = min;
+						}
+						if (haveMax == true) {
+							if (value > max) value = max;
+						}
+						textInputNode->getText().set(value, decimals);
+					}
+					break;
+				case TYPE_INT:
+					{
+						auto value = Integer::parseInt(textInputNode->getText().getString());
+						if (haveStep == true) {
+							value+= (event->getXUnscaled() - dragPosition[0]) * static_cast<int>(step);
+						}
+						if (haveMin == true) {
+							if (value < static_cast<int>(min)) value = static_cast<int>(min);
+						}
+						if (haveMax == true) {
+							if (value > static_cast<int>(max)) value = static_cast<int>(max);
+						}
+						textInputNode->getText().set(value);
+					}
+					break;
+			}
+			dragPosition[0] = event->getXUnscaled();
+			dragPosition[1] = event->getYUnscaled();
+		}
 		event->setProcessed(true);
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
@@ -194,11 +230,12 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		);
 		resetCursorMode();
 		event->setProcessed(true);
-		isDragging = true;
+		draggingInit = true;
+		draggingActive = false;
 		dragPosition[0] = event->getXUnscaled();
 		dragPosition[1] = event->getYUnscaled();
+		showCursor = false;
 	}
-
 }
 
 void GUIInputInternalController::checkOffset()
@@ -218,121 +255,124 @@ void GUIInputInternalController::checkOffset()
 	}
 }
 
-void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 	auto disabled = required_dynamic_cast<GUIInputController*>(inputNode->getController())->isDisabled();
 	if (disabled == true) {
 		return;
 	}
-	if (node == this->node) {
-		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
-		auto keyChar = event->getKeyChar();
-		if (disabled == false &&
-			(
-				(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
-				(type == TYPE_FLOAT && ((keyChar >= 48 && keyChar < 58) || (keyChar == 46))) ||
-				(type == TYPE_INT && keyChar >= 48 && keyChar < 58)
-			)) {
-			event->setProcessed(true);
-			#if defined(VULKAN) || defined(GLFW3)
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			#else
+
+	//
+	showCursor = true;
+
+	//
+	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+	auto keyChar = event->getKeyChar();
+	if (disabled == false &&
+		(
+			(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
+			(type == TYPE_FLOAT && ((keyChar >= 48 && keyChar < 58) || (keyChar == 46))) ||
+			(type == TYPE_INT && keyChar >= 48 && keyChar < 58)
+		)) {
+		event->setProcessed(true);
+		#if defined(VULKAN) || defined(GLFW3)
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
+		#else
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+		#endif
+			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
+				if (type == TYPE_FLOAT && keyChar == 46 && textInputNode->getText().getString().find('.') != string::npos) {
+					// no op
+				} else {
+					textInputNode->getText().insert(index, event->getKeyChar());
+					index++;
+					resetCursorMode();
+					checkOffset();
+					required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+				}
+			}
+		}
+	} else {
+		switch (event->getKeyCode()) {
+		case GUIKeyboardEvent::KEYCODE_LEFT: {
+				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-			#endif
-				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
-					if (type == TYPE_FLOAT && keyChar == 46 && textInputNode->getText().getString().find('.') != string::npos) {
-						// no op
-					} else {
-						textInputNode->getText().insert(index, event->getKeyChar());
-						index++;
-						resetCursorMode();
+					if (index > 0) {
+						index--;
 						checkOffset();
-						required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+						resetCursorMode();
 					}
 				}
 			}
-		} else {
-			switch (event->getKeyCode()) {
-			case GUIKeyboardEvent::KEYCODE_LEFT: {
+			break;
+		case GUIKeyboardEvent::KEYCODE_RIGHT: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					if (index < textInputNode->getText().length()) {
+						index++;
+						checkOffset();
+						resetCursorMode();
+					}
+				}
+			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_BACKSPACE: {
+				if (disabled == false) {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						if (index > 0) {
+							textInputNode->getText().delete_(index - 1, 1);
 							index--;
 							checkOffset();
 							resetCursorMode();
+							required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+							node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 						}
 					}
 				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_RIGHT: {
+			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_DELETE: {
+				if (disabled == false) {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						if (index < textInputNode->getText().length()) {
-							index++;
-							checkOffset();
+							textInputNode->getText().delete_(index, 1);
 							resetCursorMode();
+							required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+							node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 						}
 					}
 				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_BACKSPACE: {
-					if (disabled == false) {
-						event->setProcessed(true);
-						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							if (index > 0) {
-								textInputNode->getText().delete_(index - 1, 1);
-								index--;
-								checkOffset();
-								resetCursorMode();
-								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
-							}
-						}
-					}
-				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_DELETE: {
-					if (disabled == false) {
-						event->setProcessed(true);
-						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							if (index < textInputNode->getText().length()) {
-								textInputNode->getText().delete_(index, 1);
-								resetCursorMode();
-								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
-							}
-						}
-					}
-				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_RETURN: {
-					if (disabled == false) {
-						event->setProcessed(true);
-						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
-						}
-					}
-				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_POS1: {
-					if (disabled == false) {
-						event->setProcessed(true);
-						resetCursorMode();
-						index = 0;
-						checkOffset();
-					}
-				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_END: {
-					if (disabled == false) {
-						resetCursorMode();
-						index = textInputNode->getText().length();
-						checkOffset();
-					}
-				}
-				break;
 			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_RETURN: {
+				if (disabled == false) {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+					}
+				}
+			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_POS1: {
+				if (disabled == false) {
+					event->setProcessed(true);
+					resetCursorMode();
+					index = 0;
+					checkOffset();
+				}
+			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_END: {
+				if (disabled == false) {
+					resetCursorMode();
+					index = textInputNode->getText().length();
+					checkOffset();
+				}
+			}
+			break;
 		}
 	}
 }
@@ -347,6 +387,37 @@ void GUIInputInternalController::onFocusGained()
 
 void GUIInputInternalController::onFocusLost()
 {
+	switch (type) {
+		case TYPE_STRING:
+			break;
+		case TYPE_FLOAT:
+			{
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				auto value = Float::parseFloat(textInputNode->getText().getString());
+				if (haveMin == true) {
+					if (value < min) value = min;
+				}
+				if (haveMax == true) {
+					if (value > max) value = max;
+				}
+				textInputNode->getText().set(value, decimals);
+			}
+			break;
+		case TYPE_INT:
+			{
+				auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+				auto value = Integer::parseInt(textInputNode->getText().getString());
+				if (haveMin == true) {
+					if (value < static_cast<int>(min)) value = static_cast<int>(min);
+				}
+				if (haveMax == true) {
+					if (value > static_cast<int>(max)) value = static_cast<int>(max);
+				}
+				textInputNode->getText().set(value);
+			}
+			break;
+	}
+	showCursor = false;
 }
 
 bool GUIInputInternalController::hasValue()
@@ -367,7 +438,10 @@ void GUIInputInternalController::reset()
 {
 	index = 0;
 	offset = 0;
-	isDragging = false;
+	draggingActive = false;
 	resetCursorMode();
 }
 
+bool GUIInputInternalController::isShowCursor() {
+	return showCursor;
+}

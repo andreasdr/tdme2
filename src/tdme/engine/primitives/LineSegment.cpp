@@ -176,42 +176,37 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 
 bool LineSegment::doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact)
 {
-	// see: https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
-	Vector3 d1;
-	Vector3 d2;
-	Vector3 n;
-	Vector3 t;
-	// find triangle normal
-	Vector3::computeCrossProduct(d1.set(p2).sub(p1), d2.set(p3).sub(p1), n).normalize();
-	// find distance from LP1 and LP2 to the plane defined by the triangle
-	auto dist1 = Vector3::computeDotProduct(d1.set(r1).sub(p1), n);
-	auto dist2 = Vector3::computeDotProduct(d2.set(r2).sub(p1), n);
-	// check if line doesn't cross the triangle.
-	if (dist1 * dist2 >= 0.0f) {
+	// see: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+	Vector3 rayVector = r2.clone().sub(r1).normalize();
+	Vector3 edge1, edge2, h, s, q;
+	float a,f,u,v;
+	edge1 = p3.clone().sub(p1);
+	edge2 = p2.clone().sub(p1);
+	Vector3::computeCrossProduct(rayVector, edge2, h);
+	a = Vector3::computeDotProduct(edge1, h);
+	if (a > -Math::EPSILON && a < Math::EPSILON) {
+		// This ray is parallel to this triangle.
 		return false;
 	}
-	// line and plane are parallel
-	if (Math::abs(dist1 - dist2) < Math::EPSILON) {
+	f = 1.0/a;
+	s = r1 - p1;
+	u = f * Vector3::computeDotProduct(s, h);
+	if (u < 0.0 || u > 1.0) {
 		return false;
 	}
-	// Find point on the line that intersects with the plane
-	contact.set(r2).sub(r1).scale(-dist1 / (dist2 - dist1));
-	contact.add(r1);
-	// check intersection p2-p1
-	Vector3::computeCrossProduct(n, d1.set(p2).sub(p1), t);
-	if (Vector3::computeDotProduct(t, d2.set(contact).sub(p1)) < 0.0f) {
+	Vector3::computeCrossProduct(s, edge1, q);
+	v = f * Vector3::computeDotProduct(rayVector, q);
+	if (v < 0.0 || u + v > 1.0) {
 		return false;
 	}
-	// check intersection p3-p2
-	Vector3::computeCrossProduct(n, d1.set(p3).sub(p2), t);
-	if (Vector3::computeDotProduct(t, d2.set(contact).sub(p2)) < 0.0f) {
+	// At this stage we can compute t to find out where the intersection point is on the line.
+	float t = f * Vector3::computeDotProduct(edge2, q);
+	if (t > Math::EPSILON) {
+		// ray intersection
+		contact = r1 + rayVector * t;
+		return true;
+	} else {
+		// This means that there is a line intersection but not a ray intersection.
 		return false;
 	}
-	// check intersection p1-p3
-	Vector3::computeCrossProduct(n, d1.set(p1).sub(p3), t);
-	if (Vector3::computeDotProduct(t, d2.set(contact).sub(p1)) < 0.0f) {
-		return false;
-	}
-	// intersection
-	return true;
 }

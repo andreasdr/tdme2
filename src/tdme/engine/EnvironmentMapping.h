@@ -88,7 +88,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_ENVIRONMENTMAPPING;
+		return ENTITYTYPE_ENVIRONMENTMAPPING;
 	}
 
 	void setEngine(Engine* engine) override;
@@ -278,16 +278,6 @@ public:
 	inline void setTimeRenderUpdateFrequency(int64_t frequency) {
 		this->timeRenderUpdateFrequency = frequency;
 		if (environmentMappingRenderer != nullptr) environmentMappingRenderer->setTimeRenderUpdateFrequency(frequency);
-	}
-
-	/**
-	 * Get frame buffer of given index
-	 * @param idx index
-	 * @return frame buffer of given index
-	 */
-	inline FrameBuffer* getFrameBuffer(int idx) {
-		if (environmentMappingRenderer == nullptr) return nullptr;
-		return environmentMappingRenderer->getFrameBuffer(idx);
 	}
 
 	/**

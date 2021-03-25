@@ -422,7 +422,7 @@ int32_t GLES2Renderer::createTexture()
 	return textureId;
 }
 
-int32_t GLES2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
+int32_t GLES2Renderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	uint32_t depthTextureGlId;
 	// create depth texture
@@ -440,7 +440,7 @@ int32_t GLES2Renderer::createDepthBufferTexture(int32_t width, int32_t height)
 	return depthTextureGlId;
 }
 
-int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height)
+int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	uint32_t colorBufferTextureGlId;
 	// create color texture

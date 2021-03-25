@@ -53,6 +53,7 @@ private:
 	map<string, AnimationSetup*> animationSetups;
 	Matrix4x4 importTransformationsMatrix;
 	BoundingBox* boundingBox;
+	bool boundingBoxUpdated;
 
 	/**
 	 * Delete sub nodes
@@ -78,6 +79,11 @@ private:
 	 * @return target node transformations
 	 */
 	bool computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix);
+
+	/**
+	 * Invalidates bounding box
+	 */
+	void invalidateBoundingBox();
 
 public:
 	/**
@@ -298,6 +304,15 @@ public:
 	 */
 	inline bool computeTransformationsMatrix(const string& nodeId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
 		return computeTransformationsMatrix(subNodes, importTransformationsMatrix, frame, nodeId, transformationsMatrix);
+	}
+
+	/**
+	 * @return if vertices have been updated
+	 */
+	inline bool hasBoundingBoxUpdate() {
+		auto updated = boundingBoxUpdated;
+		boundingBoxUpdated = false;
+		return updated;
 	}
 
 };

@@ -138,6 +138,7 @@ SRCS = \
 	src/tdme/engine/primitives/BoundingVolume.cpp \
 	src/tdme/engine/primitives/Capsule.cpp \
 	src/tdme/engine/primitives/ConvexMesh.cpp \
+	src/tdme/engine/primitives/HeightMap.cpp \
 	src/tdme/engine/primitives/LineSegment.cpp \
 	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
 	src/tdme/engine/primitives/Sphere.cpp \

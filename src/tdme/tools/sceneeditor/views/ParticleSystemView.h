@@ -37,6 +37,6 @@ public:
 
 private:
 	// overridden methods
-	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) override;
+	virtual Prototype* loadParticleSystemPrototype(const string& name, const string& description, const string& pathName, const string& fileName) override;
 
 };

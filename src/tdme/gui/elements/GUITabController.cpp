@@ -129,9 +129,9 @@ void GUITabController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	}
 }
 
-void GUITabController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUITabController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
+	GUIElementController::handleKeyboardEvent(event);
 }
 
 void GUITabController::tick()

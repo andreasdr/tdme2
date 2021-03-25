@@ -224,7 +224,7 @@ void Engine::EngineThread::run() {
 				while (state == STATE_WAITING) Thread::nanoSleep(100LL);
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(engine->visibleDecomposedEntities, threadCount, idx, transformations.computeTransformations);
+				engine->computeTransformationsFunction(*transformations.decomposedEntities, threadCount, idx, transformations.computeTransformations);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
@@ -442,120 +442,154 @@ bool Engine::removeEntity(const string& id)
 
 	// remove from partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
+
+	//
+	removeEntityFromLists(entity);
+
 	// dispose entity
+	entity->dispose();
 	entity->setEngine(nullptr);
 	entity->setRenderer(nullptr);
-	entity->dispose();
 	delete entity;
-
-	// delete from lists
-	visibleDecomposedEntities.objects.erase(
-		remove(
-			visibleDecomposedEntities.objects.begin(),
-			visibleDecomposedEntities.objects.end(),
-			entity
-		),
-		visibleDecomposedEntities.objects.end()
-	);
-	visibleDecomposedEntities.objectsPostPostProcessing.erase(
-		remove(
-			visibleDecomposedEntities.objectsPostPostProcessing.begin(),
-			visibleDecomposedEntities.objectsPostPostProcessing.end(),
-			entity
-		),
-		visibleDecomposedEntities.objectsPostPostProcessing.end()
-	);
-	visibleDecomposedEntities.objectsNoDepthTest.erase(
-		remove(
-			visibleDecomposedEntities.objectsNoDepthTest.begin(),
-			visibleDecomposedEntities.objectsNoDepthTest.end(),
-			entity
-		),
-		visibleDecomposedEntities.objectsNoDepthTest.end()
-	);
-	visibleDecomposedEntities.lodObjects.erase(
-		remove(
-			visibleDecomposedEntities.lodObjects.begin(),
-			visibleDecomposedEntities.lodObjects.end(),
-			entity
-		),
-		visibleDecomposedEntities.lodObjects.end()
-	);
-	visibleDecomposedEntities.opses.erase(
-		remove(
-			visibleDecomposedEntities.opses.begin(),
-			visibleDecomposedEntities.opses.end(),
-			entity
-		),
-		visibleDecomposedEntities.opses.end()
-	);
-	visibleDecomposedEntities.ppses.erase(
-		remove(
-			visibleDecomposedEntities.ppses.begin(),
-			visibleDecomposedEntities.ppses.end(),
-			entity
-		),
-		visibleDecomposedEntities.ppses.end()
-	);
-	visibleDecomposedEntities.psgs.erase(
-		remove(
-			visibleDecomposedEntities.psgs.begin(),
-			visibleDecomposedEntities.psgs.end(),
-			entity
-		),
-		visibleDecomposedEntities.psgs.end()
-	);
-	visibleDecomposedEntities.linesObjects.erase(
-		remove(
-			visibleDecomposedEntities.linesObjects.begin(),
-			visibleDecomposedEntities.linesObjects.end(),
-			entity
-		),
-		visibleDecomposedEntities.linesObjects.end()
-	);
-	visibleDecomposedEntities.objectRenderGroups.erase(
-		remove(
-			visibleDecomposedEntities.objectRenderGroups.begin(),
-			visibleDecomposedEntities.objectRenderGroups.end(),
-			entity
-		),
-		visibleDecomposedEntities.objectRenderGroups.end()
-	);
-	visibleDecomposedEntities.entityHierarchies.erase(
-		remove(
-			visibleDecomposedEntities.entityHierarchies.begin(),
-			visibleDecomposedEntities.entityHierarchies.end(),
-			entity
-		),
-		visibleDecomposedEntities.entityHierarchies.end()
-	);
-	visibleDecomposedEntities.ezrObjects.erase(
-		remove(
-			visibleDecomposedEntities.ezrObjects.begin(),
-			visibleDecomposedEntities.ezrObjects.end(),
-			entity
-		),
-		visibleDecomposedEntities.ezrObjects.end()
-	);
-	visibleDecomposedEntities.noFrustumCullingEntities.erase(
-		remove(
-			visibleDecomposedEntities.noFrustumCullingEntities.begin(),
-			visibleDecomposedEntities.noFrustumCullingEntities.end(),
-			entity
-		),
-		visibleDecomposedEntities.noFrustumCullingEntities.end()
-	);
-	visibleDecomposedEntities.environmentMappingEntities.erase(
-		remove(
-			visibleDecomposedEntities.environmentMappingEntities.begin(),
-			visibleDecomposedEntities.environmentMappingEntities.end(),
-			entity
-		),
-		visibleDecomposedEntities.environmentMappingEntities.end()
-	);
 
 	//
 	return true;
+}
+
+inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedEntities, Entity* entity) {
+	// delete from lists
+	decomposedEntities.objects.erase(
+		remove(
+			decomposedEntities.objects.begin(),
+			decomposedEntities.objects.end(),
+			entity
+		),
+		decomposedEntities.objects.end()
+	);
+	decomposedEntities.objectsPostPostProcessing.erase(
+		remove(
+			decomposedEntities.objectsPostPostProcessing.begin(),
+			decomposedEntities.objectsPostPostProcessing.end(),
+			entity
+		),
+		decomposedEntities.objectsPostPostProcessing.end()
+	);
+	decomposedEntities.objectsNoDepthTest.erase(
+		remove(
+			decomposedEntities.objectsNoDepthTest.begin(),
+			decomposedEntities.objectsNoDepthTest.end(),
+			entity
+		),
+		decomposedEntities.objectsNoDepthTest.end()
+	);
+	decomposedEntities.lodObjects.erase(
+		remove(
+			decomposedEntities.lodObjects.begin(),
+			decomposedEntities.lodObjects.end(),
+			entity
+		),
+		decomposedEntities.lodObjects.end()
+	);
+	decomposedEntities.opses.erase(
+		remove(
+			decomposedEntities.opses.begin(),
+			decomposedEntities.opses.end(),
+			entity
+		),
+		decomposedEntities.opses.end()
+	);
+	decomposedEntities.ppses.erase(
+		remove(
+			decomposedEntities.ppses.begin(),
+			decomposedEntities.ppses.end(),
+			entity
+		),
+		decomposedEntities.ppses.end()
+	);
+	decomposedEntities.psgs.erase(
+		remove(
+			decomposedEntities.psgs.begin(),
+			decomposedEntities.psgs.end(),
+			entity
+		),
+		decomposedEntities.psgs.end()
+	);
+	decomposedEntities.linesObjects.erase(
+		remove(
+			decomposedEntities.linesObjects.begin(),
+			decomposedEntities.linesObjects.end(),
+			entity
+		),
+		decomposedEntities.linesObjects.end()
+	);
+	decomposedEntities.objectRenderGroups.erase(
+		remove(
+			decomposedEntities.objectRenderGroups.begin(),
+			decomposedEntities.objectRenderGroups.end(),
+			entity
+		),
+		decomposedEntities.objectRenderGroups.end()
+	);
+	decomposedEntities.entityHierarchies.erase(
+		remove(
+			decomposedEntities.entityHierarchies.begin(),
+			decomposedEntities.entityHierarchies.end(),
+			entity
+		),
+		decomposedEntities.entityHierarchies.end()
+	);
+	decomposedEntities.ezrObjects.erase(
+		remove(
+			decomposedEntities.ezrObjects.begin(),
+			decomposedEntities.ezrObjects.end(),
+			entity
+		),
+		decomposedEntities.ezrObjects.end()
+	);
+	decomposedEntities.noFrustumCullingEntities.erase(
+		remove(
+			decomposedEntities.noFrustumCullingEntities.begin(),
+			decomposedEntities.noFrustumCullingEntities.end(),
+			entity
+		),
+		decomposedEntities.noFrustumCullingEntities.end()
+	);
+	decomposedEntities.environmentMappingEntities.erase(
+		remove(
+			decomposedEntities.environmentMappingEntities.begin(),
+			decomposedEntities.environmentMappingEntities.end(),
+			entity
+		),
+		decomposedEntities.environmentMappingEntities.end()
+	);
+}
+
+void Engine::removeEntityFromLists(Entity* entity)
+{
+	if (entity == nullptr) return;
+	//
+	removeFromDecomposedEntities(visibleDecomposedEntities, entity);
+	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3DRENDERGROUP) {
+		removeEntityFromLists(static_cast<Object3DRenderGroup*>(entity)->getEntity());
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) {
+		auto ops = static_cast<ObjectParticleSystem*>(entity);
+		for (auto subEntity: ops->getObjects()) {
+			removeEntityFromLists(subEntity);
+		}
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+		auto eh = static_cast<EntityHierarchy*>(entity);
+		for (auto subEntity: eh->getEntities()) {
+			removeEntityFromLists(subEntity);
+		}
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		auto lob3d = static_cast<LODObject3D*>(entity);
+		removeEntityFromLists(lob3d->getLOD1Object());
+		removeEntityFromLists(lob3d->getLOD2Object());
+		removeEntityFromLists(lob3d->getLOD3Object());
+	}
 }
 
 void Engine::reset()
@@ -940,7 +974,7 @@ void Engine::computeTransformationsFunction(DecomposedEntities& decomposedEntite
 
 inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities) {
 	switch (entity->getEntityType()) {
-		case Entity::ENTITY_OBJECT3D:
+		case Entity::ENTITYTYPE_OBJECT3D:
 			{
 				auto object = static_cast<Object3D*>(entity);
 				if (object->isDisableDepthTest() == true) {
@@ -956,7 +990,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				};
 			}
 			break;
-		case Entity::ENTITY_LODOBJECT3D:
+		case Entity::ENTITYTYPE_LODOBJECT3D:
 			{
 				auto lodObject = static_cast<LODObject3D*>(entity);
 				auto object = lodObject->determineLODObject(camera); /* TODO: use a variable camera */
@@ -976,7 +1010,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				}
 			}
 			break;
-		case Entity::ENTITY_OBJECTPARTICLESYSTEM:
+		case Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM:
 			{
 				auto opse = static_cast<ObjectParticleSystem*>(entity);
 				for (auto object: opse->getEnabledObjects()) {
@@ -992,25 +1026,25 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.opses.push_back(opse);
 			}
 			break;
-		case Entity::ENTITY_POINTSPARTICLESYSTEM:
+		case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
 			{
 				auto ppse = static_cast<PointsParticleSystem*>(entity);
 				decomposedEntities.ppses.push_back(ppse);
 			}
 			break;
-		case Entity::ENTITY_FOGPARTICLESYSTEM:
+		case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
 			{
 				auto fpse = static_cast<FogParticleSystem*>(entity);
 				decomposedEntities.ppses.push_back(fpse);
 			}
 			break;
-		case Entity::ENTITY_LINESOBJECT3D:
+		case Entity::ENTITYTYPE_LINESOBJECT3D:
 			{
 				auto lo = static_cast<LinesObject3D*>(entity);
 				decomposedEntities.linesObjects.push_back(lo);
 			}
 			break;
-		case Entity::ENTITY_ENVIRONMENTMAPPING:
+		case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
 			{
 				auto eme = static_cast<EnvironmentMapping*>(entity);
 				decomposedEntities.environmentMappingEntities.push_back(eme);
@@ -1025,7 +1059,7 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 	// add visible entities to related lists by querying frustum
 	for (auto entity: entities) {
 		switch (entity->getEntityType()) {
-			case Entity::ENTITY_OBJECT3DRENDERGROUP:
+			case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
 				{
 					auto org = static_cast<Object3DRenderGroup*>(entity);
 					decomposedEntities.objectRenderGroups.push_back(org);
@@ -1033,14 +1067,14 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 					if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
 				}
 				break;
-			case Entity::ENTITY_PARTICLESYSTEMGROUP:
+			case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
 				{
 					auto psg = static_cast<ParticleSystemGroup*>(entity);
 					decomposedEntities.psgs.push_back(psg); \
 					for (auto ps: psg->getParticleSystems()) decomposeEntityType(ps, decomposedEntities);
 				}
 				break;
-			case Entity::ENTITY_ENTITYHIERARCHY:
+			case Entity::ENTITYTYPE_ENTITYHIERARCHY:
 				{
 					auto eh = static_cast<EntityHierarchy*>(entity);
 					decomposedEntities.entityHierarchies.push_back(eh);
@@ -1048,7 +1082,7 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 						if (entityEh->isEnabled() == false) continue;
 						// compute transformations and add to lists
 						switch (entityEh->getEntityType()) {
-							case Entity::ENTITY_OBJECT3DRENDERGROUP:
+							case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
 								{
 									auto org = static_cast<Object3DRenderGroup*>(entityEh);
 									decomposedEntities.objectRenderGroups.push_back(org);
@@ -1056,7 +1090,7 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 									if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities);
 								}
 								break;
-							case Entity::ENTITY_PARTICLESYSTEMGROUP:
+							case Entity::ENTITYTYPE_PARTICLESYSTEMGROUP:
 								{
 									auto psg = static_cast<ParticleSystemGroup*>(entityEh);
 									decomposedEntities.psgs.push_back(psg);
@@ -1120,10 +1154,17 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		computeTransformationsFunction(decomposedEntities, 1, 0, computeTransformations);
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
-		for (auto engineThread: engineThreads) engineThread->transformations.computeTransformations = computeTransformations;
+		for (auto engineThread: engineThreads) {
+			engineThread->transformations.computeTransformations = computeTransformations;
+			engineThread->transformations.decomposedEntities = &decomposedEntities;
+		}
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
 		computeTransformationsFunction(decomposedEntities, threadCount, 0, computeTransformations);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
+		for (auto engineThread: engineThreads) {
+			engineThread->transformations.computeTransformations = false;
+			engineThread->transformations.decomposedEntities = nullptr;
+		}
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
 	if (skinningShaderEnabled == true) {

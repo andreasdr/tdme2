@@ -87,7 +87,7 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITY_PARTICLESYSTEMGROUP;
+		return ENTITYTYPE_PARTICLESYSTEMGROUP;
 	}
 
 	/**

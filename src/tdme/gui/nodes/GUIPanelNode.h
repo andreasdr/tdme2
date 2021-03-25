@@ -30,6 +30,7 @@ using tdme::gui::nodes::GUIScreenNode;
 
 /**
  * GUI panel node
+ * TODO: remove me!
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -87,6 +88,5 @@ protected:
 public:
 	// overridden methods
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
-	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 };

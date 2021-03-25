@@ -136,7 +136,7 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITY_ENTITYHIERARCHY;
+		return ENTITYTYPE_ENTITYHIERARCHY;
 	}
 
 	/**

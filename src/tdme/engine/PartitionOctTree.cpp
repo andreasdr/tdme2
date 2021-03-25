@@ -151,6 +151,13 @@ void PartitionOctTree::dumpNode(PartitionOctTree_PartitionTreeNode* node, int in
 	for (auto subNode: node->subNodes) dumpNode(&subNode, indent + 1);
 }
 
+void PartitionOctTree::findEntity(PartitionOctTree_PartitionTreeNode* node, Entity* entity) {
+	for (auto nodeEntity: node->partitionEntities) {
+		if (nodeEntity == entity) Console::println("PartitionOctTree::findEntity(): found entity: " + entity->getId());
+	}
+	for (auto subNode: node->subNodes) findEntity(&subNode, entity);
+}
+
 void PartitionOctTree::dump() {
 	dumpNode(&treeRoot, 0);
 }

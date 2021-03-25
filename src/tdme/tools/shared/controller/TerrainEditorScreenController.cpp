@@ -360,7 +360,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	{
 	public:
 		void performAction() override {
-			terrainEditorScreenController->view->loadFile(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			terrainEditorScreenController->view->loadTerrain(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
 			terrainEditorScreenController->terrainPath.setPath(terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
 			terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -396,7 +396,7 @@ void TerrainEditorScreenController::onTerrainSave()
 	public:
 		void performAction() override {
 			try {
-				terrainEditorScreenController->view->saveFile(
+				terrainEditorScreenController->view->saveTerrain(
 					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
 					terrainEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 				);

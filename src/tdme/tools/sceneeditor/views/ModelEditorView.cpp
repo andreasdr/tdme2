@@ -45,7 +45,7 @@ void ModelEditorView::onInitAdditionalScreens()
 	engine->getGUI()->addRenderScreen(TDMESceneEditor::getInstance()->getSceneEditorLibraryScreenController()->getScreenNode()->getId());
 }
 
-Prototype* ModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */
+Prototype* ModelEditorView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	return TDMESceneEditor::getInstance()->getSceneLibrary()->addModel(
 		SceneLibrary::ID_ALLOCATE,

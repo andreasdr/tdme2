@@ -61,7 +61,7 @@ void GUIElementIgnoreEventsController::handleMouseEvent(GUINode* node, GUIMouseE
 	}
 }
 
-void GUIElementIgnoreEventsController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIElementIgnoreEventsController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

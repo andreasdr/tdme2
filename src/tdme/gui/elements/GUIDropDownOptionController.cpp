@@ -146,9 +146,9 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	}
 }
 
-void GUIDropDownOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIDropDownOptionController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
+	GUIElementController::handleKeyboardEvent(event);
 }
 
 void GUIDropDownOptionController::tick()

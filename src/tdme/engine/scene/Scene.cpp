@@ -11,6 +11,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
@@ -31,6 +32,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
@@ -132,6 +134,27 @@ void Scene::computeBoundingBox()
 			if (entityBottom < levelBottom) levelBottom = entityBottom;
 		}
 	}
+	for (auto i = 0; i < library->getPrototypeCount(); i++) {
+		auto prototype = library->getPrototypeAt(i);
+		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
+		auto terrain = prototype->getTerrain();
+		auto entityLeft = 0.0f;
+		auto entityRight = terrain->getWidth();
+		auto entityNear = 0.0f;
+		auto entityFar = terrain->getDepth();
+		if (entityLeft < levelLeft) levelLeft = entityLeft;
+		if (entityRight > levelRight) levelRight = entityRight;
+		if (entityNear < levelNear) levelNear = entityNear;
+		if (entityFar > levelFar) levelFar = entityFar;
+		for (auto terrainHeight: terrain->getHeightVector()) {
+			auto entityTop = terrainHeight;
+			auto entityBottom = terrainHeight;
+			if (entityTop > levelTop) levelTop = entityTop;
+			if (entityBottom < levelBottom) levelBottom = entityBottom;
+		}
+		// one terrain only, so break here
+		break;
+	}
 	boundingBox.getMin().set(levelLeft, levelBottom, levelNear);
 	boundingBox.getMax().set(levelRight, levelTop, levelFar);
 	boundingBox.update();
@@ -142,18 +165,7 @@ void Scene::computeBoundingBox()
 
 void Scene::computeCenter()
 {
-	center.set(0.0f, 0.0f, 0.0f);
-	auto entityCount = 0;
-	for (auto sceneEntity: entities) {
-		if (sceneEntity->getPrototype()->getType() != Prototype_Type::MODEL)
-			continue;
-
-		center.add(sceneEntity->getTransformations().getTranslation());
-		entityCount++;
-	}
-	if (entityCount > 0) {
-		center.scale(1.0f / entityCount);
-	}
+	center = boundingBox.getMin().clone().add(boundingBox.getMax()).scale(0.5f);
 }
 
 void Scene::clearEntities()

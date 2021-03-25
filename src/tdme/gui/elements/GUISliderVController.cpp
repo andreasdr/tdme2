@@ -85,29 +85,27 @@ void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	}
 }
 
-void GUISliderVController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (node == this->node) {
-		switch (event->getKeyCode()) {
-			case GUIKeyboardEvent::KEYCODE_UP: {
-					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
-						updateSlider();
-						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
-					}
+void GUISliderVController::handleKeyboardEvent(GUIKeyboardEvent* event) {
+	GUIElementController::handleKeyboardEvent(event);
+	switch (event->getKeyCode()) {
+		case GUIKeyboardEvent::KEYCODE_UP: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
+					updateSlider();
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 				}
-				break;
-			case GUIKeyboardEvent::KEYCODE_DOWN: {
-					event->setProcessed(true);
-					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
-						updateSlider();
-						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
-					}
+			}
+			break;
+		case GUIKeyboardEvent::KEYCODE_DOWN: {
+				event->setProcessed(true);
+				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+					this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
+					updateSlider();
+					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
 				}
-				break;
-		}
+			}
+			break;
 	}
 }
 

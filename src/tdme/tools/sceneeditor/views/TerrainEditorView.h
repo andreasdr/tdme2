@@ -32,6 +32,11 @@ public:
 
 	// overridden methods
 	virtual void onSetPrototypeData() override;
+	virtual void onLoadTerrain(Prototype* oldEntity, Prototype* entity) override;
 	virtual void onInitAdditionalScreens() override;
+
+private:
+	// overridden methods
+	virtual Prototype* loadTerrainPrototype(const string& pathName, const string& fileName) override;
 
 };

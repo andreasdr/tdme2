@@ -17,6 +17,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
+using tdme::engine::SceneConnector;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -31,6 +32,7 @@ class tdme::engine::Entity
 	friend class Engine;
 	friend class EntityHierarchy;
 	friend class ParticleSystemGroup;
+	friend class SceneConnector;
 
 private:
 	/**
@@ -56,16 +58,16 @@ public:
 	enum RenderPass { RENDERPASS_NONE = 0, RENDERPASS_SKY = 1, RENDERPASS_NOFRUSTUMCULLING = 1, RENDERPASS_TERRAIN = 2, RENDERPASS_STANDARD = 4, RENDERPASS_WATER = 8, RENDERPASS_POST_POSTPROCESSING = 16 };
 
 	enum EntityType {
-		ENTITY_ENTITYHIERARCHY,
-		ENTITY_ENVIRONMENTMAPPING,
-		ENTITY_LINESOBJECT3D,
-		ENTITY_LODOBJECT3D,
-		ENTITY_OBJECT3D,
-		ENTITY_OBJECT3DRENDERGROUP,
-		ENTITY_FOGPARTICLESYSTEM,
-		ENTITY_OBJECTPARTICLESYSTEM,
-		ENTITY_PARTICLESYSTEMGROUP,
-		ENTITY_POINTSPARTICLESYSTEM
+		ENTITYTYPE_ENTITYHIERARCHY,
+		ENTITYTYPE_ENVIRONMENTMAPPING,
+		ENTITYTYPE_LINESOBJECT3D,
+		ENTITYTYPE_LODOBJECT3D,
+		ENTITYTYPE_OBJECT3D,
+		ENTITYTYPE_OBJECT3DRENDERGROUP,
+		ENTITYTYPE_FOGPARTICLESYSTEM,
+		ENTITYTYPE_OBJECTPARTICLESYSTEM,
+		ENTITYTYPE_PARTICLESYSTEMGROUP,
+		ENTITYTYPE_POINTSPARTICLESYSTEM
 	};
 
 	/**

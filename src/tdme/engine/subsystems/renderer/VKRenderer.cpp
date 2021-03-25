@@ -155,6 +155,12 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
+	CUBEMAPTEXTUREINDEX_POSITIVE_X = 1;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_X = 2;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Y = 3;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Y = 4;
+	CUBEMAPTEXTUREINDEX_POSITIVE_Z = 5;
+	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = 6;
 }
 
 inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
@@ -202,8 +208,6 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 
 	//
 	if (context.setup_cmd_inuse != VK_NULL_HANDLE) {
-		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx));
-
 		VkResult err;
 
 		//
@@ -280,7 +284,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (bound_frame_buffer == 0 &&
+	if (bound_frame_buffer == ID_NONE &&
 		(swapchain_buffers[current_buffer].access_types != nextAccessTypes || swapchain_buffers[current_buffer].svsLayout != nextLayout)) {
 		ThsvsImageBarrier svsImageBarrier = {
 			.prevAccessCount = static_cast<uint32_t>(swapchain_buffers[current_buffer].access_types[1] != THSVS_ACCESS_NONE?2:1),
@@ -349,8 +353,6 @@ inline array<VkCommandBuffer, 3> VKRenderer::endDrawCommandBuffer(int contextIdx
 			continue;
 		}
 
-		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "@" + to_string(i));
-
 		//
 		VkResult err;
 		err = vkEndCommandBuffer(context.draw_cmds[bufferId][i]);
@@ -394,8 +396,6 @@ inline void VKRenderer::recreateContextFences(int contextIdx) {
 }
 
 inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted, bool resetFence) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(commandBufferCount));
-
 	//
 	VkResult err;
 	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
@@ -437,28 +437,39 @@ inline void VKRenderer::finishSetupCommandBuffers() {
 	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) finishSetupCommandBuffer(contextIdx);
 }
 
-inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseLevel, uint32_t levelCount) {
+inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount) {
 	auto& context = contexts[contextIdx];
 
+	// does this texture object point to a cube map color/depth buffer texture?
+	auto _textureObject = textureObject->cubemap_buffer_texture != nullptr?textureObject->cubemap_buffer_texture:textureObject;
+
+	// do not change a VK_IMAGE_LAYOUT_GENERAL
+	if (_textureObject->vkLayout == VK_IMAGE_LAYOUT_GENERAL) {
+		return;
+	}
+
+	// base array layer that applies to cube maps only
+	auto baseArrayLayer = static_cast<uint32_t>(textureObject->cubemap_buffer_texture != nullptr?textureObject->cubemap_texture_index - CUBEMAPTEXTUREINDEX_MIN:0);
+
 	// check if we need a change at all
-	if (textureObject->access_types == nextAccessTypes && textureObject->svsLayout == nextLayout) return;
+	if (_textureObject->access_types[baseArrayLayer] == nextAccessTypes && _textureObject->svsLayout == nextLayout) return;
 
 	ThsvsImageBarrier svsImageBarrier = {
-		.prevAccessCount = static_cast<uint32_t>(textureObject->access_types[1] != THSVS_ACCESS_NONE?2:1),
-		.pPrevAccesses = textureObject->access_types.data(),
+		.prevAccessCount = static_cast<uint32_t>(_textureObject->access_types[baseArrayLayer][1] != THSVS_ACCESS_NONE?2:1),
+		.pPrevAccesses = _textureObject->access_types[baseArrayLayer].data(),
 		.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 		.pNextAccesses = nextAccessTypes.data(),
-		.prevLayout = textureObject->svsLayout,
+		.prevLayout = _textureObject->svsLayout,
 		.nextLayout = nextLayout,
 		.discardContents = discardContent,
 		.srcQueueFamilyIndex = 0,
 		.dstQueueFamilyIndex = 0,
-		.image = textureObject->image,
+		.image = _textureObject->image,
 		.subresourceRange = {
-			.aspectMask = textureObject->aspect_mask,
-			.baseMipLevel = baseLevel,
+			.aspectMask = _textureObject->aspect_mask,
+			.baseMipLevel = baseMipLevel,
 			.levelCount = levelCount,
-			.baseArrayLayer = 0,
+			.baseArrayLayer = baseArrayLayer,
 			.layerCount = 1
 		}
 	};
@@ -480,9 +491,49 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 	vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 
 	//
-	textureObject->access_types = nextAccessTypes;
-	textureObject->svsLayout = nextLayout;
-	textureObject->vkLayout = vkImageMemoryBarrier.newLayout;
+	_textureObject->access_types[baseArrayLayer] = nextAccessTypes;
+	_textureObject->svsLayout = nextLayout;
+	_textureObject->vkLayout = vkImageMemoryBarrier.newLayout;
+}
+
+void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
+	auto& context = contexts[contextIdx];
+
+	ThsvsImageBarrier svsImageBarrier = {
+		.prevAccessCount = static_cast<uint32_t>(accessTypes[1] != THSVS_ACCESS_NONE?2:1),
+		.pPrevAccesses = accessTypes.data(),
+		.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
+		.pNextAccesses = nextAccessTypes.data(),
+		.prevLayout = layout,
+		.nextLayout = nextLayout,
+		.discardContents = discardContent,
+		.srcQueueFamilyIndex = 0,
+		.dstQueueFamilyIndex = 0,
+		.image = textureObject->image,
+		.subresourceRange = {
+			.aspectMask = textureObject->aspect_mask,
+			.baseMipLevel = baseMipLevel,
+			.levelCount = levelCount,
+			.baseArrayLayer = baseArrayLayer,
+			.layerCount = layerCount
+		}
+	};
+	VkImageMemoryBarrier vkImageMemoryBarrier;
+	VkPipelineStageFlags srcStages;
+	VkPipelineStageFlags dstStages;
+	thsvsGetVulkanImageMemoryBarrier(
+		svsImageBarrier,
+		&srcStages,
+		&dstStages,
+		&vkImageMemoryBarrier
+	);
+
+	//
+	VkResult err;
+
+	//
+	prepareSetupCommandBuffer(contextIdx);
+	vkCmdPipelineBarrier(context.setup_cmd_inuse, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 }
 
 inline uint32_t VKRenderer::getMipLevels(Texture* texture) {
@@ -512,7 +563,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
@@ -846,7 +897,6 @@ void VKRenderer::initializeSwapChain() {
 
 const string VKRenderer::getShaderVersion()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return "gl3";
 }
 
@@ -877,8 +927,6 @@ bool VKRenderer::isSupportingVertexArrays() {
 
 void VKRenderer::initialize()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	//
 	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&width, (int32_t*)&height);
 
@@ -1216,13 +1264,26 @@ void VKRenderer::initialize()
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
 	// the surface has no preferred format.  Otherwise, at least one
 	// supported format will be returned.
+	// We for now only support VK_FORMAT_R8G8B8A8_UNORM
 	if (formatCount == 1 && surfFormats[0].format == VK_FORMAT_UNDEFINED) {
 		format = VK_FORMAT_B8G8R8A8_UNORM;
+		color_space = surfFormats[0].colorSpace;
 	} else {
-		assert(formatCount >= 1);
-		format = surfFormats[0].format;
+		for (auto i = 0; i < formatCount; i++) {
+			if (surfFormats[i].format == VK_FORMAT_B8G8R8A8_UNORM) {
+				format = VK_FORMAT_B8G8R8A8_UNORM;
+				color_space = surfFormats[i].colorSpace;
+				break;
+			}
+		}
 	}
-	color_space = surfFormats[0].colorSpace;
+	if (format == VK_FORMAT_UNDEFINED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): No format given");
+		ERR_EXIT(
+			"Could not use VK_FORMAT_R8G8B8A8_UNORM as format\n",
+			"Format Failure"
+		);
+	}
 
 	// Get Memory information and properties
 	vkGetPhysicalDeviceMemoryProperties(gpu, &memory_properties);
@@ -1273,8 +1334,8 @@ void VKRenderer::initialize()
 		auto& context = contexts[contextIdx];
 		{
 			// TODO: a.drewke
-			context.bufferVector.resize(100000);
-			context.textureVector.resize(100000);
+			context.buffer_vector.resize(100000);
+			context.texture_vector.resize(100000);
 		}
 		{
 			// command pool
@@ -1379,9 +1440,22 @@ void VKRenderer::initialize()
 	}};
 	uploadBufferObjectInternal(0, empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
-	//
-	white_texture_default_id = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
-	white_texture_default = textures.find(white_texture_default_id)->second;
+	// fall back texture white
+	white_texture_sampler2d_default_id = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
+	white_texture_sampler2d_default = textures.find(white_texture_sampler2d_default_id)->second;
+
+	// fallback cube map texture white
+	white_texture_samplercube_default_id = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+		"cubemap-default-white",
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
+		getDefaultContext()
+	);
+	white_texture_samplercube_default = textures.find(white_texture_samplercube_default_id)->second;
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -1391,8 +1465,8 @@ void VKRenderer::initializeRenderPass() {
 	if (render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, render_pass, nullptr);
 
 	// depth buffer
-	if (depth_buffer_default != 0) disposeTexture(depth_buffer_default);
-	depth_buffer_default = createDepthBufferTexture(width, height);
+	if (depth_buffer_default != ID_NONE) disposeTexture(depth_buffer_default);
+	depth_buffer_default = createDepthBufferTexture(width, height, ID_NONE, ID_NONE);
 	auto depth_buffer_texture = textures.find(depth_buffer_default)->second;
 	setImageLayout(
 		0,
@@ -1470,7 +1544,7 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 
 	auto vkFrameBuffer = window_framebuffers[current_buffer];
 	auto vkRenderPass = render_pass;
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
@@ -1505,8 +1579,6 @@ inline void VKRenderer::endRenderPass(int contextIdx) {
 }
 
 void VKRenderer::initializeFrameBuffers() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	VkImageView attachments[2];
 	auto depthBufferIt = textures.find(depth_buffer_default);
 	assert(depthBufferIt != textures.end());
@@ -1747,10 +1819,30 @@ void VKRenderer::finishFrame()
 					.sampler = texture->sampler
 				}
 			);
+			if (texture->cubemap_colorbuffer != nullptr) {
+				delete_images.push_back(
+					{
+						.image = texture->cubemap_colorbuffer->image,
+						.allocation = texture->cubemap_colorbuffer->allocation,
+						.image_view = texture->cubemap_colorbuffer->view,
+						.sampler = texture->cubemap_colorbuffer->sampler
+					}
+				);
+			}
+			if (texture->cubemap_depthbuffer != nullptr) {
+				delete_images.push_back(
+					{
+						.image = texture->cubemap_depthbuffer->image,
+						.allocation = texture->cubemap_depthbuffer->allocation,
+						.image_view = texture->cubemap_depthbuffer->view,
+						.sampler = texture->cubemap_depthbuffer->sampler
+					}
+				);
+			}
 			//
 			textures.erase(textureObjectIt);
 			delete texture;
-			for (auto& context: contexts) context.textureVector[textureId] = nullptr;
+			for (auto& context: contexts) context.texture_vector[textureId] = nullptr;
 			free_texture_ids.push_back(textureId);
 		}
 		textures_rwlock.unlock();
@@ -1777,7 +1869,7 @@ void VKRenderer::finishFrame()
 			}
 			buffers.erase(bufferIt);
 			delete buffer;
-			for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
+			for (auto& context: contexts) context.buffer_vector[bufferObjectId] = nullptr;
 			free_buffer_ids.push_back(bufferObjectId);
 		}
 		buffers_rwlock.unlock();
@@ -1793,7 +1885,7 @@ void VKRenderer::finishFrame()
 		for (auto& delete_image: delete_images) {
 			if (delete_image.image_view != VK_NULL_HANDLE) vkDestroyImageView(device, delete_image.image_view, nullptr);
 			if (delete_image.sampler != VK_NULL_HANDLE) vkDestroySampler(device, delete_image.sampler, nullptr);
-			vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
+			if (delete_image.image != VK_NULL_HANDLE) vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
 		}
 		delete_images.clear();
 
@@ -1820,69 +1912,57 @@ void VKRenderer::finishFrame()
 
 bool VKRenderer::isBufferObjectsAvailable()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isDepthTextureAvailable()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isSupportingIntegerProgramAttributes() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 
 bool VKRenderer::isSpecularMappingAvailable()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isNormalMappingAvailable()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isInstancedRenderingAvailable() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isPBRAvailable()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isComputeShaderAvailable() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isGLCLAvailable() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isUsingShortIndices() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 int32_t VKRenderer::getTextureUnits()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
@@ -2163,7 +2243,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			definitions + "\n\n"
+			"#define __VULKAN__\n\n" + definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
 		functions + "\n\n"
@@ -2204,7 +2284,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (multiLineComment == true) {
 				if (StringTools::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
-			// TODO: a.drewke, #elif
 			if (StringTools::startsWith(line, "#if defined(") == true) {
 				auto definition = StringTools::trim(StringTools::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
@@ -2472,7 +2551,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 
 inline void VKRenderer::preparePipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
 	if (program->uniform_buffers_stored[context.idx] == true) {
 		context.uniform_buffers = program->uniform_buffers_last[context.idx];
 		context.uniform_buffers_changed = program->uniform_buffers_changed_last[context.idx];
@@ -2494,7 +2572,6 @@ inline void VKRenderer::preparePipeline(int contextIdx, program_type* program) {
 
 inline void VKRenderer::finishPipeline(int contextIdx) {
 	auto& context = contexts[contextIdx];
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
 
 	// TODO: check if pipeline was bound maybe
 	if (context.program != nullptr) {
@@ -2523,12 +2600,12 @@ inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPip
 inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
 	memset(&att_state, 0, sizeof(att_state));
 	att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-	att_state.blendEnable = blending_enabled = true?VK_TRUE:VK_FALSE;
-	att_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-	att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	att_state.blendEnable = blending_mode != BLENDING_NONE?VK_TRUE:VK_FALSE;
+	att_state.srcColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
+	att_state.dstColorBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
 	att_state.colorBlendOp = VK_BLEND_OP_ADD;
-	att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-	att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	att_state.srcAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE:VK_BLEND_FACTOR_ONE;
+	att_state.dstAlphaBlendFactor = blending_mode == BLENDING_NORMAL?VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA:VK_BLEND_FACTOR_ONE;
 	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 
@@ -2554,7 +2631,7 @@ inline const string VKRenderer::createPipelineId(program_type* program, int cont
 		sizeof(program->id) +
 		sizeof(contexts[contextIdx].front_face_index) +
 		sizeof(cull_mode) +
-		sizeof(blending_enabled) +
+		sizeof(blending_mode) +
 		sizeof(depth_buffer_testing) +
 		sizeof(depth_buffer_writing) +
 		sizeof(depth_function) +
@@ -2563,7 +2640,7 @@ inline const string VKRenderer::createPipelineId(program_type* program, int cont
 	result.append((char*)&program->id, sizeof(program->id));
 	result.append((char*)&contexts[contextIdx].front_face_index, sizeof(contexts[contextIdx].front_face_index));
 	result.append((char*)&cull_mode, sizeof(cull_mode));
-	result.append((char*)&blending_enabled, sizeof(blending_enabled));
+	result.append((char*)&blending_mode, sizeof(blending_mode));
 	result.append((char*)&depth_buffer_testing, sizeof(depth_buffer_testing));
 	result.append((char*)&depth_buffer_writing, sizeof(depth_buffer_writing));
 	result.append((char*)&depth_function, sizeof(depth_function));
@@ -2590,7 +2667,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		// sampler2D
+		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
@@ -2657,11 +2734,11 @@ VKRenderer::pipeline_type* VKRenderer::createObjectsRenderingPipeline(int contex
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != 0;
-			haveColorBuffer = frameBuffer->color_texture_id != 0;
+			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
+			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -2923,7 +3000,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		// sampler2D
+		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
@@ -2990,11 +3067,11 @@ VKRenderer::pipeline_type* VKRenderer::createPointsRenderingPipeline(int context
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != 0;
-			haveColorBuffer = frameBuffer->color_texture_id != 0;
+			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
+			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -3232,7 +3309,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 				.pImmutableSamplers = nullptr
 			};
 		}
-		// sampler2D
+		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
 			layout_bindings[uniform->position] = {
 				.binding = static_cast<uint32_t>(uniform->position),
@@ -3299,11 +3376,11 @@ VKRenderer::pipeline_type* VKRenderer::createLinesRenderingPipeline(int contextI
 	VkRenderPass renderPass = render_pass;
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer != nullptr) {
-			haveDepthBuffer = frameBuffer->depth_texture_id != 0;
-			haveColorBuffer = frameBuffer->color_texture_id != 0;
+			haveDepthBuffer = frameBuffer->depth_texture_id != ID_NONE;
+			haveColorBuffer = frameBuffer->color_texture_id != ID_NONE;
 			renderPass = frameBuffer->render_pass;
 		}
 	}
@@ -3619,11 +3696,8 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	//
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(programId));
-
 	// if unsetting program flush command buffers
-	if (contextTyped.program_id != 0) {
+	if (contextTyped.program_id != ID_NONE) {
 		endRenderPass(contextTyped.idx);
 		auto currentBufferIdx = contextTyped.draw_cmd_current;
 		auto commandBuffers = endDrawCommandBuffer(contextTyped.idx, -1, true);
@@ -3643,10 +3717,10 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	//
 	contextTyped.program_id = 0;
 	contextTyped.program = nullptr;
-	if (programId == 0) return;
+	if (programId == ID_NONE) return;
 
 	//
-	if (programId < 0 || programId >= programList.size()) {
+	if (programId < ID_NONE || programId >= programList.size()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
 		return;
 	}
@@ -3937,7 +4011,6 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 
 inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(contextTyped.program_id) + ": " + to_string(uniformId));
 
 	//
 	auto changedUniforms = 0;
@@ -3950,6 +4023,9 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 		}
 		auto& shaderUniform = *shaderUniformPtr;
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
+			shaderUniform.texture_unit = *((int32_t*)data);
+		} else
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
 			shaderUniform.texture_unit = *((int32_t*)data);
 		} else {
 			if (contextTyped.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
@@ -3982,25 +4058,22 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 		shaderIdx++;
 	}
 	if (changedUniforms == 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: no uniform changed");
+		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: no uniform changed");
 	}
 }
 
 void VKRenderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)&value, sizeof(int32_t));
 }
 
 void VKRenderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)&value, sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
 {
-	if (VERBOSE == true) if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	array<float, 12> _data = {
 		data[0],
 		data[1],
@@ -4020,37 +4093,31 @@ void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformI
 
 void VKRenderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data->getBuffer(), count * sizeof(float) * 16);
 }
 
 void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::getLighting(void* context) {
@@ -4065,14 +4132,12 @@ void VKRenderer::setLighting(void* context, int32_t lighting) {
 
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(x) + ", " + to_string(y) + "; " + to_string(width) + ", " + to_string(height));
-
 	//
 	memset(&viewport, 0, sizeof(viewport));
-	viewport.width = (float)width;
-	viewport.height = (float)height;
-	viewport.x = (float)x;
-	viewport.y = (float)y;
+	viewport.width = static_cast<float>(width);
+	viewport.height = static_cast<float>(height);
+	viewport.x = static_cast<float>(x);
+	viewport.y = static_cast<float>(y);
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
@@ -4087,17 +4152,17 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
+
+	//
+	endDrawCommandsAllContexts();
 }
 
 void VKRenderer::updateViewPort()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	//
 	clear_red = red;
 	clear_green = green;
@@ -4142,21 +4207,24 @@ void VKRenderer::setCullFace(int32_t cullFace)
 
 void VKRenderer::enableBlending()
 {
-	if (blending_enabled == true) return;
+	if (blending_mode == BLENDING_NORMAL) return;
 	endDrawCommandsAllContexts();
-	blending_enabled = true;
+	blending_mode = BLENDING_NORMAL;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
 void VKRenderer::enableAdditionBlending() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not implemented yet!");
+	if (blending_mode == BLENDING_ADDITIVE) return;
+	endDrawCommandsAllContexts();
+	blending_mode = BLENDING_ADDITIVE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
 void VKRenderer::disableBlending()
 {
-	if (blending_enabled == false) return;
+	if (blending_mode == BLENDING_NONE) return;
 	endDrawCommandsAllContexts();
-	blending_enabled = false;
+	blending_mode = BLENDING_NONE;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.fill(string());
 }
 
@@ -4202,13 +4270,10 @@ void VKRenderer::setDepthFunction(int32_t depthFunction)
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::clear(int32_t mask)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	//
 	beginDrawCommandBuffer(0);
 	startRenderPass(0);
@@ -4267,7 +4332,7 @@ int32_t VKRenderer::createTexture()
 	return texture.id;
 }
 
-int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
+int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
@@ -4280,68 +4345,76 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
 	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
 	textures[texture.id] = texturePtr;
 	textures_rwlock.unlock();
-	createDepthBufferTexture(texture.id, width, height);
+	createDepthBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex);
 	return texture.id;
 }
 
-void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
+void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
 	auto& depthBufferTexture = *textures.find(textureId)->second;
 	depthBufferTexture.format = VK_FORMAT_D32_SFLOAT;
 	depthBufferTexture.width = width;
 	depthBufferTexture.height = height;
-
-	// mark for deletion
-	delete_mutex.lock();
-	delete_images.push_back(
-		{
-			.image = depthBufferTexture.image,
-			.allocation = depthBufferTexture.allocation,
-			.image_view = depthBufferTexture.view,
-			.sampler = depthBufferTexture.sampler
-		});
-	delete_mutex.unlock();
+	depthBufferTexture.cubemap_texture_index = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
-	const VkImageCreateInfo image_create_info = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.imageType = VK_IMAGE_TYPE_2D,
-		.format = depthBufferTexture.format,
-		.extent = {
-			.width = depthBufferTexture.width,
-			.height = depthBufferTexture.height,
-			.depth = 1
-		},
-		.mipLevels = 1,
-		.arrayLayers = 1,
-		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.tiling = VK_IMAGE_TILING_OPTIMAL,
-		.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = 0,
-		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-	};
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	depthBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer:nullptr;
 
 	//
 	VkResult err;
 
-	VmaAllocationCreateInfo image_alloc_create_info = {};
-	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	//
+	if (cubeMapTexture == nullptr) {
+		// mark for deletion
+		delete_mutex.lock();
+		delete_images.push_back(
+			{
+				.image = depthBufferTexture.image,
+				.allocation = depthBufferTexture.allocation,
+				.image_view = depthBufferTexture.view,
+				.sampler = depthBufferTexture.sampler
+			});
+		delete_mutex.unlock();
 
-	VmaAllocationInfo allocation_info = {};
-	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &depthBufferTexture.image, &depthBufferTexture.allocation, &allocation_info);
-	assert(!err);
+		//
+		const VkImageCreateInfo image_create_info = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = depthBufferTexture.format,
+			.extent = {
+				.width = depthBufferTexture.width,
+				.height = depthBufferTexture.height,
+				.depth = 1
+			},
+			.mipLevels = 1,
+			.arrayLayers = 1,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices = 0,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		};
 
-	// type
-	depthBufferTexture.type = texture_type::TYPE_FRAMEBUFFER_DEPTHBUFFER;
-	depthBufferTexture.aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
-	depthBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
-	depthBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
-	depthBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VmaAllocationCreateInfo image_alloc_create_info = {};
+		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+		VmaAllocationInfo allocation_info = {};
+		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &depthBufferTexture.image, &depthBufferTexture.allocation, &allocation_info);
+		assert(!err);
+
+		// type
+		depthBufferTexture.type = texture_type::TYPE_DEPTHBUFFER;
+		depthBufferTexture.aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		depthBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		depthBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
+		depthBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	}
 
 	// create sampler
 	const VkSamplerCreateInfo sampler = {
@@ -4372,7 +4445,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = depthBufferTexture.image,
+		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemap_depthbuffer->image:depthBufferTexture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = depthBufferTexture.format,
 		.components = VkComponentMapping(),
@@ -4380,7 +4453,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 			.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
 			.baseMipLevel = 0,
 			.levelCount = 1,
-			.baseArrayLayer = 0,
+			.baseArrayLayer = cubeMapTexture != nullptr?static_cast<uint32_t>(cubeMapTextureIndex - CUBEMAPTEXTUREINDEX_MIN):0,
 			.layerCount = 1
 		},
 	};
@@ -4388,7 +4461,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	assert(!err);
 }
 
-int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
+int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 	auto texturePtr = new texture_type();
 	textures_rwlock.writeLock();
@@ -4401,68 +4474,78 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
 	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
 	textures[texture.id] = texturePtr;
 	textures_rwlock.unlock();
-	createColorBufferTexture(texture.id, width, height);
+	createColorBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex);
 	return texture.id;
 }
 
-void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
+void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
 	auto& colorBufferTexture = *textures.find(textureId)->second;
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
-
-	// mark for deletion
-	delete_mutex.lock();
-	delete_images.push_back(
-		{
-			.image = colorBufferTexture.image,
-			.allocation = colorBufferTexture.allocation,
-			.image_view = colorBufferTexture.view,
-			.sampler = colorBufferTexture.sampler
-		});
-	delete_mutex.unlock();
+	colorBufferTexture.cubemap_texture_index = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
-	const VkImageCreateInfo image_create_info = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = 0,
-		.imageType = VK_IMAGE_TYPE_2D,
-		.format = colorBufferTexture.format,
-		.extent = {
-			.width = colorBufferTexture.width,
-			.height = colorBufferTexture.height,
-			.depth = 1
-		},
-		.mipLevels = 1,
-		.arrayLayers = 1,
-		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.tiling = VK_IMAGE_TILING_OPTIMAL,
-		.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = 0,
-		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-	};
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	colorBufferTexture.cubemap_buffer_texture = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer:nullptr;
 
 	//
 	VkResult err;
 
-	VmaAllocationCreateInfo image_alloc_create_info = {};
-	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	// non cube map textures
+	if (cubeMapTexture == nullptr) {
+		// mark for deletion
+		delete_mutex.lock();
+		delete_images.push_back(
+			{
+				.image = colorBufferTexture.image,
+				.allocation = colorBufferTexture.allocation,
+				.image_view = colorBufferTexture.view,
+				.sampler = colorBufferTexture.sampler
+			});
+		delete_mutex.unlock();
 
-	VmaAllocationInfo allocation_info = {};
-	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &colorBufferTexture.image, &colorBufferTexture.allocation, &allocation_info);
-	assert(!err);
+		//
+		const VkImageCreateInfo image_create_info = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = colorBufferTexture.format,
+			.extent = {
+				.width = colorBufferTexture.width,
+				.height = colorBufferTexture.height,
+				.depth = 1
+			},
+			.mipLevels = 1,
+			.arrayLayers = 1,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices = 0,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		};
 
-	// type
-	colorBufferTexture.type = texture_type::TYPE_FRAMEBUFFER_COLORBUFFER;
-	colorBufferTexture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
-	colorBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
-	colorBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
-	colorBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		VmaAllocationCreateInfo image_alloc_create_info = {};
+		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+		VmaAllocationInfo allocation_info = {};
+		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &colorBufferTexture.image, &colorBufferTexture.allocation, &allocation_info);
+		assert(!err);
+
+		// type
+		colorBufferTexture.type = texture_type::TYPE_COLORBUFFER;
+		colorBufferTexture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		colorBufferTexture.access_types = { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		colorBufferTexture.svsLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
+		colorBufferTexture.vkLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	} else {
+		colorBufferTexture.vkLayout = VK_IMAGE_LAYOUT_GENERAL;
+	}
 
 	// create sampler
 	const VkSamplerCreateInfo sampler = {
@@ -4493,7 +4576,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = colorBufferTexture.image,
+		.image = cubeMapTexture != nullptr?cubeMapTexture->cubemap_colorbuffer->image:colorBufferTexture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
 		.format = colorBufferTexture.format,
 		.components = {
@@ -4506,7 +4589,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,
 			.levelCount = 1,
-			.baseArrayLayer = 0,
+			.baseArrayLayer = cubeMapTexture != nullptr?static_cast<uint32_t>(cubeMapTextureIndex - CUBEMAPTEXTUREINDEX_MIN):0,
 			.layerCount = 1
 		}
 	};
@@ -4515,12 +4598,349 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+	if (VERBOSE == true) {
+		Console::println(
+			"VKRenderer::" + string(__FUNCTION__) + "(): " +
+			textureLeft->getId() + " / " +
+			textureRight->getId() + " / " +
+			textureTop->getId() + " / " +
+			textureBottom->getId() + " / " +
+			textureFront->getId() + " / " +
+			textureBack->getId()
+		);
+	}
+
+	// have our context typed
+	auto& contextTyped = *static_cast<context_type*>(context);
+
+	//
+	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
+	auto textureObjectIt = textures.find(contextTyped.bound_textures[contextTyped.texture_unit_active]);
+	if (textureObjectIt == textures.end()) {
+		textures_rwlock.unlock();
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		return;
+	}
+	auto& texture = *textureObjectIt->second;
+
+	// already uploaded
+	if (texture.uploaded == true) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		textures_rwlock.unlock();
+		return;
+	}
+
+	texture.type = texture_type::TYPE_CUBEMAP;
+	texture.width = textureLeft->getTextureWidth();
+	texture.height = textureLeft->getTextureHeight();
+	texture.format = VK_FORMAT_R8G8B8A8_UNORM;
+	texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+	texture.access_types = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
+	texture.vkLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+
+	// create color buffer texture
+	//	TODO: no general
+	const VkImageCreateInfo image_create_info = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
+		.imageType = VK_IMAGE_TYPE_2D,
+		.format = texture.format,
+		.extent = {
+			.width = texture.width,
+			.height = texture.height,
+			.depth = 1
+		},
+		.mipLevels = 1,
+		.arrayLayers = 6,
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.tiling = VK_IMAGE_TILING_OPTIMAL,
+		.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = 0,
+		.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED,
+	};
+
+	//
+	VkResult err;
+
+	VmaAllocationCreateInfo image_alloc_create_info = {};
+	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+	VmaAllocationInfo allocation_info = {};
+	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.image, &texture.allocation, &allocation_info);
+	assert(!err);
+
+	//
+	uploadCubeMapSingleTexture(context, &texture, textureLeft, 0);
+	uploadCubeMapSingleTexture(context, &texture, textureRight, 1);
+	uploadCubeMapSingleTexture(context, &texture, textureTop, 2);
+	uploadCubeMapSingleTexture(context, &texture, textureBottom, 3);
+	uploadCubeMapSingleTexture(context, &texture, textureFront, 4);
+	uploadCubeMapSingleTexture(context, &texture, textureBack, 5);
+
+	//
+	setImageLayout2(
+		contextTyped.idx,
+		&texture,
+		{ THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE },
+		{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+		THSVS_IMAGE_LAYOUT_OPTIMAL,
+		THSVS_IMAGE_LAYOUT_OPTIMAL,
+		false,
+		0,
+		1,
+		0,
+		6
+	);
+	texture.access_types =
+		{{
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE }
+		}};
+	texture.vkLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	// create sampler
+	const VkSamplerCreateInfo sampler = {
+		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.magFilter = VK_FILTER_LINEAR,
+		.minFilter = VK_FILTER_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+		.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.mipLodBias = 0.0f,
+		.anisotropyEnable = VK_FALSE,
+		.maxAnisotropy = 1,
+		.compareEnable = VK_FALSE,
+		.compareOp = VK_COMPARE_OP_NEVER,
+		.minLod = 0.0f,
+		.maxLod = 0.0f,
+		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
+		.unnormalizedCoordinates = VK_FALSE,
+	};
+	err = vkCreateSampler(device, &sampler, nullptr, &texture.sampler);
+	assert(!err);
+
+	// create image view
+	VkImageViewCreateInfo view = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.image = texture.image,
+		.viewType = VK_IMAGE_VIEW_TYPE_CUBE,
+		.format = texture.format,
+		.components = {
+			.r = VK_COMPONENT_SWIZZLE_R,
+			.g = VK_COMPONENT_SWIZZLE_G,
+			.b = VK_COMPONENT_SWIZZLE_B,
+			.a = VK_COMPONENT_SWIZZLE_A,
+		},
+		.subresourceRange = {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 6
+		}
+	};
+	err = vkCreateImageView(device, &view, nullptr, &texture.view);
+	assert(!err);
+
+	//
+	texture.uploaded = true;
+
+	//
+	textures_rwlock.unlock();
 }
 
 int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
-	Console::println("VKRenderer::setCubeMapTexture(): Not implemented");
-	return 0;
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	// have our context typed
+	auto& contextTyped = *static_cast<context_type*>(context);
+
+	//
+	auto texturePtr = new texture_type();
+	textures_rwlock.writeLock();
+	auto reuseTextureId = -1;
+	if (free_texture_ids.empty() == false) {
+		reuseTextureId = free_texture_ids[0];
+		free_texture_ids.erase(free_texture_ids.begin());
+	}
+	auto& texture = *texturePtr;
+	texture.id = reuseTextureId != -1?reuseTextureId:texture_idx++;
+	texture.type = texture_type::TYPE_CUBEMAP;
+	texture.format = format;
+	texture.width = width;
+	texture.height = height;
+	texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+	texture.vkLayout = VK_IMAGE_LAYOUT_GENERAL;
+	textures[texture.id] = texturePtr;
+
+	// create color buffer texture
+	//	TODO: only create on demand
+	{
+		texture.cubemap_colorbuffer = new texture_type();
+		texture.cubemap_colorbuffer->id = -1;
+		texture.cubemap_colorbuffer->type = texture_type::TYPE_COLORBUFFER;
+		texture.cubemap_colorbuffer->format = format;
+		texture.cubemap_colorbuffer->width = width;
+		texture.cubemap_colorbuffer->height = height;
+		texture.cubemap_colorbuffer->aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		texture.cubemap_colorbuffer->vkLayout = VK_IMAGE_LAYOUT_GENERAL;
+		const VkImageCreateInfo image_create_info = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = texture.cubemap_colorbuffer->format,
+			.extent = {
+				.width = texture.cubemap_colorbuffer->width,
+				.height = texture.cubemap_colorbuffer->height,
+				.depth = 1
+			},
+			.mipLevels = 1,
+			.arrayLayers = 6,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices = 0,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
+		};
+
+		//
+		VkResult err;
+
+		VmaAllocationCreateInfo image_alloc_create_info = {};
+		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+		VmaAllocationInfo allocation_info = {};
+		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.cubemap_colorbuffer->image, &texture.cubemap_colorbuffer->allocation, &allocation_info);
+		assert(!err);
+
+		// create sampler
+		const VkSamplerCreateInfo sampler = {
+			.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.magFilter = VK_FILTER_LINEAR,
+			.minFilter = VK_FILTER_LINEAR,
+			.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
+			.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+			.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+			.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+			.mipLodBias = 0.0f,
+			.anisotropyEnable = VK_FALSE,
+			.maxAnisotropy = 1,
+			.compareEnable = VK_FALSE,
+			.compareOp = VK_COMPARE_OP_NEVER,
+			.minLod = 0.0f,
+			.maxLod = 0.0f,
+			.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
+			.unnormalizedCoordinates = VK_FALSE,
+		};
+		err = vkCreateSampler(device, &sampler, nullptr, &texture.sampler);
+		assert(!err);
+
+		// create image view
+		VkImageViewCreateInfo view = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.image = texture.cubemap_colorbuffer->image,
+			.viewType = VK_IMAGE_VIEW_TYPE_CUBE,
+			.format = texture.cubemap_colorbuffer->format,
+			.components = {
+				.r = VK_COMPONENT_SWIZZLE_R,
+				.g = VK_COMPONENT_SWIZZLE_G,
+				.b = VK_COMPONENT_SWIZZLE_B,
+				.a = VK_COMPONENT_SWIZZLE_A,
+			},
+			.subresourceRange = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 6
+			}
+		};
+		err = vkCreateImageView(device, &view, nullptr, &texture.view);
+		assert(!err);
+	}
+
+	// general
+	setImageLayout2(
+		contextTyped.idx,
+		texture.cubemap_colorbuffer,
+		{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+		{ THSVS_ACCESS_NONE, THSVS_ACCESS_NONE },
+		THSVS_IMAGE_LAYOUT_OPTIMAL,
+		THSVS_IMAGE_LAYOUT_GENERAL,
+		false,
+		0,
+		1,
+		0,
+		6
+	);
+
+	// create depth buffer texture
+	//	TODO: only create on demand
+	{
+		texture.cubemap_depthbuffer = new texture_type();
+		texture.cubemap_depthbuffer->id = -1;
+		texture.cubemap_depthbuffer->format = VK_FORMAT_D32_SFLOAT;
+		texture.cubemap_depthbuffer->width = width;
+		texture.cubemap_depthbuffer->height = height;
+		texture.cubemap_depthbuffer->type = texture_type::TYPE_DEPTHBUFFER;
+		texture.cubemap_depthbuffer->aspect_mask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		const VkImageCreateInfo image_create_info = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = texture.cubemap_depthbuffer->format,
+			.extent = {
+				.width = texture.cubemap_depthbuffer->width,
+				.height = texture.cubemap_depthbuffer->height,
+				.depth = 1
+			},
+			.mipLevels = 1,
+			.arrayLayers = 6,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices = 0,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		};
+
+		//
+		VkResult err;
+
+		VmaAllocationCreateInfo image_alloc_create_info = {};
+		image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+		VmaAllocationInfo allocation_info = {};
+		err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &texture.cubemap_depthbuffer->image, &texture.cubemap_depthbuffer->allocation, &allocation_info);
+		assert(!err);
+	}
+
+	//
+	textures_rwlock.unlock();
+
+	//
+	return texture.id;
 }
 
 void VKRenderer::uploadTexture(void* context, Texture* texture)
@@ -4538,10 +4958,10 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 		return;
 	}
-	auto& texture_type = *textureObjectIt->second;
+	auto& textureType = *textureObjectIt->second;
 
 	// already uploaded
-	if (texture_type.uploaded == true) {
+	if (textureType.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 		textures_rwlock.unlock();
 		return;
@@ -4549,29 +4969,29 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	//
 	uint32_t mipLevels = 1;
-	texture_type.width = texture->getTextureWidth();
-	texture_type.height = texture->getTextureHeight();
- 	texture_type.type = texture_type::TYPE_TEXTURE;
-	texture_type.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+	textureType.width = texture->getTextureWidth();
+	textureType.height = texture->getTextureHeight();
+ 	textureType.type = texture_type::TYPE_TEXTURE;
+	textureType.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
-	VkFormatProperties props;
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
 
-	vkGetPhysicalDeviceFormatProperties(gpu, tex_format, &props);
-	if ((props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
+	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// we need a setup command buffer here
 		prepareSetupCommandBuffer(contextTyped.idx);
 
 		//
-		struct texture_type staging_texture;
-		memset(&staging_texture, 0, sizeof(staging_texture));
-		staging_texture.width = texture->getTextureWidth();
-		staging_texture.height = texture->getTextureHeight();
-		staging_texture.type = texture_type::TYPE_TEXTURE;
-		staging_texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+		struct texture_type stagingTexture;
+		memset(&stagingTexture, 0, sizeof(stagingTexture));
+		stagingTexture.width = texture->getTextureWidth();
+		stagingTexture.height = texture->getTextureHeight();
+		stagingTexture.type = texture_type::TYPE_TEXTURE;
+		stagingTexture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		//
 		mipLevels = texture->isUseMipMap() == true?getMipLevels(texture):1;
@@ -4579,7 +4999,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		//
 		prepareTextureImage(
 			contextTyped.idx,
-			&staging_texture,
+			&stagingTexture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
@@ -4589,7 +5009,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 		prepareTextureImage(
 			contextTyped.idx,
-			&texture_type,
+			&textureType,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -4624,16 +5044,16 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 				.z = 0
 			},
 			.extent = {
-				.width = texture_type.width,
-				.height = texture_type.height,
+				.width = textureType.width,
+				.height = textureType.height,
 				.depth = 1
 			}
 		};
 		vkCmdCopyImage(
 			contextTyped.setup_cmd_inuse,
-			staging_texture.image,
+			stagingTexture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			texture_type.image,
+			textureType.image,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1,
 			&copy_region
@@ -4683,9 +5103,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 				};
 				vkCmdBlitImage(
 					contextTyped.setup_cmd_inuse,
-					staging_texture.image,
+					stagingTexture.image,
 					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-					texture_type.image,
+					textureType.image,
 					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 					1,
 					&imageBlit,
@@ -4696,7 +5116,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 		setImageLayout(
 			contextTyped.idx,
-			&texture_type,
+			&textureType,
 			{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
 			THSVS_IMAGE_LAYOUT_OPTIMAL,
 			false,
@@ -4708,8 +5128,8 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		delete_mutex.lock();
 		delete_images.push_back(
 			{
-				.image = staging_texture.image,
-				.allocation = staging_texture.allocation,
+				.image = stagingTexture.image,
+				.allocation = stagingTexture.allocation,
 				.image_view = VK_NULL_HANDLE,
 				.sampler = VK_NULL_HANDLE
 			}
@@ -4719,11 +5139,12 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		//
 		finishSetupCommandBuffer(contextTyped.idx);
 	} else
-	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+		// TODO: not sure if I should support this path
 		// Device can texture using linear textures
 		prepareTextureImage(
 			contextTyped.idx,
-			&texture_type,
+			&textureType,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
@@ -4732,9 +5153,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			THSVS_IMAGE_LAYOUT_OPTIMAL
 		);
 		finishSetupCommandBuffer(contextTyped.idx);
-	} else {
-		// Can't support VK_FORMAT_B8G8R8A8_UNORM !?
-		assert(!"No support for B8G8R8A8_UNORM as texture image format");
 	}
 
 	const VkSamplerCreateInfo sampler = {
@@ -4761,9 +5179,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.image = texture_type.image,
+		.image = textureType.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
-		.format = tex_format,
+		.format = textureFormat,
 		.components = {
 			.r = VK_COMPONENT_SWIZZLE_R,
 			.g = VK_COMPONENT_SWIZZLE_G,
@@ -4780,18 +5198,133 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	};
 
 	// create sampler
-	err = vkCreateSampler(device, &sampler, nullptr, &texture_type.sampler);
+	err = vkCreateSampler(device, &sampler, nullptr, &textureType.sampler);
 	assert(!err);
 
 	// create image view
-	err = vkCreateImageView(device, &view, nullptr, &texture_type.view);
+	err = vkCreateImageView(device, &view, nullptr, &textureType.view);
 	assert(!err);
 
 	//
-	texture_type.uploaded = true;
+	textureType.uploaded = true;
 
 	//
 	textures_rwlock.unlock();
+
+	//
+	AtomicOperations::increment(statistics.textureUploads);
+}
+
+void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer)
+{
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
+
+	// have our context typed
+	auto& contextTyped = *static_cast<context_type*>(context);
+	auto& cubemap_texture_type = *cubemapTextureType;
+
+	//
+	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	VkFormatProperties textureFormatProperties;
+	VkResult err;
+	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
+	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+		// we need a setup command buffer here
+		prepareSetupCommandBuffer(contextTyped.idx);
+
+		//
+		struct texture_type staging_texture;
+		memset(&staging_texture, 0, sizeof(staging_texture));
+		staging_texture.width = texture->getTextureWidth();
+		staging_texture.height = texture->getTextureHeight();
+		staging_texture.type = texture_type::TYPE_TEXTURE;
+		staging_texture.aspect_mask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+		//
+		prepareTextureImage(
+			contextTyped.idx,
+			&staging_texture,
+			VK_IMAGE_TILING_LINEAR,
+			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+			texture,
+			{ THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE },
+			THSVS_IMAGE_LAYOUT_OPTIMAL
+		);
+
+		//
+		setImageLayout2(
+			contextTyped.idx,
+			&cubemap_texture_type,
+			{ THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE },
+			{ THSVS_ACCESS_TRANSFER_WRITE, THSVS_ACCESS_NONE },
+			THSVS_IMAGE_LAYOUT_OPTIMAL,
+			THSVS_IMAGE_LAYOUT_OPTIMAL,
+			true,
+			0,
+			1,
+			baseArrayLayer,
+			1
+		);
+
+		//
+		VkImageCopy copy_region = {
+			.srcSubresource = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.mipLevel = 0,
+				.baseArrayLayer = 0,
+				.layerCount = 1
+			},
+			.srcOffset = {
+				.x = 0,
+				.y = 0,
+				.z = 0
+			},
+			.dstSubresource = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.mipLevel = 0,
+				.baseArrayLayer = baseArrayLayer,
+				.layerCount = 1
+			},
+			.dstOffset = {
+				.x = 0,
+				.y = 0,
+				.z = 0
+			},
+			.extent = {
+				.width = cubemap_texture_type.width,
+				.height = cubemap_texture_type.height,
+				.depth = 1
+			}
+		};
+		vkCmdCopyImage(
+			contextTyped.setup_cmd_inuse,
+			staging_texture.image,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			cubemap_texture_type.image,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1,
+			&copy_region
+		);
+
+		// mark for deletion
+		delete_mutex.lock();
+		delete_images.push_back(
+			{
+				.image = staging_texture.image,
+				.allocation = staging_texture.allocation,
+				.image_view = VK_NULL_HANDLE,
+				.sampler = VK_NULL_HANDLE
+			}
+		);
+		delete_mutex.unlock();
+
+		//
+		finishSetupCommandBuffer(contextTyped.idx);
+	} else
+	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+		// TODO: not sure if I should ever support this
+	}
 
 	//
 	AtomicOperations::increment(statistics.textureUploads);
@@ -4812,9 +5345,10 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 		return;
 	}
 	auto& texture = *textureIt->second;
+	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
-	createDepthBufferTexture(textureId, width, height);
-	if (texture.frame_buffer_object_id != 0) createFramebufferObject(texture.frame_buffer_object_id);
+	createDepthBufferTexture(textureId, width, height, ID_NONE, ID_NONE);
+	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -4832,19 +5366,18 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 		return;
 	}
 	auto& texture = *textureIt->second;
+	// TODO: Cube maps
 	if (texture.width == width && texture.height == height) return;
-	createColorBufferTexture(textureId, width, height);
-	if (texture.frame_buffer_object_id != 0) createFramebufferObject(texture.frame_buffer_object_id);
+	createColorBufferTexture(textureId, width, height, ID_NONE, ID_NONE);
+	if (texture.frame_buffer_object_id != ID_NONE) createFramebufferObject(texture.frame_buffer_object_id);
 }
 
 void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+	bindTexture(context, textureId);
 }
 
 void VKRenderer::bindTexture(void* context, int32_t textureId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId));
-
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
@@ -4852,8 +5385,8 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	contextTyped.bound_textures[contextTyped.texture_unit_active] = 0;
 
 	//
-	auto textureObjectPtr = textureId != 0?getTextureInternal(contextTyped.idx, textureId):nullptr;
-	if (textureId != 0) {
+	auto textureObjectPtr = textureId != ID_NONE?getTextureInternal(contextTyped.idx, textureId):nullptr;
+	if (textureId != ID_NONE) {
 		if (textureObjectPtr == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 			return;
@@ -4862,13 +5395,10 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 
 	// bin
 	contextTyped.bound_textures[contextTyped.texture_unit_active] = textureId;
-	if (textureId == 0) {
+	if (textureId == ID_NONE) {
 		onBindTexture(context, textureId);
 		return;
 	}
-
-	//
-	auto& textureObject = *textureObjectPtr;
 
 	// done
 	onBindTexture(context, textureId);
@@ -4876,8 +5406,6 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 
 void VKRenderer::disposeTexture(int32_t textureId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	// mark for deletion
 	dispose_mutex.lock();
 	dispose_textures.push_back(textureId);
@@ -4898,13 +5426,13 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 	auto depthBufferTextureIt = textures.find(frameBufferStruct.depth_texture_id);
 	if (depthBufferTextureIt == textures.end()) {
-		if (frameBufferStruct.depth_texture_id != 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
+		if (frameBufferStruct.depth_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
 	} else {
 		depthBufferTexture = depthBufferTextureIt->second;
 	}
 	auto colorBufferTextureIt = textures.find(frameBufferStruct.color_texture_id);
 	if (colorBufferTextureIt == textures.end()) {
-		if (frameBufferStruct.color_texture_id != 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
+		if (frameBufferStruct.color_texture_id != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
 	} else {
 		colorBufferTexture = colorBufferTextureIt->second;
 	}
@@ -4936,8 +5464,8 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-				.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+				.initialLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				.finalLayout = colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			};
 		}
 		if (depthBufferTexture != nullptr) {
@@ -4955,7 +5483,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		}
 		const VkAttachmentReference color_reference = {
 			.attachment = 0,
-			.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			.layout = colorBufferTexture != nullptr?(colorBufferTexture->vkLayout == VK_IMAGE_LAYOUT_GENERAL?VK_IMAGE_LAYOUT_GENERAL:VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL):VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		};
 		const VkAttachmentReference depth_reference = {
 			.attachment = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
@@ -5024,11 +5552,14 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 		}
 	}
 
-	auto frameBufferPtr = new framebuffer_object_type;
+	auto frameBufferPtr = new framebuffer_object_type();
 	auto& frameBuffer = *frameBufferPtr;
 	frameBuffer.id = reuseIndex != -1?reuseIndex:framebuffers.size();
 	frameBuffer.depth_texture_id = depthBufferTextureGlId;
 	frameBuffer.color_texture_id = colorBufferTextureGlId;
+	frameBuffer.cubemap_texture_id = cubeMapTextureId;
+	frameBuffer.cubemap_texture_index = cubeMapTextureIndex;
+
 	if (reuseIndex != -1) {
 		framebuffers[reuseIndex] = frameBufferPtr;
 	} else {
@@ -5042,8 +5573,6 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
-
 	//
 	if (frameBufferId == bound_frame_buffer) return;
 
@@ -5051,14 +5580,14 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	endDrawCommandsAllContexts();
 
 	//
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
 		} else {
 			auto depthBufferTextureId = frameBuffer->depth_texture_id;
 			auto colorBufferTextureId = frameBuffer->color_texture_id;
-			if (depthBufferTextureId != 0) {
+			if (depthBufferTextureId != ID_NONE) {
 				auto& depth_buffer_texture = *textures[depthBufferTextureId];
 				setImageLayout(
 					0,
@@ -5068,7 +5597,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
-			if (colorBufferTextureId != 0) {
+			if (colorBufferTextureId != ID_NONE) {
 				auto& color_buffer_texture = *textures[colorBufferTextureId];
 				setImageLayout(
 					0,
@@ -5083,24 +5612,24 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	}
 
 	//
-	if (frameBufferId != 0) {
+	if (frameBufferId != ID_NONE) {
 		auto frameBuffer = frameBufferId < 0 || frameBufferId >= framebuffers.size()?nullptr:framebuffers[frameBufferId];
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
-			frameBufferId = 0;
+			frameBufferId = ID_NONE;
 		}
 	}
 
 	//
 	bound_frame_buffer = frameBufferId;
-	if (bound_frame_buffer != 0) {
+	if (bound_frame_buffer != ID_NONE) {
 		auto frameBuffer = bound_frame_buffer < 0 || bound_frame_buffer >= framebuffers.size()?nullptr:framebuffers[bound_frame_buffer];
 		if (frameBuffer == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(bound_frame_buffer));
 		} else {
 			auto depthBufferTextureId = frameBuffer->depth_texture_id;
 			auto colorBufferTextureId = frameBuffer->color_texture_id;
-			if (depthBufferTextureId != 0) {
+			if (depthBufferTextureId != ID_NONE) {
 				auto& depth_buffer_texture = *textures[depthBufferTextureId];
 				setImageLayout(
 					0,
@@ -5110,7 +5639,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					false
 				);
 			}
-			if (colorBufferTextureId != 0) {
+			if (colorBufferTextureId != ID_NONE) {
 				auto& color_buffer_texture = *textures[colorBufferTextureId];
 				setImageLayout(
 					0,
@@ -5195,7 +5724,7 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 	buffer_object_type* buffer = nullptr;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		buffer = contextTyped.bufferVector[bufferObjectId];
+		buffer = contextTyped.buffer_vector[bufferObjectId];
 		if (buffer != nullptr) {
 			while (buffer->uploading == true) {
 				// spin lock
@@ -5215,7 +5744,7 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 	buffer = bufferIt->second;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		contextTyped.bufferVector[bufferObjectId] = buffer;
+		contextTyped.buffer_vector[bufferObjectId] = buffer;
 	}
 	buffers_rwlock.unlock();
 
@@ -5424,9 +5953,9 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 	texture_type* texture = nullptr;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		texture = contextTyped.textureVector[textureId];
+		texture = contextTyped.texture_vector[textureId];
 		if (texture != nullptr) {
-			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return white_texture_default;
+			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return white_texture_sampler2d_default;
 			return texture;
 		}
 
@@ -5436,25 +5965,24 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 	if (textureIt == textures.end()) {
 		textures_rwlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture with id " + to_string(textureId) + " does not exist");
-		return white_texture_default;
+		return white_texture_sampler2d_default;
 	}
 	// we have a texture, also place it in context
 	texture = textureIt->second;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		contextTyped.textureVector[textureId] = texture;
+		contextTyped.texture_vector[textureId] = texture;
 	}
 	textures_rwlock.unlock();
 	return texture;
 }
 
 inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, const string& pipelineId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(program->pipelines.size()) + ": " + to_string(contextIdx == -1?-1:contexts[contextIdx].pipelineVector.size()));
 	// have our context typed
 	pipeline_type* pipeline = nullptr;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		for (auto pipelineCandidate: contextTyped.pipelineVector) {
+		for (auto pipelineCandidate: contextTyped.pipeline_vector) {
 			if (pipelineCandidate->id == pipelineId) {
 				pipeline = pipelineCandidate;
 				break;
@@ -5474,7 +6002,7 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 	pipeline = pipelineIt->second;
 	if (contextIdx != -1) {
 		auto& contextTyped = contexts[contextIdx];
-		contextTyped.pipelineVector.push_back(pipeline);
+		contextTyped.pipeline_vector.push_back(pipeline);
 	}
 	pipeline_rwlock.unlock();
 	return pipeline;
@@ -5554,17 +6082,20 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	//
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id) + ": " + to_string(contextTyped.idx) + ": " + to_string(triangles) + " / " + to_string(trianglesOffset) + " / " + to_string(instances));
-
 	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.objects_render_command.textures[i];
-		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		texture.sampler = textureObject.sampler;
-		texture.view = textureObject.view;
-		texture.layout = textureObject.vkLayout;
+		if (textureId == ID_NONE) {
+			texture.sampler = VK_NULL_HANDLE;
+			texture.view = VK_NULL_HANDLE;
+			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		} else {
+			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
+			texture.sampler = textureObject.sampler;
+			texture.view = textureObject.view;
+			texture.layout = textureObject.vkLayout;
+		}
 	}
 
 	// ubos
@@ -5588,9 +6119,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	uint32_t bufferSize;
 
 	//
-	contextTyped.objects_render_command.indices_buffer = indicesBuffer == 0?0:getBufferObjectInternal(contextTyped.idx, indicesBuffer, bufferSize);
+	contextTyped.objects_render_command.indices_buffer = indicesBuffer == ID_NONE?nullptr:getBufferObjectInternal(contextTyped.idx, indicesBuffer, bufferSize);
 	for (auto i = 0; i < contextTyped.objects_render_command.vertex_buffers.size(); i++) {
-		contextTyped.objects_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == 0?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
+		contextTyped.objects_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
 		if (contextTyped.objects_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.objects_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
 
 	}
@@ -5619,8 +6150,6 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	VkResult err;
 
 	// end render passes
@@ -5664,8 +6193,6 @@ inline void VKRenderer::endDrawCommands(int contextIdx) {
 }
 
 inline void VKRenderer::executeCommand(int contextIdx) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx));
-
 	//
 	finishSetupCommandBuffer(contextIdx);
 
@@ -5712,21 +6239,57 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		//
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D
+			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
-					texDescs[samplerIdx] = {
-						.sampler = white_texture_default->sampler,
-						.imageView = white_texture_default->view,
-						.imageLayout = white_texture_default->vkLayout
-					};
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
 				} else {
 					auto& texture = contextTyped.objects_render_command.textures[uniform->texture_unit];
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
+					if (texture.view == VK_NULL_HANDLE) {
+						switch(uniform->type) {
+							case shader_type::uniform_type::TYPE_SAMPLER2D:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_sampler2d_default->sampler,
+									.imageView = white_texture_sampler2d_default->view,
+									.imageLayout = white_texture_sampler2d_default->vkLayout
+								};
+								break;
+							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_samplercube_default->sampler,
+									.imageView = white_texture_samplercube_default->view,
+									.imageLayout = white_texture_samplercube_default->vkLayout
+								};
+								break;
+							default:
+								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+								break;
+						}
+					} else {
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.layout
+						};
+					}
 				}
 				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
@@ -5805,21 +6368,57 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		// do points render command
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D
+			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
-					texDescs[samplerIdx] = {
-						.sampler = white_texture_default->sampler,
-						.imageView = white_texture_default->view,
-						.imageLayout = white_texture_default->vkLayout
-					};
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
 				} else {
 					auto& texture = contextTyped.points_render_command.textures[uniform->texture_unit];
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
+					if (texture.view == VK_NULL_HANDLE) {
+						switch(uniform->type) {
+							case shader_type::uniform_type::TYPE_SAMPLER2D:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_sampler2d_default->sampler,
+									.imageView = white_texture_sampler2d_default->view,
+									.imageLayout = white_texture_sampler2d_default->vkLayout
+								};
+								break;
+							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_samplercube_default->sampler,
+									.imageView = white_texture_samplercube_default->view,
+									.imageLayout = white_texture_samplercube_default->vkLayout
+								};
+								break;
+							default:
+								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+								break;
+						}
+					} else {
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.layout
+						};
+					}
 				}
 				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
@@ -5892,21 +6491,57 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		// do points render command
 		auto samplerIdx = 0;
 		for (auto shader: contextTyped.program->shaders) {
-			// sampler2D
+			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
 				if (uniform->texture_unit == -1) {
-					texDescs[samplerIdx] = {
-						.sampler = white_texture_default->sampler,
-						.imageView = white_texture_default->view,
-						.imageLayout = white_texture_default->vkLayout
-					};
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_sampler2d_default->sampler,
+								.imageView = white_texture_sampler2d_default->view,
+								.imageLayout = white_texture_sampler2d_default->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							texDescs[samplerIdx] = {
+								.sampler = white_texture_samplercube_default->sampler,
+								.imageView = white_texture_samplercube_default->view,
+								.imageLayout = white_texture_samplercube_default->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
+					}
 				} else {
 					auto& texture = contextTyped.lines_render_command.textures[uniform->texture_unit];
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
+					if (texture.view == VK_NULL_HANDLE) {
+						switch(uniform->type) {
+							case shader_type::uniform_type::TYPE_SAMPLER2D:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_sampler2d_default->sampler,
+									.imageView = white_texture_sampler2d_default->view,
+									.imageLayout = white_texture_sampler2d_default->vkLayout
+								};
+								break;
+							case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+								texDescs[samplerIdx] = {
+									.sampler = white_texture_samplercube_default->sampler,
+									.imageView = white_texture_samplercube_default->view,
+									.imageLayout = white_texture_samplercube_default->vkLayout
+								};
+								break;
+							default:
+								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+								break;
+						}
+					} else {
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.layout
+						};
+					}
 				}
 				descriptorSetWrites[uniform->position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
@@ -6077,10 +6712,16 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.points_render_command.textures[i];
-		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		texture.sampler = textureObject.sampler;
-		texture.view = textureObject.view;
-		texture.layout = textureObject.vkLayout;
+		if (textureId == ID_NONE) {
+			texture.sampler = VK_NULL_HANDLE;
+			texture.view = VK_NULL_HANDLE;
+			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		} else {
+			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
+			texture.sampler = textureObject.sampler;
+			texture.view = textureObject.view;
+			texture.layout = textureObject.vkLayout;
+		}
 	}
 
 	// ubos
@@ -6105,7 +6746,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	//
 	for (auto i = 0; i < contextTyped.points_render_command.vertex_buffers.size(); i++) {
-		contextTyped.points_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == 0?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
+		contextTyped.points_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
 		if (contextTyped.points_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.points_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
 	}
 	contextTyped.points_render_command.count = points;
@@ -6139,10 +6780,16 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		auto& texture = contextTyped.lines_render_command.textures[i];
-		auto& textureObject = textureId != 0?*getTextureInternal(contextTyped.idx, textureId):*white_texture_default;
-		texture.sampler = textureObject.sampler;
-		texture.view = textureObject.view;
-		texture.layout = textureObject.vkLayout;
+		if (textureId == ID_NONE) {
+			texture.sampler = VK_NULL_HANDLE;
+			texture.view = VK_NULL_HANDLE;
+			texture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		} else {
+			auto& textureObject = *getTextureInternal(contextTyped.idx, textureId);
+			texture.sampler = textureObject.sampler;
+			texture.view = textureObject.view;
+			texture.layout = textureObject.vkLayout;
+		}
 	}
 
 	// ubos
@@ -6167,7 +6814,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	//
 	for (auto i = 0; i < contextTyped.lines_render_command.vertex_buffers.size(); i++) {
-		contextTyped.lines_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == 0?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
+		contextTyped.lines_render_command.vertex_buffers[i] = contextTyped.bound_buffers[i] == ID_NONE?VK_NULL_HANDLE:getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], bufferSize);
 		if (contextTyped.lines_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.lines_render_command.vertex_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, bufferSize);
 	}
 	contextTyped.lines_render_command.count = points;
@@ -6187,7 +6834,6 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 void VKRenderer::unbindBufferObjects(void* context)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& contextTyped = *static_cast<context_type*>(context);
 	contextTyped.bound_indices_buffer = 0;
 	contextTyped.bound_buffers.fill(0);
@@ -6195,7 +6841,6 @@ void VKRenderer::unbindBufferObjects(void* context)
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	dispose_mutex.lock();
 	for (auto bufferObjectId: bufferObjectIds) {
 		dispose_buffers.push_back(bufferObjectId);
@@ -6227,6 +6872,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 void VKRenderer::initGuiMode()
 {
+	enableBlending();
 	disableCulling(&contexts[0]);
 	disableDepthBufferTest();
 	disableDepthBufferWriting();
@@ -6237,6 +6883,7 @@ void VKRenderer::doneGuiMode()
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
 	enableCulling(&contexts[0]);
+	disableBlending();
 }
 
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
@@ -6262,7 +6909,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 
 	//
 	for (auto i = 0; i < contextTyped.compute_command.storage_buffers.size(); i++) {
-		if (contextTyped.bound_buffers[i] != 0) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], contextTyped.compute_command.storage_buffer_sizes[i]);
+		if (contextTyped.bound_buffers[i] != ID_NONE) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(contextTyped.idx, contextTyped.bound_buffers[i], contextTyped.compute_command.storage_buffer_sizes[i]);
 		if (contextTyped.compute_command.storage_buffers[i] == VK_NULL_HANDLE) contextTyped.compute_command.storage_buffers[i] = getBufferObjectInternal(empty_vertex_buffer, contextTyped.compute_command.storage_buffer_sizes[i]);
 	}
 	contextTyped.compute_command.num_groups_x = numGroupsX;
@@ -6281,7 +6928,6 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 }
 
 void VKRenderer::memoryBarrier() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	VkResult err;
 
 	// end render passes
@@ -6401,7 +7047,6 @@ const string& VKRenderer::getShader(void* context) {
 
 void VKRenderer::setShader(void* context, const string& id) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	if (VERBOSE == true) Console::println("VKRenderer::setShader(): " + to_string(contextTyped.idx) + ": " + contextTyped.shader + " --> " + id);
 	contextTyped.shader = id;
 }
 

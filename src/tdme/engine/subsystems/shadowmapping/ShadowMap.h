@@ -83,7 +83,7 @@ private:
 	void updateDepthBiasMVPMatrix(void* context);
 
 public:
-	static constexpr int32_t TEXTUREUNIT { 8 };
+	static constexpr int32_t TEXTUREUNIT { 9 };
 
 	/**
 	 * Public constructor

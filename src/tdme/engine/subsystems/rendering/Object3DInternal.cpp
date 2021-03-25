@@ -41,7 +41,6 @@ Object3DInternal::Object3DInternal(const string& id, Model* model, int instances
 	receivesShadows = false;
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
-	boundingBox.fromBoundingVolume(model->getBoundingBox());
 	updateBoundingBox();
 }
 
@@ -133,6 +132,7 @@ void Object3DInternal::update()
 
 void Object3DInternal::updateBoundingBox() {
 	BoundingBox instanceBoundingBox;
+	boundingBox.fromBoundingVolume(model->getBoundingBox());
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[0]);
 	for (auto i = 1; i < instances; i++) {
 		instanceBoundingBox.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[i]);

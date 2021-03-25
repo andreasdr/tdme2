@@ -88,7 +88,7 @@ private:
 	void loadModel();
 
 	/**
-	 * Load model
+	 * Load model prototype
 	 * @param name name
 	 * @param description description
 	 * @param pathName path name
@@ -97,7 +97,7 @@ private:
 	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual Prototype* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
+	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
 	/**
 	 * On rotation event to be overloaded
@@ -212,7 +212,6 @@ public:
 	 */
 	void updateGUIElements();
 
-	// overridden methods
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;

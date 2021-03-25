@@ -36,33 +36,68 @@ private:
 	Camera* camera { nullptr };
 	int width { -1 };
 	int height { -1 };
-	array<FrameBuffer*, 6> frameBuffers { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	array<Vector3, 6> forwardVectors {{
-		{{ -1.0f, 0.0f, 0.0f }}, // left
-		{{ 1.0f, 0.0f, 0.0f }}, // right
-		{{ 0.0f, -1.0f, 0.0f }}, // top
-		{{ 0.0f, 1.0f, 0.0f }}, // bottom
-		{{ 0.0f, 0.0f, -1.0f }}, // front
-		{{ 0.0f, 0.0f, 1.0f }} // back
-	}};
-	array<Vector3, 6> sideVectors {{
-		{{ 0.0f, 0.0f, -1.0f }}, // left
-		{{ 0.0f, 0.0f, 1.0f }}, // right
-		{{ -1.0f, 0.0f, 0.0f }}, // top
-		{{ 1.0f, 0.0f, 0.0f }}, // bottom
-		{{ 1.0f, 0.0f, 0.0f }}, // front
-		{{ -1.0f, 0.0f, 0.0f }} // back
-	}};
-	array<Vector3, 6> upVectors {{
-		{{ 0.0f, 1.0f, 0.0f }}, // left
-		{{ 0.0f, 0.0f, 0.0f }}, // right
-		{{ 0.0f, 0.0f, -1.0f }}, // top
-		{{ 0.0f, 0.0f, 1.0f }}, // bottom
-		{{ 0.0f, 1.0f, 0.0f }}, // front
-		{{ 0.0f, 1.0f, 0.0f }} // back
-	}};
-	int32_t cubeMapTextureId { 0 };
-	int64_t timeRenderLast { -1LL };
+	#if defined(VULKAN)
+		array<array<FrameBuffer*, 6>, 2> frameBuffers {{
+			{{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }},
+			{{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }}
+		}};
+		array<Vector3, 6> forwardVectors {{
+			{{ 1.0f, 0.0f, 0.0f }}, // right
+			{{ -1.0f, 0.0f, 0.0f }}, // left
+			{{ 0.0f, 1.0f, 0.0f }}, // top
+			{{ 0.0f, -1.0f, 0.0f }}, // bottom
+			{{ 0.0f, 0.0f, -1.0f }}, // front
+			{{ 0.0f, 0.0f, 1.0f }} // back
+		}};
+		array<Vector3, 6> sideVectors {{
+			{{ 0.0f, 0.0f, 1.0f }}, // right
+			{{ 0.0f, 0.0f, -1.0f }}, // left
+			{{ 1.0f, 0.0f, 0.0f }}, // top
+			{{ -1.0f, 0.0f, 0.0f }}, // bottom
+			{{ 1.0f, 0.0f, 0.0f }}, // front
+			{{ -1.0f, 0.0f, 0.0f }} // back
+		}};
+		array<Vector3, 6> upVectors {{
+			{{ 0.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, 1.0f, 0.0f }}, // left
+			{{ 0.0f, 0.0f, -1.0f }}, // top
+			{{ 0.0f, 0.0f, 1.0f }}, // bottom
+			{{ 0.0f, 1.0f, 0.0f }}, // front
+			{{ 0.0f, 1.0f, 0.0f }} // back
+		}};
+		array<int32_t, 2> cubeMapTextureIds { 0, 0 };
+		int64_t timeRenderLast { -1LL };
+		int reflectionCubeMapTextureIdx { 0 };
+		int renderCubeMapTextureIdx { 0 };
+	#else
+		array<FrameBuffer*, 6> frameBuffers { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+		array<Vector3, 6> forwardVectors {{
+			{{ -1.0f, 0.0f, 0.0f }}, // left
+			{{ 1.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, -1.0f, 0.0f }}, // top
+			{{ 0.0f, 1.0f, 0.0f }}, // bottom
+			{{ 0.0f, 0.0f, -1.0f }}, // front
+			{{ 0.0f, 0.0f, 1.0f }} // back
+		}};
+		array<Vector3, 6> sideVectors {{
+			{{ 0.0f, 0.0f, -1.0f }}, // left
+			{{ 0.0f, 0.0f, 1.0f }}, // right
+			{{ -1.0f, 0.0f, 0.0f }}, // top
+			{{ 1.0f, 0.0f, 0.0f }}, // bottom
+			{{ 1.0f, 0.0f, 0.0f }}, // front
+			{{ -1.0f, 0.0f, 0.0f }} // back
+		}};
+		array<Vector3, 6> upVectors {{
+			{{ 0.0f, 1.0f, 0.0f }}, // left
+			{{ 0.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, 0.0f, -1.0f }}, // top
+			{{ 0.0f, 0.0f, 1.0f }}, // bottom
+			{{ 0.0f, 1.0f, 0.0f }}, // front
+			{{ 0.0f, 1.0f, 0.0f }} // back
+		}};
+		int32_t cubeMapTextureId { 0 };
+		int64_t timeRenderLast { -1LL };
+	#endif
 	int64_t timeRenderUpdateFrequency { 100LL };
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	Engine::DecomposedEntities visibleDecomposedEntities;
@@ -149,19 +184,14 @@ public:
 	}
 
 	/**
-	 * Get frame buffer of given index
-	 * @param idx index
-	 * @return frame buffer of given index
-	 */
-	inline FrameBuffer* getFrameBuffer(int idx) {
-		return frameBuffers[idx];
-	}
-
-	/**
 	 * @return cube map texture id
 	 */
 	inline int32_t getCubeMapTextureId() {
-		return cubeMapTextureId;
+		#if defined(VULKAN)
+			return cubeMapTextureIds[reflectionCubeMapTextureIdx];
+		#else
+			return cubeMapTextureId;
+		#endif
 	}
 
 };

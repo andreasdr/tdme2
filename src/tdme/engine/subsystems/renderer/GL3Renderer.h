@@ -132,8 +132,8 @@ public:
 	void setColorMask(bool red, bool green, bool blue, bool alpha) override;
 	void clear(int32_t mask) override;
 	int32_t createTexture() override;
-	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
-	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
+	int32_t createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
+	int32_t createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) override;
 	void uploadTexture(void* context, Texture* texture) override;
 	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
 	int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) override;

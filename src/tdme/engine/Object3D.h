@@ -122,6 +122,7 @@ private:
 	 * @param context context
 	 */
 	inline void preRender(void* context) {
+		if (model->hasBoundingBoxUpdate() == true) updateBoundingBox();
 		for (auto object3DNode: object3dNodes) {
 			if (object3DNode->renderer->needsPreRender() == true) {
 				object3DNode->renderer->preRender(context);
@@ -159,7 +160,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_OBJECT3D;
+		return ENTITYTYPE_OBJECT3D;
 	}
 
 	void setEngine(Engine* engine) override;

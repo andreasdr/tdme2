@@ -106,10 +106,10 @@ void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	}
 }
 
-void GUIMenuItemController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIMenuItemController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (isDisabled() == false && node == this->node && event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+	GUIElementController::handleKeyboardEvent(event);
+	if (isDisabled() == false && event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_SPACE: {
 				required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();

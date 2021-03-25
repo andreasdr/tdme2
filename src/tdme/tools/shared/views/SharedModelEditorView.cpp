@@ -508,7 +508,7 @@ void SharedModelEditorView::loadModel()
 	try {
 		auto oldEntity = prototype;
 		setPrototype(
-			loadModel(
+			loadModelPrototype(
 				FileSystem::getInstance()->getFileName(modelFile),
 				"",
 				FileSystem::getInstance()->getPathName(modelFile),
@@ -522,7 +522,7 @@ void SharedModelEditorView::loadModel()
 	}
 }
 
-Prototype* SharedModelEditorView::loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
+Prototype* SharedModelEditorView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
 		auto prototype = PrototypeReader::read(

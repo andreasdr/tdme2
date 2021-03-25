@@ -55,9 +55,9 @@ private:
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
-	Model* modelLOD1;
-	Model* modelLOD2;
-	Model* modelLOD3;
+	Model* modelLOD1 { nullptr };
+	Model* modelLOD2 { nullptr };
+	Model* modelLOD3 { nullptr };
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
 	LODLevelType levelTypeLOD2;
@@ -144,7 +144,28 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITY_LODOBJECT3D;
+		return ENTITYTYPE_LODOBJECT3D;
+	}
+
+	/**
+	 * @return LOD object 1
+	 */
+	inline Object3D* getLOD1Object() {
+		return objectLOD1;
+	}
+
+	/**
+	 * @return LOD object 2
+	 */
+	inline Object3D* getLOD2Object() {
+		return objectLOD2;
+	}
+
+	/**
+	 * @return LOD object 3
+	 */
+	inline Object3D* getLOD3Object() {
+		return objectLOD3;
 	}
 
 	/**

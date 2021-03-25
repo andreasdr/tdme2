@@ -184,7 +184,7 @@ void GUIMenuHeaderItemController::handleCurrentMenuItemKeyboardEvent(GUIKeyboard
 	determineMenuItemControllers();
 	auto selectedMenuItemControllerIdx = getSelectedMenuItemControllerIdx();
 	if (menuItemControllers.size() == 0) return;
-	menuItemControllers[selectedMenuItemControllerIdx]->handleKeyboardEvent(menuItemControllers[selectedMenuItemControllerIdx]->getNode(), event);
+	menuItemControllers[selectedMenuItemControllerIdx]->handleKeyboardEvent(event);
 }
 
 void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
@@ -228,9 +228,9 @@ void GUIMenuHeaderItemController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	}
 }
 
-void GUIMenuHeaderItemController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIMenuHeaderItemController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
+	GUIElementController::handleKeyboardEvent(event);
 }
 
 void GUIMenuHeaderItemController::tick()

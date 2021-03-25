@@ -538,6 +538,7 @@ void SceneEditorView::handleInputEvents()
 					}
 					updateGUITransformationsElements();
 				} else {
+					if (selectedEntity != nullptr && scene.getEntity(selectedEntity->getId()) == nullptr) selectedEntity = nullptr;
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
 						for (auto selectedEntityId: selectedEntityIds) {
@@ -918,6 +919,7 @@ void SceneEditorView::activate()
 
 void SceneEditorView::deactivate()
 {
+	SceneConnector::resetEngine(engine, scene);
 	camLookAt.set(engine->getCamera()->getLookAt());
 }
 
@@ -941,7 +943,7 @@ void SceneEditorView::storeSettings()
 
 void SceneEditorView::dispose()
 {
-	Engine::getInstance()->reset();
+	SceneConnector::resetEngine(engine, scene);
 	storeSettings();
 }
 
@@ -994,9 +996,9 @@ void SceneEditorView::resetEntity(Entity* entity) {
 
 void SceneEditorView::loadScene()
 {
+	SceneConnector::resetEngine(engine, scene); // TODO: check me!
 	removeGizmo();
 	removeGrid();
-	engine->reset();
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	SceneConnector::setLights(engine, scene, Vector3());
@@ -1005,6 +1007,11 @@ void SceneEditorView::loadScene()
 	unselectLightPresets();
 	updateGrid();
 	updateSky();
+	// center scene
+	cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
+	engine->getCamera()->setLookAt(scene.getCenter());
+	cameraInputHandler->reset();
+	gridCenter.set(engine->getCamera()->getLookAt());
 }
 
 void SceneEditorView::updateGrid()
@@ -1475,7 +1482,7 @@ bool SceneEditorView::entityPropertyAdd()
 
 void SceneEditorView::loadScene(const string& path, const string& file)
 {
-	engine->reset();
+	SceneConnector::resetEngine(engine, scene);
 	selectedPrototype = nullptr;
 	try {
 		bool haveModelFile = false;
@@ -1513,10 +1520,6 @@ void SceneEditorView::loadScene(const string& path, const string& file)
 		sceneEditorScreenController->unsetEntityProperties();
 		sceneEditorScreenController->unsetEntityTransformations();
 		loadScene();
-		cameraInputHandler->setSceneCenter(Vector3(scene.getCenter().getX(), scene.getBoundingBox()->getMax().getY() + 3.0f, scene.getCenter().getZ()));
-		engine->getCamera()->setLookAt(scene.getCenter());
-		cameraInputHandler->reset();
-		gridCenter.set(engine->getCamera()->getLookAt());
 		reloadEntityLibrary = true;
 		updateGUIElements();
 	} catch (Exception& exception) {

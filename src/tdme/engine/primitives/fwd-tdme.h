@@ -9,6 +9,7 @@ namespace primitives {
 	class Capsule;
 	class ConvexMesh;
 	class ConvexMeshBoundingVolume;
+	class HeightMap;
 	class LineSegment;
 	class OrientedBoundingBox;
 	class Plane;

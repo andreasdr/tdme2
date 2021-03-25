@@ -169,7 +169,7 @@ void GUIScrollAreaController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 {
 }
 
-void GUIScrollAreaController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIScrollAreaController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

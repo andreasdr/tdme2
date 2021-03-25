@@ -76,7 +76,14 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITY_OBJECTPARTICLESYSTEM;
+		return ENTITYTYPE_OBJECTPARTICLESYSTEM;
+	}
+
+	/**
+	 * @return objects
+	 */
+	inline const vector<Object3D*>& getObjects() {
+		return objects;
 	}
 
 	/**

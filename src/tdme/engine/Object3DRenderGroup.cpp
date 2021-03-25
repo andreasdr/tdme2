@@ -277,6 +277,7 @@ void Object3DRenderGroup::combineObjects(Model* model, const vector<Transformati
 void Object3DRenderGroup::updateRenderGroup() {
 	// dispose old object and combined model
 	if (combinedEntity != nullptr) {
+		if (engine != nullptr) engine->removeEntityFromLists(combinedEntity);
 		combinedEntity->dispose();
 		delete combinedEntity;
 		combinedEntity = nullptr;
@@ -284,15 +285,17 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 	// combine objects to a new model
 	for (auto i = 0; i < combinedModels.size(); i++) {
+		if (combinedModels[i] != nullptr) delete combinedModels[i];
 		combinedModels[i] = new Model(
-			id + ".lod." + to_string(i),
-			id + ".lod." + to_string(i),
+			id + ".o3rg.lod." + to_string(i),
+			id + ".o3rg.lod." + to_string(i),
 			UpVector::Y_UP,
 			RotationOrder::ZYX,
 			nullptr
 		);
 	}
 
+	//
 	for (auto& transformationsByModelIt: transformationsByModel) {
 		auto model = transformationsByModelIt.first;
 		auto& objectsTransformations = transformationsByModelIt.second;
@@ -332,8 +335,9 @@ void Object3DRenderGroup::updateRenderGroup() {
 		}
 	}
 
+	// no lod
 	if (combinedModels.size() == 1) {
-		auto combinedObject3D = new Object3D(id, combinedModels[0]);
+		auto combinedObject3D = new Object3D(id + ".o3rg", combinedModels[0]);
 		combinedObject3D->setParentEntity(this);
 		combinedObject3D->setShader(shaderId);
 		combinedObject3D->setDistanceShader(distanceShaderId);
@@ -346,10 +350,11 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject3D->update();
 		combinedEntity = combinedObject3D;
 	} else
+	// lod
 	if (combinedModels.size() > 1) {
 		// create object, initialize and
 		auto combinedLODObject3D = new LODObject3D(
-			id,
+			id + ".o3rg",
 			combinedModels[0],
 			combinedModels[1] == nullptr?LODObject3D::LODLEVELTYPE_NONE:LODObject3D::LODLEVELTYPE_MODEL,
 			modelLOD2MinDistance,

@@ -108,6 +108,6 @@ public:
 	 * Set model file
 	 * @param modelFileName model file name
 	 */
-	void setModelFile(const string& modelFileName) /* throws(Exception) */;
+	void setModelFile(const string& modelFileName);
 
 };

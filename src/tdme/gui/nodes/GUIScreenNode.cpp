@@ -389,10 +389,6 @@ void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
 }
 
-void GUIScreenNode::handleKeyboardEvent(GUIKeyboardEvent* event)
-{
-}
-
 void GUIScreenNode::addActionListener(GUIActionListener* listener)
 {
 	removeActionListener(listener);

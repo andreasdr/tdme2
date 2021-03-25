@@ -1062,22 +1062,6 @@ void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, 
 	}
 }
 
-void GUINode::handleKeyboardEvent(GUIKeyboardEvent* event)
-{
-	if (conditionsMet == false)
-		return;
-
-	auto node = this;
-	if (node->controller == nullptr) {
-		node = getParentControllerNode();
-	}
-	if (node == nullptr) {
-		return;
-	}
-
-	node->controller->handleKeyboardEvent(this, event);
-}
-
 GUINodeController* GUINode::getController()
 {
 	return controller;

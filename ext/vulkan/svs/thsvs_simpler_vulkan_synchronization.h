@@ -381,10 +381,10 @@ destination pipeline stages, and a VkMemoryBarrier, that can be used with
 Vulkan's synchronization methods.
 */
 void thsvsGetVulkanMemoryBarrier(
-    ThsvsGlobalBarrier      thBarrier,
-    VkPipelineStageFlags*   pSrcStages,
-    VkPipelineStageFlags*   pDstStages,
-    VkMemoryBarrier*        pVkBarrier);
+    const ThsvsGlobalBarrier& thBarrier,
+    VkPipelineStageFlags*     pSrcStages,
+    VkPipelineStageFlags*     pDstStages,
+    VkMemoryBarrier*          pVkBarrier);
 
 /*
 Mapping function that translates a buffer barrier into a set of source and
@@ -392,10 +392,10 @@ destination pipeline stages, and a VkBufferMemoryBarrier, that can be used
 with Vulkan's synchronization methods.
 */
 void thsvsGetVulkanBufferMemoryBarrier(
-    ThsvsBufferBarrier      thBarrier,
-    VkPipelineStageFlags*   pSrcStages,
-    VkPipelineStageFlags*   pDstStages,
-    VkBufferMemoryBarrier*  pVkBarrier);
+    const ThsvsBufferBarrier& thBarrier,
+    VkPipelineStageFlags*     pSrcStages,
+    VkPipelineStageFlags*     pDstStages,
+    VkBufferMemoryBarrier*    pVkBarrier);
 
 /*
 Mapping function that translates an image barrier into a set of source and
@@ -403,10 +403,10 @@ destination pipeline stages, and a VkBufferMemoryBarrier, that can be used
 with Vulkan's synchronization methods.
 */
 void thsvsGetVulkanImageMemoryBarrier(
-    ThsvsImageBarrier      thBarrier,
-    VkPipelineStageFlags*  pSrcStages,
-    VkPipelineStageFlags*  pDstStages,
-    VkImageMemoryBarrier*  pVkBarrier);
+    const ThsvsImageBarrier& thBarrier,
+    VkPipelineStageFlags*    pSrcStages,
+    VkPipelineStageFlags*    pDstStages,
+    VkImageMemoryBarrier*    pVkBarrier);
 
 /*
 Simplified wrapper around vkCmdPipelineBarrier.
@@ -552,8 +552,14 @@ const ThsvsVkAccessInfo ThsvsAccessMap[THSVS_NUM_ACCESS_TYPES] = {
 
 // Read Access
     // THSVS_ACCESS_COMMAND_BUFFER_READ_NV
-    {   VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
-        VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV,
+	{
+		#if defined(__linux__)
+			0,
+			0,
+		#else
+			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
+			VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV,
+		#endif
         VK_IMAGE_LAYOUT_UNDEFINED},
     // THSVS_ACCESS_INDIRECT_BUFFER
     {   VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
@@ -754,8 +760,14 @@ const ThsvsVkAccessInfo ThsvsAccessMap[THSVS_NUM_ACCESS_TYPES] = {
 
 // Write access
     // THSVS_ACCESS_COMMAND_BUFFER_WRITE_NV
-    {   VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
-        VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,
+    {
+		#if defined(__linux__)
+			0,
+			0,
+		#else
+			VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
+			VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,
+		#endif
         VK_IMAGE_LAYOUT_UNDEFINED},
     // THSVS_ACCESS_VERTEX_SHADER_WRITE
     {   VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
@@ -848,10 +860,10 @@ const ThsvsVkAccessInfo ThsvsAccessMap[THSVS_NUM_ACCESS_TYPES] = {
 };
 
 void thsvsGetVulkanMemoryBarrier(
-    ThsvsGlobalBarrier      thBarrier,
-    VkPipelineStageFlags*   pSrcStages,
-    VkPipelineStageFlags*   pDstStages,
-    VkMemoryBarrier*        pVkBarrier)
+    const ThsvsGlobalBarrier& thBarrier,
+    VkPipelineStageFlags*     pSrcStages,
+    VkPipelineStageFlags*     pDstStages,
+    VkMemoryBarrier*          pVkBarrier)
 {
     *pSrcStages               = 0;
     *pDstStages               = 0;
@@ -913,10 +925,10 @@ void thsvsGetVulkanMemoryBarrier(
 }
 
 void thsvsGetVulkanBufferMemoryBarrier(
-    ThsvsBufferBarrier      thBarrier,
-    VkPipelineStageFlags*   pSrcStages,
-    VkPipelineStageFlags*   pDstStages,
-    VkBufferMemoryBarrier*  pVkBarrier)
+    const ThsvsBufferBarrier& thBarrier,
+    VkPipelineStageFlags*     pSrcStages,
+    VkPipelineStageFlags*     pDstStages,
+    VkBufferMemoryBarrier*    pVkBarrier)
 {
     *pSrcStages                     = 0;
     *pDstStages                     = 0;
@@ -929,6 +941,10 @@ void thsvsGetVulkanBufferMemoryBarrier(
     pVkBarrier->buffer              = thBarrier.buffer;
     pVkBarrier->offset              = thBarrier.offset;
     pVkBarrier->size                = thBarrier.size;
+
+#ifdef THSVS_ERROR_CHECK_COULD_USE_GLOBAL_BARRIER
+    assert(pVkBarrier->srcQueueFamilyIndex != pVkBarrier->dstQueueFamilyIndex);
+#endif
 
     for (uint32_t i = 0; i < thBarrier.prevAccessCount; ++i)
     {
@@ -984,10 +1000,10 @@ void thsvsGetVulkanBufferMemoryBarrier(
 }
 
 void thsvsGetVulkanImageMemoryBarrier(
-    ThsvsImageBarrier       thBarrier,
-    VkPipelineStageFlags*   pSrcStages,
-    VkPipelineStageFlags*   pDstStages,
-    VkImageMemoryBarrier*   pVkBarrier)
+    const ThsvsImageBarrier& thBarrier,
+    VkPipelineStageFlags*    pSrcStages,
+    VkPipelineStageFlags*    pDstStages,
+    VkImageMemoryBarrier*    pVkBarrier)
 {
     *pSrcStages                     = 0;
     *pDstStages                     = 0;
@@ -1054,10 +1070,6 @@ void thsvsGetVulkanImageMemoryBarrier(
 #endif
             pVkBarrier->oldLayout = layout;
         }
-
-#ifdef THSVS_ERROR_CHECK_COULD_USE_GLOBAL_BARRIER
-    assert(pVkBarrier->srcQueueFamilyIndex != pVkBarrier->dstQueueFamilyIndex);
-#endif
     }
 
     for (uint32_t i = 0; i < thBarrier.nextAccessCount; ++i)

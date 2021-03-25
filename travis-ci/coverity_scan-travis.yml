@@ -16,7 +16,7 @@ addons:
   coverity_scan:
     project:
       name: "andreasdr/tdme2"
-      description: "TDME2 - ThreeDeeMiniEngine2 is a lightweight, multi-platform 3D engine including tools suited for 3D game development using C++11"
+      description: "TDME2 - ThreeDeeMiniEngine2 is a lightweight, multi-platform 3D engine including tools suited for 3D game/application development using C++11"
     notification_email: andreas@drewke.net
     build_command_prepend: ""
     build_command: "make mains"

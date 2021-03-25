@@ -194,9 +194,9 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 	}
 }
 
-void GUISelectBoxOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUISelectBoxOptionController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
+	GUIElementController::handleKeyboardEvent(event);
 }
 
 void GUISelectBoxOptionController::onFocusGained()

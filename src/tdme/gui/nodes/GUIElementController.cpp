@@ -138,9 +138,9 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	}
 }
 
-void GUIElementController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIElementController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	if (disabled == false && node == this->node) {
+	if (disabled == false) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_SPACE: {
 					event->setProcessed(true);

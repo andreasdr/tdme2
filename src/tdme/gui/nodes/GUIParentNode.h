@@ -212,7 +212,6 @@ public:
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
-	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	/**
 	 * Invalidate render caches

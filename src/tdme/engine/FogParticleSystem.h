@@ -75,7 +75,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITY_FOGPARTICLESYSTEM;
+		return ENTITYTYPE_FOGPARTICLESYSTEM;
 	}
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;

@@ -60,10 +60,9 @@ public:
 
 	/**
 	 * Handle keyboard event
-	 * @param node node
 	 * @param event event
 	 */
-	virtual void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) = 0;
+	virtual void handleKeyboardEvent(GUIKeyboardEvent* event) = 0;
 
 	/**
 	 * Tick method will be executed once per frame

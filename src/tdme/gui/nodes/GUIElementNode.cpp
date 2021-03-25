@@ -4,6 +4,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
@@ -34,6 +35,7 @@ using std::find;
 using std::set;
 using std::to_string;
 
+using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementIgnoreEventsController;
@@ -352,9 +354,15 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (conditionsMet == false)
 		return;
 
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes[i];
-		subNode->handleKeyboardEvent(event);
+	vector<GUINode*> childControllerNodes;
+	getChildControllerNodes(childControllerNodes, true);
+	if (controller != nullptr) {
+		controller->handleKeyboardEvent(event);
 	}
-	GUIParentNode::handleKeyboardEvent(event);
+	if (event->isProcessed() == false) {
+		for (auto childControllerNode: childControllerNodes) {
+			childControllerNode->getController()->handleKeyboardEvent(event);
+			if (event->isProcessed() == true) break;
+		}
+	}
 }

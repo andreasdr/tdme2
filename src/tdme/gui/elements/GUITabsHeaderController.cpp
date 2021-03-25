@@ -159,27 +159,24 @@ void GUITabsHeaderController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 	}
 }
 
-void GUITabsHeaderController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUITabsHeaderController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (node == this->node) {
-		switch (event->getKeyCode()) {
-		case GUIKeyboardEvent::KEYCODE_LEFT: {
-				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					selectPrevious();
-				}
+	GUIElementController::handleKeyboardEvent(event);
+	switch (event->getKeyCode()) {
+	case GUIKeyboardEvent::KEYCODE_LEFT: {
+			event->setProcessed(true);
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				selectPrevious();
 			}
-			break;
-		case GUIKeyboardEvent::KEYCODE_RIGHT: {
-				event->setProcessed(true);
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					selectNext();
-				}
-			}
-			break;
 		}
-
+		break;
+	case GUIKeyboardEvent::KEYCODE_RIGHT: {
+			event->setProcessed(true);
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				selectNext();
+			}
+		}
+		break;
 	}
 }
 

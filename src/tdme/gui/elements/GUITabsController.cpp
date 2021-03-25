@@ -101,7 +101,7 @@ void GUITabsController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 }
 
-void GUITabsController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUITabsController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

@@ -64,8 +64,7 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	//
 	Engine::registerShader(
 		Engine::ShaderType::SHADERTYPE_POSTPROCESSING,
-		"light_scattering",
-		{{ "intensity", ShaderParameter(0.0f) }}
+		"light_scattering"
 	);
 }
 
@@ -97,6 +96,9 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(void
 		if (intensity < Math::EPSILON) {
 			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 0);
 		} else {
+			#if defined(VULKAN)
+				lightSourcePosition2D = Vector2(lightSourcePosition2D.getX(), 1.0f - lightSourcePosition2D.getY());
+			#endif
 			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 1);
 			renderer->setProgramUniformFloatVec2(context, uniformLightPosition[i], lightSourcePosition2D.getArray());
 			renderer->setProgramUniformFloat(context, uniformLightIntensity[i], intensity);

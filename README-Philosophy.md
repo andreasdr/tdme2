@@ -12,7 +12,7 @@
        - A programmer should program mostly
    - Keep it portable, so the engine should also be able to run on a toaster :smile: (sorry, I used to love NetBSD)
    - Make it complete! It should be possible to create a number of game types or app types with it without really or only adjusting the engine very little
-   - Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating games! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
+   - Be Open Source friendly! We understand that economy currently works only if making money easy said, but still think there should be low cost or open source eco systems for creating 3D games/applications! We also love the power of open source e.g. in terms of sharing knowledge as without the world wide web the engine would not have been possible so far
 
 - Links
     - TDME2 Engine, see [README.md](./README.md)

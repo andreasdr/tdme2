@@ -1015,12 +1015,12 @@ void ParticleSystemScreenController::onParticleSystemReload()
 	view->reloadFile();
 }
 
-void ParticleSystemScreenController::saveParticleSystem(const string& pathName, const string& fileName) /* throws(Exception) */
+void ParticleSystemScreenController::saveParticleSystem(const string& pathName, const string& fileName)
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ParticleSystemScreenController::loadParticleSystem(const string& pathName, const string& fileName) /* throws(Exception) */
+void ParticleSystemScreenController::loadParticleSystem(const string& pathName, const string& fileName)
 {
 	view->loadFile(pathName, fileName);
 }

@@ -2046,12 +2046,12 @@ void ModelEditorScreenController::onMaterialPBREnabledValueChanged() {
 	}
 }
 
-void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName)
 {
 	view->saveFile(pathName, fileName);
 }
 
-void ModelEditorScreenController::loadFile(const string& pathName, const string& fileName) /* throws(Exception) */
+void ModelEditorScreenController::loadFile(const string& pathName, const string& fileName)
 {
 	view->loadFile(pathName, fileName);
 }

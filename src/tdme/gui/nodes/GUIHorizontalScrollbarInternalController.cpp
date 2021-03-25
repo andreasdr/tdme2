@@ -138,7 +138,7 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 	}
 }
 
-void GUIHorizontalScrollbarInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUIHorizontalScrollbarInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

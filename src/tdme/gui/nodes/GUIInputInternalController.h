@@ -34,11 +34,12 @@ private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	static constexpr int64_t DRAGGING_CALMDOWN { 50LL };
 	GUIElementNode* inputNode { nullptr };
-	int64_t cursorModeStarted;
-	CursorMode cursorMode;
-	int index;
-	int offset;
-	bool isDragging;
+	int64_t cursorModeStarted { -1LL };
+	CursorMode cursorMode { CURSORMODE_SHOW };
+	int index { 0 };
+	int offset { 0 };
+	bool draggingInit { false };
+	bool draggingActive { false };
 	array<int, 2> dragPosition;
 	MutableString value;
 
@@ -50,6 +51,9 @@ private:
 	float min { 0.0f };
 	float max { 0.0f };
 	float step { 0.0f };
+	int decimals { 3 };
+
+	bool showCursor { false };
 
 	/**
 	 * Private constructor
@@ -88,6 +92,11 @@ public:
 	 */
 	void reset();
 
+	/**
+	 * @return show cursor
+	 */
+	bool isShowCursor();
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
@@ -95,7 +104,7 @@ public:
 	void dispose() override;
 	void postLayout() override;
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event) override;
-	void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) override;
+	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 	void tick() override;
 	void onFocusGained() override;
 	void onFocusLost() override;

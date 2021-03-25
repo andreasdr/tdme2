@@ -83,7 +83,7 @@ private:
 	void loadParticleSystem();
 
 	/**
-	 * Load particle system
+	 * Load particle system prototype
 	 * @param name name
 	 * @param description description
 	 * @param pathName path name
@@ -91,7 +91,7 @@ private:
 	 * @return prototype
 	 * @throws tdme::utilities::Exception
 	 */
-	virtual Prototype* loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName);
+	virtual Prototype* loadParticleSystemPrototype(const string& name, const string& description, const string& pathName, const string& fileName);
 
 public:
 	/**
@@ -165,7 +165,7 @@ public:
 	/**
 	 * Triggers saving a particle system
 	 */
-	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
+	void saveFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Issue file reloading

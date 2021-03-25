@@ -48,8 +48,3 @@ void GUIPanelNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingN
 	}
 }
 
-void GUIPanelNode::handleKeyboardEvent(GUIKeyboardEvent* event)
-{
-	GUILayoutNode::handleKeyboardEvent(event);
-}
-

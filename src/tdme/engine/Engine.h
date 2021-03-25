@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <map>
 #include <string>
@@ -42,6 +43,7 @@
 
 using std::array;
 using std::map;
+using std::remove;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -269,13 +271,14 @@ private:
 		Engine* engine;
 
 		struct {
-			bool computeTransformations;
+			bool computeTransformations { false };
+			DecomposedEntities* decomposedEntities { nullptr };
 		} transformations;
 
 		struct {
 			EntityRenderer_InstancedRenderFunctionParameters parameters;
 			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
-			TransparentRenderFacesPool* transparentRenderFacesPool;
+			TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 		} rendering;
 
 		volatile State state { STATE_WAITING };
@@ -1112,5 +1115,18 @@ private:
 	 * @return if light source is visible
 	 */
 	bool renderLightSources(int width, int height);
+
+	/**
+	 * Remove entity from decomposed entities
+	 * @param decomposedEntities decomposed entities
+	 * @param entity entity
+	 */
+	void removeFromDecomposedEntities(DecomposedEntities& decomposedEntities, Entity* entity);
+
+	/**
+	 * Remove entity
+	 * @param entity entity
+	 */
+	void removeEntityFromLists(Entity* entity);
 
 };

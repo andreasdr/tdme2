@@ -60,11 +60,21 @@ EnvironmentMappingRenderer::~EnvironmentMappingRenderer() {
 
 void EnvironmentMappingRenderer::initialize()
 {
-	cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
-	for (auto i = 0; i < frameBuffers.size(); i++) {
-		frameBuffers[i] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureId, i + 1);
-		frameBuffers[i]->initialize();
-	}
+	#if defined(VULKAN)
+		for (auto i = 0; i < frameBuffers.size(); i++) {
+			cubeMapTextureIds[i] = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
+			for (auto j = 0; j < frameBuffers[i].size(); j++) {
+				frameBuffers[i][j] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureIds[i], j + 1);
+				frameBuffers[i][j]->initialize();
+			}
+		}
+	#else
+		cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
+		for (auto i = 0; i < frameBuffers.size(); i++) {
+			frameBuffers[i] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureId, i + 1);
+			frameBuffers[i]->initialize();
+		}
+	#endif
 }
 
 void EnvironmentMappingRenderer::reshape(int32_t width, int32_t height)
@@ -73,11 +83,21 @@ void EnvironmentMappingRenderer::reshape(int32_t width, int32_t height)
 
 void EnvironmentMappingRenderer::dispose()
 {
-	for (auto i = 0; i < frameBuffers.size(); i++) {
-		frameBuffers[i]->dispose();
-		delete frameBuffers[i];
-	}
-	engine->renderer->disposeTexture(cubeMapTextureId);
+	#if defined(VULKAN)
+		for (auto i = 0; i < frameBuffers.size(); i++) {
+			for (auto j = 0; j < frameBuffers[i].size(); j++) {
+				frameBuffers[i][j]->dispose();
+				delete frameBuffers[i][j];
+			}
+			engine->renderer->disposeTexture(cubeMapTextureIds[i]);
+		}
+	#else
+		for (auto i = 0; i < frameBuffers.size(); i++) {
+			frameBuffers[i]->dispose();
+			delete frameBuffers[i];
+		}
+		engine->renderer->disposeTexture(cubeMapTextureId);
+	#endif
 }
 
 void EnvironmentMappingRenderer::render(const Vector3& position)
@@ -89,10 +109,22 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 	//
 	auto engineCamera = engine->getCamera();
 
+	#if defined(VULKAN)
+		reflectionCubeMapTextureIdx = renderCubeMapTextureIdx;
+		renderCubeMapTextureIdx = (renderCubeMapTextureIdx + 1) % 2;
+	#endif
 	//
-	for (auto i = 0; i < frameBuffers.size(); i++) {
+	#if defined(VULKAN)
+		for (auto i = 0; i < frameBuffers[renderCubeMapTextureIdx].size(); i++) {
+	#else
+		for (auto i = 0; i < frameBuffers.size(); i++) {
+	#endif
 		// bind frame buffer
-		frameBuffers[i]->enableFrameBuffer();
+		#if defined(VULKAN)
+			frameBuffers[renderCubeMapTextureIdx][i]->enableFrameBuffer();
+		#else
+			frameBuffers[i]->enableFrameBuffer();
+		#endif
 
 		// set up camera
 		camera->setZNear(engineCamera->getZNear());

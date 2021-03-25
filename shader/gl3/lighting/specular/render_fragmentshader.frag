@@ -297,10 +297,15 @@ void main(void) {
 		computeLights(normal, vsPosition);
 
 		// reflection
-		#if !defined(HAVE_WATER_SHADER)
+		#if defined(HAVE_WATER_SHADER)
+		#else
 			if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
 				vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), normal);
-				fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
+				#if defined(__VULKAN__)
+					fragColor+= texture(environmentMappingTextureUnit, -reflectionVector * vec3(1.0, -1.0, 1.0)) * material.reflection;
+				#else
+					fragColor+= texture(environmentMappingTextureUnit, -reflectionVector) * material.reflection;
+				#endif
 			}
 		#endif
 	#endif
@@ -402,7 +407,11 @@ void main(void) {
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
 			vec3 reflectionVector = reflect(normalize(vsPosition.xyz - environmentMappingPosition), normalize(normal * vec3(0.01, 1.0, 0.01)));
-			envColor = texture(environmentMappingTextureUnit, -reflectionVector);
+			#if defined(__VULKAN__)
+				envColor = texture(environmentMappingTextureUnit, -reflectionVector * vec3(1.0, -1.0, 1.0));
+			#else
+				envColor = texture(environmentMappingTextureUnit, -reflectionVector);
+			#endif
 		}
 		outColor = fragColor * 0.4;
 		outColor+= envColor;

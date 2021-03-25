@@ -92,10 +92,10 @@ void GUICheckboxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	}
 }
 
-void GUICheckboxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUICheckboxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
-	if (disabled == false && node == this->node) {
+	GUIElementController::handleKeyboardEvent(event);
+	if (disabled == false) {
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);

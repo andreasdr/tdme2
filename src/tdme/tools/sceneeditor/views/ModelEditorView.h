@@ -37,6 +37,6 @@ public:
 
 private:
 	// overridden methods
-	virtual Prototype* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) override;
+	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) override;
 
 };

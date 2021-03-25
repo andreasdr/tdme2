@@ -69,8 +69,8 @@ void GUIProgressBarController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 	GUIElementController::handleMouseEvent(node, event);
 }
 
-void GUIProgressBarController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
-	GUIElementController::handleKeyboardEvent(node, event);
+void GUIProgressBarController::handleKeyboardEvent(GUIKeyboardEvent* event) {
+	GUIElementController::handleKeyboardEvent(event);
 }
 
 void GUIProgressBarController::tick() {

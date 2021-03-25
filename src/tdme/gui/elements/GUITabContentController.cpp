@@ -60,7 +60,7 @@ void GUITabContentController::handleMouseEvent(GUINode* node, GUIMouseEvent* eve
 {
 }
 
-void GUITabContentController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
+void GUITabContentController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 }
 

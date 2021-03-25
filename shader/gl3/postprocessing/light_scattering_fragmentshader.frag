@@ -2,6 +2,8 @@
 
 // based on: https://fabiensanglard.net/lightScattering/index.php
 
+{$DEFINITIONS}
+
 #define FALSE		0
 #define MAX_LIGHTS	8
 
@@ -23,7 +25,6 @@ uniform Light lights[MAX_LIGHTS];
 uniform sampler2D colorBufferTextureUnit;
 uniform float bufferTexturePixelWidth;
 uniform float bufferTexturePixelHeight;
-uniform float intensity;
 
 // passed from vertex shader
 in vec2 vsFragTextureUV;

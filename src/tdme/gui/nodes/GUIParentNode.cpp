@@ -494,14 +494,6 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 	GUINode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
 }
 
-void GUIParentNode::handleKeyboardEvent(GUIKeyboardEvent* event)
-{
-	if (conditionsMet == false)
-		return;
-
-	GUINode::handleKeyboardEvent(event);
-}
-
 void GUIParentNode::invalidateRenderCaches() {
 	computeViewportCache = true;
 	vieportSubNodesCache.clear();

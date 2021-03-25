@@ -54,6 +54,7 @@ void Node::setVertices(const vector<Vector3>& vertices)
 		this->vertices[i++] = vertex;
 	}
 	this->verticesUpdated = true;
+	model->invalidateBoundingBox();
 }
 
 void Node::setNormals(const vector<Vector3>& normals)
@@ -64,6 +65,7 @@ void Node::setNormals(const vector<Vector3>& normals)
 		this->normals[i++] = normal;
 	}
 	this->normalsUpdated = true;
+	model->invalidateBoundingBox();
 }
 
 void Node::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
