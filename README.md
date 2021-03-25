@@ -114,7 +114,7 @@
         - multiple renderer
           - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)
     - physics via ReactPhysics3D 0.7.0
-        - have sphere, capsule, obb, convex mesh, concave terrain mesh bounding volumes
+        - have sphere, capsule, obb, convex mesh, concave terrain mesh, height map bounding volumes
         - have multiple bounding volumes per body
         - have static, dynamic rigid bodies and collision bodies
         - uses discrete collision detection
