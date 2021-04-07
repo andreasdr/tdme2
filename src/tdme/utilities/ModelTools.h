@@ -50,15 +50,13 @@ public:
 	/**
 	 * Computes face normal for given face vertices
 	 * @param vertices face vertices
-	 * @param normal face normal
 	 * @return computed face normal
 	 */
-	inline static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal) {
+	inline static Vector3 computeNormal(const array<Vector3,3>& vertices) {
 		// face normal
-		Vector3::computeCrossProduct(
+		auto normal = Vector3::computeCrossProduct(
 			(vertices)[1].clone().sub((vertices)[0]),
-			(vertices)[2].clone().sub((vertices)[0]),
-			normal
+			(vertices)[2].clone().sub((vertices)[0])
 		);
 		// check if zero?
 		if (normal.computeLengthSquared() < Math::EPSILON * Math::EPSILON) {
@@ -68,23 +66,27 @@ public:
 			// otherwise normalize
 			normal.normalize();
 		}
+		return normal;
 	}
 
 	/**
 	 * Computes face normals for given face vertices
 	 * these normals will not be smooth
 	 * @param vertices face vertices
-	 * @param normals computed face normals
+	 * @return normals computed face normals
 	 */
-	static void computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals) {
+	static array<Vector3,3> computeNormals(const array<Vector3,3>& vertices) {
 		// face normal
-		Vector3 normal;
-		computeNormal(vertices, normal);
+		auto normal = computeNormal(vertices);
 
 		// compute vertex normal
+		array<Vector3,3> normals;
 		for (auto i = 0; i < vertices.size(); i++) {
 			normals[i].set(normal);
 		}
+
+		//
+		return normals;
 	}
 
 	/**

@@ -150,8 +150,7 @@ void PointsParticleSystemInternal::updateParticles()
 		//
 		activeParticles++;
 		// set up bounding box
-		point.set(particle.position);
-		localTransformationsMatrix.multiply(point, point);
+		point = localTransformationsMatrix.multiply(particle.position);
 		point.add(center);
 		//
 		auto& pointXYZ = point.getArray();
@@ -168,7 +167,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 		// transform particle according to its transformations
-		transformationsMatrix.multiply(point, point);
+		point = transformationsMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}

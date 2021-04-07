@@ -177,24 +177,23 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 bool LineSegment::doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact)
 {
 	// see: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-	Vector3 rayVector = r2.clone().sub(r1).normalize();
-	Vector3 edge1, edge2, h, s, q;
+	auto rayVector = r2.clone().sub(r1).normalize();
 	float a,f,u,v;
-	edge1 = p3.clone().sub(p1);
-	edge2 = p2.clone().sub(p1);
-	Vector3::computeCrossProduct(rayVector, edge2, h);
+	auto edge1 = p3.clone().sub(p1);
+	auto edge2 = p2.clone().sub(p1);
+	auto h = Vector3::computeCrossProduct(rayVector, edge2);
 	a = Vector3::computeDotProduct(edge1, h);
 	if (a > -Math::EPSILON && a < Math::EPSILON) {
 		// This ray is parallel to this triangle.
 		return false;
 	}
 	f = 1.0/a;
-	s = r1 - p1;
+	auto s = r1 - p1;
 	u = f * Vector3::computeDotProduct(s, h);
 	if (u < 0.0 || u > 1.0) {
 		return false;
 	}
-	Vector3::computeCrossProduct(s, edge1, q);
+	auto q = Vector3::computeCrossProduct(s, edge1);
 	v = f * Vector3::computeDotProduct(rayVector, q);
 	if (v < 0.0 || u + v > 1.0) {
 		return false;

@@ -287,9 +287,7 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				array<Vector3, 3> faceNormals;
-				ModelTools::computeNormals(faceVertices, faceNormals);
-				for (auto& normal : faceNormals) {
+				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -304,9 +302,7 @@ Model* Primitives::createSphereModel(Sphere* sphere, const string& id, int32_t s
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				array<Vector3, 3> faceNormals;
-				ModelTools::computeNormals(faceVertices, faceNormals);
-				for (auto& normal : faceNormals) {
+				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -352,17 +348,16 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
 		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
-		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
+		rotationAxis = Vector3::computeCrossProduct(yAxis, abNormalized).normalize();
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion.rotate(rotationAxis, angle);
-	Matrix4x4 rotationQuaternionMatrixInverted;
-	rotationQuaternion.computeMatrix(rotationQuaternionMatrixInverted);
+	auto rotationQuaternionMatrixInverted = rotationQuaternion.computeMatrix();
 	rotationQuaternionMatrixInverted.invert();
 	auto aInverted = a.clone().sub(center);
 	auto bInverted = b.clone().sub(center);
-	rotationQuaternionMatrixInverted.multiply(aInverted, aInverted);
-	rotationQuaternionMatrixInverted.multiply(bInverted, bInverted);
+	aInverted = rotationQuaternionMatrixInverted.multiply(aInverted);
+	bInverted = rotationQuaternionMatrixInverted.multiply(bInverted);
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
@@ -394,34 +389,32 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 	//	bottom half sphere
 	for (auto ySegment = 0; ySegment < segmentsY / 2; ySegment++)
 	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-		auto vertex = Vector3();
-		rotationQuaternion.multiply(
-			Vector3(
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-				((Math::cos(Math::PI * ySegment / segmentsY))),
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
-			),
-			vertex
-		);
+		auto vertex =
+			rotationQuaternion.multiply(
+				Vector3(
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					((Math::cos(Math::PI * ySegment / segmentsY))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+				)
+			);
 		vertex.scale(radius);
-		rotationQuaternionMatrixInverted.multiply(vertex, vertex);
+		vertex = rotationQuaternionMatrixInverted.multiply(vertex);
 		vertex.add(bInverted);
 		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
 	}
 	//	top half sphere
 	for (auto ySegment = segmentsY / 2; ySegment < segmentsY + 1; ySegment++)
 	for (auto xSegment = 0; xSegment < segmentsX; xSegment++) {
-		auto vertex = Vector3();
-		rotationQuaternion.multiply(
-			Vector3(
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
-				((Math::cos(Math::PI * ySegment / segmentsY))),
-				((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
-			),
-			vertex
-		);
+		auto vertex =
+			rotationQuaternion.multiply(
+				Vector3(
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
+					((Math::cos(Math::PI * ySegment / segmentsY))),
+					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX)))
+				)
+			);
 		vertex.scale(radius);
-		rotationQuaternionMatrixInverted.multiply(vertex, vertex);
+		vertex = rotationQuaternionMatrixInverted.multiply(vertex);
 		vertex.add(aInverted);
 		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
 	}
@@ -443,9 +436,7 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				array<Vector3, 3> faceNormals;
-				ModelTools::computeNormals(faceVertices, faceNormals);
-				for (auto& normal : faceNormals) {
+				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}
@@ -459,9 +450,7 @@ Model* Primitives::createCapsuleModel(Capsule* capsule, const string& id, int32_
 					vertices.at(vi1),
 					vertices.at(vi2)
 				};
-				array<Vector3, 3> faceNormals;
-				ModelTools::computeNormals(faceVertices, faceNormals);
-				for (auto& normal : faceNormals) {
+				for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 					normals.push_back(normal);
 				}
 			}

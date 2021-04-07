@@ -178,7 +178,7 @@ public:
 	 * @return vector3 component
 	 */
 	inline float& operator[](int i) {
-			return data[i];
+		return data[i];
 	}
 
 	/**
@@ -187,7 +187,7 @@ public:
 	 * @return vector3 component
 	 */
 	inline const float& operator[](int i) const {
-			return data[i];
+		return data[i];
 	}
 
 	/**

@@ -54,20 +54,19 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 	auto zNearDistance = engine->getCamera()->getFrustum()->getPlanes()[Frustum::PLANE_NEAR].computeDistance(gizmoCenter);
 	Vector3 a,b,c,d;
 	Vector4 e;
-	Vector3 f;
 	Quaternion q1, q2;
 	q1.rotate(zNearNormal, -45.0f);
 	q2.rotate(zNearNormal, 135.0f);
-	engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * 1.0f + q1.multiply(Vector3(0.0f, -0.5f, 0.0f), f), 1.0f), e);
+	e = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * 1.0f + q1.multiply(Vector3(0.0f, -0.5f, 0.0f)), 1.0f));
 	e.scale(1.0f / e.getW());
 	a.set(e.getX(), e.getY(), e.getZ());
-	engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * 1.0f + q2.multiply(Vector3(0.0f, -0.5f, 0.0f), f), 1.0f), e);
+	e = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * 1.0f + q2.multiply(Vector3(0.0f, -0.5f, 0.0f)), 1.0f));
 	e.scale(1.0f / e.getW());
 	b.set(e.getX(), e.getY(), e.getZ());
-	engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * zNearDistance + q1.multiply(Vector3(0.0f, -0.5f, 0.0f), f), 1.0f), e);
+	e = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * zNearDistance + q1.multiply(Vector3(0.0f, -0.5f, 0.0f)), 1.0f));
 	e.scale(1.0f / e.getW());
 	c.set(e.getX(), e.getY(), e.getZ());
-	engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * zNearDistance + q2.multiply(Vector3(0.0f, -0.5f, 0.0f), f), 1.0f), e);
+	e = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(lookFrom + zNearNormal * zNearDistance + q2.multiply(Vector3(0.0f, -0.5f, 0.0f)), 1.0f));
 	e.scale(1.0f / e.getW());
 	d.set(e.getX(), e.getY(), e.getZ());
 	auto baX = b.getX() - a.getX();
@@ -426,8 +425,7 @@ bool Gizmo::determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode)
 }
 
 void Gizmo::setGizmoRotation(const Transformations& transformations) {
-	Matrix4x4 rotationsMatrix;
-	transformations.getRotationsQuaternion().computeMatrix(rotationsMatrix);
+	auto rotationsMatrix = transformations.getRotationsQuaternion().computeMatrix();
 	{
 		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity(id + ".tdme.gizmo.scale"));
 		if (gizmoEntity != nullptr) {

@@ -10,6 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
 using std::unordered_map;
@@ -20,6 +21,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Transformations;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 /**
@@ -183,6 +185,7 @@ public:
 		BRUSHOPERATION_DELETE,
 		BRUSHOPERATION_SMOOTH,
 		BRUSHOPERATION_WATER,
+		BRUSHOPERATION_RAMP,
 	};
 
 	/**
@@ -222,6 +225,31 @@ public:
 	);
 
 	/**
+	 * Apply ramp brush to given terrain models
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models vector
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushRotation brush rotation
+	 * @param brushScale brush scale
+	 * @param flattenHeightMin minimum flatten height
+	 * @param flattenHeightMax maximum flatten height
+	 *
+	 */
+	static void applyRampBrushToTerrainModels(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<Model*>& terrainModels,
+		vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushRotation,
+		const Vector2& brushScale,
+		float flattenHeightMin,
+		float flattenHeightMax
+	);
+
+	/**
 	 * Update foliage after using terrain brush
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param terrainHeightVector terrain height vector
@@ -237,6 +265,28 @@ public:
 		const Vector3& brushCenterPosition,
 		Texture* brushTexture,
 		float brushScale,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		unordered_set<int>& updateFoliagePartitions
+	);
+
+	/**
+	 * Update foliage after using terrain ramp brush
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainHeightVector terrain height vector
+	 * @param brushCenterPosition brush center position
+	 * @param brushTexture brush texture
+	 * @param brushRotation brush rotation
+	 * @param brushScale brush scale
+	 * @param foliageMaps foliage maps
+	 * @param updateFoliagePartitions update foliage partitions
+	 */
+	static void updateFoliageTerrainRampBrush(
+		BoundingBox& terrainBoundingBox, // TODO: constness
+		vector<float>& terrainHeightVector,
+		const Vector3& brushCenterPosition,
+		Texture* brushTexture,
+		float brushRotation,
+		const Vector2& brushScale,
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& updateFoliagePartitions
 	);
@@ -392,4 +442,45 @@ public:
 		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
 		unordered_set<int>& recreateFoliagePartitions
 	);
+
+	/**
+	 * Mirror terrain around X axis
+	 * @param flipZ flip Z
+	 * @param width width
+	 * @param depth depth
+	 * @param terrainHeightVector terrain height vector
+	 * @param waterPositionMapsHeight water position maps heights
+	 * @param waterPositionMaps water position maps
+	 * @param foliageMaps foliage maps
+	 */
+	static void mirrorXAxis(
+		bool flipZ,
+		float width,
+		float depth,
+		vector<float>& terrainHeightVector,
+		unordered_map<int, float>& waterPositionMapsHeight,
+		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	);
+
+	/**
+	 * Mirror terrain around Z axis
+	 * @param flipX flip X
+	 * @param width width
+	 * @param depth depth
+	 * @param terrainHeightVector terrain height vector
+	 * @param waterPositionMapsHeight water position maps heights
+	 * @param waterPositionMaps water position maps
+	 * @param foliageMaps foliage maps
+	 */
+	static void mirrorZAxis(
+		bool flipX,
+		float width,
+		float depth,
+		vector<float>& terrainHeightVector,
+		unordered_map<int, float>& waterPositionMapsHeight,
+		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
+		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	);
+
 };

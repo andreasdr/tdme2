@@ -176,8 +176,7 @@ public:
 	 * @return new vector (this * v)
 	 */
 	inline Vector3 operator *(const Vector3& v) const {
-		auto r = Vector3();
-		return this->multiply(v, r);
+		return this->multiply(v);
 	}
 
 	/**
@@ -186,8 +185,7 @@ public:
 	 * @return new vector (this * v)
 	 */
 	inline Vector4 operator *(const Vector4& v) const {
-		auto r = Vector4();
-		return this->multiply(v, r);
+		return this->multiply(v);
 	}
 
 	/*
@@ -352,11 +350,10 @@ public:
 	/**
 	 * Multiplies a vector3 with this matrix into destination vector
 	 * @param v vector 3
-	 * @param dest destination vector 3
-	 * @return vector 3
+	 * @return resulting vector 3
 	 */
-	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
-		return dest.set(
+	inline Vector3 multiply(const Vector3& v) const {
+		return Vector3(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + data[12],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + data[13],
 			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10] + data[14]
@@ -366,11 +363,10 @@ public:
 	/**
 	 * Multiplies a vector3 with this matrix ignoring translation
 	 * @param v vector 3
-	 * @param dest destination vector 3
-	 * @return vector 3 dest
+	 * @return resulting vector 3
 	 */
-	inline Vector3& multiplyNoTranslation(const Vector3& v, Vector3& dest) const {
-		return dest.set(
+	inline Vector3 multiplyNoTranslation(const Vector3& v) const {
+		return Vector3(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9],
 			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10]
@@ -380,17 +376,15 @@ public:
 	/**
 	 * Multiplies a vector4 with this matrix into destination vector
 	 * @param v vector 4
-	 * @param dest destination vector4
-	 * @return destination vector 4
+	 * @return resulting vector 4
 	 */
-	inline Vector4& multiply(const Vector4& v, Vector4& dest) const {
-		dest.set(
+	inline Vector4 multiply(const Vector4& v) const {
+		return Vector4(
 			v.data[0] * data[0] + v.data[1] * data[4] + v.data[2] * data[8] + v.data[3] * data[12],
 			v.data[0] * data[1] + v.data[1] * data[5] + v.data[2] * data[9] + v.data[3] * data[13],
 			v.data[0] * data[2] + v.data[1] * data[6] + v.data[2] * data[10] + v.data[3] * data[14],
 			v.data[0] * data[3] + v.data[1] * data[7] + v.data[2] * data[11] + v.data[3] * data[15]
 		);
-		return dest;
 	}
 
 	/**
@@ -641,11 +635,10 @@ public:
 	 * @param m1 matrix 1
 	 * @param m2 matrix 2
 	 * @param t t
-	 * @param dest destination matrix
 	 * @return interpolated matrix
 	 */
-	inline static Matrix4x4& interpolateLinear(const Matrix4x4& m1, const Matrix4x4& m2, float t, Matrix4x4& dest) {
-		return dest.set(
+	inline static Matrix4x4 interpolateLinear(const Matrix4x4& m1, const Matrix4x4& m2, float t) {
+		return Matrix4x4(
 			(m2.data[0] * t) + ((1.0f - t) * m1.data[0]),
 			(m2.data[1] * t) + ((1.0f - t) * m1.data[1]),
 			(m2.data[2] * t) + ((1.0f - t) * m1.data[2]),
@@ -667,9 +660,9 @@ public:
 
 	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @param euler euler
+	 * @return vector 3 containing euler angles
 	 */
-	inline void computeEulerAngles(Vector3& euler) const {
+	inline Vector3 computeEulerAngles() const {
 		/*
 		see https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
 
@@ -683,6 +676,7 @@ public:
 			nobody involved with Gems - authors, editors, publishers, or webmasters - are to be held responsible.
 			Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 		*/
+		Vector3 euler;
 		auto axis0 = 0;
 		auto axis1 = 1;
 		auto axis2 = 2;
@@ -697,6 +691,7 @@ public:
 			euler[2] = 0.0f;
 		}
 		euler.scale(static_cast<float>((180.0 / Math::PI)));
+		return euler;
 	}
 
 	/**

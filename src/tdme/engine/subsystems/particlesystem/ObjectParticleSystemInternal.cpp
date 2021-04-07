@@ -200,11 +200,10 @@ void ObjectParticleSystemInternal::updateParticles()
 		object->setEffectColorAdd(effectColorAdd);
 		object->setEffectColorMul(effectColorMul);
 		// translation
-		point.set(particle.position);
-		localTransformationsMatrix.multiply(point, point);
+		point = localTransformationsMatrix.multiply(particle.position);
 		point.add(center);
 		// transform particle according to its transformations
-		transformationsMatrix.multiply(point, point);
+		point = transformationsMatrix.multiply(point);
 		// apply to object
 		object->setTranslation(point);
 		object->update();

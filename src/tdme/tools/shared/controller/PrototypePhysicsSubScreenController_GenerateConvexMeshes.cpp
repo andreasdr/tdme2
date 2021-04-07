@@ -352,9 +352,7 @@ Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(con
 				vertices[triangles[i * 3 + 1]],
 				vertices[triangles[i * 3 + 2]]
 			};
-			array<Vector3, 3> faceNormals;
-			ModelTools::computeNormals(faceVertices, faceNormals);
-			for (auto& normal : faceNormals) {
+			for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 				normals.push_back(normal);
 			}
 		}
@@ -407,9 +405,7 @@ Model* PrototypePhysicsSubScreenController_GenerateConvexMeshes::createModel(con
 				triangle.getVertices()[1],
 				triangle.getVertices()[2],
 			};
-			array<Vector3, 3> faceNormals;
-			ModelTools::computeNormals(faceVertices, faceNormals);
-			for (auto& normal : faceNormals) {
+			for (auto& normal: ModelTools::computeNormals(faceVertices)) {
 				normals.push_back(normal);
 			}
 		}

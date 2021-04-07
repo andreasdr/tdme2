@@ -481,8 +481,7 @@ void SceneEditorView::handleInputEvents()
 									auto sceneEntity = scene.getEntity(_selectedEntity->getId());
 									if (sceneEntity == nullptr) continue;
 									auto translation = sceneEntity->getTransformations().getTranslation();
-									auto translationRelative = translation.clone().sub(gizmoEntity->getTranslation());
-									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translationRelative, translationRelative));
+									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translation.clone().sub(gizmoEntity->getTranslation())));
 									sceneEntity->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
 									auto scale = sceneEntity->getTransformations().getScale().clone().scale(deltaScale);
 									if (Math::abs(scale.getX()) < 0.01f) scale.setX(Math::sign(scale.getX()) * 0.01f);

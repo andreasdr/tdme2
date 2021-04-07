@@ -442,13 +442,11 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	auto lookAt = cam->getLookAt();
 	lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
-	Vector3 forwardVectorTransformed;
-	Vector3 upVector;
 	// TODO: a.drewke
 	Transformations _lookFromRotations;
 	_lookFromRotations.fromTransformations(lookFromRotations);
-	_lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(camScale);
-	_lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	auto forwardVectorTransformed = _lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(camScale);
+	auto upVector = _lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->setLookFrom(lookFrom);
 	cam->setLookAt(lookAt);

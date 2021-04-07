@@ -33,7 +33,9 @@ public:
 	virtual void useProgram(Engine* engine, void* context) override;
 
 private:
+	int32_t uniformBrushEnabled { -1 };
 	int32_t uniformBrushTextureUnit { -1 };
+	int32_t uniformBrushTextureMatrix { -1 };
 	int32_t uniformBrushPosition { -1 };
 	int32_t uniformBrushTextureDimension { -1 };
 

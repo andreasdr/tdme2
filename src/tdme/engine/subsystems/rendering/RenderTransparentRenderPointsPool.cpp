@@ -44,7 +44,7 @@ void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2
 			return;
 		}
 		//
-		cameraMatrix.multiply(point->point, point->point);
+		point->point = cameraMatrix.multiply(point->point);
 		// create point in pool
 		transparentRenderPoints[poolIdx++] = point;
 	}

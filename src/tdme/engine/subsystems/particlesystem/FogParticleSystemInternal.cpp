@@ -119,8 +119,7 @@ void FogParticleSystemInternal::initialize() {
 		color[3] += colorAdd[3] * static_cast<float>(timeRnd);
 
 		// set up bounding box
-		point.set(particle.position);
-		localTransformationsMatrix.multiply(point, point);
+		point = localTransformationsMatrix.multiply(particle.position);
 		point.add(center);
 
 		// set up bounding box
@@ -195,8 +194,7 @@ void FogParticleSystemInternal::updateParticles()
 		//
 		activeParticles++;
 		// set up bounding box
-		point.set(particle.position);
-		localTransformationsMatrix.multiply(point, point);
+		point = localTransformationsMatrix.multiply(particle.position);
 		point.add(center);
 		//
 		auto& pointXYZ = point.getArray();
@@ -213,7 +211,7 @@ void FogParticleSystemInternal::updateParticles()
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 		// transform particle according to its transformations
-		transformationsMatrix.multiply(point, point);
+		point = transformationsMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), particle.color, 1, this);
 	}

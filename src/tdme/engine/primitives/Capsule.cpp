@@ -62,7 +62,7 @@ void Capsule::setScale(const Vector3& scale) {
 	if (Math::abs(abNormalizedVectorXYZ[0]) < Math::EPSILON && Math::abs(abNormalizedVectorXYZ[2]) < Math::EPSILON) {
 		rotationAxis.set(abNormalizedVectorXYZ[1], 0.0f, 0.0f);
 	} else {
-		Vector3::computeCrossProduct(yAxis, abNormalized, rotationAxis).normalize();
+		rotationAxis = Vector3::computeCrossProduct(yAxis, abNormalized).normalize();
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	Quaternion rotationQuaternion;

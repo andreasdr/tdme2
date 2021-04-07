@@ -77,10 +77,10 @@ void CircleParticleEmitter::fromTransformations(const Transformations& transform
 {
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
-	transformationsMatrix.multiply(center, centerTransformed);
+	centerTransformed = transformationsMatrix.multiply(center);
 	// apply transformations rotation + scale to axis
-	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed).normalize();
-	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed).normalize();
+	axis0Transformed = transformationsMatrix.multiplyNoTranslation(axis0).normalize();
+	axis1Transformed = transformationsMatrix.multiplyNoTranslation(axis1).normalize();
 	// scale and radius transformed
 	Vector3 scale;
 	transformationsMatrix.getScale(scale);

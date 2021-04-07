@@ -133,19 +133,19 @@ void Object3DRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& o
 				Vector3 tmpVector3;
 				for (auto& vertex: sourceNode->getVertices()) {
 					combinedModelNodeOrigins.push_back(origins[i]);
-					combinedModelNodeVertices.push_back(transformationsMatrix.multiply(vertex, tmpVector3));
+					combinedModelNodeVertices.push_back(transformationsMatrix.multiply(vertex));
 				}
 				for (auto& normal: sourceNode->getNormals()) {
-					combinedModelNodeNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
+					combinedModelNodeNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal));
 				}
 				for (auto& textureCoordinate: sourceNode->getTextureCoordinates()) {
 					combinedModelNodeTextureCoordinates.push_back(textureCoordinate);
 				}
 				for (auto& tangent: sourceNode->getTangents()) {
-					combinedModelNodeTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
+					combinedModelNodeTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent));
 				}
 				for (auto& bitangent: sourceNode->getBitangents()) {
-					combinedModelNodeBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
+					combinedModelNodeBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent));
 				}
 				//
 				i++;

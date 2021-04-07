@@ -234,12 +234,11 @@ public:
 
 	/**
 	 * Multiplies a vector with this matrix into destination vector
-	 * @param v vector
-	 * @param dest destination vector
-	 * @return destination vector
+	 * @param v vector 2
+	 * @return resulting vector 2
 	 */
-	inline Vector2& multiply(const Vector2& v, Vector2& dest) const {
-		return dest.set(
+	inline Vector2 multiply(const Vector2& v) const {
+		return Vector2(
 			data[0] * v.data[0] + data[3] * v.data[1] + data[6],
 			data[1] * v.data[0] + data[4] * v.data[1] + data[7]
 		);
@@ -292,8 +291,7 @@ public:
 	 * @return new vector (this * v)
 	 */
 	inline Vector2 operator *(const Vector2& v) const {
-		auto r = Vector2();
-		return this->multiply(v, r);
+		return this->multiply(v);
 	}
 
 	/**
@@ -338,11 +336,10 @@ public:
 	 * @param m1 matrix 1
 	 * @param m2 matrix 2
 	 * @param t t
-	 * @param dest destination matrix
 	 * @return interpolated matrix
 	 */
-	inline static Matrix2D3x3& interpolateLinear(const Matrix2D3x3& m1, const Matrix2D3x3& m2, float t, Matrix2D3x3& dest) {
-		return dest.set(
+	inline static Matrix2D3x3 interpolateLinear(const Matrix2D3x3& m1, const Matrix2D3x3& m2, float t) {
+		return Matrix2D3x3(
 			(m2.data[0] * t) + ((1.0f - t) * m1.data[0]),
 			(m2.data[1] * t) + ((1.0f - t) * m1.data[1]),
 			(m2.data[2] * t) + ((1.0f - t) * m1.data[2]),

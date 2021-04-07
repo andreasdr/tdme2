@@ -66,14 +66,8 @@ int main(int argc, char** argv)
 			auto prototype = sceneLibray->getPrototypeAt(i);
 			if (prototype->getType() != Prototype_Type::MODEL) continue;
 			prototype->getModel()->setImportTransformationsMatrix(prototype->getModel()->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
-			z2yUpMatrix.multiply(
-				prototype->getModel()->getBoundingBox()->getMin(),
-				prototype->getModel()->getBoundingBox()->getMin()
-			);
-			z2yUpMatrix.multiply(
-				prototype->getModel()->getBoundingBox()->getMax(),
-				prototype->getModel()->getBoundingBox()->getMax()
-			);
+			prototype->getModel()->getBoundingBox()->getMin() = z2yUpMatrix.multiply(prototype->getModel()->getBoundingBox()->getMin());
+			prototype->getModel()->getBoundingBox()->getMax() = z2yUpMatrix.multiply(prototype->getModel()->getBoundingBox()->getMax());
 			prototype->getModel()->getBoundingBox()->update();
 		}
 		// scene entities

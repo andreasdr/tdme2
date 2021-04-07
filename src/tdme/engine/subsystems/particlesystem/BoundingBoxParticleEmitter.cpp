@@ -81,11 +81,11 @@ void BoundingBoxParticleEmitter::fromTransformations(const Transformations& tran
 	Vector3 halfExtension;
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
-	transformationsMatrix.multiply(obb->getCenter(), center);
+	center = transformationsMatrix.multiply(obb->getCenter());
 	// apply transformations rotation to axis
-	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[0], axesTransformed[0]);
-	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[1], axesTransformed[1]);
-	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[2], axesTransformed[2]);
+	axesTransformed[0] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[0]);
+	axesTransformed[1] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[1]);
+	axesTransformed[2] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[2]);
 	// scale
 	scale.set(
 		axesTransformed[0].computeLength(),

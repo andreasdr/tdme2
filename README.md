@@ -226,7 +226,7 @@
     - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
     - Terrain Editor
-    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials, Vulkan support is WIP)
+    - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
     - Simple script language

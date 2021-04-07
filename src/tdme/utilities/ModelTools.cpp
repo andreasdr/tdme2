@@ -443,9 +443,9 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 			}
 
 			// find out partition by transforming vertices into world coordinates
-			transformationsMatrix.multiply(vertex0, vertex0Transformed);
-			transformationsMatrix.multiply(vertex1, vertex1Transformed);
-			transformationsMatrix.multiply(vertex2, vertex2Transformed);
+			vertex0Transformed = transformationsMatrix.multiply(vertex0);
+			vertex1Transformed = transformationsMatrix.multiply(vertex1);
+			vertex2Transformed = transformationsMatrix.multiply(vertex2);
 			faceCenter.set(vertex0Transformed);
 			faceCenter.add(vertex1Transformed);
 			faceCenter.add(vertex2Transformed);
@@ -652,7 +652,7 @@ float ModelTools::computeNormals(Node* node, ProgressCallback* progressCallback,
 			for (auto i = 0; i < vertices.size(); i++) {
 				vertices[i] = node->getVertices()[face.getVertexIndices()[i]];
 			}
-			computeNormal(vertices, normal);
+			normal = computeNormal(vertices);
 			face.setNormalIndices(normals.size(), normals.size() + 1, normals.size() + 2);
 			normals.push_back(normal);
 			normals.push_back(normal);
@@ -743,7 +743,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
 		for (auto& vertex: vertices) {
-			transformationsMatrix.multiply(vertex, vertex);
+			vertex = transformationsMatrix.multiply(vertex);
 			if (shader == "tree") objectOrigins[vertexIdx].set(0.0f, vertex.getY(), 0.0f);
 			vertexIdx++;
 		}
@@ -752,7 +752,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal = transformationsMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -760,7 +760,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -768,7 +768,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);
@@ -786,14 +786,14 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
 		for (auto& vertex: vertices) {
-			transformationsMatrix.multiply(vertex, vertex);
+			vertex = transformationsMatrix.multiply(vertex);
 		}
 		node->setVertices(vertices);
 	}
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal = transformationsMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -801,7 +801,7 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -809,7 +809,7 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);
@@ -861,14 +861,14 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	{
 		auto vertices = node->getVertices();
 		for (auto& vertex: vertices) {
-			transformationsMatrix.multiply(vertex, vertex);
+			vertex = transformationsMatrix.multiply(vertex);
 		}
 		node->setVertices(vertices);
 	}
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal = transformationsMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -876,7 +876,7 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -884,7 +884,7 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);

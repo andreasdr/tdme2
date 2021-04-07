@@ -38,8 +38,6 @@ using tdme::utilities::ExceptionBase;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
 
-constexpr int SceneLibrary::ID_ALLOCATE;
-
 SceneLibrary::SceneLibrary(Scene* scene)
 {
 	this->scene = scene;
@@ -217,6 +215,14 @@ Prototype* SceneLibrary::getPrototype(int id)
 	auto prototypeByIdIt = prototypesById.find(id);
 	if (prototypeByIdIt != prototypesById.end()) {
 		return prototypeByIdIt->second;
+	}
+	return nullptr;
+}
+
+Prototype* SceneLibrary::getTerrainPrototype()
+{
+	for (auto prototype: prototypes) {
+		if (prototype->getType() == Prototype_Type::TERRAIN) return prototype;
 	}
 	return nullptr;
 }

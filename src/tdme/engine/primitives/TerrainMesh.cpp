@@ -33,7 +33,7 @@ TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transforma
 	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
 		for (const auto& vertex: triangle.getVertices()) {
-			transformations.getTransformationsMatrix().multiply(vertex, vertexTransformed);
+			vertexTransformed = transformations.getTransformationsMatrix().multiply(vertex);
 			auto i = 0;
 			for (; i < indexedVertices.size(); i++) {
 				if (indexedVertices[i].equals(vertexTransformed) == true) break;

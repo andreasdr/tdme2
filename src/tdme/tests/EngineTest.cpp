@@ -195,7 +195,6 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 	auto player = players[idx];
 	auto& r = player->getRotation(0);
 	player->update();
-	Vector3 movement;
 	if (keyRight)
 		r.setAngle(r.getAngle() - (135.0f / fps));
 
@@ -206,7 +205,7 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 		player->update();
 	}
 	if (keyUp) {
-		r.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), movement);
+		auto movement = r.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f));
 		movement.scale(1.5f / fps);
 		player->setTranslation(player->getTranslation().clone().add(movement));
 		player->update();

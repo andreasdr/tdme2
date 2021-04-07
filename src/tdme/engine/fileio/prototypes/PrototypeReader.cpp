@@ -232,7 +232,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		EntityShaderParameters shaderParameters;
 		shaderParameters.setShader(prototype->getShader());
 		for (auto jShaderParameterIt = jShaderParameters.MemberBegin(); jShaderParameterIt != jShaderParameters.MemberEnd(); ++jShaderParameterIt) {
-			shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), jShaderParameterIt->value.GetString());
+			shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
 		}
 		prototype->setShaderParameters(shaderParameters);
 	}
@@ -241,7 +241,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 		EntityShaderParameters distanceShaderParameters;
 		distanceShaderParameters.setShader(prototype->getDistanceShader());
 		for (auto jDistanceShaderParameterIt = jDistanceShaderParameters.MemberBegin(); jDistanceShaderParameterIt != jDistanceShaderParameters.MemberEnd(); ++jDistanceShaderParameterIt) {
-			distanceShaderParameters.setShaderParameter(jDistanceShaderParameterIt->name.GetString(), jDistanceShaderParameterIt->value.GetString());
+			distanceShaderParameters.setShaderParameter(jDistanceShaderParameterIt->name.GetString(), string(jDistanceShaderParameterIt->value.GetString()));
 		}
 		prototype->setDistanceShaderParameters(distanceShaderParameters);
 	}

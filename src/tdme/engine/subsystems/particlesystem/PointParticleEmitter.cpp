@@ -60,5 +60,5 @@ void PointParticleEmitter::fromTransformations(const Transformations& transforma
 	//
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply translations
-	transformationsMatrix.multiply(position, positionTransformed);
+	positionTransformed = transformationsMatrix.multiply(position);
 }

@@ -85,7 +85,7 @@ private:
 			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[1]]);
 			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[2]]);
 			tmpVector3.scale(1.0f / 3.0f);
-			modelViewMatrix.multiply(tmpVector3, tmpVector3);
+			tmpVector3 = modelViewMatrix.multiply(tmpVector3);
 			distanceFromCamera = -tmpVector3.getZ();
 			// create transparent render face
 			auto transparentRenderFace = transparentRenderFacesPool.allocate();

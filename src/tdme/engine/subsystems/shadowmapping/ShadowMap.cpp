@@ -217,41 +217,35 @@ void ShadowMap::createShadowMap(Light* light)
 	// try to determine light position
 
 	// 	left
-	Vector4 left;
-	camera->getModelViewProjectionInvertedMatrix().multiply(
+	auto left = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * 0.0f) - 1.0f,
 			1.0f - (2.0f * 0.5f),
 			2.0f * 0.997f - 1.0f,
 			1.0f
-		),
-		left
+		)
 	);
 	left.scale(1.0f / left.getW());
 
 	//	right
-	Vector4 right;
-	camera->getModelViewProjectionInvertedMatrix().multiply(
+	auto right = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * 1.0f) - 1.0f,
 			1.0f - (2.0f * 0.5f),
 			2.0f * 0.997f - 1.0f,
 			1.0f
-		),
-		right
+		)
 	);
 	right.scale(1.0f / right.getW());
 
 	//	center
-	Vector4 center4;
-	camera->getModelViewProjectionInvertedMatrix().multiply(
+	auto center4 = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * 0.5f) - 1.0f,
 			1.0f - (2.0f * 1.0f),
 			2.0f * 0.5f - 1.0f,
 			1.0f
-		),
-		center4
+		)
 	);
 	center4.scale(1.0f / center4.getW());
 
@@ -276,9 +270,9 @@ void ShadowMap::createShadowMap(Light* light)
 	lightCamera->setForwardVector(lightDirection);
 	lightCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
 	// TODO: fix cross product NaN if side vector == forward vector
-	Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getSideVector(), lightCameraUpVector);
+	lightCameraUpVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getSideVector());
 	lightCamera->setUpVector(lightCameraUpVector);
-	Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector(), lightCameraSideVector);
+	lightCameraSideVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector());
 	lightCamera->setSideVector(lightCameraSideVector);
 	lightCamera->setUpVector(lightCameraUpVector);
 	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());

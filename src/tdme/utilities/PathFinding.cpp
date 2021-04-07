@@ -361,10 +361,8 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	// compute possible end positions
 	vector<Vector3> endPositionCandidates;
 	{
-		Vector3 forwardVector;
-		Vector3 sideVector;
-		forwardVector.set(endPosition).sub(startPositionComputed).setY(0.0f).normalize();
-		Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f), sideVector).setY(0.0f).normalize();
+		auto forwardVector = endPosition.clone().sub(startPositionComputed).setY(0.0f).normalize();
+		auto sideVector = Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f)).setY(0.0f).normalize();
 		if (Float::isNaN(sideVector.getX()) ||
 			Float::isNaN(sideVector.getY()) ||
 			Float::isNaN(sideVector.getZ())) {

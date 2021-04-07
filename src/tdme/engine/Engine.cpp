@@ -1374,15 +1374,13 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
 	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
-	Vector4 worldCoordinate4;
-	camera->getModelViewProjectionInvertedMatrix().multiply(
+	auto worldCoordinate4 = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
 			(2.0f * (mouseX * scaleFactorWidth - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
 			1.0f - (2.0f * (mouseY * scaleFactorHeight - camera->getViewPortTop()) / camera->getViewPortHeight()),
 			2.0f * z - 1.0f,
 			1.0f
-		),
-		worldCoordinate4
+		)
 	);
 	worldCoordinate4.scale(1.0f / worldCoordinate4.getW());
 	worldCoordinate.set(
@@ -1839,17 +1837,15 @@ Entity* Engine::doRayCasting(
 
 bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate, int width, int height)
 {
-	Vector3 screenCoordinate3;
-	Vector4 screenCoordinate4;
 	auto _width = width != -1?width:(scaledWidth != -1?scaledWidth:this->width);
 	auto _height = height != -1?height:(scaledHeight != -1?scaledHeight:this->height);
 	// convert to normalized device coordinates
-	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
+	auto screenCoordinate4 = camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f));
 	screenCoordinate4.scale(1.0f / screenCoordinate4.getW());
 	// convert to screen coordinate
 	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * _width / 2.0f);
 	screenCoordinate.setY(_height - ((screenCoordinate4[1] + 1.0f) * _height / 2.0f));
-	return camera->getModelViewMatrix().multiply(worldCoordinate, screenCoordinate3).getZ() <= 0.0f;
+	return camera->getModelViewMatrix().multiply(worldCoordinate).getZ() <= 0.0f;
 }
 
 void Engine::dispose()

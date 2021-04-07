@@ -468,162 +468,163 @@ void SceneConnector::addScene(Engine* engine, Scene& scene, bool addEmpties, boo
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	// TODO: progress callbacks for terrain
 
-	// terrain
+	// scene library
 	auto sceneLibrary = scene.getLibrary();
-	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
-		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
-		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
-		//
-		auto terrain = prototype->getTerrain();
-		auto width = terrain->getWidth();
-		auto depth = terrain->getDepth();
-		// terrain
-		BoundingBox terrainBoundingBox;
-		vector<Model*> terrainModels;
-		Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels);
-		if (terrainModels.empty() == false) {
-			auto idx = 0;
-			for (auto terrainModel: terrainModels) {
-				auto terrainObject3D = new Object3D("tdme.terrain." + to_string(idx++), terrainModel);
-				terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
-				terrainObject3D->setShader("terrain");
-				terrainObject3D->setContributesShadows(true);
-				terrainObject3D->setReceivesShadows(true);
-				terrainObject3D->setPickable(pickable);
-				terrainObject3D->setEnabled(enable);
-				terrainObject3D->setTranslation(translation);
-				terrainObject3D->update();
-				engine->addEntity(terrainObject3D);
+
+	// terrain
+	{
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
+			//
+			auto terrain = prototype->getTerrain();
+			auto width = terrain->getWidth();
+			auto depth = terrain->getDepth();
+			// terrain
+			BoundingBox terrainBoundingBox;
+			vector<Model*> terrainModels;
+			Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels);
+			if (terrainModels.empty() == false) {
+				auto idx = 0;
+				for (auto terrainModel: terrainModels) {
+					auto terrainObject3D = new Object3D("tdme.terrain." + to_string(idx++), terrainModel);
+					terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
+					terrainObject3D->setShader("terrain");
+					terrainObject3D->setContributesShadows(true);
+					terrainObject3D->setReceivesShadows(true);
+					terrainObject3D->setPickable(pickable);
+					terrainObject3D->setEnabled(enable);
+					terrainObject3D->setTranslation(translation);
+					terrainObject3D->update();
+					engine->addEntity(terrainObject3D);
+				}
 			}
-		}
-		// water
-		{
-			auto idx = 0;
-			auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
-			for (auto waterPositionMapIdx: waterPositionMapsIndices) {
-				vector<Model*> waterModels;
-				Terrain::createWaterModels(
-					terrainBoundingBox,
-					prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
-					prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
-					waterPositionMapIdx,
-					waterModels
-				);
-				for (auto waterModel: waterModels) {
-					auto waterObject3D = new Object3D("tdme.water." + to_string(idx++), waterModel);
-					waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
-					waterObject3D->setShader("water");
-					waterObject3D->setContributesShadows(false);
-					waterObject3D->setReceivesShadows(false);
-					waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
-					waterObject3D->setReflectionEnvironmentMappingPosition(
-						Terrain::computeWaterReflectionEnvironmentMappingPosition(
-							terrain->getWaterPositionMap(waterPositionMapIdx),
-							terrain->getWaterPositionMapHeight(waterPositionMapIdx)
-						)
+			// water
+			{
+				auto idx = 0;
+				auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
+				for (auto waterPositionMapIdx: waterPositionMapsIndices) {
+					vector<Model*> waterModels;
+					Terrain::createWaterModels(
+						terrainBoundingBox,
+						prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
+						prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
+						waterPositionMapIdx,
+						waterModels
 					);
-					waterObject3D->setPickable(pickable);
-					waterObject3D->setEnabled(enable);
-					waterObject3D->setTranslation(translation);
-					waterObject3D->update();
-					engine->addEntity(waterObject3D);
+					for (auto waterModel: waterModels) {
+						auto waterObject3D = new Object3D("tdme.water." + to_string(idx++), waterModel);
+						waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
+						waterObject3D->setShader("water");
+						waterObject3D->setContributesShadows(false);
+						waterObject3D->setReceivesShadows(false);
+						waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
+						waterObject3D->setReflectionEnvironmentMappingPosition(
+							Terrain::computeWaterReflectionEnvironmentMappingPosition(
+								terrain->getWaterPositionMap(waterPositionMapIdx),
+								terrain->getWaterPositionMapHeight(waterPositionMapIdx)
+							)
+						);
+						waterObject3D->setPickable(pickable);
+						waterObject3D->setEnabled(enable);
+						waterObject3D->setTranslation(translation);
+						waterObject3D->update();
+						engine->addEntity(waterObject3D);
+					}
 				}
 			}
-		}
-		// foliage
-		{
-			//
-			auto& foliageMaps = terrain->getFoliageMaps();
+			// foliage
+			{
+				//
+				auto& foliageMaps = terrain->getFoliageMaps();
 
-			//
-			auto objectIdx = 0;
-			auto idx = 0;
-			auto partitionIdx = 0;
-			for (auto& foliageMapPartition: foliageMaps) {
-				auto partitionPrototypeInstanceCount = 0;
-				for (auto& foliageMapPartitionIt: foliageMapPartition) {
-					partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
-				}
-				if (partitionPrototypeInstanceCount > 0) {
-					unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+				//
+				auto foliageRenderGroupIdx = 0;
+				auto partitionIdx = 0;
+				map<int, int> prototypeEntityIdx;
+				for (auto& foliageMapPartition: foliageMaps) {
+					auto partitionPrototypeInstanceCount = 0;
 					for (auto& foliageMapPartitionIt: foliageMapPartition) {
-						auto prototypeIdx = foliageMapPartitionIt.first;
-						auto& transformationsVector = foliageMapPartitionIt.second;
-						if (transformationsVector.empty() == true) continue;
-						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-						if (foliagePrototype->isRenderGroups() == false) {
-							for (auto& transformations: transformationsVector) {
-								Entity* entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(objectIdx++), transformations);
-								if (entity == nullptr) continue;
-								entity->setTranslation(entity->getTranslation().clone().add(translation));
-								entity->setPickable(pickable);
-								entity->setEnabled(enable);
-								entity->update();
-								engine->addEntity(entity);
-							}
-						} else {
-							Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
-							auto contributesShadows = foliagePrototype->isContributesShadows();
-							auto receivesShadows = foliagePrototype->isReceivesShadows();
-							auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + foliagePrototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
-							auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(hash);
-							if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
-								foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
-							}
-							if (foliagePartitionObject3DRenderGroup == nullptr) {
-								foliagePartitionObject3DRenderGroup =
-									new Object3DRenderGroup(
-										"tdme.fo3rg." + to_string(idx++),
-										renderGroupsLODLevels,
-										renderGroupsLOD2MinDistance,
-										renderGroupsLOD3MinDistance,
-										renderGroupsLOD2ReduceBy,
-										renderGroupsLOD3ReduceBy
-									);
-								foliagePartitionObject3DRenderGroup->setContributesShadows(contributesShadows);
-								foliagePartitionObject3DRenderGroup->setReceivesShadows(receivesShadows);
-								foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
-								foliagePartitionObject3DRenderGroup->setDistanceShader(foliagePrototype->getDistanceShader());
-								foliagePartitionObject3DRenderGroup->setDistanceShaderDistance(foliagePrototype->getDistanceShaderDistance());
-								auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-								auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getDistanceShader());
-								for (auto& parameterIt: shaderParametersDefault) {
-									auto& parameterName = parameterIt.first;
-									auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
-									foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+						partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
+					}
+					if (partitionPrototypeInstanceCount > 0) {
+						unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+						for (auto& foliageMapPartitionIt: foliageMapPartition) {
+							auto prototypeIdx = foliageMapPartitionIt.first;
+							auto& transformationsVector = foliageMapPartitionIt.second;
+							if (transformationsVector.empty() == true) continue;
+							auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+							if (foliagePrototype->isRenderGroups() == false) {
+								for (auto& transformations: transformationsVector) {
+									auto entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx[prototypeIdx]++), transformations);
+									if (entity == nullptr) continue;
+									entity->setTranslation(entity->getTranslation().clone().add(translation));
+									entity->setPickable(pickable);
+									entity->setEnabled(enable);
+									entity->update();
+									engine->addEntity(entity);
 								}
-								for (auto& parameterIt: distanceShaderParametersDefault) {
-									auto& parameterName = parameterIt.first;
-									auto parameterValue = foliagePrototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-									foliagePartitionObject3DRenderGroup->setDistanceShaderParameter(parameterName, parameterValue);
+							} else {
+								Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+								auto contributesShadows = foliagePrototype->isContributesShadows();
+								auto receivesShadows = foliagePrototype->isReceivesShadows();
+								auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + foliagePrototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
+								auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(hash);
+								if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+									foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
 								}
-								foliagePartitionObject3DRenderGroup->setPickable(false);
-								foliagePartitionObject3DRenderGroup->setEnabled(enable);
-								engine->addEntity(foliagePartitionObject3DRenderGroup);
-								object3DRenderGroupByShaderParameters[hash] = foliagePartitionObject3DRenderGroup;
-							}
+								if (foliagePartitionObject3DRenderGroup == nullptr) {
+									foliagePartitionObject3DRenderGroup =
+										new Object3DRenderGroup(
+											"tdme.fo3rg." + to_string(foliageRenderGroupIdx++),
+											renderGroupsLODLevels,
+											renderGroupsLOD2MinDistance,
+											renderGroupsLOD3MinDistance,
+											renderGroupsLOD2ReduceBy,
+											renderGroupsLOD3ReduceBy
+										);
+									foliagePartitionObject3DRenderGroup->setContributesShadows(contributesShadows);
+									foliagePartitionObject3DRenderGroup->setReceivesShadows(receivesShadows);
+									foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
+									foliagePartitionObject3DRenderGroup->setDistanceShader(foliagePrototype->getDistanceShader());
+									foliagePartitionObject3DRenderGroup->setDistanceShaderDistance(foliagePrototype->getDistanceShaderDistance());
+									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
+									auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getDistanceShader());
+									for (auto& parameterIt: shaderParametersDefault) {
+										auto& parameterName = parameterIt.first;
+										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
+										foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+									}
+									for (auto& parameterIt: distanceShaderParametersDefault) {
+										auto& parameterName = parameterIt.first;
+										auto parameterValue = foliagePrototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+										foliagePartitionObject3DRenderGroup->setDistanceShaderParameter(parameterName, parameterValue);
+									}
+									foliagePartitionObject3DRenderGroup->setPickable(false);
+									foliagePartitionObject3DRenderGroup->setEnabled(enable);
+									engine->addEntity(foliagePartitionObject3DRenderGroup);
+									object3DRenderGroupByShaderParameters[hash] = foliagePartitionObject3DRenderGroup;
+								}
 
-							//
-							auto objectIdx = -1;
-							for (auto& transformations: transformationsVector) {
-								objectIdx++;
-								if (objectIdx % renderGroupsReduceBy != 0) continue;
-								foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+								//
+								auto objectIdx = -1;
+								for (auto& transformations: transformationsVector) {
+									objectIdx++;
+									if (objectIdx % renderGroupsReduceBy != 0) continue;
+									foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+								}
 							}
 						}
+						for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
+							auto foliagePartitionObject3DRenderGroup = object3DRenderGroupByShaderParametersIt.second;
+							foliagePartitionObject3DRenderGroup->updateRenderGroup();
+							foliagePartitionObject3DRenderGroup->setTranslation(translation);
+							foliagePartitionObject3DRenderGroup->update();
+						}
 					}
-					for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
-						auto foliagePartitionObject3DRenderGroup = object3DRenderGroupByShaderParametersIt.second;
-						foliagePartitionObject3DRenderGroup->updateRenderGroup();
-						foliagePartitionObject3DRenderGroup->setTranslation(translation);
-						foliagePartitionObject3DRenderGroup->update();
-					}
+					partitionIdx++;
 				}
-				partitionIdx++;
 			}
 		}
-		// one terrain only, so break here
-		break;
 	}
 
 	// scene entities
@@ -875,75 +876,77 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	auto progressStepCurrent = 0;
 
-	// terrain + foliage
+	// scene library
 	auto sceneLibrary = scene.getLibrary();
-	for (auto prototypeIdx = 0; prototypeIdx < sceneLibrary->getPrototypeCount(); prototypeIdx++) {
-		auto prototype = sceneLibrary->getPrototypeAt(prototypeIdx);
-		if (prototype->getType() != Prototype_Type::TERRAIN) continue;
-		//
-		auto terrain = prototype->getTerrain();
-		auto width = terrain->getWidth();
-		auto depth = terrain->getDepth();
-		auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
-		auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
-		// terrain
-		auto minHeight = terrain->getHeightVector()[0];
-		auto maxHeight = terrain->getHeightVector()[0];
-		for (auto heightValue: terrain->getHeightVector()) {
-			if (heightValue < minHeight) minHeight = heightValue;
-			if (heightValue > maxHeight) maxHeight = heightValue;
-		}
-		{
-			Transformations transformations;
-			transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
-			transformations.update();
-			auto rigidBody = world->addStaticRigidBody(
-				"tdme.terrain",
-				true,
-				RIGIDBODY_TYPEID_STATIC,
-				transformations,
-				0.5f,
-				{
-					new HeightMap(
-						terrainHeightVectorVerticesPerX,
-						terreinHeightVectorVerticesPerZ,
-						minHeight,
-						maxHeight,
-						terrain->getHeightVector().data()
-					)
-				}
-			);
-			rigidBody->setEnabled(enable);
-		}
-		// foliage
-		{
-			//
-			auto& foliageMaps = terrain->getFoliageMaps();
 
+	// terrain + foliage
+	{
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
 			//
-			auto objectIdx = 0;
-			for (auto& foliageMapPartition: foliageMaps) {
-				for (auto& foliageMapPartitionIt: foliageMapPartition) {
-					auto prototypeIdx = foliageMapPartitionIt.first;
-					auto& transformationsVector = foliageMapPartitionIt.second;
-					if (transformationsVector.empty() == true) continue;
-					auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
-					for (auto& foliageTransformations: transformationsVector) {
-						auto rigidBody = createBody(world, foliagePrototype, "tdme.foliage." + to_string(objectIdx++), foliageTransformations);
-						if (rigidBody == nullptr) continue;
-						if (translation.equals(Vector3()) == false) {
-							auto transformations = foliageTransformations;
-							transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-							transformations.update();
-							rigidBody->fromTransformations(transformations);
+			auto terrain = prototype->getTerrain();
+			auto width = terrain->getWidth();
+			auto depth = terrain->getDepth();
+			auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
+			auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
+			// terrain
+			auto minHeight = terrain->getHeightVector()[0];
+			auto maxHeight = terrain->getHeightVector()[0];
+			for (auto heightValue: terrain->getHeightVector()) {
+				if (heightValue < minHeight) minHeight = heightValue;
+				if (heightValue > maxHeight) maxHeight = heightValue;
+			}
+			{
+				Transformations transformations;
+				transformations.setTranslation(Vector3(width / 2.0f, (maxHeight - minHeight) / 2.0f, depth / 2.0f));
+				transformations.update();
+				auto rigidBody = world->addStaticRigidBody(
+					"tdme.terrain",
+					true,
+					RIGIDBODY_TYPEID_STATIC,
+					transformations,
+					0.5f,
+					{
+						new HeightMap(
+							terrainHeightVectorVerticesPerX,
+							terreinHeightVectorVerticesPerZ,
+							minHeight,
+							maxHeight,
+							terrain->getHeightVector().data()
+						)
+					}
+				);
+				rigidBody->setEnabled(enable);
+			}
+			// single foliage
+			{
+				//
+				auto& foliageMaps = terrain->getFoliageMaps();
+
+				//
+				map<int, int> prototypeBodyIdx;
+				for (auto& foliageMapPartition: foliageMaps) {
+					for (auto& foliageMapPartitionIt: foliageMapPartition) {
+						auto prototypeIdx = foliageMapPartitionIt.first;
+						auto& transformationsVector = foliageMapPartitionIt.second;
+						if (transformationsVector.empty() == true) continue;
+						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+						if (foliagePrototype->isRenderGroups() == true) continue;
+						for (auto& foliageTransformations: transformationsVector) {
+							auto body = createBody(world, foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeBodyIdx[prototypeIdx]++), foliageTransformations);
+							if (body == nullptr) continue;
+							if (translation.equals(Vector3()) == false) {
+								auto transformations = foliageTransformations;
+								transformations.setTranslation(transformations.getTranslation().clone().add(translation));
+								transformations.update();
+								body->fromTransformations(transformations);
+							}
+							body->setEnabled(enable);
 						}
-						rigidBody->setEnabled(enable);
 					}
 				}
 			}
 		}
-		// one terrain only, so break here
-		break;
 	}
 
 	//
@@ -975,7 +978,7 @@ void SceneConnector::addScene(World* world, Scene& scene, bool enable, const Vec
 
 void SceneConnector::disableScene(Engine* engine, Scene& scene)
 {
-	// terrain + foliage + water + render groups
+	// terrain + water + foliage render groups + render groups
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
@@ -993,13 +996,6 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
-		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
-			entity->setEnabled(false);
-		}
-	}
-	{
-		auto idx = 0;
-		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
 			entity->setEnabled(false);
 		}
@@ -1011,6 +1007,28 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 			entity->setEnabled(false);
 		}
 	}
+
+	// scene library
+	auto sceneLibrary = scene.getLibrary();
+
+	// single foliage
+	{
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
+			//
+			auto terrain = prototype->getTerrain();
+			//
+			for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				if (foliagePrototype->isRenderGroups() == true) continue;
+				for (auto& entityId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+					auto entity = engine->getEntity(entityId);
+					if (entity != nullptr) entity->setEnabled(false);
+				}
+			}
+		}
+	}
+
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -1025,30 +1043,44 @@ void SceneConnector::disableScene(Engine* engine, Scene& scene)
 void SceneConnector::disableScene(World* world, Scene& scene)
 {
 	// terrain
-	auto rigidBody = world->getBody("tdme.terrain");
-	if (rigidBody != nullptr) rigidBody->setEnabled(false);
-
-	// foliage
 	{
-		auto idx = 0;
-		Body* rigidBody = nullptr;
-		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
-			rigidBody->setEnabled(false);
+		auto body = world->getBody("tdme.terrain");
+		if (body != nullptr) body->setEnabled(false);
+	}
+
+	// scene library
+	auto sceneLibrary = scene.getLibrary();
+
+	// single foliage
+	{
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
+			//
+			auto terrain = prototype->getTerrain();
+			//
+			for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				if (foliagePrototype->isRenderGroups() == true) continue;
+				for (auto& bodyId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+					auto body = world->getBody(bodyId);
+					if (body != nullptr) body->setEnabled(false);
+				}
+			}
 		}
 	}
 
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
-		auto rigidBody = world->getBody(sceneEntity->getId());
-		if (rigidBody == nullptr) continue;
-		rigidBody->setEnabled(false);
+		auto body = world->getBody(sceneEntity->getId());
+		if (body == nullptr) continue;
+		body->setEnabled(false);
 	}
 }
 
 void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& translation)
 {
-	// terrain + foliage + water + render groups
+	// terrain + water + foliage render groups + render groups
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
@@ -1066,13 +1098,6 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 	{
 		auto idx = 0;
 		Entity* entity = nullptr;
-		while ((entity = engine->getEntity("tdme.foliage." + to_string(idx++))) != nullptr) {
-			entity->setEnabled(true);
-		}
-	}
-	{
-		auto idx = 0;
-		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.fo3rg." + to_string(idx++))) != nullptr) {
 			entity->setEnabled(true);
 		}
@@ -1084,6 +1109,28 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 			entity->setEnabled(true);
 		}
 	}
+
+	// scene library
+	auto sceneLibrary = scene.getLibrary();
+
+	// single foliage
+	{
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
+			//
+			auto terrain = prototype->getTerrain();
+			//
+			for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				if (foliagePrototype->isRenderGroups() == true) continue;
+				for (auto& entityId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+					auto entity = engine->getEntity(entityId);
+					if (entity != nullptr) entity->setEnabled(true);
+				}
+			}
+		}
+	}
+
 	// scene entities
 	for (auto i = 0; i < scene.getEntityCount(); i++) {
 		auto sceneEntity = scene.getEntityAt(i);
@@ -1104,18 +1151,32 @@ void SceneConnector::enableScene(Engine* engine, Scene& scene, const Vector3& tr
 void SceneConnector::enableScene(World* world, Scene& scene, const Vector3& translation)
 {
 	// terrain
-	auto rigidBody = world->getBody("tdme.terrain");
-	if (rigidBody != nullptr) {
-		rigidBody->setEnabled(true);
-		// TODO: translate
+	{
+		auto body = world->getBody("tdme.terrain");
+		if (body != nullptr) {
+			body->setEnabled(true);
+			// TODO: translate
+		}
 	}
 
-	// foliage
+	// scene library
+	auto sceneLibrary = scene.getLibrary();
+
+	// single foliage
 	{
-		auto idx = 0;
-		Body* rigidBody = nullptr;
-		while ((rigidBody = world->getBody("tdme.foliage." + to_string(idx++))) != nullptr) {
-			rigidBody->setEnabled(true);
+		auto prototype = sceneLibrary->getTerrainPrototype();
+		if (prototype != nullptr) {
+			//
+			auto terrain = prototype->getTerrain();
+			//
+			for (auto prototypeIdx: terrain->getFoliagePrototypeIndices()) {
+				auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
+				if (foliagePrototype->isRenderGroups() == true) continue;
+				for (auto& bodyId: terrain->getFoliagePrototypeEntityIds(prototypeIdx)) {
+					auto body = world->getBody(bodyId);
+					if (body != nullptr) body->setEnabled(true);
+				}
+			}
 		}
 	}
 

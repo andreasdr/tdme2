@@ -135,8 +135,17 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 	if (texture != nullptr) texture->acquireReference();
 	brushTexture = texture;
 	//
-	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * scale, static_cast<int>(texture->getTextureHeight()) * scale));
+	rampScaleX = scale;
+	auto _scale = terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
+	engine->setShaderParameter(
+		"terraineditor",
+		"brushEnabled",
+		(terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
+		terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
+	);
+	rampMode = -1;
 }
 
 void SharedTerrainEditorView::unsetTerrainBrush() {
@@ -144,6 +153,7 @@ void SharedTerrainEditorView::unsetTerrainBrush() {
 		engine->getTextureManager()->removeTexture(brushTexture->getId());
 		brushTexture->releaseReference();
 		brushTexture = nullptr;
+		engine->setShaderParameter("terraineditor", "brushEnabled", false);
 	}
 }
 
@@ -381,14 +391,14 @@ void SharedTerrainEditorView::addFoliage() {
 	}
 }
 
-void SharedTerrainEditorView::recreateFoliage() {
+void SharedTerrainEditorView::recreateFoliage(const unordered_set<int>& partitionIdxSet) {
 	if (prototype == nullptr) return;
 
 	//
 	auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
 
 	//
-	for (auto partitionIdx: temporaryPartitionIdxs) {
+	for (auto partitionIdx: partitionIdxSet) {
 		auto& foliageMapPartition = foliageMaps[partitionIdx];
 		engine->removeEntity("foliage.entityhierarchy." + to_string(partitionIdx));
 		auto shaderParameterIdx = 0;
@@ -441,9 +451,6 @@ void SharedTerrainEditorView::recreateFoliage() {
 			}
 		}
 	}
-
-	//
-	temporaryPartitionIdxs.clear();
 }
 
 void SharedTerrainEditorView::resetCamera() {
@@ -586,18 +593,82 @@ void SharedTerrainEditorView::handleInputEvents()
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			brushMoved = true;
 			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+			if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
+				rampVertices[1] = brushCenterPosition;
+				//
+				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
+				brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+				engine->setShaderParameter("terraineditor", "brushEnabled", brushEnabled);
+				if (brushEnabled == true) {
+					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
+					if (Math::abs(rampVertices[0].getY() - rampVertices[1].getY()) > Math::EPSILON && rampVertices[0].getY() < rampVertices[1].getY()) brushRotation = brushRotation + 180.0f;
+					auto brushScale =
+						Vector2(
+							(rampScaleX * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
+							1.0f / (engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getY() / rampVertices[1].clone().sub(rampVertices[0]).computeLength())
+						);
+					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
+					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
+				}
+			}
+		} else
+		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
+			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+				event.setProcessed(true);
+			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				recreateFoliage();
-				brushingEnabled = false;
-				terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					if (engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition) != nullptr &&
+						terrainEditorScreenController->determineRampHeight(terrainBoundingBox, terrainModels, brushCenterPosition, rampHeight[rampMode + 1]) == true) {
+						rampMode++;
+						rampVertices[rampMode] = brushCenterPosition;
+						if (rampMode == 0) {
+							// no op
+						} else
+						if (rampMode == 1) {
+							// place ramp
+							brushCenterPosition = rampVertices[0].clone().add(rampVertices[1]).scale(0.5f);
+							terrainEditorScreenController->applyRampTerrainBrush(
+								terrainBoundingBox,
+								terrainModels,
+								brushCenterPosition,
+								engine->getShaderParameter("terraineditor", "brushRotation").getFloatValue(),
+								engine->getShaderParameter("terraineditor", "brushScale").getVector2Value(),
+								Math::min(rampHeight[0], rampHeight[1]),
+								Math::max(rampHeight[0], rampHeight[1])
+							);
+							//
+							rampMode = -1;
+							engine->setShaderParameter("terraineditor", "brushEnabled", false);
+							engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+							engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+						}
+					}
+				} else {
+					recreateFoliage(temporaryPartitionIdxs);
+					temporaryPartitionIdxs.clear();
+					brushingEnabled = false;
+					terrainEditorScreenController->unsetCurrentBrushFlattenHeight();
+				}
 				event.setProcessed(true);
 			} else
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				brushMoved = true;
-				engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				if (terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) {
+					engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
+				}
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					// no op
+				} else
 				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER) {
 					if (terrainEditorScreenController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
@@ -632,6 +703,23 @@ void SharedTerrainEditorView::handleInputEvents()
 				}
 				event.setProcessed(true);
 			}
+		}
+	}
+	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		if (event.isProcessed() == true) continue;
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
+			if (isKeyDown == true) {
+				if (terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
+					rampMode = -1;
+					engine->setShaderParameter("terraineditor", "brushEnabled", false);
+					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
+					engine->setShaderParameter("terraineditor", "brushScale", Vector2(1.0f, 1.0f));
+				}
+			}
+			event.setProcessed(true);
 		}
 	}
 	cameraInputHandler->handleInputEvents();

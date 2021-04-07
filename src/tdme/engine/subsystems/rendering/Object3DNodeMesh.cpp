@@ -230,7 +230,6 @@ void Object3DNodeMesh::computeTransformations(void* context, Object3DBase* objec
 			Engine::getSkinningShader()->computeSkinning(context, object3DBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			Vector3 tmpVector3;
 			auto& nodeVertices = node->getVertices();
 			auto& nodeNormals = node->getNormals();
 			auto& nodeTangent = node->getTangents();
@@ -269,16 +268,16 @@ void Object3DNodeMesh::computeTransformations(void* context, Object3DBase* objec
 						// skinning transformation matrix
 						transformationsMatrix.set(*cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx]).multiply(object3DBase->getTransformationsMatrix());
 						// vertex
-						transformedVertex->add(transformationsMatrix.multiply(*vertex, tmpVector3).scale(weight));
+						transformedVertex->add(transformationsMatrix.multiply(*vertex).scale(weight));
 						// normals
-						transformedNormal->add(transformationsMatrix.multiplyNoTranslation(*normal, tmpVector3).scale(weight));
+						transformedNormal->add(transformationsMatrix.multiplyNoTranslation(*normal).scale(weight));
 						// tangent
 						if (tangent != nullptr && transformedTangent != nullptr) {
-							transformedTangent->add(transformationsMatrix.multiplyNoTranslation(*tangent, tmpVector3).scale(weight));
+							transformedTangent->add(transformationsMatrix.multiplyNoTranslation(*tangent).scale(weight));
 						}
 						// bitangent
 						if (bitangent != nullptr && transformedBitangent != nullptr) {
-							transformedBitangent->add(transformationsMatrix.multiplyNoTranslation(*bitangent, tmpVector3).scale(weight));
+							transformedBitangent->add(transformationsMatrix.multiplyNoTranslation(*bitangent).scale(weight));
 						}
 						//
 						totalWeights += weight;
@@ -316,11 +315,11 @@ void Object3DNodeMesh::computeTransformations(void* context, Object3DBase* objec
 		// transformations for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-			transformedVertices[vertexIndex].set(cNodeTransformationsMatrix->multiply(nodeVertices[vertexIndex], tmpVector3));
+			transformedVertices[vertexIndex].set(cNodeTransformationsMatrix->multiply(nodeVertices[vertexIndex]));
 		}
 		//	normals
 		for (auto normalIndex = 0; normalIndex < nodeNormals.size(); normalIndex++) {
-			transformedNormals[normalIndex].set(cNodeTransformationsMatrix->multiplyNoTranslation(nodeNormals[normalIndex], tmpVector3).normalize());
+			transformedNormals[normalIndex].set(cNodeTransformationsMatrix->multiplyNoTranslation(nodeNormals[normalIndex]).normalize());
 		}
 		//	TODO: tangents, bitangents, but actually it is only in use for computing bounding volumes, so I am not in a hurry
 		// recreate buffers

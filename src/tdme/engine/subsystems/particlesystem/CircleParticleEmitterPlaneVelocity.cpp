@@ -72,10 +72,10 @@ void CircleParticleEmitterPlaneVelocity::fromTransformations(const Transformatio
 {
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
-	transformationsMatrix.multiply(center, centerTransformed);
+	centerTransformed = transformationsMatrix.multiply(center);
 	// apply transformations rotation + scale to axis
-	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
-	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
+	axis0Transformed = transformationsMatrix.multiplyNoTranslation(axis0);
+	axis1Transformed = transformationsMatrix.multiplyNoTranslation(axis1);
 	// scale and radius transformed
 	Vector3 scale;
 	transformationsMatrix.getScale(scale);

@@ -65,11 +65,10 @@ inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector
 	Vector3 v1;
 	Vector3 v2;
 	Vector3 v3;
-	Vector3 v2v3Cross;
 	v1.set(triangle.getVertices()[1]).sub(triangle.getVertices()[0]).normalize();
 	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]).normalize();
 	v3.set(vertex).sub(triangle.getVertices()[0]);
-	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross).normalize());
+	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3).normalize());
 	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
 }
 
@@ -293,10 +292,9 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		// plane normal
 		Vector3 triangle1Edge1;
 		Vector3 triangle1Edge2;
-		Vector3 polygonNormal;
 		triangle1Edge1.set(trianglesCoplanarVector[0]->getVertices()[1]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
 		triangle1Edge2.set(trianglesCoplanarVector[0]->getVertices()[2]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
-		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
+		auto polygonNormal = Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2).normalize();
 
 		// determine polygon vertices order
 		vector<int> polygonVerticesOrdered;

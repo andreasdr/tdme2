@@ -22,11 +22,11 @@ using tdme::math::Vector4;
  */
 class tdme::engine::ShaderParameter {
 public:
-	enum Type { TYPE_NONE, TYPE_FLOAT, TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4, TYPE_INT };
+	enum Type { TYPE_NONE, TYPE_BOOLEAN, TYPE_INTEGER, TYPE_FLOAT, TYPE_VECTOR2, TYPE_VECTOR3, TYPE_VECTOR4 };
 
 private:
 	Type type { TYPE_NONE };
-	int intValue { 0 };
+	int integerValue { 0 };
 	array<float, 4> floatValues { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	/**
@@ -42,6 +42,20 @@ public:
 	 * Public default constructor
 	 */
 	ShaderParameter(): type(TYPE_NONE) {
+	}
+
+	/**
+	 * Public constructor for boolean value
+	 * @param booleanValue boolean value
+	 */
+	ShaderParameter(bool booleanValue): type(TYPE_BOOLEAN), integerValue(booleanValue) {
+	}
+
+	/**
+	 * Public constructor for int value
+	 * @param integerValue int value
+	 */
+	ShaderParameter(int integerValue): type(TYPE_INTEGER), integerValue(integerValue) {
 	}
 
 	/**
@@ -73,17 +87,24 @@ public:
 	}
 
 	/**
-	 * Public constructor for int value
-	 * @param intValue int value
-	 */
-	ShaderParameter(int intValue): type(TYPE_INT), intValue(intValue) {
-	}
-
-	/**
 	 * @return type
 	 */
 	inline Type getType() const {
 		return type;
+	}
+
+	/**
+	 * @return boolean value
+	 */
+	inline float getBooleanValue() const {
+		return integerValue;
+	}
+
+	/**
+	 * @return integer value
+	 */
+	inline float getIntegerValue() const {
+		return integerValue;
 	}
 
 	/**
@@ -115,35 +136,46 @@ public:
 	}
 
 	/**
-	 * @return int value
-	 */
-	inline float getIntValue() const {
-		return intValue;
-	}
-
-	/**
 	 * @return string representation
 	 */
 	inline const string toString() const {
 		switch(type) {
 			case ShaderParameter::TYPE_NONE:
 				return string();
+			case ShaderParameter::TYPE_BOOLEAN:
+				return toString(integerValue);
+			case ShaderParameter::TYPE_INTEGER:
+				return toString(integerValue);
 			case ShaderParameter::TYPE_FLOAT:
 				return toString(floatValues[0]);
 			case ShaderParameter::TYPE_VECTOR2:
+			{
+				string result;
+				for (auto i = 0; i < 2; i++) {
+					if (i != 0) result+= ",";
+					result+= toString(floatValues[i]);
+				}
+				return result;
+			}
 			case ShaderParameter::TYPE_VECTOR3:
+			{
+				string result;
+				for (auto i = 0; i < 3; i++) {
+					if (i != 0) result+= ",";
+					result+= toString(floatValues[i]);
+				}
+				return result;
+			}
 			case ShaderParameter::TYPE_VECTOR4:
 				{
 					string result;
-					for (auto i = 0; i < floatValues.size(); i++) {
+					for (auto i = 0; i < 4; i++) {
 						if (i != 0) result+= ",";
 						result+= toString(floatValues[i]);
 					}
 					return result;
 				}
 				break;
-			case ShaderParameter::TYPE_INT:
-				return toString(intValue);
 			default:
 				return string();
 		}

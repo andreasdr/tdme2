@@ -19,7 +19,6 @@ private:
 	Vector3 xAxis;
 	Vector3 yAxis;
 	Vector3 zAxis;
-	Vector3 tmpAxis;
 
 public:
 	/**
@@ -41,7 +40,7 @@ public:
 		yAxis.set(transformationsMatrixData[4], transformationsMatrixData[5], transformationsMatrixData[6]);
 		zAxis.set(transformationsMatrixData[8], transformationsMatrixData[9], transformationsMatrixData[10]);
 		// check if inverted/negative transformation
-		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f;
+		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f;
 	}
 
 };

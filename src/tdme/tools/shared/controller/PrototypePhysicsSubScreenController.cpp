@@ -310,11 +310,10 @@ void PrototypePhysicsSubScreenController::setupBoundingBox(int idx, const Vector
 
 void PrototypePhysicsSubScreenController::setupOrientedBoundingBox(int idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
-	Vector3 rotation;
 	Matrix4x4 rotationMatrix;
 	rotationMatrix.identity();
 	rotationMatrix.setAxes(axis0, axis1, axis2);
-	rotationMatrix.computeEulerAngles(rotation);
+	auto rotation = rotationMatrix.computeEulerAngles();
 	selectBoundingVolume(idx, PrototypePhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 	boundingvolumeObbCenter[idx]->getController()->setValue(MutableString(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
 	boundingvolumeObbHalfextension[idx]->getController()->setValue(MutableString(Tools::formatFloat(halfExtension.getX())).append(", ").append(Tools::formatFloat(halfExtension.getY())).append(", ").append(Tools::formatFloat(halfExtension.getZ())));

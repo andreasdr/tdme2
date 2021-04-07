@@ -667,9 +667,9 @@ void PrototypeWriter::write(Document& jDocument, Value& jEntityRoot, Prototype* 
 						jFoliagePrototypeTransformations.AddMember("sx", Value(transformations.getScale().getX()), jAllocator);
 						jFoliagePrototypeTransformations.AddMember("sy", Value(transformations.getScale().getY()), jAllocator);
 						jFoliagePrototypeTransformations.AddMember("sz", Value(transformations.getScale().getZ()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("rx", Value(transformations.getRotationAngle(0)), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("rz", Value(transformations.getRotationAngle(0)), jAllocator);
 						jFoliagePrototypeTransformations.AddMember("ry", Value(transformations.getRotationAngle(1)), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("rz", Value(transformations.getRotationAngle(2)), jAllocator);
+						jFoliagePrototypeTransformations.AddMember("rx", Value(transformations.getRotationAngle(2)), jAllocator);
 						jFoliagePrototypePartitionTransformations.PushBack(jFoliagePrototypeTransformations, jAllocator);
 					}
 					jFoliagePrototypePartitions.PushBack(jFoliagePrototypePartitionTransformations, jAllocator);

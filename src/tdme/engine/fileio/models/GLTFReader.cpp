@@ -165,7 +165,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
 						keyFrameMatrices[i].identity();
 						rotationQuaternion.set(animationOutputBufferData[i * 4 + 0], animationOutputBufferData[i * 4 + 1], animationOutputBufferData[i * 4 + 2], animationOutputBufferData[i * 4 + 3]);
-						rotationQuaternion.computeMatrix(keyFrameMatrices[i]);
+						keyFrameMatrices[i] = rotationQuaternion.computeMatrix();
 					}
 					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationRotationMatrices[node->getId()], maxFrames);
 				} else
@@ -249,7 +249,7 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 				frameIdx++;
 				continue;
 			}
-			Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), interpolatedMatrices[frameStartIdx +  frameIdx]);
+			interpolatedMatrices[frameStartIdx +  frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
 			frameIdx++;
 		}
 		timeStampLast = timeStamp;
@@ -294,7 +294,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 		}
 		if (gltfNode.rotation.size() == 4) {
 			Quaternion rotationQuaternion(gltfNode.rotation[0], gltfNode.rotation[1], gltfNode.rotation[2], gltfNode.rotation[3]);
-			rotationQuaternion.computeMatrix(nodeRotationMatrices);
+			nodeRotationMatrices = rotationQuaternion.computeMatrix();
 		}
 		if (gltfNode.translation.size() == 3) {
 			nodeTranslationMatrices.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));

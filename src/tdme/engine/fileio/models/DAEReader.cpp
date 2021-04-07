@@ -391,7 +391,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 											frameIdx++;
 											continue;
 										}
-										Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), transformationsMatrices[frameIdx]);
+										transformationsMatrices[frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
 										frameIdx++;
 									}
 									timeStampLast = timeStamp;

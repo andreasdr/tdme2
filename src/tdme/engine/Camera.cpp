@@ -50,15 +50,14 @@ Vector3 Camera::defaultUp(0.0f, 1.0f, 0.0f);
 Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 {
 	Vector3 tmpForward;
-	Vector3 tmpSide;
 	Vector3 tmpUpVector;
 	tmpForward.set(lookAt).sub(lookFrom).normalize();
 	if (Math::abs(tmpForward.getX()) < Math::EPSILON && Math::abs(tmpForward.getZ()) < Math::EPSILON) {
 		tmpUpVector.set(0.0f, 0.0f, tmpForward.getY()).normalize();
 		return tmpUpVector;
 	}
-	Vector3::computeCrossProduct(tmpForward, defaultUp, tmpSide).normalize();
-	Vector3::computeCrossProduct(tmpSide, tmpForward, tmpUpVector).normalize();
+	auto tmpSide = Vector3::computeCrossProduct(tmpForward, defaultUp).normalize();
+	tmpUpVector = Vector3::computeCrossProduct(tmpSide, tmpForward).normalize();
 	return tmpUpVector;
 }
 
@@ -96,21 +95,18 @@ Matrix4x4& Camera::computeFrustumMatrix(float leftPlane, float rightPlane, float
 
 Matrix4x4& Camera::computeModelViewMatrix()
 {
-	Matrix4x4 tmpAxesMatrix;
-	Vector3 tmpUp;
-	Vector3 tmpLookFromInverted;
 	if (cameraMode == CAMERAMODE_LOOKAT) {
 		forwardVector.set(lookAt).sub(lookFrom).normalize();
-		Vector3::computeCrossProduct(forwardVector, upVector, sideVector).normalize();
+		sideVector = Vector3::computeCrossProduct(forwardVector, upVector).normalize();
 	}
-	Vector3::computeCrossProduct(sideVector, forwardVector, tmpUp);
+	auto tmpUp = Vector3::computeCrossProduct(sideVector, forwardVector);
 	modelViewMatrix.
 		identity().
 		translate(
-			tmpLookFromInverted.set(lookFrom).scale(-1.0f)
+			lookFrom.clone().scale(-1.0f)
 		).
 		multiply(
-			tmpAxesMatrix.set(
+			Matrix4x4(
 				sideVector[0],
 				tmpUp[0],
 				-forwardVector[0],

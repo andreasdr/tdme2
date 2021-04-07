@@ -35,10 +35,9 @@ void Transformations::fromTransformations(const Transformations& transformations
 }
 
 void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
-	Vector3 eulerAngles;
 	matrix.getScale(scale);
 	matrix.getTranslation(translation);
-	matrix.computeEulerAngles(eulerAngles);
+	auto eulerAngles = matrix.computeEulerAngles();
 	rotations.clear();
 	rotations.push_back(Rotation(rotationOrder->getAxis0(), eulerAngles[rotationOrder->getAxis0VectorIndex()]));
 	rotations.push_back(Rotation(rotationOrder->getAxis1(), eulerAngles[rotationOrder->getAxis1VectorIndex()]));
@@ -52,7 +51,6 @@ void Transformations::update()
 	Matrix4x4 translationMatrix;
 	Matrix4x4 scaleMatrix;
 	Matrix4x4 rotationsMatrix;
-	Matrix4x4 rotationsQuaternionMatrix;
 	Matrix4x4 rotationsTranslationsMatrix;
 
 	// transformation matrix identity
@@ -73,8 +71,7 @@ void Transformations::update()
 	//	pivot
 	rotationsMatrix.translate(pivot.clone().scale(-1.0f));
 	//	rotations
-	rotationsQuaternion.computeMatrix(rotationsQuaternionMatrix);
-	rotationsMatrix.multiply(rotationsQuaternionMatrix);
+	rotationsMatrix.multiply(rotationsQuaternion.computeMatrix());
 	//	pivot
 	rotationsTranslationsMatrix.identity().translate(pivot);
 	rotationsMatrix.multiply(rotationsTranslationsMatrix);

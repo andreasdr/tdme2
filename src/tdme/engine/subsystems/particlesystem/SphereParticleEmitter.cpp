@@ -73,7 +73,7 @@ void SphereParticleEmitter::fromTransformations(const Transformations& transform
 	Vector3 center;
 	Vector3 axis;
 	// 	translate center
-	transformationsMatrix.multiply(sphere->getCenter(), center);
+	center = transformationsMatrix.multiply(sphere->getCenter());
 	// scale and radius transformed
 	Vector3 scale;
 	transformationsMatrix.getScale(scale);

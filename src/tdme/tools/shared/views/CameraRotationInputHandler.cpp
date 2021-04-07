@@ -213,10 +213,8 @@ void CameraRotationInputHandler::handleInputEvents()
 		resetRequested = false;
 	}
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
-	Vector3 forwardVectorTransformed;
-	Vector3 upVector;
-	lookFromRotations.getTransformationsMatrix().multiply(forwardVector, forwardVectorTransformed).scale(scale);
-	lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f), upVector).normalize();
+	auto forwardVectorTransformed = lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(scale);
+	auto upVector = lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->setLookFrom(lookFrom);
 	cam->setLookAt(lookAt);

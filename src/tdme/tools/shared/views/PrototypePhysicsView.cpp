@@ -576,8 +576,8 @@ void PrototypePhysicsView::applyBoundingVolumeTransformations(Prototype* prototy
 		transformations.setTranslation(transformations.getTranslation().clone().scale(objectScaleInverted));
 		transformations.setPivot(transformations.getPivot().clone().scale(objectScaleInverted));
 		transformations.update();
-		transformations.getTransformationsMatrix().multiply(a, a);
-		transformations.getTransformationsMatrix().multiply(b, b);
+		a = transformations.getTransformationsMatrix().multiply(a);
+		b = transformations.getTransformationsMatrix().multiply(b);
 		auto scale = 1.0f;
 		if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 			Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -602,9 +602,9 @@ void PrototypePhysicsView::applyBoundingVolumeTransformations(Prototype* prototy
 		auto axis1 = OrientedBoundingBox::AABB_AXIS_Y;
 		auto axis2 = OrientedBoundingBox::AABB_AXIS_Z;
 		auto halfExtension = obb->getHalfExtension();
-		transformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
-		transformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
-		transformations.getTransformationsMatrix().multiplyNoTranslation(axis2, axis2);
+		axis0 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis0);
+		axis1 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis1);
+		axis2 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis2);
 		halfExtension.set(
 			Vector3(
 				Math::clamp(axis0.computeLength() / 2.0f, 0.01f, 1000.0f),

@@ -147,6 +147,12 @@ public:
 	Prototype* getPrototype(int id);
 
 	/**
+	 * Get a terrain prototype
+	 * @return terrain prototype
+	 */
+	Prototype* getTerrainPrototype();
+
+	/**
 	 * Remove a prototype
 	 * @param id id
 	 */

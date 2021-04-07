@@ -383,8 +383,8 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			);
 			model->setImportTransformationsMatrix(sceneModel->getImportTransformationsMatrix());
 			float importFixScale = 1.0f;
-			Vector3 translation, scale, rotation;
-			Vector3 xAxis, yAxis, zAxis, tmpAxis;
+			Vector3 translation, scale;
+			Vector3 xAxis, yAxis, zAxis;
 			Matrix4x4 nodeTransformationsMatrix;
 			nodeTransformationsMatrix.set(meshNode.transformationsMatrix);
 			nodeTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
@@ -394,18 +394,18 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 			yAxis.normalize();
 			zAxis.normalize();
 			nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-			if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
-				(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
+			if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f) ||
+				(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis), yAxis) < 0.0f)) {
 				xAxis.scale(-1.0f);
 				yAxis.scale(-1.0f);
 				zAxis.scale(-1.0f);
 				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
 				scale.scale(-1.0f);
 			}
-			nodeTransformationsMatrix.computeEulerAngles(rotation);
-			sceneModelImportRotationMatrix.multiply(scale, scale);
-			sceneModelImportRotationMatrix.multiply(rotation, rotation);
-			model->getImportTransformationsMatrix().multiply(translation, translation);
+			auto rotation = nodeTransformationsMatrix.computeEulerAngles();
+			scale = sceneModelImportRotationMatrix.multiply(scale);
+			rotation = sceneModelImportRotationMatrix.multiply(rotation);
+			translation = model->getImportTransformationsMatrix().multiply(translation);
 
 			ModelTools::cloneNode(meshNode.node, model);
 			if (model->getSubNodes().begin() != model->getSubNodes().end()) {

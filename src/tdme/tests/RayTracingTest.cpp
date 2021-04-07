@@ -117,25 +117,24 @@ void RayTracingTest::display()
 	// movement player
 	{
 		Vector3 movementVector;
-		Vector3 tmpMovementVector;
 		if (keyLeft == true) {
 			movementVector.add(
-				yRotation.getQuaternion().multiply(Vector3(1.0f, 0.0f, 0.0f), tmpMovementVector)
+				yRotation.getQuaternion().multiply(Vector3(1.0f, 0.0f, 0.0f))
 			);
 		} else
 		if (keyRight == true) {
 			movementVector.sub(
-				yRotation.getQuaternion().multiply(Vector3(1.0f, 0.0f, 0.0f), tmpMovementVector)
+				yRotation.getQuaternion().multiply(Vector3(1.0f, 0.0f, 0.0f))
 			);
 		}
 		if (keyUp == true) {
 			movementVector.add(
-				yRotation.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), tmpMovementVector)
+				yRotation.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f))
 			);
 		} else
 		if (keyDown == true) {
 			movementVector.sub(
-				yRotation.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f), tmpMovementVector)
+				yRotation.getQuaternion().multiply(Vector3(0.0f, 0.0f, 1.0f))
 			);
 		}
 		world->getBody("player")->setLinearVelocity(movementVector.scale(4.0f));
@@ -150,14 +149,13 @@ void RayTracingTest::display()
 
 		Quaternion rotationQuaternion = transformations.getRotation(0).getQuaternion();
 		rotationQuaternion.multiply((Quaternion().rotate(Vector3(1.0f, 0.0f, 0.0f), rotationX)));
-		Vector3 vectorRotated;
 
 		camLookAt.set(transformations.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
-		camLookAt.add(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f), vectorRotated).scale(80.0f));
+		camLookAt.add(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f)).scale(80.0f));
 
 		camLookFrom.set(transformations.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
-		camLookFrom.sub(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f), vectorRotated).scale(trdDistanceCamPlayer));
-		camLookFrom.sub(transformations.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f), vectorRotated));
+		camLookFrom.sub(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f)).scale(trdDistanceCamPlayer));
+		camLookFrom.sub(transformations.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f)));
 
 		engine->getCamera()->setLookFrom(camLookFrom);
 		engine->getCamera()->setLookAt(camLookAt);

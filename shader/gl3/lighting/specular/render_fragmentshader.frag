@@ -122,9 +122,11 @@ vec4 fragColor;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
 	#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+		uniform int brushEnabled;
 		uniform vec2 brushPosition;
 		uniform vec2 brushTextureDimension;
 		uniform sampler2D brushTextureUnit;
+		uniform mat3 brushTextureMatrix;
 	#endif
 
 	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
@@ -382,10 +384,12 @@ void main(void) {
 			if (terrainBlending[3] > 0.001) outColor+= readTerrainTextureSnow(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 			outColor*= fragColor;
 			#if defined(HAVE_TERRAIN_SHADER_EDITOR)
-				vec2 brushTextureUV = ((vsPosition.xz - brushPosition) / brushTextureDimension) + vec2(0.5, 0.5);
-				if (brushTextureUV.x >= 0 && brushTextureUV.x <= 1.0 &&
-					brushTextureUV.y >= 0 && brushTextureUV.y <= 1.0) {
-					outColor+= vec4(texture(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
+				if (brushEnabled == 1) {
+					vec2 brushTextureUV = vec2(brushTextureMatrix * vec3(((vsPosition.xz - brushPosition) / brushTextureDimension), 1.0));
+					if (brushTextureUV.x >= 0.0 && brushTextureUV.x < 1.0 &&
+						brushTextureUV.y >= 0.0 && brushTextureUV.y < 1.0) {
+						outColor+= vec4(texture(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
+					}
 				}
 			#endif
 			outColor = clamp(outColor, 0.0, 1.0);

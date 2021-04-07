@@ -36,6 +36,7 @@ private:
 	string id;
 	SpecularMaterialProperties* specularMaterialProperties { nullptr };
 	PBRMaterialProperties* pbrMaterialProperties { nullptr };
+	bool doubleSided { false };
 	Matrix2D3x3 textureMatrix;
 
 public:
@@ -98,6 +99,21 @@ public:
 	void setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProperties);
 
 	/**
+	 * @return is double sided
+	 */
+	inline bool isDoubleSided() const {
+		return doubleSided;
+	}
+
+	/**
+	 * Set double sided
+	 * @param texture matrix
+	 */
+	inline void setDoubleSided(bool doubleSided) {
+		this->doubleSided = doubleSided;
+	}
+
+	/**
 	 * @return texture matrix
 	 */
 	inline const Matrix2D3x3& getTextureMatrix() const {
@@ -106,7 +122,7 @@ public:
 
 	/**
 	 * Set texture matrix
-	 * @param texture matrix
+	 * @param textureMatrix texture matrix
 	 */
 	inline void setTextureMatrix(const Matrix2D3x3& textureMatrix) {
 		this->textureMatrix = textureMatrix;

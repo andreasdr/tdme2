@@ -333,9 +333,6 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 	auto& effectColorMul = object3D->getEffectColorMul();
 	const Material* material = nullptr;
 	auto textureCoordinates = false;
-	Vector3 transformedVector;
-	Vector3 transformedNormal;
-	Vector2 transformedTextureCoordinate;
 	// render transparent faces
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
 		auto transparentRenderFace = transparentRenderFaces[i];
@@ -364,13 +361,12 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DNode->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfNode->addVertex(
-				modelViewMatrix.multiply((*transparentRenderFace->object3DNode->mesh->vertices)[arrayIdx], transformedVector),
-				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DNode->mesh->normals)[arrayIdx], transformedNormal),
+				modelViewMatrix.multiply((*transparentRenderFace->object3DNode->mesh->vertices)[arrayIdx]),
+				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DNode->mesh->normals)[arrayIdx]),
 				transparentRenderFace->object3DNode->textureMatricesByEntities[facesEntityIdx].multiply(
 					textureCoordinates.size() > 0?
 						Vector2(textureCoordinates[arrayIdx].getArray()):
-						Vector2(0.0f, 0.0f),
-					transformedTextureCoordinate
+						Vector2(0.0f, 0.0f)
 				)
 			);
 		}
@@ -433,7 +429,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 			//	via material
 			if (specularMaterialProperties != nullptr) {
 				if (specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true) transparentFacesEntity = true;
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					renderer->disableCulling(context);
 				}
 			}
@@ -628,7 +625,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 			// keep track of rendered faces
 			faceIdx += faces;
 			if (specularMaterialProperties != nullptr) {
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					renderer->enableCulling(context);
 				}
 			}
@@ -709,7 +707,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					continue;
 				}
 
-				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				if (material->isDoubleSided() == true ||
+					(specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true)) {
 					if (cullingMode != 0) {
 						renderer->disableCulling(context);
 						cullingMode = 0;

@@ -616,9 +616,9 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 			auto axis1 = emitter->getObbAxis1().clone().scale(emitter->getObbHalfextension().getY() * 2.0f);
 			auto axis2 = emitter->getObbAxis2().clone().scale(emitter->getObbHalfextension().getZ() * 2.0f);
 			auto halfExtension = emitter->getObbHalfextension();
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis2, axis2);
+			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0);
+			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1);
+			axis2 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis2);
 			halfExtension.set(
 				Vector3(
 					Math::clamp(axis0.computeLength() / 2.0f, 0.01f, 1000.0f),
@@ -645,10 +645,8 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();
 			auto axis1 = emitter->getAxis1();
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
-			axis0.normalize();
-			axis1.normalize();
+			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0).normalize();
+			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1).normalize();
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -677,10 +675,8 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();
 			auto axis1 = emitter->getAxis1();
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
-			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
-			axis0.normalize();
-			axis1.normalize();
+			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0).normalize();
+			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1).normalize();
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {

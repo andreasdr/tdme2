@@ -276,31 +276,28 @@ public:
 	/**
 	 * Multiplies a quaternion with given vector v
 	 * @param v vector v
-	 * @param dest destination vector
-	 * @return dest
+	 * @return resulting vector 3
 	 */
-	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
-		Vector3 q;
-		Vector3 t;
-		Vector3 qxt;
+	inline Vector3 multiply(const Vector3& v) const {
 		// t = 2 * cross(q.xyz, v)
-		q.set(data[0], data[1], data[2]);
-		Vector3::computeCrossProduct(q, v, t).scale(2.0f);
+		Vector3 q(data[0], data[1], data[2]);
+		auto t = Vector3::computeCrossProduct(q, v).scale(2.0f);
 		// v' = v + q.w * t + cross(q.xyz, t)
-		Vector3::computeCrossProduct(q, t, qxt);
-		dest.set(v);
-		dest.add(qxt);
-		dest.add(t.scale(data[3]));
-		return dest;
+		auto qxt = Vector3::computeCrossProduct(q, t);
+		//
+		Vector3 result;
+		result.set(v);
+		result.add(qxt);
+		result.add(t.scale(data[3]));
+		return result;
 	}
 
 	/**
 	 * Computes a matrix from given
-	 * @param matrix destination matrix
-	 * @return destination matrix
+	 * @return resulting matrix
 	 */
-	inline Matrix4x4& computeMatrix(Matrix4x4& matrix) const {
-		matrix.set(
+	inline Matrix4x4 computeMatrix() const {
+		return Matrix4x4(
 			1.0f - 2.0f * (data[1] * data[1] + data[2] * data[2]),
 			2.0f * (data[0] * data[1] + data[2] * data[3]),
 			2.0f * (data[0] * data[2] - data[1] * data[3]),
@@ -318,7 +315,6 @@ public:
 			0.0f,
 			1.0f
 		);
-		return matrix;
 	}
 
 	/**
@@ -393,8 +389,7 @@ public:
 	 * @return new Vector ()thic * v
 	 */
 	inline Vector3 operator *(const Vector3& v) const {
-		auto r = Vector3();
-		return this->multiply(v, r);
+		return this->multiply(v);
 	}
 
 	/**

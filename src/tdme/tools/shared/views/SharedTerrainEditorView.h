@@ -77,6 +77,11 @@ private:
 	vector<int> partitionFoliageIdx;
 	unordered_set<int> temporaryPartitionIdxs;
 
+	int rampMode { -1 };
+	array<Vector3,2> rampVertices;
+	array<float,2> rampHeight;
+	float rampScaleX { 1.0f };
+
 	/**
 	 * Init entity
 	 */
@@ -197,8 +202,9 @@ public:
 
 	/**
 	 * Recreate foliage using render groups at given partition indices that has been transformed to temporary foliage
+	 * @param partitionIdxSet partition index set
 	 */
-	void recreateFoliage();
+	void recreateFoliage(const unordered_set<int>& partitionIdxSet);
 
 	/**
 	 * Reset camera

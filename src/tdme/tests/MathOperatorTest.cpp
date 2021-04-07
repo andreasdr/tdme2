@@ -445,9 +445,8 @@ void MathOperatorTest::testQuaternionOperators() {
 
 	q3 = q2;
 	auto v1 = Vector3(4.75, 0.98, 7.0228);
-	auto v2 = Vector3();
 	Console::print(string("operator *(Vector3&): "));
-	q3.multiply(v1, v2);
+	auto v2 = q3.multiply(v1);
 	if (q3 * v1 == v2) {
 		Console::println(string(this->success));
 	} else {
@@ -555,9 +554,8 @@ void MathOperatorTest::testMatrix2D3x3Operators() {
 	}
 
 	auto v1 = Vector2(4.75, 0.98);
-	auto v2 = Vector2();
 	Console::print(string("operator *(Vector2&): "));
-	m2.multiply(v1, v2);
+	auto v2 = m2.multiply(v1);
 	if (m3 * v1 == v2) {
 		Console::println(string(this->success));
 	} else {
@@ -615,18 +613,16 @@ void MathOperatorTest::testMatrix4x4Operators() {
 		Console::println(string(this->fail));
 	}
 
-	Vector3 v03 = Vector3();
 	Console::print(string("operator *(Vector3&): "));
-	m2.multiply(v3, v03);
+	auto v03 = m2.multiply(v3);
 	if (m3 * v3 == v03) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));
 	}
 
-	Vector4 v04 = Vector4();
 	Console::print(string("operator *(Vector4&): "));
-	m2.multiply(v4, v04);
+	auto v04 = m2.multiply(v4);
 	if (m3 * v4 == v04) {
 		Console::println(string(this->success));
 	} else {

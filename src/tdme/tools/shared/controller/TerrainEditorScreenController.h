@@ -14,6 +14,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
@@ -36,6 +37,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::PrototypeBaseSubScreenController;
@@ -96,6 +98,11 @@ private:
 	array<GUIElementNode*, 5> foliageBrushPrototypeNormalAlign;
 
 	GUIElementNode* btnFoliageBrushApply { nullptr };
+
+	GUIElementNode* mirrorXAxis { nullptr };
+	GUIElementNode* mirrorZAxis { nullptr };
+	GUIElementNode* mirrorFlip { nullptr };
+	GUIElementNode* btnMirrorApply { nullptr };
 
 	FileDialogPath terrainPath;
 	FileDialogPath brushTexturePath;
@@ -254,6 +261,18 @@ public:
 	void applyTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& brushCenterPosition, int64_t deltaTime);
 
 	/**
+	 * Apply current brush to terrain at given brush center position
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param rotation rotation
+	 * @param scale scale
+	 * @param minHeight min height
+	 * @param maxHeigth max heigth
+	 */
+	void applyRampTerrainBrush(BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, const Vector3& position, float rotation, const Vector2& scale, float minHeight, float maxHeight);
+
+	/**
 	 * Apply current brush to foliage at given brush center position
 	 * @param terrainBoundingBox terrain bounding box
 	 * @param brushCenterPosition brush center position
@@ -286,6 +305,16 @@ public:
 	bool determineCurrentBrushHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& brushCenterPosition);
 
 	/**
+	 * Determine ramp height
+	 * @param terrainBoundingBox terrain bounding box
+	 * @param terrainModels terrain models
+	 * @param position position
+	 * @param height height
+	 * @return success
+	 */
+	bool determineRampHeight(BoundingBox& terrainBoundingBox, vector<Model*> terrainModels, const Vector3& position, float& height);
+
+	/**
 	 * Unset current brush flatten height
 	 */
 	void unsetCurrentBrushFlattenHeight();
@@ -316,6 +345,11 @@ public:
 	 * On apply foliage brush
 	 */
 	void onApplyFoliageBrush();
+
+	/**
+	 * On apply mirror
+	 */
+	void onApplyMirror();
 
 	/**
 	 * Get viewport rectangle

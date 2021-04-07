@@ -81,7 +81,7 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
-		transformationsMatrix.multiply(_vertices[i], vertices[i]);
+		vertices[i] = transformationsMatrix.multiply(_vertices[i]);
 	}
 	// determine axis aligned bounding box constraints based on local vertices
 	auto& vertexXYZ = vertices[0].getArray();

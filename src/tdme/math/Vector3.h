@@ -174,17 +174,16 @@ public:
 
 	/**
 	 * Compute the cross product of vector v1 and v2
-	 * @param v1 v1
-	 * @param v2 v2
-	 * @param dest destination vector
-	 * @return destination vector
+	 * @param v1 vector 1
+	 * @param v2 vector 2
+	 * @return resulting vector
 	 */
-	inline static Vector3& computeCrossProduct(const Vector3& v1, const Vector3& v2, Vector3& dest) {
-		dest.set(
+	inline static Vector3 computeCrossProduct(const Vector3& v1, const Vector3& v2) {
+		return Vector3(
 			(v1.data[1] * v2.data[2]) - (v1.data[2] * v2.data[1]),
 			(v1.data[2] * v2.data[0]) - (v1.data[0] * v2.data[2]),
-			(v1.data[0] * v2.data[1]) - (v1.data[1] * v2.data[0]));
-		return dest;
+			(v1.data[0] * v2.data[1]) - (v1.data[1] * v2.data[0])
+		);
 	}
 
 	/**
@@ -265,9 +264,8 @@ public:
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
-		Vector3 c;
 		auto angle = Vector3::computeAngle(a, b);
-		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b, c)));
+		auto sign = Math::sign(Vector3::computeDotProduct(n, Vector3::computeCrossProduct(a, b)));
 		if (Float::isNaN(sign) == true) sign = 1.0f;
 		return std::fmod(((angle * sign) + 360.0f), 360.0f);
 	}
@@ -389,11 +387,10 @@ public:
 	 * @param v1 vector 1
 	 * @param v2 vector 2
 	 * @param t t
-	 * @param dest destination vector
-	 * @return destination vector
+	 * @return resulting vector
 	 */
-	inline static Vector3& interpolateLinear(const Vector3& v1, const Vector3& v2, float t, Vector3& dest) {
-		return dest.set(
+	inline static Vector3 interpolateLinear(const Vector3& v1, const Vector3& v2, float t) {
+		return Vector3(
 			(v2.data[0] * t) + ((1.0f - t) * v1.data[0]),
 			(v2.data[1] * t) + ((1.0f - t) * v1.data[1]),
 			(v2.data[2] * t) + ((1.0f - t) * v1.data[2])

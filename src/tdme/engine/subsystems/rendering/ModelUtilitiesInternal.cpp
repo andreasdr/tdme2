@@ -123,7 +123,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
 		for (auto nodeIt: model->getNodes()) {
 			auto& transformedNodeMatrix = object3DModelInternal->getNodeTransformationsMatrix(nodeIt.second->getId());
-			transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
+			vertex = transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f));
 			if (firstVertex == true) {
 				minX = vertex[0];
 				minY = vertex[1];

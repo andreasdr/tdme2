@@ -390,11 +390,10 @@ void Object3DAnimation::computeTransformationsMatrices(vector<FlattenedNode>& no
 						}
 					}
 				}
-				Matrix4x4::interpolateLinear(
+				transformationsMatrix = Matrix4x4::interpolateLinear(
 					animationMatrices[matrixAtLast + nodeAnimationState->setup->getStartFrame()],
 					animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()],
-					t,
-					transformationsMatrix
+					t
 				);
 			} else {
 				transformationsMatrix.set(animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()]);
@@ -480,14 +479,13 @@ void Object3DAnimation::computeTransformations(void* context, const Matrix4x4& i
 			if (baseAnimationIdxLast != -1 &&
 				baseAnimations[baseAnimationIdxLast].endAtTime != -1LL) {
 				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / Engine::getAnimationBlendingTime();
-				Matrix4x4::interpolateLinear(
+				*nodeLists[0][i].transformationsMatrix = Matrix4x4::interpolateLinear(
 					*nodeLists[1 + baseAnimationIdxLast][i].transformationsMatrix,
 					*nodeLists[1 + baseAnimationIdx][i].transformationsMatrix,
 					Math::min(
 						blendingAnimationDuration,
 						1.0f
-					),
-					*nodeLists[0][i].transformationsMatrix
+					)
 				);
 				if (blendingAnimationDuration >= 1.0f) {
 					auto& animationStateLast = baseAnimations[baseAnimationIdxLast];

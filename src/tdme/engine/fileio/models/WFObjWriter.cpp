@@ -41,8 +41,7 @@ void WFObjWriter::addFace(vector<int> faceVertexIndices) {
 		}
 	}
 	array<Vector3, 3> minFaceVertices { vertices[faceVertexIndices[0]], vertices[faceVertexIndices[1]], vertices[faceVertexIndices[2]]};
-	Vector3 faceNormal;
-	ModelTools::computeNormal(minFaceVertices, faceNormal);
+	auto faceNormal = ModelTools::computeNormal(minFaceVertices);
 	auto faceNormalIdx = 0;
 	for (auto i = 0; i < normals.size(); i++) {
 		if (faceNormal.equals(normals[i]) == true) break;

@@ -94,12 +94,36 @@ public:
 				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:
 						break;
+					case ShaderParameter::TYPE_BOOLEAN:
+						hash+= to_string(parameterValue.getBooleanValue());
+						break;
+					case ShaderParameter::TYPE_INTEGER:
+						hash+= to_string(parameterValue.getIntegerValue());
+						break;
 					case ShaderParameter::TYPE_FLOAT:
 						hash+= to_string(static_cast<int>(parameterValue.getFloatValue() * 100.0f));
+						break;
+					case ShaderParameter::TYPE_VECTOR2:
+						{
+							auto& shaderParameterArray = parameterValue.getVector2Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) hash+= ",";
+								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
+							}
+						}
 						break;
 					case ShaderParameter::TYPE_VECTOR3:
 						{
 							auto& shaderParameterArray = parameterValue.getVector3Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) hash+= ",";
+								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));
+							}
+						}
+						break;
+					case ShaderParameter::TYPE_VECTOR4:
+						{
+							auto& shaderParameterArray = parameterValue.getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) hash+= ",";
 								hash+= to_string(static_cast<int>(shaderParameterArray[i] * 100.0f));

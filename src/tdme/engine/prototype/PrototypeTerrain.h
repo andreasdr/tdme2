@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Transformations.h>
 
 using std::unordered_map;
@@ -87,6 +88,20 @@ public:
 	 */
 	inline vector<float>& getHeightVector() {
 		return terrainHeightVector;
+	}
+
+	/**
+	 * @return water position maps height
+	 */
+	inline unordered_map<int, float>& getWaterPositionMapsHeight() {
+		return waterPositionMapsHeight;
+	}
+
+	/**
+	 * @return water position maps
+	 */
+	inline unordered_map<int, unordered_map<int, unordered_set<int>>>& getWaterPositionMaps() {
+		return waterPositionMaps;
 	}
 
 	/**
@@ -173,11 +188,11 @@ public:
 
 	/**
 	 * Get foliage prototype by given index
-	 * @param idx index
+	 * @param idx protoype index
 	 * @return prototype or nullptr
 	 */
-	inline Prototype* getFoliagePrototype(int idx) {
-		auto foliageFoliagePrototypeIt = foliageFoliagePrototypeMap.find(idx);
+	inline Prototype* getFoliagePrototype(int prototypeIdx) {
+		auto foliageFoliagePrototypeIt = foliageFoliagePrototypeMap.find(prototypeIdx);
 		if (foliageFoliagePrototypeIt == foliageFoliagePrototypeMap.end()) {
 			return nullptr;
 		}
@@ -189,6 +204,50 @@ public:
 	 */
 	inline vector<unordered_map<int, vector<Transformations>>>& getFoliageMaps() {
 		return foliageMaps;
+	}
+
+	/**
+	 * Get foliage prototype entity ids
+	 * @param prototypeIdx prototype index
+	 * @return entity ids
+	 */
+	inline const vector<string> getFoliagePrototypeEntityIds(int prototypeIdx) {
+		vector<string> foliagePrototypeEntityIds;
+		auto prototypeEntityIdx = 0;
+		for (auto& foliageMapPartition: foliageMaps) {
+			for (auto& foliageMapPartitionIt: foliageMapPartition) {
+				auto& transformationsVector = foliageMapPartition[prototypeIdx];
+				if (transformationsVector.empty() == true) continue;
+				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
+				if (foliagePrototype->isRenderGroups() == false) {
+					for (auto& transformations: transformationsVector) {
+						foliagePrototypeEntityIds.push_back("tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++));
+					}
+				}
+			}
+		}
+		return foliagePrototypeEntityIds;
+	}
+
+	/**
+	 * Get foliage prototype entity transformations indexed by entity id
+	 * @param prototypeIdx prototype index
+	 * @return transformations indexed by entity id
+	 */
+	inline const map<string, Transformations> getFoliagePrototypeEntityTransformations(int prototypeIdx) {
+		map<string, Transformations> foliagePrototypeEntityTransformations;
+		auto prototypeEntityIdx = 0;
+		for (auto& foliageMapPartition: foliageMaps) {
+			auto& transformationsVector = foliageMapPartition[prototypeIdx];
+			if (transformationsVector.empty() == true) continue;
+			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
+			if (foliagePrototype->isRenderGroups() == false) {
+				for (auto& transformations: transformationsVector) {
+					foliagePrototypeEntityTransformations["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transformations;
+				}
+			}
+		}
+		return foliagePrototypeEntityTransformations;
 	}
 
 };

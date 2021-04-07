@@ -87,11 +87,10 @@ void LODTest::display()
 	Quaternion camRotationQuaternion;
 	camRotationQuaternion.set(camRotationYQuaternion).multiply(camRotationXQuaternion);
 	Vector3 camLookAt;
-	camRotationQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+	camLookAt = camRotationQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f));
 
 	auto forwardVector = camLookAt;
-	auto sideVector = Vector3();
-	Vector3::computeCrossProduct(forwardVector.normalize(), Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
+	auto sideVector = Vector3::computeCrossProduct(forwardVector.normalize(), Vector3(0.0f, 1.0f, 0.0f)).normalize();
 
 	if (keyA == true) camLookFrom.add(sideVector.clone().scale(-20.0f / 60.0f));
 	if (keyD == true) camLookFrom.add(sideVector.clone().scale(+20.0f / 60.0f));

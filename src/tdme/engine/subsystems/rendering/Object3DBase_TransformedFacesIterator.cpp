@@ -62,9 +62,9 @@ const array<Vector3, 3>& Object3DBase_TransformedFacesIterator::next()
 	// compute vertices
 	auto& faceVertexIndices = face.getVertexIndices();
 	auto nodeVerticesTransformed = object3DNode->mesh->vertices;
-	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
-	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
-	matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
+	vertices[0] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[0]]);
+	vertices[1] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[1]]);
+	vertices[2] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[2]]);
 	// set up current node
 	node = object3DNode->node;
 	// increment to next face

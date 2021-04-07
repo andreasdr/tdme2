@@ -326,8 +326,7 @@ void SharedModelEditorView::display()
 		transformationsMatrix*= model->getTransformations().getTransformationsMatrix();
 		attachment1->setTranslation(transformationsMatrix * Vector3(0.0f, 0.0f, 0.0f));
 		// euler angles
-		Vector3 euler;
-		transformationsMatrix.computeEulerAngles(euler);
+		auto euler = transformationsMatrix.computeEulerAngles();
 		// rotations
 		attachment1->setRotationAngle(0, euler.getZ());
 		attachment1->setRotationAngle(1, euler.getY());
