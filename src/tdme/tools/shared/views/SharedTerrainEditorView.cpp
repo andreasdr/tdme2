@@ -130,12 +130,12 @@ void SharedTerrainEditorView::setPrototype(Prototype* prototype)
 	initModelRequested = true;
 }
 
-void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
+void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale, float densityStrength) {
 	unsetTerrainBrush();
 	if (texture != nullptr) texture->acquireReference();
 	brushTexture = texture;
 	//
-	rampScaleX = scale;
+	brushScale = scale;
 	auto _scale = terrainEditorScreenController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
@@ -146,6 +146,26 @@ void SharedTerrainEditorView::setTerrainBrush(Texture* texture, float scale) {
 		terrainEditorScreenController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
 	);
 	rampMode = -1;
+	brushDensityStrength = densityStrength;
+}
+
+void SharedTerrainEditorView::setBrushScale(float scale) {
+	if (brushTexture == nullptr ||
+		terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER ||
+		(terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorScreenController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(brushTexture->getTextureWidth()) * scale, static_cast<int>(brushTexture->getTextureHeight()) * scale));
+	brushScale = scale;
+	terrainEditorScreenController->setBrushScale(scale);
+}
+
+void SharedTerrainEditorView::setBrushDensityStrength(float densityStrength) {
+	if (brushTexture == nullptr ||
+		terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER ||
+		(terrainEditorScreenController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorScreenController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
+	brushDensityStrength = densityStrength;
+	terrainEditorScreenController->setBrushDensityStrength(densityStrength);
 }
 
 void SharedTerrainEditorView::unsetTerrainBrush() {
@@ -590,6 +610,16 @@ void SharedTerrainEditorView::handleInputEvents()
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
 
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
+			if (event.isShiftDown() == true) {
+				setBrushScale(Math::clamp(brushScale + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				event.setProcessed(true);
+			}
+			if (event.isControlDown() == true) {
+				setBrushDensityStrength(Math::clamp(brushDensityStrength + 0.1 * event.getWheelY(), 0.1f, 100.0f));
+				event.setProcessed(true);
+			}
+		} else
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			brushMoved = true;
 			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
@@ -602,13 +632,13 @@ void SharedTerrainEditorView::handleInputEvents()
 				if (brushEnabled == true) {
 					auto brushRotation = -(Vector3::computeAngle(rampVertices[1].clone().sub(rampVertices[0]).setY(0.0f).normalize(), Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 1.0f, 0.0f)) - 180.0f);
 					if (Math::abs(rampVertices[0].getY() - rampVertices[1].getY()) > Math::EPSILON && rampVertices[0].getY() < rampVertices[1].getY()) brushRotation = brushRotation + 180.0f;
-					auto brushScale =
-						Vector2(
-							(rampScaleX * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
-							1.0f / (engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getY() / rampVertices[1].clone().sub(rampVertices[0]).computeLength())
-						);
 					engine->setShaderParameter("terraineditor", "brushRotation", brushRotation);
-					engine->setShaderParameter("terraineditor", "brushScale", brushScale);
+					engine->setShaderParameter("terraineditor", "brushScale",
+						Vector2(
+							(brushScale * 5.0f) / engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getX(),
+							1.0f / (engine->getShaderParameter("terraineditor", "brushDimension").getVector2Value().getY() / rampVertices[1].clone().sub(rampVertices[0]).computeLength())
+						)
+					);
 				}
 			}
 		} else
@@ -802,10 +832,10 @@ void SharedTerrainEditorView::initialize()
 
 		//
 		// load sky
-		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
-		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
-		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
-		spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmm");
+		skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
+		skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
+		skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+		spherePrototype = PrototypeReader::read("resources/engine/models", "sphere.tmodel");
 
 	} catch (Exception& exception) {
 		Console::print(string("SharedTerrainEditorView::initialize(): An error occurred: "));

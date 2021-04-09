@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 3) {
-		Console::println("Usage: importtmm tmmfile.tmm modelfile.ext [bvs-model.ext]");
+		Console::println("Usage: importtmm tmmfile.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	//
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 		);
 		// load tmm
 		if (FileSystem::getInstance()->fileExists(tmmFileName) == false) {
-			Console::println("Creating tmm: " + tmmFileName);
+			Console::println("Creating tmodel: " + tmmFileName);
 			auto pathName = FileSystem::getInstance()->getPathName(tmmFileName);
 			auto fileName = FileSystem::getInstance()->getFileName(tmmFileName);
 			auto fileNameWithoutExtension = StringTools::substring(fileName, 0, fileName.rfind('.'));
@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
 		} else {
-			Console::println("Loading tmm: " + tmmFileName);
+			Console::println("Loading tmodel: " + tmmFileName);
 			tmm = PrototypeReader::read(
 				FileSystem::getInstance()->getPathName(tmmFileName),
 				FileSystem::getInstance()->getFileName(tmmFileName)
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
 				);
 			}
 		}
-		Console::println("Saving tmm: " + tmmFileName);
+		Console::println("Saving tmodel: " + tmmFileName);
 		PrototypeWriter::write(
 			FileSystem::getInstance()->getPathName(tmmFileName),
 			FileSystem::getInstance()->getFileName(tmmFileName),

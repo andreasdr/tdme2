@@ -226,22 +226,50 @@ void EntityRenderer::reset()
 void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(1, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
-		EntityRenderer_InstancedRenderFunctionParameters parameters;
-		parameters.renderPass = renderPass;
-		parameters.objects = objects;
-		parameters.collectTransparentFaces = renderTransparentFaces;
-		parameters.renderTypes = renderTypes;
+		auto elementsIssued = 0;
+		auto queueElement = new Engine::EngineThreadQueueElement();
+		queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
+		queueElement->engine = engine;
+		queueElement->rendering.renderPass = renderPass;
+		queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
+		queueElement->rendering.renderTypes = renderTypes;
+		for (auto i = 0; i < objects.size(); i++) {
+			queueElement->objects.push_back(objects[i]);
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
+				engine->engineThreadsQueue->addElement(queueElement, false);
+				elementsIssued++;
+				queueElement = new Engine::EngineThreadQueueElement();
+				queueElement->type = Engine::EngineThreadQueueElement::TYPE_RENDERING;
+				queueElement->engine = engine;
+				queueElement->rendering.renderPass = renderPass;
+				queueElement->rendering.collectTransparentFaces = renderTransparentFaces;
+				queueElement->rendering.renderTypes = renderTypes;
+			}
+		}
+		if (queueElement->objects.empty() == true) {
+			delete queueElement;
+		} else {
+			engine->engineThreadsQueue->addElement(queueElement, false);
+			elementsIssued++;
+		}
 
-		for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
-		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
-		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
+		// wait until all elements have been processed
+		while (true == true) {
+			auto elementsProcessed = 0;
+			for (auto engineThread: Engine::engineThreads) elementsProcessed+= engineThread->getProcessedElements();
+			if (elementsProcessed == elementsIssued) {
+				for (auto engineThread: Engine::engineThreads) engineThread->resetProcessedElements();
+				break;
+			}
+		}
 
-		renderFunction(threadCount, 0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
-
-		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
-		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
+		//
+		for (auto engineThread: Engine::engineThreads) {
+			transparentRenderFacesPool->merge(engineThread->transparentRenderFacesPool);
+			engineThread->transparentRenderFacesPool->reset();
+		}
 	}
 }
 

@@ -509,7 +509,7 @@ void SceneReader::readFromModel(const string& pathName, const string& fileName, 
 	// export to tl
 	SceneWriter::write(
 		pathName,
-		Tools::removeFileEnding(fileName) + ".tl",
+		Tools::removeFileEnding(fileName) + ".tscene",
 		scene
 	);
 

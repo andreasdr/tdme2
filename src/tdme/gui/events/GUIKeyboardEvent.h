@@ -38,6 +38,12 @@ public:
 	static constexpr int32_t KEYCODE_F10 { KEYBOARD_KEYCODE_F10 };
 	static constexpr int32_t KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
 	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
+	static constexpr int32_t KEYCODE_LEFT_ALT { KEYBOARD_KEYCODE_LEFT_ALT };
+	static constexpr int32_t KEYCODE_LEFT_CONTROL { KEYBOARD_KEYCODE_LEFT_CTRL };
+	static constexpr int32_t KEYCODE_LEFT_SHIFT { KEYBOARD_KEYCODE_LEFT_SHIFT };
+	static constexpr int32_t KEYCODE_RIGHT_ALT { KEYBOARD_KEYCODE_RIGHT_ALT };
+	static constexpr int32_t KEYCODE_RIGHT_CONTROL { KEYBOARD_KEYCODE_RIGHT_CTRL };
+	static constexpr int32_t KEYCODE_RIGHT_SHIFT { KEYBOARD_KEYCODE_RIGHT_SHIFT };
 
 	enum GUIKeyboardEventType {
 		KEYBOARDEVENT_NONE,

@@ -68,7 +68,7 @@ int SceneLibrary::allocatePrototypeId()
 Prototype* SceneLibrary::addModel(int id, const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
 	Prototype* prototype = nullptr;
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
 		prototype = PrototypeReader::read(id == ID_ALLOCATE?allocatePrototypeId():id, pathName, fileName);
 	} else {
 		auto model = ModelReader::read(

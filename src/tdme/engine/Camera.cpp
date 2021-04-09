@@ -95,11 +95,12 @@ Matrix4x4& Camera::computeFrustumMatrix(float leftPlane, float rightPlane, float
 
 Matrix4x4& Camera::computeModelViewMatrix()
 {
+	Vector3 tmpUp = upVector;
 	if (cameraMode == CAMERAMODE_LOOKAT) {
 		forwardVector.set(lookAt).sub(lookFrom).normalize();
 		sideVector = Vector3::computeCrossProduct(forwardVector, upVector).normalize();
+		tmpUp = Vector3::computeCrossProduct(sideVector, forwardVector);
 	}
-	auto tmpUp = Vector3::computeCrossProduct(sideVector, forwardVector);
 	modelViewMatrix.
 		identity().
 		translate(

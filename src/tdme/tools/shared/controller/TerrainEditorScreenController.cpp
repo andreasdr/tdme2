@@ -387,7 +387,7 @@ void TerrainEditorScreenController::onTerrainLoad()
 	};
 
 	vector<string> extensions;
-	extensions.push_back("tte");
+	extensions.push_back("tterrain");
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	view->getPopUps()->getFileDialogScreenController()->show(
 		terrainPath.getPath(),
@@ -432,7 +432,7 @@ void TerrainEditorScreenController::onTerrainSave()
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	vector<string> extensions = {
-		"tte"
+		"tterrain"
 	};
 	fileName = Tools::getFileName(fileName);
 	view->getPopUps()->getFileDialogScreenController()->show(
@@ -538,10 +538,32 @@ void TerrainEditorScreenController::onApplyTerrainBrush() {
 		currentTerrainBrushTexture = TextureReader::read(Tools::getPathName(brushTextureFileName), Tools::getFileName(brushTextureFileName), false, false);
 
 		//
-		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale);
+		view->setTerrainBrush(currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
+void TerrainEditorScreenController::setBrushScale(float scale) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushScale = scale;
+		terrainBrushScale->getController()->setValue(MutableString(Tools::formatFloat(scale)));
+	} else
+	if (currentFoliageBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentFoliageBrushScale = scale;
+		foliageBrushScale->getController()->setValue(MutableString(Tools::formatFloat(scale)));
+	}
+}
+
+void TerrainEditorScreenController::setBrushDensityStrength(float densityStrength) {
+	if (currentTerrainBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentTerrainBrushStrength = densityStrength;
+		terrainBrushStrength->getController()->setValue(MutableString(Tools::formatFloat(densityStrength)));
+	} else
+	if (currentFoliageBrushOperation != Terrain::BRUSHOPERATION_NONE) {
+		currentFoliageBrushDensity = densityStrength;
+		foliageBrushDensity->getController()->setValue(MutableString(Tools::formatFloat(densityStrength)));
 	}
 }
 
@@ -844,7 +866,7 @@ void TerrainEditorScreenController::onFoliageBrushPrototypeLoad(int idx) {
 		int idx;
 	};
 
-	vector<string> extensions = { "tmm" };
+	vector<string> extensions = { "tmodel" };
 	view->getPopUps()->getFileDialogScreenController()->show(
 		foliageBrushPrototypeFile[idx]->getController()->getValue().getString().empty() == true?prototypePath.getPath():Tools::getPathName(foliageBrushPrototypeFile[idx]->getController()->getValue().getString()),
 		"Load from: ",
@@ -928,7 +950,7 @@ void TerrainEditorScreenController::onApplyFoliageBrush() {
 		}
 
 		//
-		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale);
+		view->setTerrainBrush(currentFoliageBrushTexture, currentFoliageBrushScale, currentFoliageBrushDensity);
 	} catch (Exception& exception) {
 		Console::println(string("Terrain::onApplyBrush(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));

@@ -111,6 +111,12 @@ void WaterTest::display()
 	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
 	engine->getCamera()->setUpVector(Camera::computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
 
+	{
+		auto playerSphere = engine->getEntity("playersphere");
+		playerSphere->setTranslation(camLookFrom);
+		playerSphere->update();
+	}
+
 	// rendering
 	auto start = Time::getCurrentMillis();
 	engine->display();
@@ -141,15 +147,15 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 
-	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tl", scene);
+	SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene", scene);
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 
 	// load sky
-	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmm");
-	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmm");
-	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmm");
-	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "CM_Sphere.tmm");
+	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
+	skyDomePrototype = PrototypeReader::read("resources/engine/models", "sky_dome.tmodel");
+	skyPanoramaPrototype = PrototypeReader::read("resources/engine/models", "sky_panorama.tmodel");
+	spherePrototype = PrototypeReader::read("resources/tests/levels/water/", "sphere.tmodel");
 
 	// add sky
 	{
@@ -206,6 +212,16 @@ void WaterTest::initialize()
 		sphere->setReflectionEnvironmentMappingPosition(sphere->getTranslation());
 		sphere->update();
 		engine->addEntity(sphere);
+	}
+
+	{
+		// player sphere
+		auto playerSphere = new Object3D("playersphere", spherePrototype->getModel());
+		playerSphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
+		playerSphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
+		playerSphere->update();
+		playerSphere->setEnabled(false);
+		engine->addEntity(playerSphere);
 	}
 
 	auto cam = engine->getCamera();

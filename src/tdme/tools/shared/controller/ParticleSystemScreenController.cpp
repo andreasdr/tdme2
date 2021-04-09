@@ -946,7 +946,7 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 	};
 
 	vector<string> extensions = {
-		"tps"
+		"tparticle"
 	};
 	view->getPopUps()->getFileDialogScreenController()->show(
 		particleSystemPath.getPath(),
@@ -986,11 +986,11 @@ void ParticleSystemScreenController::onPrototypeSave()
 
 	auto fileName = view->getPrototype()->getFileName();
 	if (fileName.length() == 0) {
-		fileName = "untitle.tps";
+		fileName = "untitled.tparticle";
 	}
 	fileName = Tools::getFileName(fileName);
 	vector<string> extensions = {
-		"tps"
+		"tparticle"
 	};
 	view->getPopUps()->getFileDialogScreenController()->show(
 		particleSystemPath.getPath(),

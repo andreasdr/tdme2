@@ -176,7 +176,6 @@ private:
 
 	/**
 	 * Render function
-	 * @param threadCount thread count
 	 * @param threadIdx thread index
 	 * @param objects objects
 	 * @param visibleObjectsByModels objects by models storage
@@ -184,7 +183,6 @@ private:
 	 * @param renderTypes render types
 	 */
 	inline void renderFunction(
-		int threadCount,
 		int threadIdx,
 		Entity::RenderPass renderPass,
 		const vector<Object3D*>& objects,
@@ -199,7 +197,6 @@ private:
 		Vector3 objectCamFromAxis;
 		auto camera = engine->getCamera();
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;

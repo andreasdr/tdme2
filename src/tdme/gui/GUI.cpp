@@ -555,6 +555,24 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 				event->setProcessed(true);
 				break;
 			}
+		case (GUIKeyboardEvent::KEYCODE_LEFT_ALT):
+		case (GUIKeyboardEvent::KEYCODE_RIGHT_ALT):
+			{
+				altDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+				break;
+			}
+		case (GUIKeyboardEvent::KEYCODE_LEFT_CONTROL):
+		case (GUIKeyboardEvent::KEYCODE_RIGHT_CONTROL):
+			{
+				controlDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+				break;
+			}
+		case (GUIKeyboardEvent::KEYCODE_LEFT_SHIFT):
+		case (GUIKeyboardEvent::KEYCODE_RIGHT_SHIFT):
+			{
+				shiftDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+				break;
+			}
 		default:
 			{
 				break;
@@ -686,9 +704,9 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
@@ -703,9 +721,9 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
@@ -720,9 +738,9 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
@@ -737,9 +755,9 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
@@ -754,9 +772,9 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 	unlockEvents();
@@ -782,9 +800,9 @@ void GUI::onMouseDragged(int x, int y) {
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
 	#else
-		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+		guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
@@ -811,9 +829,9 @@ void GUI::onMouseMoved(int x, int y) {
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
 	#else
-		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+		guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
@@ -841,9 +859,9 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
 	#else
-		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+		guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
@@ -871,9 +889,9 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
 	#else
-		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+		guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
 	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);

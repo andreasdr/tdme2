@@ -326,7 +326,6 @@ bool Application::limitFPS = true;
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
 	int Application::glfwMouseButtonLast = -1;
-	int Application::glfwMods = 0;
 	bool Application::capsLockEnabled = false;
 #endif
 
@@ -789,7 +788,6 @@ void Application::reshapeInternal(int width, int height) {
 
 	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
 		if (Application::inputEventHandler == nullptr) return;
-		glfwMods = mods;
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		// TODO: Use GLFW_MOD_CAPS_LOCK, which does not seem to be available with my version, need to update perhabs
@@ -840,7 +838,6 @@ void Application::reshapeInternal(int width, int height) {
 
 	void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods) {
 		if (Application::inputEventHandler == nullptr) return;
-		glfwMods = mods;
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);

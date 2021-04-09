@@ -404,7 +404,9 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 					FbxPropertyT<FbxDouble3> fbxColor3;
 					FbxPropertyT<FbxDouble> fbxTransparency;
 					FbxPropertyT<FbxDouble> fbxFactor;
-					FbxPropertyT<FbxDouble> fbxShinienss;
+					FbxPropertyT<FbxDouble> fbxShininess;
+					FbxPropertyT<FbxDouble> fbxShininessFactor;
+					FbxPropertyT<FbxDouble> fbxReflection;
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->AmbientFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
@@ -458,9 +460,14 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 							)
 						);
 					}
-					fbxShinienss = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
-					if (fbxShinienss.IsValid() == true) {
-						specularMaterialProperties->setShininess(static_cast<float>(fbxShinienss.Get()));
+					fbxShininess = ((FbxSurfacePhong*)fbxMaterial)->Reflection;
+					fbxShininessFactor = ((FbxSurfacePhong*)fbxMaterial)->ReflectionFactor;
+					if (fbxShininess.IsValid() == true && fbxShininessFactor.IsValid() == true) {
+						specularMaterialProperties->setShininess(static_cast<float>(fbxShininess.Get() * fbxShininessFactor.Get()));
+					}
+					fbxReflection = ((FbxSurfacePhong*)fbxMaterial)->Reflection;
+					if (fbxReflection.IsValid() == true) {
+						specularMaterialProperties->setReflection(static_cast<float>(fbxReflection.Get()));
 					}
 				} else
 				if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId)) {

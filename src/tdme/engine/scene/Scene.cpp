@@ -47,7 +47,7 @@ Scene::Scene()
 {
 	applicationRootPathName = "";
 	pathName = ".";
-	fileName = "untitled.tl";
+	fileName = "untitled.tscene";
 	rotationOrder = RotationOrder::XYZ;
 	lights.push_back(new SceneLight(0));
 	lights.push_back(new SceneLight(1));

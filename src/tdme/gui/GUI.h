@@ -96,6 +96,10 @@ private:
 	map<string, set<string>> mouseDraggingEventNodeIds;
 	map<string, bool> mouseIsDragging;
 
+	bool altDown { false };
+	bool controlDown { false };
+	bool shiftDown { false };
+
 	/**
 	 * Add node that is a possible mouse out candidate as it received a mouse over
 	 * @param node element node

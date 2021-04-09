@@ -64,44 +64,44 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
-				// shader
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glsl") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".vert") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".frag") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".cl") == true) return true;
+				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 				// audio
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ogg") == true) return true;
-				// models
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dae") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fbx") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) return true;
-				// meta
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) return true;
-				// scene
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tl") == true) return true;
-				// particle system
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) return true;
-				// xml
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".xml") == true) return true;
-				// images
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ico") == true) return true;
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) return true;
 				// fonts
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
-				// wss
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".wss") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
+				// images
+				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
+				// models
+				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) return true;
+				// property files
+				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) return true;
+				// shader
+				if (StringTools::endsWith(fileNameLowerCase, ".cl") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".frag") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".glsl") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".vert") == true) return true;
+				// tdme model
+				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
+				// tdme scene
+				if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) return true;
+				// tdme particle system
+				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) return true;
+				// tdme terrain
+				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) return true;
+				// tdme script
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) return true;
+				// xml
+				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
 				// files without ending
-				//	TODO: fix me, paths get submitted here too as filename
 				if (fileName.rfind(".") == string::npos ||
 					(fileName.rfind("/") != string::npos &&
 					fileName.rfind(".") < fileName.rfind("/"))) {
 					return true;
 				}
-				// properties
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".properties") == true) return true;
-				// tdme archive
-				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".ta") == true) return true;
 				//
 				return false;
 			}

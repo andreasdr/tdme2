@@ -324,6 +324,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 				material = materialIt->second;
 			} else {
 				material = new Material(gltfMaterial.name);
+				material->setDoubleSided(false/*TODO: enable me: gltfMaterial.doubleSided*/);
 				auto pbrMaterialProperties = new PBRMaterialProperties();
 				auto specularMaterialProperties = new SpecularMaterialProperties();
 				// some adjustment, lets see if we can extract this later

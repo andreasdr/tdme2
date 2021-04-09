@@ -707,7 +707,7 @@ void SceneEditorScreenController::onSceneLoad()
 	};
 
 	vector<string> extensions = ModelReader::getModelExtensions();
-	extensions.push_back("tl");
+	extensions.push_back("tscene");
 	view->getPopUps()->getFileDialogScreenController()->show(
 		scenePath.getPath(),
 		"Load from: ",
@@ -741,7 +741,7 @@ void SceneEditorScreenController::onSceneSave()
 	};
 
 	vector<string> extensions = {
-		"tl",
+		"tscene",
 	};
 	view->getPopUps()->getFileDialogScreenController()->show(
 		scenePath.getPath(),

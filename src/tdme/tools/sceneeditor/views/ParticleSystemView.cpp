@@ -48,7 +48,7 @@ void ParticleSystemView::onLoadParticleSystem(Prototype* oldEntity, Prototype* n
 
 Prototype* ParticleSystemView::loadParticleSystemPrototype(const string& name, const string& description, const string& pathName, const string& fileName)
 {
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tparticle") == true) {
 		auto prototype = PrototypeReader::read(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		prototype->setDefaultBoundingVolumes();
 		TDMESceneEditor::getInstance()->getSceneLibrary()->addPrototype(prototype);

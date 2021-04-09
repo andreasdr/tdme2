@@ -50,7 +50,7 @@ void TerrainEditorView::onInitAdditionalScreens()
 }
 
 Prototype* TerrainEditorView::loadTerrainPrototype(const string& pathName, const string& fileName) {
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tte") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tterrain") == true) {
 		auto prototype = PrototypeReader::read(SceneLibrary::ID_ALLOCATE, pathName, fileName);
 		TDMESceneEditor::getInstance()->getSceneLibrary()->addPrototype(prototype);
 		return prototype;

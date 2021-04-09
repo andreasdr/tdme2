@@ -523,7 +523,7 @@ void SharedModelEditorView::loadModel()
 
 Prototype* SharedModelEditorView::loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot)
 {
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmm") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
 		auto prototype = PrototypeReader::read(
 			pathName,
 			fileName

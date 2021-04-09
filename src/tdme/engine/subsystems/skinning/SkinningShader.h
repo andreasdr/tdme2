@@ -30,7 +30,7 @@ class tdme::engine::subsystems::skinning::SkinningShader final
 {
 private:
 	struct SkinningContext {
-		bool running { false };
+		volatile bool running { false };
 	};
 
 	struct ModelSkinningCache {

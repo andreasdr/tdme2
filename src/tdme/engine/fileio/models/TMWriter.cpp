@@ -70,7 +70,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(15));
+	os.writeByte(static_cast< uint8_t >(16));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -120,6 +120,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	os->writeBoolean(smp->hasDiffuseTextureTransparency());
 	os->writeBoolean(smp->hasDiffuseTextureMaskedTransparency());
 	os->writeFloat(smp->getDiffuseTextureMaskedTransparencyThreshold());
+	os->writeBoolean(m->isDoubleSided());
 	os->writeFloatArray(m->getTextureMatrix().getArray());
 	if (pmp == nullptr) {
 		os->writeBoolean(false);

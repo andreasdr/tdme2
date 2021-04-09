@@ -38,6 +38,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/threading/Queue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 
@@ -99,6 +100,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::os::threading::Queue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 
@@ -156,6 +158,8 @@ public:
 	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
+	// TODO: make sure one can set up this parameter also, also check if we need a different value for compute
+	static constexpr int ENGINETHREADSQUEUE_DISPATCH_COUNT { 200 };
 
 protected:
 	static Engine* currentEngine;
@@ -260,44 +264,74 @@ private:
 
 	map<string, map<string, ShaderParameter>> shaderParameters;
 
-	class EngineThread: public Thread {
-		friend class Engine;
-	private:
-		int idx;
-		void* context;
-	public:
-		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
+	struct EngineThreadQueueElement {
+		enum Type { TYPE_NONE, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
 
-		Engine* engine;
+		Type type { TYPE_NONE };
+
+		Engine* engine { nullptr };
 
 		struct {
 			bool computeTransformations { false };
-			DecomposedEntities* decomposedEntities { nullptr };
 		} transformations;
 
 		struct {
-			EntityRenderer_InstancedRenderFunctionParameters parameters;
-			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
-			TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+			Entity::RenderPass renderPass;
+			uint32_t renderTypes;
+			bool collectTransparentFaces;
 		} rendering;
 
-		volatile State state { STATE_WAITING };
+		vector<Object3D*> objects;
+	};
+
+	class EngineThread: public Thread {
+		friend class Engine;
+		friend class tdme::engine::subsystems::rendering::EntityRenderer;
+	private:
+		int idx;
+		Queue<EngineThreadQueueElement>* queue { nullptr };
+		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+		unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
+		volatile int elementsProcessed { 0 };
 
 	private:
 		/**
 		 * Constructor
 		 * @param idx thread index
-		 * @param context context
+		 * @param queue queue
 		 */
-		EngineThread(int idx, void* context);
+		EngineThread(int idx, Queue<EngineThreadQueueElement>* queue);
 
 		/**
 		 * Run
 		 */
 		virtual void run();
+
+		/**
+		 * @return transparent render faces pool
+		 */
+		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
+			return transparentRenderFacesPool;
+		}
+
+		/**
+		 * @return processed elements
+		 */
+		inline int getProcessedElements() {
+			return elementsProcessed;
+		}
+
+		/**
+		 * Reset processed element count
+		 */
+		inline void resetProcessedElements() {
+			elementsProcessed = 0;
+		}
+
 	};
 
 	static vector<EngineThread*> engineThreads;
+	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
 
 	/**
 	 * @return mesh manager
@@ -407,12 +441,11 @@ private:
 
 	/**
 	 * Computes visibility and transformations
-	 * @param decomposedEntites decomposed entites
-	 * @param threadCount thread count
-	 * @param threadIdx thread idx
+	 * @param objects objects
+	 * @param threadIdx thread index
 	 * @param computeTransformations compute transformations
 	 */
-	void computeTransformationsFunction(DecomposedEntities& decomposedEntites, int threadCount, int threadIdx, bool computeTransformations);
+	void computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx, bool computeTransformations);
 
 	/**
 	 * Computes visibility and transformations

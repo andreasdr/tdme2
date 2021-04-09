@@ -20,7 +20,7 @@ InputEventHandler::~InputEventHandler() {
 
 int InputEventHandler::getKeyboardModifiers() {
 	#if defined(VULKAN) || defined(GLFW3)
-		return Application::application->glfwMods;
+		return 0;
 	#else
 		return glutGetModifiers();
 	#endif

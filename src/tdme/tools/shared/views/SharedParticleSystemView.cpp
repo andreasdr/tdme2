@@ -507,7 +507,7 @@ void SharedParticleSystemView::loadParticleSystem()
 
 Prototype* SharedParticleSystemView::loadParticleSystemPrototype(const string& name, const string& description, const string& pathName, const string& fileName)
 {
-	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tps") == true) {
+	if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tparticle") == true) {
 		auto prototype = PrototypeReader::read(pathName, fileName);
 		prototype->setDefaultBoundingVolumes();
 		return prototype;

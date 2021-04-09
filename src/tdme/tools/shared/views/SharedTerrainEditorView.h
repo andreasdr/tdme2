@@ -80,7 +80,8 @@ private:
 	int rampMode { -1 };
 	array<Vector3,2> rampVertices;
 	array<float,2> rampHeight;
-	float rampScaleX { 1.0f };
+	float brushScale { 1.0f };
+	float brushDensityStrength { 1.0f };
 
 	/**
 	 * Init entity
@@ -136,8 +137,21 @@ public:
 	 * Set terrain brush
 	 * @param texture brush texture
 	 * @param scale scale
+	 * @param densityStrength density strength
 	 */
-	void setTerrainBrush(Texture* texture, float scale);
+	void setTerrainBrush(Texture* texture, float scale, float densityStrength);
+
+	/**
+	 * Set brush scale
+	 * @param scale scale
+	 */
+	void setBrushScale(float scale);
+
+	/**
+	 * Set brush density/strength
+	 * @param densityStrength density/strength
+	 */
+	void setBrushDensityStrength(float densityStrength);
 
 	/**
 	 * Unset terrain brush

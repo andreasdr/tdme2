@@ -242,6 +242,18 @@ public:
 	void onApplyTerrainBrush();
 
 	/**
+	 * Set brush scale
+	 * @param scale scale
+	 */
+	void setBrushScale(float scale);
+
+	/**
+	 * Set brush density/strength
+	 * @param densityStrength density/strength
+	 */
+	void setBrushDensityStrength(float densityStrength);
+
+	/**
 	 * @return current terrain brush operation
 	 */
 	Terrain::BrushOperation getTerrainBrushOperation();

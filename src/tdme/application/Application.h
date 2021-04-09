@@ -269,7 +269,6 @@ private:
 		static GLFWwindow* glfwWindow;
 		static array<unsigned int, 10> glfwMouseButtonDownFrames;
 		static int glfwMouseButtonLast;
-		static int glfwMods;
 		static bool capsLockEnabled;
 	#endif
 

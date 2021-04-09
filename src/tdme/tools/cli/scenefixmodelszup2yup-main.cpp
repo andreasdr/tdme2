@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	Console::println();
 
 	if (argc != 2) {
-		Console::println("Usage: scenefixmodelszup2yup scene.tl");
+		Console::println("Usage: scenefixmodelszup2yup scene.tscene");
 		Application::exit(1);
 	}
 	string sceneFileName = string(argv[1]);

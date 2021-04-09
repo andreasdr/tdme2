@@ -142,7 +142,7 @@ void TDMEParticleSystem::initialize()
 			Prototype_Type::PARTICLESYSTEM,
 			"Untitled",
 			"",
-			"Untitled.tps",
+			"Untitled.tparticle",
 			"",
 			"",
 			nullptr,

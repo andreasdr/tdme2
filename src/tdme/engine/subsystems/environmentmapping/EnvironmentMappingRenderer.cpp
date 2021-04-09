@@ -133,7 +133,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 		camera->setLookFrom(position);
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);
-		camera->setUpVector(upVectors[i]);
+		camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
 		camera->update(engine->renderer->getDefaultContext(), width, height);
 
 		// set up clear color

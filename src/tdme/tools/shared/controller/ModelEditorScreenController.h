@@ -92,6 +92,7 @@ private:
 	GUIElementNode* materialsDropdown { nullptr };
 	GUIElementNode* materialsDropdownApply { nullptr };
 	GUIElementNode* materialsMaterialName { nullptr };
+	GUIElementNode* materialsMaterialDoubleSided { nullptr };
 	GUIElementNode* materialsMaterialAmbient { nullptr };
 	GUIElementNode* materialsMaterialDiffuse { nullptr };
 	GUIElementNode* materialsMaterialSpecular { nullptr };
