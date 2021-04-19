@@ -106,15 +106,14 @@ void ShadowMapCreationShader::bindTexture(void* context, int32_t textureId)
 void ShadowMapCreationShader::setShader(void* context, const string& id) {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderPreContext.implementation;
-
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	shadowMappingShaderPreContext.implementation = shaderIt->second;
-
-	if (currentImplementation != shadowMappingShaderPreContext.implementation) {
+	auto nextImplementation = shaderIt->second;
+	if (currentImplementation != nextImplementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		shadowMappingShaderPreContext.implementation = nextImplementation;
 		shadowMappingShaderPreContext.implementation->useProgram(engine, context);
 	}
 }

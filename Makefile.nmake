@@ -371,7 +371,6 @@ SRCS = \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
 	src/tdme/os/threading/ReadWriteLock.cpp \
-	src/tdme/os/threading/Semaphore.cpp \
 	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \
@@ -655,7 +654,7 @@ all: \
 	copyanimationsetups \
 	create-installer \
 	generatelicenses \
-	importtmm \
+	importtmodel \
 	fixdoxygen \
 	optimizemodel \
 	scenefixmodelszup2yup \
@@ -788,6 +787,9 @@ importtmm:
 
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+makefilegenerator:
+	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

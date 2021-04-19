@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/fwd-tdme.h>
+#include <tdme/engine/fileio/scenes/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -15,6 +16,7 @@
 using std::string;
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeLODLevel;
@@ -30,17 +32,20 @@ using rapidjson::Value;
  */
 class tdme::engine::fileio::prototypes::PrototypeReader final
 {
+	friend class tdme::engine::fileio::scenes::SceneReader;
+
 public:
 	/**
 	 * Reads a prototype from file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param transformFilter transform filter or nullptr
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	inline static Prototype* read(const string& pathName, const string& fileName) {
-		return read(Prototype::ID_NONE, pathName, fileName);
+	inline static Prototype* read(const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr) {
+		return read(Prototype::ID_NONE, pathName, fileName, transformFilter);
 	}
 
 	/**
@@ -48,22 +53,12 @@ public:
 	 * @param id id or Prototype.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param transformFilter transform filter or nullptr
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return prototype
 	 */
-	static Prototype* read(int id, const string& pathName, const string& fileName);
-
-	/**
-	 * Reads a prototype from JSON object
-	 * @param id id or Prototype.ID_NONE
-	 * @param pathName path name or null
-	 * @param jEntityRoot JSON entity root
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::engine::fileio::models::ModelFileIOException
-	 * @return prototype
-	 */
-	static Prototype* read(int id, const string& pathName, Value& jEntityRoot);
+	static Prototype* read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter = nullptr);
 
 	/**
 	 * Get resource path name
@@ -74,6 +69,17 @@ public:
 	static const string getResourcePathName(const string& pathName, const string& fileName);
 
 private:
+	/**
+	 * Reads a prototype from JSON object
+	 * @param id id or Prototype.ID_NONE
+	 * @param pathName path name or null
+	 * @param jEntityRoot JSON entity root
+	 * @param transformFilter transform filter or nullptr
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return prototype
+	 */
+	static Prototype* read(int id, const string& pathName, Value& jEntityRoot, PrototypeTransformFilter* transformFilter = nullptr);
 
 	/**
 	 * Parse bounding volume

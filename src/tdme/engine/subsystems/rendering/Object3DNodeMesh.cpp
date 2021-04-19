@@ -183,6 +183,7 @@ Object3DNodeMesh::Object3DNodeMesh(Object3DNodeRenderer* object3DNodeRenderer, E
 		(animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING))) {
 		// skinning computation caches if computing skinning on CPU
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+			cSkinningMaxVertexWeights = 0;
 			cSkinningJointWeight.resize(nodeVertices.size());
 			cSkinningJointTransformationsMatrices.resize(instances);
 			for (auto i = 0; i < instances; i++) cSkinningJointTransformationsMatrices[i].resize(nodeVertices.size());

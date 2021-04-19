@@ -112,6 +112,6 @@ public:
 	/**
 	 * @return merged properties from entity and object
 	 */
-	PrototypeProperties* getTotalProperties();
+	const PrototypeProperties getTotalProperties();
 
 };

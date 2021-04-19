@@ -1403,6 +1403,7 @@ void VKRenderer::initialize()
 		context.pipeline.fill(VK_NULL_HANDLE);
 		context.draw_cmd_started.fill({false, false, false});
 		context.render_pass_started.fill(false);
+		context.uniform_buffers_changed.fill(false);
 
 		// set up lights
 		for (auto i = 0; i < context.lights.size(); i++) {
@@ -3743,6 +3744,7 @@ int32_t VKRenderer::createProgram(int type)
 	for (auto i = 0; i < program.uniform_buffers_stored.size(); i++) program.uniform_buffers_stored[i] = false;
 	program.uniform_buffers_last.resize(Engine::getThreadCount());
 	program.uniform_buffers_changed_last.resize(Engine::getThreadCount());
+	for (auto& programBufferChangedLast: program.uniform_buffers_changed_last) programBufferChangedLast.fill(false);
 	program.desc_sets.resize(Engine::getThreadCount());
 	program.desc_idxs.resize(Engine::getThreadCount());
 	for (auto i = 0; i < program.desc_idxs.size(); i++) program.desc_idxs[i] = 0;
@@ -3898,7 +3900,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 				if (VERBOSE == true) {
 					Console::println(
 						string(
-							string("GL3Renderer::") +
+							string("VKRenderer::") +
 							string(__FUNCTION__) +
 							string("[") +
 							to_string(shader->id) +
@@ -3910,7 +3912,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			} else {
 				Console::println(
 					string(
-						string("GL3Renderer::") +
+						string("VKRenderer::") +
 						string(__FUNCTION__) +
 						string("[") +
 						to_string(shader->id) +
@@ -3942,7 +3944,6 @@ bool VKRenderer::linkProgram(int32_t programId)
 		auto uniformName = it.second;
 
 		//
-		auto samplerIdx = 0;
 		for (auto shader: program->shaders) {
 			auto shaderUniformIt = shader->uniforms.find(uniformName);
 			if (shaderUniformIt == shader->uniforms.end()) {
@@ -4001,7 +4002,6 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 	auto program = programList[programId];
 	for (auto& uniformIt: program->uniforms) {
 		if (uniformIt.second == name) {
-			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + name + " -- > " + to_string(uniformIt.first));
 			return uniformIt.first;
 		}
 	}
@@ -4016,6 +4016,26 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 	auto changedUniforms = 0;
 	auto shaderIdx = 0;
 	for (auto shader: contextTyped.program->shaders) {
+		//
+		if (uniformId < 0 || uniformId >= shader->uniformList.size()) {
+			Console::println(
+				"VKRenderer::" +
+				string(__FUNCTION__) +
+				"(): program: uniform id out of uniform list bounds: " +
+				to_string(contextTyped.idx) + ": " +
+				to_string(contextTyped.program_id) + ": " +
+				to_string(uniformId) + " / " +
+				to_string(shader->uniformList.size())
+			);
+			Console::println(
+				string("\t") +
+				to_string(contextTyped.idx) + ": " +
+				to_string(contextTyped.program_id) + ": " +
+				to_string(uniformId) + " / " +
+				contextTyped.program->uniforms[uniformId]
+			);
+			continue;
+		}
 		auto shaderUniformPtr = uniformId != -1?shader->uniformList[uniformId]:nullptr;
 		if (shaderUniformPtr == nullptr) {
 			shaderIdx++;
@@ -4028,6 +4048,24 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
 			shaderUniform.texture_unit = *((int32_t*)data);
 		} else {
+			if (size != shaderUniform.size) {
+				Console::println(
+					"VKRenderer::" +
+					string(__FUNCTION__) +
+					"(): program: uniform size != given size: " +
+					to_string(contextTyped.idx) + ": " +
+					to_string(contextTyped.program_id) + ": " +
+					to_string(uniformId) + "; " +
+					to_string(shaderIdx) + "; " +
+					to_string(contextTyped.uniform_buffers[shaderIdx].size()) + "; " +
+					to_string(shaderUniform.position + size) + ": " +
+					shaderUniform.name + ": " +
+					to_string(size) + " / " +
+					to_string(shaderUniform.size)
+				);
+				shaderIdx++;
+				continue;
+			}
 			if (contextTyped.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
 				Console::println(
 					"VKRenderer::" +
@@ -4035,6 +4073,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 					"(): program: uniform buffer is too small: " +
 					to_string(contextTyped.idx) + ": " +
 					to_string(contextTyped.program_id) + ": " +
+					to_string(uniformId) + "; " +
 					to_string(shaderIdx) + "; " +
 					to_string(contextTyped.uniform_buffers[shaderIdx].size()) + "; " +
 					to_string(shaderUniform.position + size) + ": " +

@@ -4,32 +4,29 @@
 
 #include <queue>
 
-#include "Condition.h"
-#include "Mutex.h"
+#include "SpinLock.h"
 
 using std::queue;
-using tdme::os::threading::Condition;
-using tdme::os::threading::Mutex;
+using tdme::os::threading::SpinLock;
 
 namespace tdme {
 namespace os {
 namespace threading {
 
 /**
- * Consumer/producer queue.
+ * Realtime consumer/producer queue.
  * @author Andreas Drewke
  * @version $Id: 160da968398d80de667bab6b825cdeca9dc1dd50 $
  */
 template <typename T>
-class Queue {
+class RealtimeQueue {
 public:
 	/**
 	 * @brief Public constructor
 	 */
-	Queue(const unsigned int maxElements) :
+	RealtimeQueue(const unsigned int maxElements) :
 		maxElements(maxElements),
 		m("queue"),
-		c("queue"),
 		stopRequested(false) {
 		//
 	}
@@ -37,7 +34,7 @@ public:
 	/**
 	 * @brief Destructor, removes remaining elements from queue
 	 */
-	virtual ~Queue() {
+	virtual ~RealtimeQueue() {
 		while (data.size() > 0) {
 			T* element = data.front();
 			delete element;
@@ -46,25 +43,24 @@ public:
 	}
 
 	/**
-	 * @brief Requests this queue to be stopped, any gets will be woke up and return NULL
+	 * @brief Requests this queue to be stopped
 	 */
 	void stop() {
 		stopRequested = true;
-		c.signal();
 	}
 
 	/**
-	 * @brief Gets an element from this queue, if no element exists yet the calling thread will be blocked until an element is available
+	 * @brief Gets an element from this queue, if no element exists it will immediately return NULL
 	 * @return T*
 	 */
 	T* getElement() {
 		m.lock();
-		while (data.empty() && stopRequested == false) {
-			c.wait(m);
-		}
-		if (stopRequested == true && data.size() == 0) {
+		if (stopRequested == true) {
 			m.unlock();
-			c.signal();
+			return NULL;
+		} else
+		if (data.size() == 0) {
+			m.unlock();
 			return NULL;
 		} else {
 			T* element = data.front();
@@ -75,7 +71,7 @@ public:
 	}
 
 	/**
-	 * @brief Adds an element to this queue, signals threads which waits for an element
+	 * @brief Adds an element to this queue
 	 * @param element T* element
 	 * @param declinable bool if element is declinable
 	 * @return if element was added
@@ -87,19 +83,17 @@ public:
 			return false;
 		}
 		data.push(element);
-		c.signal();
 		m.unlock();
 		return true;
 	}
 
 protected:
-	typedef queue<T*> QueueType;
-	QueueType data;
+	typedef queue<T*> RealtimeQueueType;
+	RealtimeQueueType data;
 	unsigned int maxElements;
 
 private:
-	Mutex m;
-	Condition c;
+	SpinLock m;
 	volatile bool stopRequested;
 
 };

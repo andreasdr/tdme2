@@ -38,7 +38,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/os/threading/Queue.h>
+#include <tdme/os/threading/RealtimeQueue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
 
@@ -100,7 +100,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
-using tdme::os::threading::Queue;
+using tdme::os::threading::RealtimeQueue;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 
@@ -158,8 +158,9 @@ public:
 	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
-	// TODO: make sure one can set up this parameter also, also check if we need a different value for compute
-	static constexpr int ENGINETHREADSQUEUE_DISPATCH_COUNT { 200 };
+	// TODO: make sure one can set up this parameter also
+	static constexpr int ENGINETHREADSQUEUE_RENDER_DISPATCH_COUNT { 200 };
+	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
 protected:
 	static Engine* currentEngine;
@@ -289,7 +290,7 @@ private:
 		friend class tdme::engine::subsystems::rendering::EntityRenderer;
 	private:
 		int idx;
-		Queue<EngineThreadQueueElement>* queue { nullptr };
+		RealtimeQueue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 		unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
 		volatile int elementsProcessed { 0 };
@@ -300,7 +301,7 @@ private:
 		 * @param idx thread index
 		 * @param queue queue
 		 */
-		EngineThread(int idx, Queue<EngineThreadQueueElement>* queue);
+		EngineThread(int idx, RealtimeQueue<EngineThreadQueueElement>* queue);
 
 		/**
 		 * Run
@@ -317,7 +318,7 @@ private:
 		/**
 		 * @return processed elements
 		 */
-		inline int getProcessedElements() {
+		volatile inline int getProcessedElements() {
 			return elementsProcessed;
 		}
 
@@ -331,7 +332,7 @@ private:
 	};
 
 	static vector<EngineThread*> engineThreads;
-	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+	static RealtimeQueue<EngineThreadQueueElement>* engineThreadsQueue;
 
 	/**
 	 * @return mesh manager

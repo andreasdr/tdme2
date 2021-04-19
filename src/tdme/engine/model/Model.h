@@ -80,11 +80,6 @@ private:
 	 */
 	bool computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix);
 
-	/**
-	 * Invalidates bounding box
-	 */
-	void invalidateBoundingBox();
-
 public:
 	/**
 	 * Public constructor
@@ -284,6 +279,11 @@ public:
 	 * @return bounding box
 	 */
 	BoundingBox* getBoundingBox();
+
+	/**
+	 * Invalidates bounding box
+	 */
+	void invalidateBoundingBox();
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given node id recursivly

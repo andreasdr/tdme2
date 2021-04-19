@@ -2,8 +2,9 @@
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::renderer::GUIShader;
+
+using tdme::engine::subsystems::renderer::Renderer;
 
 GUIShader::GUIShader(Renderer* renderer)
 {

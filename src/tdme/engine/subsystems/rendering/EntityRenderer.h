@@ -93,6 +93,7 @@ private:
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	int threadCount;
 	vector<Object3DRenderContext> contexts;
+	unordered_map<string, vector<Object3D*>> objectsByShaderMap;
 
 	/**
 	 * Renders transparent faces

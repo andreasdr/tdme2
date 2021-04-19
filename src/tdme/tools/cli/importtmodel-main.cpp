@@ -109,11 +109,11 @@ static Model* createModel(const string& id, vector<Triangle>& triangles) {
 
 int main(int argc, char** argv)
 {
-	Console::println(string("importtmm ") + Version::getVersion());
+	Console::println(string("importtmodel ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
 	if (argc < 3) {
-		Console::println("Usage: importtmm tmmfile.tmodel modelfile.ext [bvs-model.ext]");
+		Console::println("Usage: importtmodel model.tmodel modelfile.ext [bvs-model.ext]");
 		Application::exit(1);
 	}
 	//

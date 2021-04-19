@@ -7,6 +7,7 @@
 #include <rapidjson/document.h>
 #include <tdme/engine/fileio/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/engine/fileio/prototypes/fwd-tdme.h>
 #include <tdme/engine/fileio/scenes/fwd-tdme.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
@@ -18,6 +19,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Node;
 using tdme::engine::scene::Scene;
@@ -41,10 +43,11 @@ public:
 	 * @param fileName file name
 	 * @param scene scene
 	 * @param progressCallback progress callback
+	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr);
+	static void read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
 	/**
 	 * Reads a scene
@@ -53,10 +56,11 @@ public:
 	 * @param scene scene
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
+	 * @param prototypeTransformFilter prototype transform filter
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
+	static void read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr, PrototypeTransformFilter* prototypeTransformFilter = nullptr);
 
 	/**
 	 * Reads a scene

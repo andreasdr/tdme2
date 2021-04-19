@@ -125,15 +125,14 @@ void ShadowMapRenderShader::setRenderLightId(int32_t lightId) {
 void ShadowMapRenderShader::setShader(void* context, const string& id) {
 	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = shadowMappingShaderRenderContext.implementation;
-
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	shadowMappingShaderRenderContext.implementation = shaderIt->second;
-
-	if (currentImplementation != shadowMappingShaderRenderContext.implementation) {
+	auto nextImplementation = shaderIt->second;
+	if (currentImplementation != nextImplementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		shadowMappingShaderRenderContext.implementation = nextImplementation;
 		shadowMappingShaderRenderContext.implementation->useProgram(engine, context);
 	}
 

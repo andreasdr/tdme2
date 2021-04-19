@@ -89,9 +89,7 @@ void LightingShader::unUseProgram()
 	running = false;
 	auto i = 0;
 	for (auto& lightingShaderContext: contexts) {
-		if (lightingShaderContext.implementation != nullptr) {
-			lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
-		}
+		if (lightingShaderContext.implementation != nullptr) lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
 		lightingShaderContext.implementation = nullptr;
 		i++;
 	}
@@ -132,8 +130,6 @@ void LightingShader::updateTextureMatrix(void* context) {
 	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-// TODO: shader parameters
-
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 	auto shaderId = id;
@@ -145,9 +141,10 @@ void LightingShader::setShader(void* context, const string& id) {
 	auto shaderIt = shader.find(renderer->getShaderPrefix() + shaderId);
 	if (shaderIt == shader.end()) shaderIt = shader.find(renderer->getShaderPrefix() + "default");
 	if (shaderIt == shader.end()) shaderIt = shader.find("default");
-	lightingShaderContext.implementation = shaderIt->second;
-	if (currentImplementation != lightingShaderContext.implementation) {
+	auto nextImplementation = shaderIt->second;
+	if (currentImplementation != nextImplementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		lightingShaderContext.implementation = nextImplementation;
 		lightingShaderContext.implementation->useProgram(engine, context);
 	}
 }

@@ -4,6 +4,7 @@
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -24,6 +25,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
+#include <tdme/engine/prototype/PrototypeProperty.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/LODObject3D.h>
@@ -49,6 +51,7 @@ using std::string;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
@@ -68,6 +71,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
+using tdme::engine::prototype::PrototypeProperty;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject3D;
@@ -89,19 +93,19 @@ using tdme::utilities::Terrain;
 using rapidjson::Document;
 using rapidjson::Value;
 
-Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName)
+Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Document jEntityRoot;
 	jEntityRoot.Parse(jsonContent.c_str());
 
-	auto prototype = read(id, pathName, jEntityRoot);
+	auto prototype = read(id, pathName, jEntityRoot, transformFilter);
 	prototype->setFileName(pathName + "/" + fileName);
 	return prototype;
 }
 
-Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityRoot)
+Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityRoot, PrototypeTransformFilter* transformFilter)
 {
 	Prototype* prototype;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
@@ -119,38 +123,44 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jEntityR
 	if (jEntityRoot.FindMember("file") != jEntityRoot.MemberEnd()) {
 		modelFileName = (jEntityRoot["file"].GetString());
 	}
+	PrototypeProperties properties;
+	auto jProperties = jEntityRoot["properties"].GetArray();
+	for (auto i = 0; i < jProperties.Size(); i++) {
+		auto& jProperty = jProperties[i];
+		properties.addProperty(
+			(jProperty["name"].GetString()),
+			(jProperty["value"].GetString())
+		);
+	}
+	if (transformFilter != nullptr && transformFilter->filterEmptyTransform(properties) == true) {
+		prototypeType = Prototype_Type::EMPTY;
+	}
 	Model* model = nullptr;
+	if (prototypeType == Prototype_Type::EMPTY) {
+		model = ModelReader::read("resources/engine/models", "empty.tm");
+	} else
 	if (modelFileName.length() > 0) {
 		modelPathName = getResourcePathName(pathName, modelFileName);
 		model = ModelReader::read(
 			modelPathName,
 			FileSystem::getInstance()->getFileName(modelFileName)
 		);
-	} else
-	if (prototypeType == Prototype_Type::EMPTY) {
-		model = ModelReader::read("resources/engine/models", "empty.tm");
 	}
-
 	prototype = new Prototype(
 		id,
 		prototypeType,
 		name,
 		description,
 		"",
-		modelFileName.length() > 0 ? modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName) : "",
+		modelFileName.length() > 0?modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName):"",
 		modelThumbnail,
 		model,
 		pivot
 	);
-	auto jProperties = jEntityRoot["properties"].GetArray();
-	for (auto i = 0; i < jProperties.Size(); i++) {
-		auto& jProperty = jProperties[i];
-		prototype->addProperty(
-			(jProperty["name"].GetString()),
-			(jProperty["value"].GetString())
-		);
+	for (auto i = 0; i < properties.getPropertyCount(); i++) {
+		auto property = properties.getPropertyByIndex(i);
+		prototype->addProperty(property->getName(), property->getValue());
 	}
-
 	if (jEntityRoot.FindMember("bv") != jEntityRoot.MemberEnd()) {
 		auto boundingVolume = parseBoundingVolume(
 			0,

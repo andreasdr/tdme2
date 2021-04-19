@@ -103,15 +103,14 @@ void EZRShader::setShader(void* context, const string& id) {
 
 	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
 	auto currentImplementation = ezrShaderContext.implementation;
-
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	ezrShaderContext.implementation = shaderIt->second;
-
-	if (currentImplementation != ezrShaderContext.implementation) {
+	auto nextImplementation = shaderIt->second;
+	if (currentImplementation != nextImplementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		ezrShaderContext.implementation = nextImplementation;
 		ezrShaderContext.implementation->useProgram(engine, context);
 	}
 }

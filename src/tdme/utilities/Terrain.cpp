@@ -188,6 +188,7 @@ void Terrain::createTerrainModels(float width, float depth, float y, vector<floa
 		terrainNode->setFacesEntities(nodeFacesEntities);
 		terrainModel->getNodes()[terrainNode->getId()] = terrainNode;
 		terrainModel->getSubNodes()[terrainNode->getId()] = terrainNode;
+		terrainModel->invalidateBoundingBox();
 		if (partitionIdx == 0) {
 			terrainBoundingBox = *terrainModel->getBoundingBox();
 		} else {
@@ -613,6 +614,7 @@ void Terrain::applyBrushToTerrainModels(
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
 					terrainNode->setVertices(terrainVertices);
+					terrainModels[partitionIdx]->invalidateBoundingBox();
 				}
 			}
 			partitionIdx++;
@@ -626,6 +628,7 @@ void Terrain::applyBrushToTerrainModels(
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
 					terrainNode->setNormals(terrainNormals);
+					terrainModels[partitionIdx]->invalidateBoundingBox();
 				}
 			}
 			partitionIdx++;
@@ -930,6 +933,7 @@ void Terrain::applyRampBrushToTerrainModels(
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
 					terrainNode->setVertices(terrainVertices);
+					terrainModels[partitionIdx]->invalidateBoundingBox();
 				}
 			}
 			partitionIdx++;
@@ -943,6 +947,7 @@ void Terrain::applyRampBrushToTerrainModels(
 				auto terrainNode = terrainModels[partitionIdx]->getNodeById("terrain");
 				if (terrainNode != nullptr) {
 					terrainNode->setNormals(terrainNormals);
+					terrainModels[partitionIdx]->invalidateBoundingBox();
 				}
 			}
 			partitionIdx++;

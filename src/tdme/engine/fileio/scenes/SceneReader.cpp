@@ -5,6 +5,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeTransformFilter.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
@@ -41,6 +42,7 @@ using std::to_string;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::fileio::prototypes::PrototypeTransformFilter;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
 using tdme::engine::fileio::ProgressCallback;
@@ -73,12 +75,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback)
+void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
 {
-	read(pathName, fileName, scene, "", progressCallback);
+	read(pathName, fileName, scene, "", progressCallback, prototypeTransformFilter);
 }
 
-void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback)
+void SceneReader::read(const string& pathName, const string& fileName, Scene& scene, const string& objectIdPrefix, ProgressCallback* progressCallback, PrototypeTransformFilter* prototypeTransformFilter)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -154,7 +156,8 @@ void SceneReader::read(const string& pathName, const string& fileName, Scene& sc
 		Prototype* prototype = PrototypeReader::read(
 			jPrototype["id"].GetInt(),
 			pathName,
-			jPrototype["entity"]
+			jPrototype["entity"],
+			prototypeTransformFilter
 		);
 		if (prototype == nullptr) {
 			Console::println("SceneReader::doImport(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));

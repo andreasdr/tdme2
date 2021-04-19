@@ -91,7 +91,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/os/threading/Queue.h>
+#include <tdme/os/threading/RealtimeQueue.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -170,7 +170,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::os::threading::Queue;
+using tdme::os::threading::RealtimeQueue;
 using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -210,9 +210,9 @@ float Engine::transformationsComputingReduction2Distance = 50.0f;
 map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
-Queue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
+RealtimeQueue<Engine::EngineThreadQueueElement>* Engine::engineThreadsQueue = nullptr;
 
-Engine::EngineThread::EngineThread(int idx, Queue<EngineThreadQueueElement>* queue):
+Engine::EngineThread::EngineThread(int idx, RealtimeQueue<EngineThreadQueueElement>* queue):
 	Thread("enginethread"),
 	idx(idx),
 	queue(queue) {
@@ -224,6 +224,7 @@ void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 	while (isStopRequested() == false) {
 		auto element = queue->getElement();
+		if (element == nullptr) continue;
 		switch(element->type) {
 			case EngineThreadQueueElement::TYPE_NONE:
 				break;
@@ -689,7 +690,7 @@ void Engine::initialize()
 
 	// engine thread count
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2, 2, 4) + 1;
+		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?3:Thread::getHardwareThreadCount() / 2, 3, 5);
 	} else {
 		threadCount = 1;
 	}
@@ -831,7 +832,7 @@ void Engine::initialize()
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(1000000);
+		engineThreadsQueue = new RealtimeQueue<Engine::EngineThreadQueueElement>(1000000);
 		engineThreads.resize(threadCount - 1);
 		for (auto i = 0; i < threadCount - 1; i++) {
 			engineThreads[i] = new EngineThread(
@@ -1142,48 +1143,52 @@ void Engine::computeTransformations(Frustum* frustum, DecomposedEntities& decomp
 		computeTransformationsFunction(decomposedEntities.objectsNoDepthTest, 0, computeTransformations);
 	} else {
 		auto elementsIssued = 0;
+		Engine::EngineThreadQueueElement* queueElementToSubmit = nullptr;
 		auto queueElement = new Engine::EngineThreadQueueElement();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 		queueElement->engine = this;
 		queueElement->transformations.computeTransformations = computeTransformations;
 		for (auto i = 0; i < decomposedEntities.objects.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objects[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
-				engineThreadsQueue->addElement(queueElement, false);
-				elementsIssued++;
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
+				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
+				elementsIssued++;
+				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
 		for (auto i = 0; i < decomposedEntities.objectsPostPostProcessing.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objectsPostPostProcessing[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
-				engineThreadsQueue->addElement(queueElement, false);
-				elementsIssued++;
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
+				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
+				elementsIssued++;
+				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
 		for (auto i = 0; i < decomposedEntities.objectsNoDepthTest.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.objectsNoDepthTest[i]);
-			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_DISPATCH_COUNT) {
-				engineThreadsQueue->addElement(queueElement, false);
-				elementsIssued++;
+			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
+				auto queueElementToSubmit = queueElement;
 				queueElement = new Engine::EngineThreadQueueElement();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
 				queueElement->engine = this;
 				queueElement->transformations.computeTransformations = computeTransformations;
+				elementsIssued++;
+				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
 		}
 		if (queueElement->objects.empty() == true) {
 			delete queueElement;
 		} else {
-			engineThreadsQueue->addElement(queueElement, false);
 			elementsIssued++;
+			engineThreadsQueue->addElement(queueElement, false);
 			queueElement = nullptr;
 		}
 
