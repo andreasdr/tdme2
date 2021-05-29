@@ -56,6 +56,7 @@ protected:
 	int32_t uniformMaterialEmission { -1 };
 	int32_t uniformMaterialShininess { -1 };
 	int32_t uniformMaterialReflection { -1 };
+	int32_t uniformMaterialReflectionFragmentShader { -1 };
 	int32_t uniformTime { -1 };
 	int32_t uniformApplyFoliageAnimation { -1 };
 	int32_t uniformEnvironmentMappingTextureUnit { -1 };

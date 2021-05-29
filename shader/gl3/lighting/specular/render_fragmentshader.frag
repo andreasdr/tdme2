@@ -117,17 +117,11 @@ vec4 fragColor;
 	in vec3 terrainNormal;
 	in float terrainHeight;
 	in float terrainSlope;
+
 	uniform sampler2D grasTextureUnit;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
-	#if defined(HAVE_TERRAIN_SHADER_EDITOR)
-		uniform int brushEnabled;
-		uniform vec2 brushPosition;
-		uniform vec2 brushTextureDimension;
-		uniform sampler2D brushTextureUnit;
-		uniform mat3 brushTextureMatrix;
-	#endif
 
 	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
@@ -165,6 +159,13 @@ vec4 fragColor;
 		return result;
 	}
 
+	#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+		uniform int brushEnabled;
+		uniform vec2 brushPosition;
+		uniform vec2 brushTextureDimension;
+		uniform sampler2D brushTextureUnit;
+		uniform mat3 brushTextureMatrix;
+	#endif
 #elif defined(HAVE_WATER_SHADER)
 #else
 	uniform sampler2D diffuseTextureUnit;

@@ -116,6 +116,8 @@ void LightingShaderBaseImplementation::initialize()
 		uniformLightQuadraticAttenuation[i] = renderer->getProgramUniformLocation(programId, "lights[" + to_string(i) + "].quadraticAttenuation");
 	}
 
+	uniformMaterialReflectionFragmentShader = renderer->getProgramUniformLocation(programId, "materialReflection");
+
 	// use foliage animation
 	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 
@@ -204,6 +206,7 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, material.shininess);
 	// reflection
 	if (uniformMaterialReflection != -1) renderer->setProgramUniformFloat(context, uniformMaterialReflection, material.reflection);
+	if (uniformMaterialReflectionFragmentShader != -1) renderer->setProgramUniformFloat(context, uniformMaterialReflectionFragmentShader, material.reflection);
 	// diffuse texture masked transparency
 	if (uniformDiffuseTextureMaskedTransparency != -1) {
 		renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);

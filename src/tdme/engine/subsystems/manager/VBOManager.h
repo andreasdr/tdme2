@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -27,7 +27,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 
 private:
 	Renderer* renderer { nullptr };
-	map<string, VBOManager_VBOManaged*> vbos;
+	unordered_map<string, VBOManager_VBOManaged*> vbos;
 	ReadWriteLock rwLock;
 
 public:

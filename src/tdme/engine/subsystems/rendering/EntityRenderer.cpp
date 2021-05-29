@@ -310,8 +310,8 @@ void EntityRenderer::renderTransparentFaces() {
 		// disable foliage animation
 		// reset shader
 		// TODO: shader parameters
-		renderer->setShader(renderer->getDefaultContext(), string());
-		renderer->onUpdateShader(renderer->getDefaultContext());
+		renderer->setShader(context, string());
+		renderer->onUpdateShader(context);
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -422,14 +422,14 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 }
 
 void EntityRenderer::renderTransparentFacesGroups(void* context) {
-	for (auto it: transparentRenderFacesGroups) {
+	for (auto& it: transparentRenderFacesGroups) {
 		it.second->render(engine, renderer, context);
 	}
 }
 
 void EntityRenderer::releaseTransparentFacesGroups()
 {
-	for (auto it: transparentRenderFacesGroups) {
+	for (auto& it: transparentRenderFacesGroups) {
 		transparentRenderFacesGroupPool->release(it.second);
 	}
 	transparentRenderFacesGroups.clear();
@@ -693,8 +693,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	auto context = renderer->getContext(threadIdx);
 
 	//
+	auto cameraMatrix = renderer->getCameraMatrix();
 	Vector3 objectCamFromAxis;
-	Matrix4x4 cameraMatrix(renderer->getCameraMatrix());
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 

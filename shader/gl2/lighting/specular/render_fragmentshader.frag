@@ -2,15 +2,6 @@
 
 precision mediump float;
 
-struct Material {
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular;
-	vec4 emission;
-	float shininess;
-	float reflection;
-};
-
 uniform vec4 effectColorAdd;
 
 uniform sampler2D diffuseTextureUnit;
@@ -22,7 +13,7 @@ uniform samplerCube environmentMappingTextureUnit;
 uniform int environmentMappingTextureAvailable;
 uniform vec3 environmentMappingPosition;
 
-uniform Material material;
+uniform float materialReflection;
 
 varying vec3 vsPosition;
 varying vec3 vsNormal;
@@ -38,15 +29,15 @@ varying vec4 vsFragColor;
 	#define TERRAIN_HEIGHT_BLEND			4.0
 	#define TERRAIN_SLOPE_BLEND			5.0
 
-	uniform sampler2D grasTextureUnit;
-	uniform sampler2D dirtTextureUnit;
-	uniform sampler2D stoneTextureUnit;
-	uniform sampler2D snowTextureUnit;
-
 	varying vec3 terrainVertex;
 	varying vec3 terrainNormal;
 	varying float terrainHeight;
 	varying float terrainSlope;
+
+	uniform sampler2D grasTextureUnit;
+	uniform sampler2D dirtTextureUnit;
+	uniform sampler2D stoneTextureUnit;
+	uniform sampler2D snowTextureUnit;
 
 	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
 		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
@@ -83,6 +74,14 @@ varying vec4 vsFragColor;
 		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
 		return result;
 	}
+
+	#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+		uniform int brushEnabled;
+		uniform vec2 brushPosition;
+		uniform vec2 brushTextureDimension;
+		uniform sampler2D brushTextureUnit;
+		uniform mat3 brushTextureMatrix;
+	#endif
 #endif
 
 void main (void) {
@@ -165,6 +164,16 @@ void main (void) {
 		if (terrainBlending[3] > 0.001) gl_FragColor+= readTerrainTextureSnow(terrainVertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 		gl_FragColor*= vsFragColor;
 		gl_FragColor = clamp(effectColorAdd + gl_FragColor, 0.0, 1.0);
+
+		#if defined(HAVE_TERRAIN_SHADER_EDITOR)
+			if (brushEnabled == 1) {
+				vec2 brushTextureUV = vec2(brushTextureMatrix * vec3(((vsPosition.xz - brushPosition) / brushTextureDimension), 1.0));
+				if (brushTextureUV.x >= 0.0 && brushTextureUV.x < 1.0 &&
+					brushTextureUV.y >= 0.0 && brushTextureUV.y < 1.0) {
+					gl_FragColor+= vec4(texture2D(brushTextureUnit, brushTextureUV).rgb * 0.25, 0.0);
+				}
+			}
+		#endif
 	#elif defined(HAVE_WATER_SHADER)
 		vec4 envColor = vec4(0.2, 0.2, 0.6, 1.0);
 		if (environmentMappingTextureAvailable == 1) {
@@ -186,9 +195,9 @@ void main (void) {
 
 	// reflection
 	#if !defined(HAVE_WATER_SHADER)
-		if (material.reflection > 0.0 && environmentMappingTextureAvailable == 1) {
+		if (materialReflection > 0.0 && environmentMappingTextureAvailable == 1) {
 			vec3 reflectionVector = reflect(normalize(environmentMappingPosition - vsPosition.xyz), vsNormal);
-			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * material.reflection, 0.0, 1.0);
+			gl_FragColor = clamp(gl_FragColor + textureCube(environmentMappingTextureUnit, -reflectionVector) * materialReflection, 0.0, 1.0);
 		}
 	#endif
 }

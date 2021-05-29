@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -9,8 +9,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
@@ -28,7 +28,7 @@ class tdme::engine::subsystems::manager::TextureManager final
 
 private:
 	Renderer* renderer { nullptr };
-	map<string, TextureManager_TextureManaged*> textures;
+	unordered_map<string, TextureManager_TextureManaged*> textures;
 	Mutex mutex;
 
 public:

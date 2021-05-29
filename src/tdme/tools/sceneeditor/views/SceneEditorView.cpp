@@ -672,7 +672,6 @@ void SceneEditorView::display()
 							worldCoordinate = snappedWorldCoordinate;
 						}
 					}
-					worldCoordinate.sub(Vector3(0.0f, selectedEngineEntity->getBoundingBox()->getMin().getY(), 0.0f));
 					transformations.setTranslation(worldCoordinate);
 					transformations.setRotationAngle(scene.getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
 					transformations.update();

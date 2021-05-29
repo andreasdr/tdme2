@@ -1,14 +1,14 @@
 #include <tdme/audio/AudioBufferManager.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/audio/Audio.h>
 #include <tdme/audio/AudioBufferManager_AudioBufferManaged.h>
 #include <tdme/utilities/Console.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;

@@ -32,6 +32,13 @@ public:
 	static float parseFloat(const string& str);
 
 	/**
+	 * Check if given string is a float string
+	 * @param str string
+	 * @return given string is float
+	 */
+	static bool isFloat(const string& str);
+
+	/**
 	 * Check if float is not a number
 	 * @param value float value
 	 * @return if value is not a number

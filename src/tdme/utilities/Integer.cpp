@@ -23,5 +23,5 @@ int Integer::parseInt(const string& str) {
 bool Integer::isInt(const string& str) {
     return
 		str.empty() == false &&
-		find_if(str.begin(), str.end(), [](char c) { return isdigit(c) == false; }) == str.end();
+		find_if(str.begin() + (str[0] == '-'?1:0), str.end(), [](char c) { return isdigit(c) == false; }) == str.end();
 }

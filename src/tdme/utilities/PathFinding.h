@@ -42,7 +42,7 @@ using tdme::utilities::PathFindingCustomTest;
 class tdme::utilities::PathFinding final
 {
 public:
-	static constexpr bool VERBOSE { false };
+	static constexpr bool VERBOSE { true };
 
 	/**
 	 * Public constructor

@@ -157,7 +157,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
 				ignoreStepUpMax == true?10000.0f:actorStepUpMax,
 				actorPositionCandidate.set(_x, y, _z),
-				actorPosition
+				actorPosition,
+				-10000.0f,
+				ignoreStepUpMax == true?10000.0f:y + actorStepUpMax + 0.1f
 			);
 			if (body == nullptr || ((body->getCollisionTypeId() & skipOnCollisionTypeIds) != 0)) {
 				return false;
@@ -170,7 +172,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.25f:height + actorStepUpMax, z));
+	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?0.1f:height + 0.1f, z));
 	actorTransformations.update();
 
 	// update rigid body
@@ -354,32 +356,116 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
-	// positions
-	Vector3 startPositionComputed;
-	startPositionComputed.set(startPosition);
+	//
+	auto forcedAlternativeEndSteps = 0;
 
 	// compute possible end positions
+	vector<Vector3> startPositionCandidates;
 	vector<Vector3> endPositionCandidates;
 	{
-		auto forwardVector = endPosition.clone().sub(startPositionComputed).setY(0.0f).normalize();
+		auto forwardVector = endPosition.clone().sub(startPosition).setY(0.0f).normalize();
 		auto sideVector = Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f)).setY(0.0f).normalize();
 		if (Float::isNaN(sideVector.getX()) ||
 			Float::isNaN(sideVector.getY()) ||
 			Float::isNaN(sideVector.getZ())) {
+			if (VERBOSE == true) Console::println("PathFinding::findPath(): side vector = NaN!");
 			endPositionCandidates.push_back(endPosition);
+			startPositionCandidates.push_back(startPosition);
 		} else {
-			auto sideDistance = stepSize;
-			auto forwardDistance = 0.0f;
-			auto i = 0;
-			while (true == true) {
-				endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-				i++; if (i >= alternativeEndSteps) break;
-				endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-				i++; if (i >= alternativeEndSteps) break;
-				endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-				i++; if (i >= alternativeEndSteps) break;
+			{
+				auto sideDistance = stepSize;
+				auto forwardDistance = 0.0f;
+				auto i = 0;
+				while (true == true) {
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= alternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= alternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= alternativeEndSteps) break;
+					forwardDistance+= stepSize;
+				}
+				forwardDistance = 0.0f;
+				forwardVector.scale(-1.0f);
+				sideVector.scale(-1.0f);
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 				forwardDistance+= stepSize;
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				forwardDistance+= stepSize;
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
+				startPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(startPosition));
 			}
+			if (maxTries == 0) {
+				forcedAlternativeEndSteps = 27 * 2;
+				auto forwardDistance = 0.0f;
+				auto i = 0;
+				while (true == true) {
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(-0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.1f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.2f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					endPositionCandidates.push_back(Vector3().set(sideVector).scale(+0.3f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+					i++; if (i >= forcedAlternativeEndSteps) break;
+					forwardDistance+= 0.1f;
+				}
+			}
+		}
+	}
+
+	Vector3 startPositionComputed = startPosition;
+	for (auto& startPositionCandidate: startPositionCandidates) {
+		float startYHeight = startPositionCandidate.getY();
+		if (isWalkableInternal(
+			startPositionCandidate.getX(),
+			startPositionCandidate.getY(),
+			startPositionCandidate.getZ(),
+			startYHeight,
+			stepSize,
+			scaleActorBoundingVolumes,
+			false
+		) == false) {
+			if (VERBOSE == true) {
+				Console::println(
+					"PathFinding::findPath(): Start position not walkable: " +
+					to_string(startPositionCandidate.getX()) + ", " +
+					to_string(startPositionCandidate.getY()) + ", " +
+					to_string(startPositionCandidate.getZ()) + " / " +
+					to_string(startYHeight)
+				);
+			}
+			//
+			continue;
+		} else {
+			startPositionComputed = startPositionCandidate;
+			startPositionComputed.setY(startYHeight);
+			break;
 		}
 	}
 
@@ -401,7 +487,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 			) == false) {
 			if (VERBOSE == true) {
 				Console::println(
-					"End position not walkable: " +
+					"PathFinding::findPath(): End position not walkable: " +
 					to_string(endPositionComputed.getX()) + ", " +
 					to_string(endPositionComputed.getY()) + ", " +
 					to_string(endPositionComputed.getZ()) + " / " +
@@ -535,7 +621,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 		tries++;
 
 		//
-		if (success == true || tries == maxTries) break;
+		if (success == true || tries >= maxTries + forcedAlternativeEndSteps) break;
 	}
 
 	//

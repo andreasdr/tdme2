@@ -35,33 +35,46 @@ private:
 	/**
 	 * @return audio buffer id
 	 */
-	virtual const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/**
 	 * @return Open AL id
 	 */
-	virtual int32_t getAlId();
+	inline int32_t getAlId() {
+		return alId;
+	}
 
 	/**
 	 * Set up Open AL audio buffer id
 	 * @param alId al Id
 	 */
-	virtual void setAlId(int32_t alId);
+	inline void setAlId(int32_t alId) {
+		this->alId = alId;
+	}
 
 	/**
 	 * @return reference counter
 	 */
-	virtual int32_t getReferenceCounter();
+	inline int32_t getReferenceCounter() {
+		return referenceCounter;
+	}
 
 	/**
 	 * decrement reference counter
 	 * @return if reference counter = 0
 	 */
-	bool decrementReferenceCounter();
+	inline bool decrementReferenceCounter() {
+		referenceCounter--;
+		return referenceCounter == 0;
+	}
 
 	/**
 	 * increment reference counter
 	 */
-	void incrementReferenceCounter();
+	inline void incrementReferenceCounter() {
+		referenceCounter++;
+	}
 
 };

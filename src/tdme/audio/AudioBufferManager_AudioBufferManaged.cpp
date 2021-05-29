@@ -16,35 +16,3 @@ AudioBufferManager_AudioBufferManaged::AudioBufferManager_AudioBufferManaged(Aud
 	this->alId = alId;
 	this->referenceCounter = 0;
 }
-
-const string& AudioBufferManager_AudioBufferManaged::getId()
-{
-	return id;
-}
-
-int32_t AudioBufferManager_AudioBufferManaged::getAlId()
-{
-	return alId;
-}
-
-void AudioBufferManager_AudioBufferManaged::setAlId(int32_t alId)
-{
-	this->alId = alId;
-}
-
-int32_t AudioBufferManager_AudioBufferManaged::getReferenceCounter()
-{
-	return referenceCounter;
-}
-
-bool AudioBufferManager_AudioBufferManaged::decrementReferenceCounter()
-{
-	referenceCounter--;
-	return referenceCounter == 0;
-}
-
-void AudioBufferManager_AudioBufferManaged::incrementReferenceCounter()
-{
-	referenceCounter++;
-}
-

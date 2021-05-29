@@ -236,12 +236,11 @@
 - What is WIP or planned
     - Shader parameters, the system is implemented and working, now lets connect tools and shaders
     - Editor, which will combine all tools that we currently have into one tool and increase user experience a lot
-    - Terrain Editor
     - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
     - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
     - GUI effects via XML definitions
-    - Simple script language
-    - PBR lighting shader for GL3/CORE+
+    - Simple script language: I started with MiniScript, not 100% sure yet, lets see if works good enough with WS bot scripting
+    - PBR lighting shader for GL3/CORE+, Vulkan
     - Add nmake support to makefile generator for TDME2 based projects
     - Installer for MacOSX
     - Improve on Vulkan

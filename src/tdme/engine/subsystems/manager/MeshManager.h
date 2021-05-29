@@ -1,14 +1,14 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
 using tdme::engine::subsystems::rendering::Object3DNodeMesh;
@@ -21,7 +21,7 @@ using tdme::engine::subsystems::rendering::Object3DNodeMesh;
 class tdme::engine::subsystems::manager::MeshManager final
 {
 private:
-	map<string, MeshManager_MeshManaged*> meshes;
+	unordered_map<string, MeshManager_MeshManaged*> meshes;
 
 public:
 	/**

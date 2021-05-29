@@ -1,6 +1,6 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -8,8 +8,8 @@
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utilities/Console.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;

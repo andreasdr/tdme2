@@ -178,6 +178,9 @@ int main(int argc, char** argv)
 		while (tmm->getBoundingVolumeCount() > 0) tmm->removeBoundingVolume(0);
 
 		// load new convex meshes bv model
+		if (bvsModelFileName.empty() == false && FileSystem::getInstance()->fileExists(bvsModelFileName) == false) {
+			Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName + ": File not found!");
+		} else
 		if (bvsModelFileName.empty() == false) {
 			Console::println("Loading convex mesh bounding volumes model: " + bvsModelFileName);
 			auto bvsModel = ModelReader::read(

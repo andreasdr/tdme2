@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Console.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;

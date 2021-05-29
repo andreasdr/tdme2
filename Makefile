@@ -629,6 +629,7 @@ SRCS = \
 	src/tdme/utilities/HexEncDec.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/IntEncDec.cpp \
+	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
@@ -861,6 +862,7 @@ MAIN_SRCS = \
 	src/tdme/tests/FlowMapTest-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/MathOperatorTest-main.cpp \
+	src/tdme/tests/MiniScriptTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \

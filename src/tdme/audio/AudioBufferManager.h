@@ -1,13 +1,13 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 
@@ -23,7 +23,7 @@ class tdme::audio::AudioBufferManager final
 	friend class Sound;
 
 private:
-	map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
+	unordered_map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
 
 	/**
 	 * Private constructor
