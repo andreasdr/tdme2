@@ -18,7 +18,7 @@ public:
 	 * @returns renderer version
 	 */
 	inline static const string getRendererVersion() {
-		return "0.9.85";
+		return "0.9.86";
 	}
 
 };
