@@ -22,6 +22,8 @@
 #include <agui/agui.h>
 #include <agui/gui/renderer/GUIShader.h>
 #include <agui/gui/GUI.h>
+#include <agui/gui/GUIVersion.h>
+#include <agui/utilities/Console.h>
 
 using agui::gui::renderer::ApplicationGL3Renderer;
 
@@ -30,6 +32,8 @@ using std::string;
 
 using agui::gui::renderer::GUIShader;
 using agui::gui::GUI;
+using agui::gui::GUIVersion;
+using agui::utilities::Console;
 
 ApplicationGL3Renderer::ApplicationGL3Renderer()
 {
@@ -55,14 +59,14 @@ bool ApplicationGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 bool ApplicationGL3Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
 	glfwMakeContextCurrent(glfwWindow);
 	if (glfwGetCurrentContext() == nullptr) {
-		Console::printLine("EngineGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		Console::printLine("ApplicationGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
 		return false;
 	}
 	#if !defined(__APPLE__)
 		//glewExperimental = true;
 		GLenum glewInitStatus = glewInit();
 		if (glewInitStatus != GLEW_OK) {
-			Console::printLine("EngineGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+			Console::printLine("ApplicationGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
 			return false;
 		}
 	#endif
@@ -82,4 +86,14 @@ void ApplicationGL3Renderer::onUpdateTextureMatrix(int contextIdx)
 void ApplicationGL3Renderer::onUpdateEffect(int contextIdx)
 {
 	GUI::getShader()->updateEffect();
+}
+
+extern "C" ApplicationGL3Renderer* createInstance()
+{
+	if (ApplicationGL3Renderer::getRendererVersion() != GUIVersion::getVersion()) {
+		Console::printLine("ApplicationGL3Renderer::createInstance(): Engine and renderer backend version do not match: '" + ApplicationGL3Renderer::getRendererVersion() + "' != '" + GUIVersion::getVersion() + "'");
+		return nullptr;
+	}
+	Console::printLine("ApplicationGL3Renderer::createInstance(): Creating ApplicationGL2Renderer instance!");
+	return new ApplicationGL3Renderer();
 }

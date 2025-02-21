@@ -12,25 +12,25 @@
 
 #include <agui/agui.h>
 #include <agui/gui/renderer/fwd-agui.h>
-#include <agui/gui/renderer/GL3Renderer.h>
+#include <agui/gui/renderer/GL2Renderer.h>
 #include <agui/gui/renderer/GUIRendererBackendPlugin.h>
 
 using std::string;
 
 /**
- * Application GL3 renderer
+ * Application GL2 renderer
  * @author Andreas Drewke
  */
-class agui::gui::renderer::ApplicationGL3Renderer: public GL3Renderer, public GUIRendererBackendPlugin
+class agui::gui::renderer::ApplicationGL2Renderer: public GL2Renderer, public GUIRendererBackendPlugin
 {
 public:
 	// forbid class copy
-	FORBID_CLASS_COPY(ApplicationGL3Renderer)
+	FORBID_CLASS_COPY(ApplicationGL2Renderer)
 
 	/**
 	 * Public constructor
 	 */
-	ApplicationGL3Renderer();
+	ApplicationGL2Renderer();
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;
@@ -38,4 +38,5 @@ public:
 	void onBindTexture(int contextIdx, int32_t textureId) override;
 	void onUpdateTextureMatrix(int contextIdx) override;
 	void onUpdateEffect(int contextIdx) override;
+
 };

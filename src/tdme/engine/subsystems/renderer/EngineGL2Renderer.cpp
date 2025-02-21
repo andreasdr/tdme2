@@ -175,7 +175,7 @@ void EngineGL2Renderer::onUpdateShaderParameters(int contextIdx) {
 extern "C" EngineGL2Renderer* createInstance()
 {
 	if (EngineGL2Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::printLine("EngineGL2Renderer::createInstance(): Engine and rendererBackend version do not match: '" + EngineGL2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		Console::printLine("EngineGL2Renderer::createInstance(): Engine and renderer backend version do not match: '" + EngineGL2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
 	Console::printLine("EngineGL2Renderer::createInstance(): Creating EngineGL2Renderer instance");

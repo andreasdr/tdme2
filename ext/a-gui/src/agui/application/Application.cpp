@@ -23,6 +23,10 @@
 	#include <Carbon/Carbon.h>
 #endif
 
+#if !defined(_MSC_VER)
+	#include <dlfcn.h>
+#endif
+
 #include <stdlib.h>
 
 #include <array>
@@ -36,7 +40,6 @@
 #include <agui/audio/Audio.h>
 #include <agui/gui/textures/GUITexture.h>
 #include <agui/gui/fileio/TextureReader.h>
-#include <agui/gui/renderer/ApplicationGL3Renderer.h>
 #include <agui/gui/renderer/GUIRendererBackend.h>
 #include <agui/gui/GUIEventHandler.h>
 #include <agui/os/filesystem/FileSystem.h>
@@ -63,7 +66,6 @@ using agui::application::Application;
 using agui::audio::Audio;
 using agui::gui::textures::GUITexture;
 using agui::gui::fileio::TextureReader;
-using agui::gui::renderer::ApplicationGL3Renderer;
 using agui::gui::renderer::GUIRendererBackend;
 using agui::gui::GUIEventHandler;
 using agui::os::filesystem::FileSystem;
@@ -79,7 +81,7 @@ using agui::utilities::StringTokenizer;
 using agui::utilities::StringTools;
 using agui::utilities::Time;
 
-unique_ptr<GUIRendererBackend> Application::rendererBackend = nullptr;
+unique_ptr<GUIRendererBackend> Application::guiRendererBackend = nullptr;
 unique_ptr<Application> Application::application = nullptr;
 GUIEventHandler* Application::eventHandler = nullptr;
 int64_t Application::timeLast = -1L;
@@ -562,9 +564,6 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 		}
 	}
 
-	// renderer
-	rendererBackend = make_unique<ApplicationGL3Renderer>();
-
 	// window hints
 	if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -572,7 +571,7 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 	//
-	for (auto i = 0; rendererBackend->prepareWindowSystemRendererContext(i) == true; i++) {
+	for (auto i = 0; guiRendererBackend->prepareWindowSystemRendererContext(i) == true; i++) {
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (glfwWindow != nullptr) break;
 	}
@@ -585,14 +584,14 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 	}
 
 	//
-	if (rendererBackend->initializeWindowSystemRendererContext(glfwWindow) == false) {
+	if (guiRendererBackend->initializeWindowSystemRendererContext(glfwWindow) == false) {
 		Console::printLine("glfwCreateWindow(): Could not initialize window system renderer context");
 		glfwTerminate();
 		return EXITCODE_FAILURE;
 	}
 
 	//
-	rendererBackend->initialize();
+	guiRendererBackend->initialize();
 
 	//
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
@@ -655,7 +654,7 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 		Console::printLine("Application::run(): Shutting down application");
 		Application::application->dispose();
 		Audio::shutdown();
-		Application::rendererBackend = nullptr;
+		Application::guiRendererBackend = nullptr;
 		Console::shutdown();
 		//
 		Application::application = nullptr;

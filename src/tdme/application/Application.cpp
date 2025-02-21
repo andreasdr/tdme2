@@ -35,7 +35,6 @@
 #include <string>
 
 #include <agui/agui.h>
-#include <agui/gui/renderer/ApplicationGL3Renderer.h>
 #include <agui/gui/renderer/GUIRendererBackend.h>
 #include <agui/gui/GUIEventHandler.h>
 
@@ -546,6 +545,142 @@ static void glfwErrorCallback(int error, const char* description) {
 	Console::printLine(string("glfwErrorCallback(): ") + description);
 }
 
+bool Application::loadEngineRendererPlugin(const string& rendererType) {
+	string rendererBackendLibrary = "lib" + rendererType + "renderer";
+	#if defined(_WIN32)
+		rendererBackendLibrary = rendererBackendLibrary + ".dll";
+	#elif defined(__APPLE__)
+		rendererBackendLibrary = rendererBackendLibrary + ".dylib";
+	#else
+		rendererBackendLibrary = rendererBackendLibrary + ".so";
+	#endif
+
+	// renderer
+	Console::printLine("Application::run(): Opening renderer backend library: " + rendererBackendLibrary);
+
+	#if defined(_MSC_VER)
+		//
+		auto rendererBackendLibraryHandle = LoadLibrary(rendererBackendLibrary.c_str());
+		if (rendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open renderer backend library");
+			glfwTerminate();
+			return false;
+		}
+		//
+		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())GetProcAddress(rendererBackendLibraryHandle, "createInstance");
+		//
+		if (rendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
+			glfwTerminate();
+			return false;
+		}
+		//
+		rendererBackend = unique_ptr<RendererBackend>((RendererBackend*)rendererBackendCreateInstance());
+		if (rendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create renderer backend");
+			glfwTerminate();
+			return false;
+		}
+	#else
+		//
+		#if defined(__HAIKU__)
+			auto rendererBackendLibraryHandle = dlopen(("lib/" + rendererBackendLibrary).c_str(), RTLD_NOW);
+		#else
+			auto rendererBackendLibraryHandle = dlopen(rendererBackendLibrary.c_str(), RTLD_NOW);
+		#endif
+		if (rendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open renderer backend library");
+			glfwTerminate();
+			return false;
+		}
+		//
+		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())dlsym(rendererBackendLibraryHandle, "createInstance");
+		//
+		if (rendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
+			glfwTerminate();
+			return false;
+		}
+		//
+		rendererBackend = unique_ptr<RendererBackend>((RendererBackend*)rendererBackendCreateInstance());
+		if (rendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create renderer backend");
+			glfwTerminate();
+			return false;
+		}
+	#endif
+	//
+	return true;
+}
+
+bool Application::loadGUIRendererPlugin(const string& rendererType) {
+	string guiRendererBackendLibrary = "libgui" + rendererType + "renderer";
+	#if defined(_WIN32)
+		guiRendererBackendLibrary = guiRendererBackendLibrary + ".dll";
+	#elif defined(__APPLE__)
+		guiRendererBackendLibrary = guiRendererBackendLibrary + ".dylib";
+	#else
+		guiRendererBackendLibrary = guiRendererBackendLibrary + ".so";
+	#endif
+
+	// renderer
+	Console::printLine("Application::run(): Opening GUI renderer backend library: " + guiRendererBackendLibrary);
+
+	#if defined(_MSC_VER)
+		//
+		auto guiRendererBackendLibraryHandle = LoadLibrary(guiRendererBackendLibrary.c_str());
+		if (guiRendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open GUI renderer backend library");
+			glfwTerminate();
+			return false;
+		}
+		//
+		GUIRendererBackend* (*guiRendererBackendCreateInstance)() = (GUIRendererBackend*(*)())GetProcAddress(guiRendererBackendLibraryHandle, "createInstance");
+		//
+		if (guiRendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find GUI renderer backend library createInstance() entry point");
+			glfwTerminate();
+			return false;
+		}
+		//
+		guiRendererBackend = unique_ptr<GUIRendererBackend>((GUIRendererBackend*)guiRendererBackendCreateInstance());
+		if (guiRendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create renderer backend");
+			glfwTerminate();
+			return false;
+		}
+	#else
+		//
+		#if defined(__HAIKU__)
+			auto guiRendererBackendLibraryHandle = dlopen(("lib/" + guiRendererBackendLibrary).c_str(), RTLD_NOW);
+		#else
+			auto guiRendererBackendLibraryHandle = dlopen(guiRendererBackendLibrary.c_str(), RTLD_NOW);
+		#endif
+		if (guiRendererBackendLibraryHandle == nullptr) {
+			Console::printLine("Application::run(): Could not open GUI renderer backend library");
+			glfwTerminate();
+			return false;
+		}
+		//
+		GUIRendererBackend* (*guiRendererBackendCreateInstance)() = (GUIRendererBackend*(*)())dlsym(guiRendererBackendLibraryHandle, "createInstance");
+		//
+		if (guiRendererBackendCreateInstance == nullptr) {
+			Console::printLine("Application::run(): Could not find GUI renderer backend library createInstance() entry point");
+			glfwTerminate();
+			return false;
+		}
+		//
+		guiRendererBackend = unique_ptr<GUIRendererBackend>((GUIRendererBackend*)guiRendererBackendCreateInstance());
+		if (guiRendererBackend == nullptr) {
+			Console::printLine("Application::run(): Could not create GUI renderer backend");
+			glfwTerminate();
+			return false;
+		}
+	#endif
+	//
+	return true;
+}
+
 int Application::run(int argc, char** argv, const string& title, GUIEventHandler* eventHandler, int windowHints) {
 	//
 	this->title = title;
@@ -579,79 +714,20 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 	}
 
 	// renderer backend library
-	string rendererBackendLibrary = "libopengl3corerenderer";
+	string rendererBackendType = "opengl3core";
 	for (auto i = 1; i < argc; i++) {
 		auto argValue = string(argv[i]);
 		if (argValue == "--debug") debuggingEnabled = true; else
-		if (argValue == "--gles2") rendererBackendLibrary = "libopengles2renderer"; else
-		if (argValue == "--gl2") rendererBackendLibrary = "libopengl2renderer"; else
-		if (argValue == "--gl3core") rendererBackendLibrary = "libopengl3corerenderer"; else
-		if (argValue == "--vulkan") rendererBackendLibrary = "libvulkanrenderer";
+		if (argValue == "--gles2") rendererBackendType = "opengles2"; else
+		if (argValue == "--gl2") rendererBackendType = "opengl2"; else
+		if (argValue == "--gl3core") rendererBackendType = "opengl3core"; else
+		if (argValue == "--vulkan") rendererBackendType = "vulkan";
 	}
 
-	#if defined(_WIN32)
-		rendererBackendLibrary = rendererBackendLibrary + ".dll";
-	#elif defined(__APPLE__)
-		rendererBackendLibrary = rendererBackendLibrary + ".dylib";
-	#else
-		rendererBackendLibrary = rendererBackendLibrary + ".so";
-	#endif
-
-	// renderer
-	Console::printLine("Application::run(): Opening renderer backend library: " + rendererBackendLibrary);
-
-	// load renderer backend library
-	#if defined(_MSC_VER)
-		//
-		auto rendererBackendLibraryHandle = LoadLibrary(rendererBackendLibrary.c_str());
-		if (rendererBackendLibraryHandle == nullptr) {
-			Console::printLine("Application::run(): Could not open renderer backend library");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-		//
-		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())GetProcAddress(rendererBackendLibraryHandle, "createInstance");
-		//
-		if (rendererBackendCreateInstance == nullptr) {
-			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-		//
-		rendererBackend = unique_ptr<RendererBackend>((RendererBackend*)rendererBackendCreateInstance());
-		if (rendererBackend == nullptr) {
-			Console::printLine("Application::run(): Could not create renderer backend");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-	#else
-		//
-		#if defined(__HAIKU__)
-			auto rendererBackendLibraryHandle = dlopen(("lib/" + rendererBackendLibrary).c_str(), RTLD_NOW);
-		#else
-			auto rendererBackendLibraryHandle = dlopen(rendererBackendLibrary.c_str(), RTLD_NOW);
-		#endif
-		if (rendererBackendLibraryHandle == nullptr) {
-			Console::printLine("Application::run(): Could not open renderer backend library");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-		//
-		RendererBackend* (*rendererBackendCreateInstance)() = (RendererBackend*(*)())dlsym(rendererBackendLibraryHandle, "createInstance");
-		//
-		if (rendererBackendCreateInstance == nullptr) {
-			Console::printLine("Application::run(): Could not find renderer backend library createInstance() entry point");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-		//
-		rendererBackend = unique_ptr<RendererBackend>((RendererBackend*)rendererBackendCreateInstance());
-		if (rendererBackend == nullptr) {
-			Console::printLine("Application::run(): Could not create renderer backend");
-			glfwTerminate();
-			return EXITCODE_FAILURE;
-		}
-	#endif
+	// load engine renderer backend plugin
+	if (loadEngineRendererPlugin(rendererBackendType) == false) {
+		return EXITCODE_FAILURE;
+	}
 
 	// window hints
 	if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -682,13 +758,13 @@ int Application::run(int argc, char** argv, const string& title, GUIEventHandler
 	//
 	rendererBackend->initialize();
 
-	// TODO: improve me!
-	if (rendererBackend->getRendererType() == RendererBackend::RENDERERTYPE_OPENGL) {
-		guiRendererBackend = make_unique<ApplicationGL3Renderer>();
-		guiRendererBackend->initialize();
-	} else {
-		Console::printLine("Application::run(): GUI renderer backend: Not available");
+	// load GUI renderer backend plugin
+	if (loadGUIRendererPlugin(rendererBackendType) == false) {
+		return EXITCODE_FAILURE;
 	}
+
+	//
+	guiRendererBackend->initialize();
 
 	//
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);

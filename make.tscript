@@ -63,7 +63,11 @@ function: main()
 		$yannetDefinitions = ""
 		$aguiIncludes = "-Iext/a-gui/src"
 		$aguiLdFlags = "-Llib -lminitscript -ltdme-ext"
+		$aguiRendererLdFlags = "-Llib -lagui"
 		$aguiDefinitions = ""
+		$aguiRendererDefinitions = ""
+		$aguiRendererIncludes = "-Isrc -Iext/minitscript/src -Iext/a-gui/src"
+		$aguiLdFlags = "-Llib -lminitscript -ltdme-ext"
 		$tdmeIncludes = ""
 		$tdmeLdFlags = "-Llib -lminitscript -lyannet -ltdme-ext -lagui"
 		$tdmeDefinitions = ""
@@ -152,6 +156,7 @@ function: main()
 				"src/tdme/engine/fileio/models/ModelReaderFBX.cpp",
 				"src/tdme/engine/fileio/models/FBXReader.cpp"
 			]
+			$aguiRendererDefinitions = "/D AGUI_DLL_IMPORT"
 			$aguiLdFlags = ""
 			$aguiLdFlags = $aguiLdFlags + " " + "/LIBPATH \"" + getWindowsSDKPathNameMSC() + "/um/x64/opengl32.lib" + "\""
 			$aguiLdFlags = $aguiLdFlags + " " + "/LIBPATH \"lib/libminitscript.lib\""
@@ -639,8 +644,6 @@ function: main()
 				"ext/a-gui/src/agui/gui/nodes/GUIVerticalScrollbarInternalController.cpp",
 				"ext/a-gui/src/agui/gui/nodes/GUIVerticalScrollbarInternalNode.cpp",
 				"ext/a-gui/src/agui/gui/nodes/GUIVideoNode.cpp",
-				"ext/a-gui/src/agui/gui/renderer/ApplicationGL3Renderer.cpp",
-				"ext/a-gui/src/agui/gui/renderer/GL3Renderer.cpp",
 				"ext/a-gui/src/agui/gui/renderer/GUIFont.cpp",
 				"ext/a-gui/src/agui/gui/renderer/GUIRendererBackend.cpp",
 				"ext/a-gui/src/agui/gui/renderer/GUIRenderer.cpp",
@@ -668,6 +671,58 @@ function: main()
 				"ext/a-gui/src/agui/video/decoder/VideoDecoderException.cpp"
 			],
 			false
+		)
+
+		script.call(
+			$buildLibrary,
+			"libguiopengl2renderer",
+			[
+				"glew",
+				"glfw3"
+			],
+			$glfwDefinitions + " " + $aguiRendererDefinitions,
+			$aguiRendererIncludes,
+			$aguiRendererLdFlags,
+			[
+				"ext/a-gui/src/agui/gui/renderer/ApplicationGL2Renderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GL2Renderer.cpp"
+			],
+			true
+		)
+
+		script.call(
+			$buildLibrary,
+			"libguiopengl3corerenderer",
+			[
+				"glew",
+				"glfw3"
+			],
+			$glfwDefinitions + " " + $aguiRendererDefinitions,
+			$aguiRendererIncludes,
+			$aguiRendererLdFlags,
+			[
+				"ext/a-gui/src/agui/gui/renderer/ApplicationGL3Renderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GL3Renderer.cpp"
+			],
+			true
+		)
+
+		script.call(
+			$buildLibrary,
+			"libguiopengles2renderer",
+			[
+				"glesv2",
+				"egl",
+				"glfw3"
+			],
+			$glfwDefinitions + " " + $aguiRendererDefinitions,
+			$aguiRendererIncludes,
+			$aguiRendererLdFlags,
+			[
+				"ext/a-gui/src/agui/gui/renderer/ApplicationGLES2Renderer.cpp",
+				"ext/a-gui/src/agui/gui/renderer/GLES2Renderer.cpp"
+			],
+			true
 		)
 	
 		script.call(

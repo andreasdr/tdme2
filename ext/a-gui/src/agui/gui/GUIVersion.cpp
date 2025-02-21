@@ -13,5 +13,5 @@ string GUIVersion::getVersion() {
 }
 
 string GUIVersion::getCopyright() {
-	return "Developed 2012-2023 by Andreas Drewke, Dominik Hepp, Mathias Lenz, Kolja Gumpert, drewke.net, mindty.com, github.com/mahula. Please see the license @ https://github.com/andreasdr/a-gui/blob/master/LICENSE";
+	return "Developed 2012-2023 by Andreas Drewke, Dominik Hepp, Kolja Gumpert, drewke.net, mindty.com. Please see the license @ https://github.com/andreasdr/a-gui/blob/master/LICENSE";
 }

@@ -395,6 +395,18 @@ private:
 	array<array<int64_t, 16>, 16> joystickButtons;
 
 	/**
+	 * Load engine renderer backend plugin
+	 * @param rendererType renderer type
+	 */
+	bool loadEngineRendererPlugin(const string& rendererType);
+
+	/**
+	 * Load GUI renderer backend plugin
+	 * @param rendererType renderer type
+	 */
+	bool loadGUIRendererPlugin(const string& rendererType);
+
+	/**
 	 * Set application icon
 	 */
 	void setIcon();

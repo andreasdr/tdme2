@@ -76,7 +76,7 @@ public:
 	 * @returns renderer backend
 	 */
 	inline static GUIRendererBackend* getRendererBackend() {
-		return rendererBackend.get();
+		return guiRendererBackend.get();
 	}
 
 	/**
@@ -350,7 +350,7 @@ public:
 	virtual void onDrop(const vector<string>& paths);
 
 private:
-	AGUI_STATIC_DLL_IMPEXT static unique_ptr<GUIRendererBackend> rendererBackend;
+	AGUI_STATIC_DLL_IMPEXT static unique_ptr<GUIRendererBackend> guiRendererBackend;
 	AGUI_STATIC_DLL_IMPEXT static unique_ptr<Application> application;
 	AGUI_STATIC_DLL_IMPEXT static GUIEventHandler* eventHandler;
 	int windowHints { WINDOW_HINT_NONE };

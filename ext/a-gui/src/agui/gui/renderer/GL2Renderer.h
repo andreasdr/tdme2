@@ -1,9 +1,5 @@
 #pragma once
 
-#if defined (__APPLE__)
-	#include <OpenCL/opencl.h>
-#endif
-
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -34,26 +30,23 @@ namespace renderer {
 }
 
 /**
- * OpenGL 3 renderer backend
+ * OpenGL 2 renderer backend
  * @author Andreas Drewke
  */
-class agui::gui::renderer::GL3Renderer: public GUIRendererBackend
+class agui::gui::renderer::GL2Renderer: public GUIRendererBackend
 {
 private:
-	uint32_t engineVAO;
 	unordered_map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
-	bool deferredShadingAvailable;
-	bool textureCompressionAvailable;
 
 public:
 	// forbid class copy
-	FORBID_CLASS_COPY(GL3Renderer)
+	FORBID_CLASS_COPY(GL2Renderer)
 
 	/**
 	 * Public constructor
 	 */
-	GL3Renderer();
+	GL2Renderer();
 
 	// overridden methods
 	void initialize() override;
@@ -113,11 +106,4 @@ public:
 	void doneGUIMode() override;
 	void setVSync(bool vSync) override;
 	const Renderer_Statistics getStatistics() override;
-
-private:
-
-	/**
-	 * Checks if GL error did occour
-	 */
-	void checkGLError(int line);
 };
